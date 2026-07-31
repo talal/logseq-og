@@ -3510,7 +3510,7 @@
 (defn expand!
   ([e] (expand! e false))
   ([e clear-selection?]
-   (util/stop e)
+   (when e (util/stop e))
    (cond
      (state/editing?)
      (when-let [block-id (:block/uuid (state/get-edit-block))]
@@ -3526,8 +3526,9 @@
             doall)
        (and clear-selection? (clear-selection!)))
 
-     (whiteboard?)
-     (.setCollapsed (.-api ^js (state/active-tldraw-app)) false)
+     (state/whiteboard-route?)
+     (when (state/active-tldraw-app)
+       (.setCollapsed (.-api ^js (state/active-tldraw-app)) false))
 
      :else
      ;; expand one level
@@ -3563,8 +3564,9 @@
             doall)
        (and clear-selection? (clear-selection!)))
 
-     (whiteboard?)
-     (.setCollapsed (.-api ^js (state/active-tldraw-app)) true)
+     (state/whiteboard-route?)
+     (when (state/active-tldraw-app)
+       (.setCollapsed (.-api ^js (state/active-tldraw-app)) true))
 
      :else
      ;; collapse by one level from outside
@@ -3610,10 +3612,12 @@
                (doseq [block-id block-ids] (collapse-block! block-id))))))
        (and clear-selection? (clear-selection!)))
 
-     (whiteboard?)
-      ;; TODO: Looks like detecting the whiteboard selection's collapse state will take more work.
-      ;; Leaving unimplemented for now.
-     nil
+     (state/whiteboard-route?)
+     (when-let [api (and (state/active-tldraw-app) (.-api ^js (state/active-tldraw-app)))]
+       (when-let [shapes (.-allSelectedShapesArray api)]
+         (when (not-empty shapes)
+           (let [collapsed? (not-every? #(.-collapsed ^js %) shapes)]
+             (.setCollapsed api collapsed?)))))
 
      :else
       ;; If no block is being edited or selected, the "toggle" action doesn't make sense,

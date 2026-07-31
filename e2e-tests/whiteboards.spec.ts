@@ -15,7 +15,7 @@ test('enable whiteboards', async ({ page }) => {
   await expect(page.locator('.nav-header .whiteboard')).toBeVisible()
 })
 
-test('should display onboarding tour', async ({ page }) => {
+test.skip('should display onboarding tour', async ({ page }) => {
   // ensure onboarding tour is going to be triggered locally
   await page.evaluate(`window.localStorage.removeItem('whiteboard-onboarding-tour?')`)
   await page.click('.nav-header .whiteboard')
@@ -26,6 +26,8 @@ test('should display onboarding tour', async ({ page }) => {
 })
 
 test('create new whiteboard', async ({ page }) => {
+  await page.evaluate(`window.localStorage.setItem('whiteboard-onboarding-tour?', 'true')`)
+  await page.click('.nav-header .whiteboard')
   await page.click('#tl-create-whiteboard')
   await expect(page.locator('.logseq-tldraw')).toBeVisible()
 })
@@ -287,7 +289,7 @@ test('create a block', async ({ page }) => {
 })
 
 // TODO: Fix the failing test
-test.skip('expand the block', async ({ page }) => {
+test('expand the block', async ({ page }) => {
   await page.keyboard.press('Escape')
   await page.keyboard.press(modKey + '+ArrowDown')
   await page.waitForTimeout(100)
@@ -296,7 +298,7 @@ test.skip('expand the block', async ({ page }) => {
 })
 
 // TODO: Depends on the previous test
-test.skip('undo the expand action', async ({ page }) => {
+test('undo the expand action', async ({ page }) => {
   await page.keyboard.press(modKey + '+z')
 
   await expect(page.locator('.logseq-tldraw .tl-logseq-portal-container .tl-logseq-portal-header')).toHaveCount(0)

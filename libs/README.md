@@ -17,6 +17,7 @@ import "@logseq/libs"
 ```
 
 #### APIs & Samples
+
 - https://logseq.github.io/plugins/
 - https://github.com/logseq/logseq-plugin-samples
 
@@ -28,5 +29,6 @@ import "@logseq/libs"
 4. https://github.com/YU000jp/logseq-plugin-sample-kit-typescript
 
 #### Feedback
-If you have any feedback or encounter any issues, feel free to join Logseq's discord group.
-https://discord.gg/KpN4eHY
+
+If you have any feedback or encounter any issues, feel free to join Logseq's
+discord group. https://discord.gg/KpN4eHY

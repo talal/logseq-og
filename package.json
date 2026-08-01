@@ -40,7 +40,6 @@
         "debug-electron": "cd static/ && yarn electron:debug",
         "e2e-test": "cross-env DEBUG=pw:api CI=true npx playwright test --reporter github",
         "clean": "gulp clean",
-        "style:lint": "stylelint \"src/**/*.css\"",
         "gulp:watch": "gulp watch",
         "gulp:build": "cross-env NODE_ENV=production gulp build",
         "css:build": "postcss tailwind.all.css -o static/css/style.css --verbose --env production",

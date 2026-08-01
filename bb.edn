@@ -130,7 +130,27 @@
   logseq.tasks.lang/validate-translations
 
   file-sync:integration-tests
-  logseq.tasks.file-sync/integration-tests}
+  logseq.tasks.file-sync/integration-tests
+
+  ;; --- Migrated from package.json ---
+  cljs:watch {:task (shell "clojure -M:cljs watch app electron")}
+  cljs:watch-storybook {:task (shell "clojure -M:cljs watch stories-dev")}
+  cljs:app-watch {:task (shell "clojure -M:cljs watch app")}
+  cljs:electron-watch {:task (shell "clojure -M:cljs watch app electron --config-merge" "{:asset-path \"./js\"}")}
+  cljs:release {:task (shell "clojure -M:cljs release app publishing electron")}
+  cljs:release-electron {:task (do (shell "clojure -M:cljs release app electron --debug")
+                                   (shell "clojure -M:cljs release publishing"))}
+  cljs:release-app {:task (shell "clojure -M:cljs release app --config-merge" "{:compiler-options {:output-feature-set :es6}}")}
+  cljs:release-publishing {:task (shell "clojure -M:cljs release publishing")}
+  cljs:test {:task (shell "clojure -M:test compile test")}
+  cljs:run-test {:task (shell "node static/tests.js")}
+  cljs:dev-release-app {:task (shell "clojure -M:cljs release app --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")}
+  cljs:dev-release-electron {:task (do (shell "clojure -M:cljs release app electron --debug --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")
+                                       (shell "clojure -M:cljs release publishing"))}
+  cljs:debug {:task (shell "clojure -M:cljs release app --debug")}
+  cljs:report {:task (shell "clojure -M:cljs run shadow.cljs.build-report app report.html")}
+  cljs:build-electron {:task (shell "clojure -A:cljs compile app electron")}
+  cljs:lint {:task (shell "clojure -M:clj-kondo --parallel --lint src --cache false")}}
 
  :tasks/config
  {:large-vars

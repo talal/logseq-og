@@ -1,5 +1,8 @@
+!AGENTS.md
+!.agents/
 /e2e-dump
 /test-results
+/files
 /target
 /classes
 /checkouts

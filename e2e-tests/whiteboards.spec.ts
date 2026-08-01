@@ -15,9 +15,13 @@ test('enable whiteboards', async ({ page }) => {
   await expect(page.locator('.nav-header .whiteboard')).toBeVisible()
 })
 
-test.skip('should display onboarding tour', async ({ page }) => {
-  // ensure onboarding tour is going to be triggered locally
-  await page.evaluate(`window.localStorage.removeItem('whiteboard-onboarding-tour?')`)
+test('should display onboarding tour', async ({ page }) => {
+  await page.evaluate(`
+    window.localStorage.removeItem('whiteboard-onboarding-tour?');
+    if (window.logseq && window.logseq.api) {
+      window.logseq.api.set_state_from_store('whiteboard/onboarding-tour?', false);
+    }
+  `)
   await page.click('.nav-header .whiteboard')
 
   await expect(page.locator('.cp__whiteboard-welcome')).toBeVisible()
@@ -26,7 +30,12 @@ test.skip('should display onboarding tour', async ({ page }) => {
 })
 
 test('create new whiteboard', async ({ page }) => {
-  await page.evaluate(`window.localStorage.setItem('whiteboard-onboarding-tour?', 'true')`)
+  await page.evaluate(`
+    window.localStorage.setItem('whiteboard-onboarding-tour?', 'true');
+    if (window.logseq && window.logseq.api) {
+      window.logseq.api.set_state_from_store('whiteboard/onboarding-tour?', true);
+    }
+  `)
   await page.click('.nav-header .whiteboard')
   await page.click('#tl-create-whiteboard')
   await expect(page.locator('.logseq-tldraw')).toBeVisible()
@@ -291,8 +300,16 @@ test('create a block', async ({ page }) => {
 // TODO: Fix the failing test
 test('expand the block', async ({ page }) => {
   await page.keyboard.press('Escape')
-  await page.keyboard.press(modKey + '+ArrowDown')
   await page.waitForTimeout(100)
+  
+  // Select the shape by clicking its coordinates on the canvas
+  const canvas = await page.waitForSelector('.logseq-tldraw')
+  const bounds = (await canvas.boundingBox())!
+  await page.mouse.click(bounds.x + 105, bounds.y + 105)
+  
+  await page.waitForTimeout(200)
+  await page.keyboard.press(modKey + '+ArrowDown')
+  await page.waitForTimeout(500)
 
   await expect(page.locator('.logseq-tldraw .tl-logseq-portal-container .tl-logseq-portal-header')).toHaveCount(1)
 })

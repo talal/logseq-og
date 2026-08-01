@@ -1,5 +1,5 @@
 #!/bin/sh
-yarn clean && yarn release-publishing
+yarn clean && bb cljs:release-publishing
 /usr/bin/rm -rf /tmp/publishing
 mkdir /tmp/publishing
 cp -R ./static /tmp/publishing/

@@ -12,7 +12,8 @@
  {clj-kondo/clj-kondo {:version "2023.05.26"}
   org.babashka/fswatcher {:version "0.0.3"}}
  :tasks
- {dev:desktop-watch
+ {;; Development
+  dev:desktop-watch
   logseq.tasks.dev.desktop/watch
 
   dev:open-dev-electron-app
@@ -67,7 +68,8 @@
    :task (run '-dev:ios-app {:parallel true})}
 
   release:ios-app
-  logseq.tasks.dev.mobile/run-ios-release
+  {:doc "Build and run the iOS release application"
+   :task (run '-release:ios-app)}
 
   dev:npx-cap-run-android
   logseq.tasks.dev.mobile/npx-cap-run-android
@@ -80,8 +82,10 @@
    :task (run '-dev:android-app {:parallel true})}
 
   release:android-app
-  logseq.tasks.dev.mobile/run-android-release
+  {:doc "Build and run the Android release application"
+   :task (run '-release:android-app)}
 
+  ;; Validation and linting
   dev:validate-local-storage
   logseq.tasks.spec/validate-local-storage
 
@@ -98,7 +102,8 @@
   logseq.tasks.malli/validate-ast
 
   dev:lint
-  logseq.tasks.dev/lint
+  {:doc "Run all ClojureScript lint tasks"
+   :depends [cljs:lint lint:carve lint:large-vars lang:validate-translations lint:ns-docstrings]}
 
   dev:gen-malli-kondo-config
   logseq.tasks.dev/gen-malli-kondo-config
@@ -130,25 +135,113 @@
   file-sync:integration-tests
   logseq.tasks.file-sync/integration-tests
 
-  ;; --- Migrated from package.json ---
-  cljs:watch {:task (shell "clojure -M:cljs watch app electron")}
-  cljs:watch-storybook {:task (shell "clojure -M:cljs watch stories-dev")}
-  cljs:app-watch {:task (shell "clojure -M:cljs watch app")}
-  cljs:electron-watch {:task (shell "clojure -M:cljs watch app electron --config-merge" "{:asset-path \"./js\"}")}
-  cljs:release {:task (shell "clojure -M:cljs release app publishing electron")}
-  cljs:release-electron {:task (do (shell "clojure -M:cljs release app electron --debug")
-                                   (shell "clojure -M:cljs release publishing"))}
-  cljs:release-app {:task (shell "clojure -M:cljs release app --config-merge" "{:compiler-options {:output-feature-set :es6}}")}
-  cljs:release-publishing {:task (shell "clojure -M:cljs release publishing")}
-  cljs:test {:task (shell "clojure -M:test compile test")}
-  cljs:run-test {:task (shell "node static/tests.js")}
-  cljs:dev-release-app {:task (shell "clojure -M:cljs release app --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")}
-  cljs:dev-release-electron {:task (do (shell "clojure -M:cljs release app electron --debug --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")
-                                       (shell "clojure -M:cljs release publishing"))}
-  cljs:debug {:task (shell "clojure -M:cljs release app --debug")}
-  cljs:report {:task (shell "clojure -M:cljs run shadow.cljs.build-report app report.html")}
-  cljs:build-electron {:task (shell "clojure -A:cljs compile app electron")}
-  cljs:lint {:task (shell "clojure -M:clj-kondo --parallel --lint src --cache false")}}
+  ;; Node asset steps used by ClojureScript builds
+  assets:build
+  {:doc "Build static resources, vendor assets, and production CSS"
+   :task (shell "yarn gulp:build")}
+
+  ;; ClojureScript commands
+  cljs:watch
+  {:doc "Watch the browser and Electron ClojureScript builds"
+   :task (shell "clojure -M:cljs watch app electron")}
+
+  cljs:watch-storybook
+  {:doc "Watch the Storybook ClojureScript module"
+   :task (shell "clojure -M:cljs watch stories-dev")}
+
+  cljs:app-watch
+  {:doc "Watch the browser ClojureScript build"
+   :task (shell "clojure -M:cljs watch app")}
+
+  cljs:electron-watch
+  {:doc "Watch browser and Electron builds with the Electron asset path"
+   :task (shell "clojure -M:cljs watch app electron --config-merge" "{:asset-path \"./js\"}")}
+
+  cljs:release
+  {:doc "Build the app, publishing, and Electron ClojureScript releases"
+   :task (shell "clojure -M:cljs release app publishing electron")}
+
+  cljs:release-electron
+  {:doc "Build the Electron and publishing ClojureScript releases"
+   :task (do (shell "clojure -M:cljs release app electron --debug")
+             (shell "clojure -M:cljs release publishing"))}
+
+  cljs:release-app
+  {:doc "Build the production browser ClojureScript release"
+   :task (shell "clojure -M:cljs release app --config-merge" "{:compiler-options {:output-feature-set :es6}}")}
+
+  cljs:release-publishing
+  {:doc "Build the publishing ClojureScript release"
+   :task (shell "clojure -M:cljs release publishing")}
+
+  cljs:test
+  {:doc "Compile the ClojureScript test bundle"
+   :task (shell "clojure -M:test compile test")}
+
+  cljs:run-test
+  {:doc "Run the compiled ClojureScript test bundle"
+   :task (shell "node static/tests.js")}
+
+  test
+  {:doc "Compile and run the ClojureScript tests"
+   :depends [cljs:test cljs:run-test]}
+
+  cljs:dev-release-app
+  {:doc "Build the development browser release"
+   :task (shell "clojure -M:cljs release app --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")}
+
+  cljs:dev-release-electron
+  {:doc "Build development Electron and publishing releases"
+   :task (do (shell "clojure -M:cljs release app electron --debug --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")
+             (shell "clojure -M:cljs release publishing"))}
+
+  cljs:debug
+  {:doc "Build the debug browser release"
+   :task (shell "clojure -M:cljs release app --debug")}
+
+  cljs:report
+  {:doc "Generate a Shadow CLJS build report"
+   :task (shell "clojure -M:cljs run shadow.cljs.build-report app report.html")}
+
+  cljs:build-electron
+  {:doc "Compile the app and Electron builds"
+   :task (shell "clojure -M:cljs compile app electron")}
+
+  cljs:lint
+  {:doc "Run clj-kondo over the ClojureScript source"
+   :task (shell "clojure -M:clj-kondo --parallel --lint src --cache false")}
+
+  ;; Complete build and packaging workflows
+  build:app
+  {:doc "Build static assets and the production browser application"
+   :depends [assets:build]
+   :task (shell "clojure -M:cljs release app --config-merge" "{:compiler-options {:output-feature-set :es6}}")}
+
+  build:dev-app
+  {:doc "Build static assets and the development browser application"
+   :depends [assets:build]
+   :task (shell "clojure -M:cljs release app --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")}
+
+  build:release
+  {:doc "Build static assets and all production ClojureScript targets"
+   :depends [assets:build]
+   :task (shell "clojure -M:cljs release app publishing electron")}
+
+  -release:electron
+  {:depends [assets:build cljs:release-electron]
+   :task (shell "yarn electron:package")}
+
+  release:electron
+  {:doc "Build and package the Electron application"
+   :task (run '-release:electron)}
+
+  -release:ios-app
+  {:depends [build:app]
+   :task (logseq.tasks.dev.mobile/run-ios-release)}
+
+  -release:android-app
+  {:depends [build:app]
+   :task (logseq.tasks.dev.mobile/run-android-release)}}
 
  :tasks/config
  {:large-vars

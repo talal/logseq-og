@@ -5,14 +5,25 @@
             [clojure.string :as string]
             [logseq.tasks.util :as task-util]))
 
+(defn- local-server-url
+  "Returns the local development server URL used by Capacitor"
+  []
+  (let [ip (string/trim (:out (shell {:out :string}
+                                     "node"
+                                     "-e"
+                                     "console.log(require('ip').address())")))]
+    (format "http://%s:3001" ip)))
+
 (defn- open-dev-app
   "Opens mobile app when watch process has built main.js"
-  [cmd]
-  (let [start-time (java.time.Instant/now)]
+  [platform]
+  (let [start-time (java.time.Instant/now)
+        server-url (local-server-url)
+        shell-opts {:extra-env {"LOGSEQ_APP_SERVER_URL" server-url}}]
     (loop [n 1000]
       (if (and (fs/exists? "static/js/main.js")
                (task-util/file-modified-later-than? "static/js/main.js" start-time))
-        (shell cmd)
+        (shell shell-opts "npx" "cap" "sync" platform)
         (println "Waiting for app to build..."))
       (Thread/sleep 1000)
       (when-not (or (and (fs/exists? "ios/App/App/public/static/js/main.js")
@@ -21,53 +32,41 @@
                       (task-util/file-modified-later-than? "android/App/src/main/assets/public/static/js/main.js" start-time)))
         (recur (dec n))))))
 
-(defn- set-system-env
-  "Updates capacitor.config.ts serve url with IP from ifconfig"
-  []
-  (let [ip (string/trim (:out (shell {:out :string} "ipconfig getifaddr en0")))
-        logseq-app-server-url (format "%s://%s:%s" "http" ip "3001")]
-    (println "Server URL:" logseq-app-server-url)
-    (shell "git checkout capacitor.config.ts")
-    (let [new-body (-> (slurp "capacitor.config.ts")
-                       (string/replace "// , server:" " , server:")
-                       (string/replace "//    url:" "    url:")
-                       (string/replace "process.env.LOGSEQ_APP_SERVER_URL"
-                                       (pr-str logseq-app-server-url))
-                       (string/replace "//    cleartext:" "    cleartext:")
-                       (string/replace "// }" " }"))]
-      (spit "capacitor.config.ts" new-body))))
-
-
 (defn app-watch
   "Watches environment to reload cljs, css and other assets for mobile"
   []
-  (println "set-system-env")
-  (set-system-env)
-  (doseq [cmd ["yarn clean"
-               "yarn app-watch"]]
-    (println cmd)
-    (shell cmd)))
+  (shell "yarn clean")
+  (shell "sh" "-c" "yarn gulp:watch & clojure -M:cljs watch app & wait"))
 
 (defn npx-cap-run-ios
   "Copy assets files to iOS build directory, and run app in Xcode"
   []
-  (open-dev-app "npx cap sync ios")
-  (shell "npx cap open ios"))
+  (open-dev-app "ios")
+  (shell {:extra-env {"LOGSEQ_APP_SERVER_URL" (local-server-url)}}
+         "npx" "cap" "open" "ios"))
 
 (defn npx-cap-run-android
   "Copy assets files to Android build directory, and run app in Android Studio"
   []
-  (open-dev-app "npx cap sync android")
-  (shell "npx cap open android"))
+  (open-dev-app "android")
+  (shell {:extra-env {"LOGSEQ_APP_SERVER_URL" (local-server-url)}}
+         "npx" "cap" "open" "android"))
+
+(defn- run-mobile-release
+  "Copies the built web app into the Capacitor project and runs a release build"
+  [platform]
+  (shell "rm -rf ./public/static")
+  (shell "rm -f ./static/js/*.map")
+  (shell "mv static ./public")
+  (shell "npx" "cap" "sync" platform)
+  (shell "npx" "cap" "run" platform))
 
 (defn run-ios-release
   "Build iOS app release"
   []
-  (shell "git checkout capacitor.config.ts")
-  (shell "yarn run-ios-release"))
+  (run-mobile-release "ios"))
 
 (defn run-android-release
   "Build Android app release"
   []
-  (shell "git checkout capacitor.config.ts")
-  (shell "yarn run-android-release"))
+  (run-mobile-release "android"))

@@ -33,7 +33,7 @@
   logseq/shui                           {:local/root "deps/shui"}
   metosin/malli                         {:mvn/version "0.10.0"}}
 
- :aliases {:cljs {:extra-paths ["src/dev-cljs/" "src/test/" "src/electron/"]
+ :aliases {:cljs {:extra-paths ["src/dev-cljs/" "src/test/"]
                   :extra-deps  {org.clojure/clojurescript        {:mvn/version "1.11.54"}
                                 org.clojure/tools.namespace      {:mvn/version "0.2.11"}
                                 cider/cider-nrepl                {:mvn/version "0.29.0"}

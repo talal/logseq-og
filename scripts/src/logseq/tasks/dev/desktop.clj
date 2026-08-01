@@ -7,7 +7,7 @@
 (defn watch
   "Watches environment to reload cljs, css and other assets"
   []
-  (shell "yarn electron-watch"))
+  (shell "sh" "-c" "yarn gulp:watch & clojure -M:cljs watch app electron --config-merge '{:asset-path \"./js\"}' & wait"))
 
 (defn open-dev-electron-app
   "Opens dev-electron-app when watch process has built main.js"

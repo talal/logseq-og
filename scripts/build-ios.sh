@@ -11,7 +11,7 @@ PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 yarn install --force
 rm -rv public/static || true
 rm -rv ios/App/App/public || true
 
-yarn release-app
+bb build:app
 
 rsync -avz --exclude node_modules --exclude '*.js.map' --exclude android ./static/ ./public/static/
 

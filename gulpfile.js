@@ -169,10 +169,6 @@ exports.electron = () => {
 }
 
 exports.electronMaker = async () => {
-  cp.execSync('yarn cljs:release-electron', {
-    stdio: 'inherit'
-  })
-
   const pkgPath = path.join(outputPath, 'package.json')
   const pkg = require(pkgPath)
   const version = fs.readFileSync(path.join(__dirname, 'src/main/frontend/version.cljs'))

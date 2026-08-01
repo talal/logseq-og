@@ -13,12 +13,10 @@ npx shadcn-ui@latest add button
 ```
 
 #### 🦄 Play with Storybook
-1. Watch shui cljs stories from root [scripts](https://github.com/logseq/logseq/blob/15be34fc5c79ccef9e7756131f54436763f36699/package.json#L59).
+1. Watch shui ClojureScript stories from the repository root.
 
 ```shell
-yarn run cljs:watch-stories
-
-# cljs:watch-stories: "clojure -M:cljs watch stories-dev"
+bb cljs:watch-storybook
 ```
 
 2. Set up storybook from the current working directory.
@@ -34,4 +32,3 @@ yarn run watch:storybook
 
 ### License
 MIT
-

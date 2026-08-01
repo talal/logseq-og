@@ -25,7 +25,7 @@
 
 React and ReactDOM are resolved to globals instead of bundled by Shadow. That decision reduces duplication and supports JavaScript-produced UI globals, but it makes HTML/resource assembly and compatible global versions part of the compiler contract.
 
-There is version drift in declared tooling: root `package.json` declares Shadow CLJS `2.17.5`, while `deps.edn` declares `2.19.0`. Because commands run `clojure -M:cljs`, the Clojure dependency is normally authoritative; the npm copy remains a source of confusion. Similar skew exists across root React 17, `packages/ui` runtime React 18 declarations, React 17 type packages, and externalized globals.
+Shadow CLJS is declared through the Clojure CLI in `deps.edn`; the root package does not duplicate that tool dependency. Similar skew still exists across root React 17, `packages/ui` runtime React 18 declarations, React 17 type packages, and externalized globals.
 
 ## Development flows
 
@@ -34,14 +34,14 @@ The clearest supported entry points are the Babashka tasks:
 - `bb dev:electron-start`: run desktop asset/CLJS watches and open Electron concurrently.
 - `bb dev:ios-app` / `bb dev:android-app`: watch app assets and run Capacitor against a reachable development server.
 - `bb dev:publishing`: build publishing output, optionally in watch mode.
-- `bb cljs:test` then `bb cljs:run-test`: compile and execute the main CLJS tests.
+- `bb test`: compile and execute the main CLJS tests.
 - `bb dev:lint`: aggregate repository linting.
 
-Legacy or lower-level Yarn/Gulp scripts remain and sometimes invoke Babashka/Clojure tasks in return. This bidirectional orchestration makes it possible to use familiar entry points but can obscure the canonical command and environment variables.
+Lower-level Yarn/Gulp scripts remain for Node-only asset and packaging steps. Project workflows are orchestrated through Babashka.
 
 ## Asset pipeline
 
-`resources/` is copied into `static/`. Gulp then copies selected prebuilt assets from `node_modules`, builds Tailwind/PostCSS CSS, and optionally mirrors assembled JS/CSS into `public/static` for Capacitor. The production Electron step compiles CLJS, updates the nested static package version from `frontend/version.cljs`, installs nested dependencies if needed, and invokes Electron Forge.
+`resources/` is copied into `static/`. Gulp then copies selected prebuilt assets from `node_modules`, builds Tailwind/PostCSS CSS, and optionally mirrors assembled JS/CSS into `public/static` for Capacitor. Babashka orchestrates the ClojureScript build before the Node-only Electron packaging step updates the nested static package version from `frontend/version.cljs`, installs nested dependencies if needed, and invokes Electron Forge.
 
 This pipeline treats `static/` as both build output and a checked-in/nested package. That dual role complicates cleaning, ownership, cache invalidation, and reviews. A clean separation such as `resources/` -> ephemeral `build/desktop` -> packaging would make provenance clearer.
 

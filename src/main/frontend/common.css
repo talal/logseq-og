@@ -15,9 +15,21 @@
 }
 
 html:not(.is-native-android) {
-  font-family: var(--ls-font-family), sans-serif, system-ui, -apple-system,
-  BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-  serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol !important;
+  font-family:
+    var(--ls-font-family),
+    sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Noto Sans',
+    serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol" !important;
 }
 
 /* region Reset top elements */
@@ -41,7 +53,7 @@ body {
   textarea {
     overflow: hidden;
     padding: 8px;
-    border: 1px solid rgba(39, 41, 43, 0.15);
+    border: 1px solid rgb(39 41 43 / 15%);
     border-radius: var(--ls-border-radius-low);
     font-size: 1em;
     line-height: 1.5;
@@ -83,7 +95,7 @@ body {
 
   a {
     cursor: pointer;
-    color: var(--lx-accent-11, var(--ls-link-text-color, hsl(var(--primary)/.8)));
+    color: var(--lx-accent-11, var(--ls-link-text-color, hsl(var(--primary)/80%)));
     text-decoration: none;
   }
 
@@ -115,7 +127,7 @@ body {
     text-indent: 0;
     padding: 8px 20px;
     border-left: 4px solid;
-    border-left-color: var(--ls-page-blockquote-border-color, hsl(var(--primary)/.4));
+    border-left-color: var(--ls-page-blockquote-border-color, hsl(var(--primary)/40%));
     background-color: var(--ls-page-blockquote-bg-color, hsl(var(--secondary)));
     color: var(--ls-page-blockquote-color, hsl(var(--secondary-foreground)));
     margin: 1rem 0;
@@ -142,11 +154,9 @@ body {
     color: var(--ls-primary-text-color);
   }
 
-  ::-moz-selection {
-    background: var(--ls-selection-background-color);
-    color: var(--ls-primary-text-color);
-  }
+
 }
+
 /* endregion */
 
 /** region App utilities **/
@@ -217,7 +227,7 @@ li p:last-child,
 .cancelled,
 .done {
   text-decoration: line-through;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .opacity-30 {
@@ -253,15 +263,8 @@ li p:last-child,
   --transform-translate-x: 1.25rem;
 }
 
-.done,
-.canceled,
-.cancelled {
-  opacity: 0.7;
-}
-
 .tip-shadow {
-  -webkit-filter: drop-shadow(1px 1px 2px rgba(155, 155, 0, 0.8));
-  filter: drop-shadow(1px 1px 2px rgba(155, 155, 0, 0.8));
+  filter: drop-shadow(1px 1px 2px rgb(155 155 0 / 80%));
 }
 
 .admonition-icon {
@@ -335,7 +338,8 @@ i.ti {
 /** endregion **/
 
 /* region FIXME: override elements (?) */
-h1.title, h1.title input {
+h1.title,
+h1.title input {
   @apply mb-4 font-medium;
 
   color: var(--lx-gray-12, var(--ls-title-text-color, hsl(var(--foreground))));
@@ -579,7 +583,7 @@ mark {
 
 .page-reference {
   border-radius: 3px;
-  padding: 2px 0px;
+  padding: 2px 0;
   transition: 0.3s;
 }
 
@@ -598,19 +602,24 @@ mark {
   border-radius: 3px;
   font-size: 0.9em;
   font-style: normal;
-  font-family: MonoLisa, 'Fira Code', Monaco, Menlo, Consolas, 'COURIER NEW',
-  monospace;
+  font-family:
+    MonoLisa,
+    'Fira Code',
+    Monaco,
+    Menlo,
+    Consolas,
+    'COURIER NEW',
+    monospace;
   letter-spacing: 0;
   background-color: var(--lx-gray-06, var(--ls-page-inline-code-bg-color, var(--rx-gray-05)));
   color: var(--lx-gray-11, var(--ls-page-inline-code-color, var(--rx-gray-11)));
-  text-rendering: optimizeSpeed;
+  text-rendering: optimizespeed;
 }
 
-:not(pre):not(mark) > code {
+:not(pre, mark) > code {
   line-height: 1.45;
   padding: 3px 5px !important;
   border-radius: var(--ls-border-radius-low);
-  -webkit-border-radius: var(--ls-border-radius-low);
 }
 
 mark > code {
@@ -632,16 +641,12 @@ a {
   transition: 0.3s;
 }
 
-a.tooltip-priority {
-  transition: none;
-}
-
 .page-reference:hover {
-  background: var(--lx-accent-04-alpha, var(--ls-secondary-background-color, hsl(var(--primary)/.4)));
+  background: var(--lx-accent-04-alpha, var(--ls-secondary-background-color, hsl(var(--primary)/40%)));
 }
 
 .references-blocks .page-reference:hover {
-  background: var(--lx-accent-04-alpha, var(--ls-tertiary-background-color, hsl(var(--primary)/.4)));
+  background: var(--lx-accent-04-alpha, var(--ls-tertiary-background-color, hsl(var(--primary)/40%)));
 }
 
 #head .fade-link {
@@ -682,8 +687,9 @@ html[data-theme='light'] .keyboard-shortcut > code {
 }
 
 html[data-theme='dark'] .keyboard-shortcut > code {
-  box-shadow: inset 0 -1px 0 var(--ls-primary-background-color),
-  0 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 -1px 0 var(--ls-primary-background-color),
+    0 0 1px 1px rgb(255 255 255 / 20%);
 }
 
 .ui__modal-panel {
@@ -726,6 +732,7 @@ html.is-mobile {
 @layer base {
   .ls-grid-cols {
     @apply grid grid-flow-col auto-cols-max;
+
     place-items: center;
   }
 

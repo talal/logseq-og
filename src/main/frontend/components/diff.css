@@ -1,14 +1,14 @@
 .cp__diff-file {
-    @apply mb-3;
+  @apply mb-3;
 
-    textarea {
-        min-height: 20vh;
+  textarea {
+    min-height: 20vh;
 
-        @screen sm {
-            min-height: 50vh;
-        }
+    @screen sm {
+      min-height: 50vh;
     }
- }
+  }
+}
 
 .cp__diff-file-header {
   background-color: var(--ls-secondary-background-color);
@@ -18,8 +18,9 @@
 }
 
 .cp__diff-file-header-content {
-    @apply truncate;
-    overflow-wrap: break-word;
+  @apply truncate;
+
+  overflow-wrap: break-word;
 }
 
 .cp__diff-file-header-type {

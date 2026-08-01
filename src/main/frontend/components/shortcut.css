@@ -18,7 +18,7 @@
 
     a.fold {
       @apply absolute right-0 top-0 w-full pt-3 pr-3
-      pb-3 flex items-center justify-end select-none;
+        pb-3 flex items-center justify-end select-none;
 
       &:active {
         @apply bg-white/50 opacity-60;
@@ -38,7 +38,7 @@
 
       a.x {
         @apply flex items-center absolute right-1 top-0 py-[7px] px-1 opacity-60
-        hover:opacity-90;
+          hover:opacity-90;
       }
     }
 
@@ -85,7 +85,7 @@
     @apply relative pb-4 overflow-y-auto;
 
     max-height: calc(70vh - 100px);
-    overflow-y: overlay;
+    overflow-y: auto;
 
     > ul {
       @apply px-4 m-0 py-0;
@@ -95,7 +95,7 @@
 
         &.th {
           @apply rounded mb-2 sticky top-0 cursor-pointer
-          select-none active:opacity-80 px-2 py-1 z-[1];
+            select-none active:opacity-80 px-2 py-1 z-[1];
 
           background-color: var(--ls-tertiary-background-color);
         }
@@ -106,7 +106,7 @@
 
         .action-wrap {
           @apply flex space-x-2 items-center flex-nowrap
-          select-none active:opacity-70;
+            select-none active:opacity-70;
 
           &.disabled {
             @apply opacity-60 cursor-default;
@@ -123,7 +123,9 @@
       @apply relative top-[-8px];
     }
 
-    &:active, &:focus, &:focus-within {
+    &:active,
+    &:focus,
+    &:focus-within {
       outline: burlywood hidden medium;
     }
 
@@ -132,7 +134,7 @@
 
       .shortcut-record-control {
         @apply flex space-x-1 items-center select-none
-        rounded border-[2px] py-[2px] px-[2px];
+          rounded border-[2px] py-[2px] px-[2px];
       }
 
       .keyboard-shortcut {
@@ -141,8 +143,8 @@
 
           a.x {
             @apply hidden absolute right-[-8px] top-[-6px] h-[16px] w-[16px]
-            rounded-full bg-red-700 text-white leading-none items-center
-            justify-center cursor-pointer opacity-90  hover:opacity-100;
+              rounded-full bg-red-700 text-white leading-none items-center
+              justify-center cursor-pointer opacity-90  hover:opacity-100;
           }
 
           &:hover a.x {
@@ -154,7 +156,7 @@
 
     &.keypressed {
       .shortcut-record-control {
-        @apply pt-0
+        @apply pt-0;
       }
     }
 
@@ -183,14 +185,14 @@
 }
 
 .sidebar-item .cp__shortcut-page-x {
-    padding: 12px 0 0 0;
-    background-color: var(--color-level-2);
+  padding: 12px 0 0;
+  background-color: var(--color-level-2);
 }
 
 .sidebar-item article {
-    max-height: unset;
+  max-height: unset;
 }
 
 .keyboard-shortcut {
-    @apply inline-flex;
+  @apply inline-flex;
 }

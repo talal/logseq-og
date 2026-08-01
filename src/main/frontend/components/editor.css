@@ -74,7 +74,7 @@
 pre {
   display: block;
   padding: 0.5rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 2%);
   border-radius: 4px;
 }
 
@@ -95,6 +95,3 @@ pre {
     width: 135px;
   }
 }
-
-
-

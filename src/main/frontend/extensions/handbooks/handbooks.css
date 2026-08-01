@@ -3,7 +3,7 @@
     @apply flex flex-col justify-between flex-1 overflow-y-auto;
 
     -webkit-font-smoothing: antialiased;
-    overflow-y: overlay;
+    overflow-y: auto;
 
     &-wrap {
       @apply flex justify-center flex-col flex-1 h-full overflow-y-auto relative;
@@ -11,7 +11,7 @@
 
     .hd {
       @apply dark:text-white px-3 pt-3 pb-2 sticky top-0 left-0 z-[4]
-      transition-shadow duration-200;
+        transition-shadow duration-200;
 
       background-color: var(--ls-tertiary-background-color1);
 
@@ -42,9 +42,8 @@
 
         > input {
           @apply text-base leading-none w-full border-none py-[7px] px-[24px] bg-transparent
-          focus:outline-0 dark:text-gray-100 font-medium;
+            focus:outline-0 dark:text-gray-100 font-medium;
         }
-
       }
 
       > .search-results-wrap {
@@ -56,7 +55,8 @@
       @apply py-1 px-4 dark:text-gray-50;
     }
 
-    .pane > h2, .ft > h2 {
+    .pane > h2,
+    .ft > h2 {
       @apply py-2 text-base font-medium dark:text-gray-100;
     }
 
@@ -65,27 +65,28 @@
 
       background-color: var(--ls-quaternary-background-color);
 
-      /*noinspection ALL*/
+      /* noinspection ALL */
 
       svg {
         stroke-width: 1.5px;
       }
     }
 
-    .topic-card, .link-card {
+    .topic-card,
+    .link-card {
       @apply text-sm px-3 py-2.5 rounded-lg cursor-pointer
-      mb-2 active:opacity-90 select-none items-center;
+        mb-2 active:opacity-90 select-none items-center;
 
       background-color: var(--ls-secondary-background-color1);
       border: 1px solid var(--ls-border-color);
-      transition: background-color .3s;
+      transition: background-color 0.3s;
 
       > .l {
         @apply pr-2.5 w-[80px] min-h-[64px] bg-transparent rounded overflow-hidden;
 
         img {
           mix-blend-mode: luminosity;
-          opacity: .8;
+          opacity: 0.8;
           float: left;
           width: 100%;
         }
@@ -103,7 +104,8 @@
         }
       }
 
-      &:hover, &.active {
+      &:hover,
+      &.active {
         background-color: var(--ls-primary-background-color1);
         border-color: var(--ls-secondary-border-color);
 
@@ -140,7 +142,8 @@
         @apply hidden;
       }
 
-      &:hover, &:active {
+      &:hover,
+      &:active {
         background-color: var(--ls-primary-background-color1);
       }
 
@@ -175,7 +178,8 @@
       }
 
       > .demos {
-        img, video {
+        img,
+        video {
           @apply w-full;
         }
 
@@ -204,7 +208,7 @@
     .glide {
       &__bullets {
         @apply w-full bottom-0 left-0 transform-none
-        flex items-center justify-end pb-2 pr-1;
+          flex items-center justify-end pb-2 pr-1;
       }
 
       &__bullet {
@@ -247,7 +251,8 @@
         @apply py-1 text-xl font-bold;
       }
 
-      h3, h4 {
+      h3,
+      h4 {
         @apply py-1 text-lg font-semibold;
       }
 
@@ -297,7 +302,8 @@
           }
 
           &:active {
-            .ui__icon, strong {
+            .ui__icon,
+            strong {
               @apply opacity-80;
             }
           }
@@ -330,7 +336,8 @@
       @apply cursor-pointer active:opacity-80;
     }
 
-    img, video {
+    img,
+    video {
       @apply inline-block my-1;
     }
   }
@@ -342,7 +349,7 @@
     --ls-quaternary-background-color1: var(--ls-quaternary-background-color, var(--lx-gray-08, var(--rx-gray-08)));
 
     @apply fixed rounded-lg overflow-hidden border
-    z-[19] shadow-lg flex justify-center flex-col;
+      z-[19] shadow-lg flex justify-center flex-col;
 
     background-color: var(--ls-tertiary-background-color1);
     border: 1px solid var(--ls-tertiary-background-color1);
@@ -367,8 +374,10 @@ html[data-theme="light"] {
       }
     }
 
-    .topic-card, :not(.as-primary).link-card {
-      &:hover, &.active {
+    .topic-card,
+    :not(.as-primary).link-card {
+      &:hover,
+      &.active {
         background-color: var(--ls-tertiary-background-color1);
         border-color: var(--ls-secondary-border-color);
       }
@@ -396,7 +405,8 @@ html[data-theme="light"] {
 
     .categories-list {
       .category-card {
-        &:hover, &:active {
+        &:hover,
+        &:active {
           background-color: var(--ls-tertiary-background-color1);
         }
       }

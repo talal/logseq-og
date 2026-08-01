@@ -52,7 +52,8 @@
         width: 120px;
       }
 
-      &.created-at, &.updated-at {
+      &.created-at,
+      &.updated-at {
         width: 150px;
       }
     }
@@ -100,7 +101,7 @@
     z-index: 1;
 
     .dark & {
-        background-color: var(--lx-gray-02, var(--ls-primary-background-color, var(--rx-gray-02)));
+      background-color: var(--lx-gray-02, var(--ls-primary-background-color, var(--rx-gray-02)));
     }
 
     @screen md {
@@ -123,7 +124,7 @@
     .l {
       .actions-wrap {
         button {
-          opacity: .5;
+          opacity: 0.5;
           pointer-events: none;
         }
       }
@@ -179,13 +180,13 @@
       }
 
       .cancel {
-        opacity: .3;
+        opacity: 0.3;
         position: absolute;
         right: 6px;
         top: 6px;
 
         &:hover {
-          opacity: .6;
+          opacity: 0.6;
         }
       }
     }
@@ -193,7 +194,7 @@
 }
 
 .cp__vertical-menu-button {
-  opacity: 60%;
+  opacity: 0.6;
   display: block;
 }
 
@@ -285,24 +286,24 @@ html.is-native-iphone-without-notch {
 
 /* Change to another cursor style if Shift key is active */
 [data-active-keystroke*="Shift" i] :is(.journal-title, .page-title,
-    .block-ref, .page-ref, a.tag,
-    .bullet-container.cursor) {
+.block-ref, .page-ref, a.tag,
+.bullet-container.cursor) {
   cursor: e-resize;
 }
 
 .add-button-link {
   opacity: 0;
   color: var(--ls-primary-text-color);
-  transform: scale(.8);
+  transform: scale(0.8);
 
   &:hover {
     color: var(--ls-primary-text-color);
-    opacity: .6 !important;
-    transform: scale(.9);
+    opacity: 0.6 !important;
+    transform: scale(0.9);
   }
 
   &:active {
-    opacity: .8 !important;
+    opacity: 0.8 !important;
   }
 
   &-wrap {
@@ -311,8 +312,8 @@ html.is-native-iphone-without-notch {
 }
 
 .add-button-link-wrap:focus .add-button-link {
-  opacity: .8 !important;
-  transform: scale(.9);
+  opacity: 0.8 !important;
+  transform: scale(0.9);
 }
 
 .cp__right-sidebar .add-button-link {
@@ -341,13 +342,15 @@ html.is-native-ios {
   .block-content-wrapper {
     /* 38px is the width of block-control */
     width: calc(100% - 35px);
+
     @screen sm {
       width: calc(100% - 33px);
     }
   }
 }
 
-.page-blocks-collapse-control, .page-blocks-collapse-control:hover {
+.page-blocks-collapse-control,
+.page-blocks-collapse-control:hover {
   text-decoration: none;
   cursor: default;
   min-width: 22px;

@@ -9,11 +9,13 @@
 
   .form-select {
     @apply py-2;
+
     min-width: 20rem;
   }
 
   .form-input {
     @apply py-2;
+
     min-width: 20rem;
   }
 
@@ -37,21 +39,18 @@
     }
 
     .icon-loading {
-      @apply absolute top-4 right-4 opacity-75 scale-[.7];
+      @apply absolute top-4 right-4 opacity-75 scale-[0.7];
     }
   }
 }
 
 .zotero-search-item-loading-indicator {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
   text-align: center;
   font-size: 60px;
   color: black;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgb(255 255 255 / 50%);
   display: flex;
   justify-content: center;
   align-items: center;

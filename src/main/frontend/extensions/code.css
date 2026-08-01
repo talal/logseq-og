@@ -3,19 +3,22 @@
 
   &-lang {
     @apply p-1 text-sm;
+
     background: var(--ls-secondary-background-color);
     word-break: keep-all;
     position: absolute;
     width: fit-content;
+
     /* height:2rem; */
     order: 3;
     left: auto;
     right: 0;
+
     /* margin-top: 4px; */
     z-index: 9999;
     padding: 4px 6px;
     line-height: 1em;
-    opacity: .8;
+    opacity: 0.8;
 
     &:hover {
       cursor: pointer;
@@ -26,14 +29,15 @@
 
   &-calc {
     @apply text-sm;
-    padding: 23px 0.25em 0.25em 0.25em;
+
+    padding: 23px 0.25em 0.25em;
     width: max-content;
     text-align: right;
 
     &-output-line {
       height: 23px;
       white-space: pre;
-      font-family: Fira Code, Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
+      font-family: "Fira Code", Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
     }
   }
 }
@@ -41,7 +45,7 @@
 .CodeMirror {
   height: auto;
   width: 100%;
-  font-family: Fira Code, Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
+  font-family: "Fira Code", Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
   border-radius: 2px;
   line-height: 1.45em;
 
@@ -66,5 +70,5 @@
 }
 
 .cm-s-solarized.CodeMirror {
-    box-shadow: none;
+  box-shadow: none;
 }

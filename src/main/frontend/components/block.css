@@ -2,6 +2,7 @@
   /* 38px is the width of block-control */
   width: calc(100% - 22px);
   user-select: text;
+
   @screen sm {
     width: calc(100% - 33px);
     overflow-x: visible;
@@ -83,7 +84,8 @@
 
   .resize {
     display: inline-flex;
-    /* Fix chrome missing resize handle issue https://bugs.chromium.org/p/chromium/issues/detail?id=1135676&q=css%20resize%20type%3DBug&can=2.*/
+
+    /* Fix chrome missing resize handle issue https://bugs.chromium.org/p/chromium/issues/detail?id=1135676&q=css%20resize%20type%3DBug&can=2. */
     transform: translate3d(0, 0, 0);
   }
 
@@ -106,7 +108,8 @@
   }
 
   .inline-wrap {
-    & > div, & > div > div {
+    & > div,
+    & > div > div {
       display: inherit;
     }
   }
@@ -184,7 +187,7 @@
 
   &:hover {
     background-color: var(--lx-gray-10, var(--ls-primary-text-color, var(--rx-gray-10)));
-    opacity: .7;
+    opacity: 0.7;
   }
 
   &:active {
@@ -195,7 +198,6 @@
 .block-children {
   border-left: 1px solid;
   border-left-color: var(--lx-gray-04-alpha, var(--ls-guideline-color, var(--rx-gray-04-alpha))) !important;
-
   padding-top: 2px;
   padding-bottom: 3px;
 
@@ -218,7 +220,8 @@
   }
 }
 
-.block-control, .block-control:hover {
+.block-control,
+.block-control:hover {
   text-decoration: none;
   cursor: default;
   font-size: 14px;
@@ -227,7 +230,7 @@
   padding: 2px;
   color: var(--ls-secondary-text-color);
   user-select: none;
-  opacity: .4;
+  opacity: 0.4;
 
   .control-hide {
     display: none;
@@ -236,7 +239,7 @@
 
 .block-left-menu {
   background-color: var(--ls-secondary-background-color);
-  background: linear-gradient(90deg, var(--ls-primary-background-color) 0%, var(--ls-secondary-background-color) 100%);
+  background-image: linear-gradient(90deg, var(--ls-primary-background-color) 0%, var(--ls-secondary-background-color) 100%);
 
   .commands-button {
     @apply overflow-hidden flex max-w-[40px];
@@ -249,14 +252,16 @@
 
 .block-right-menu {
   background-color: var(--ls-secondary-background-color);
+
   /* background: linear-gradient(-90deg, var(--ls-primary-background-color) 0%, var(--ls-secondary-background-color) 100%); */
 
   .commands-button {
     @apply overflow-hidden flex flex-nowrap;
 
-    .outdent, .more {
+    .outdent,
+    .more {
       @apply flex items-center justify-center
-      overflow-hidden opacity-30 m-0 w-[40px];
+        overflow-hidden opacity-30 m-0 w-[40px];
     }
   }
 }
@@ -302,7 +307,7 @@
 }
 
 .page-ref {
-  color: var(--lx-accent-11, var(--ls-link-text-color, hsl(var(--primary)/.8)));
+  color: var(--lx-accent-11, var(--ls-link-text-color, hsl(var(--primary)/80%)));
 
   &:hover {
     color: var(--lx-accent-11, var(--ls-link-text-color, hsl(var(--primary))));
@@ -311,22 +316,22 @@
 
 .asset-ref {
   &-wrap {
-    &[data-ext=pdf] {
+    &[data-ext="pdf"] {
       display: inline-flex;
       align-items: center;
     }
   }
 
   &.is-doc {
-    &:before {
+    &::before {
       content: "[[📜";
-      opacity: .7;
+      opacity: 0.7;
       margin-right: 4px;
     }
 
-    &:after {
+    &::after {
       content: "]]";
-      opacity: .7;
+      opacity: 0.7;
     }
   }
 }
@@ -343,7 +348,8 @@
   }
 }
 
-.block-properties, .page-properties {
+.block-properties,
+.page-properties {
   margin: 4px 0;
   padding: 4px 8px;
   background-color: var(--lx-gray-03, var(--ls-block-properties-background-color, var(--rx-gray-03)));
@@ -681,17 +687,19 @@ a.filter svg {
   height: 100%;
 }
 
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   .ui__modal-panel .ls-card {
     min-height: 24rem;
   }
 }
 
-a[data-ref="card"], .page-reference[data-ref="card"] {
+a[data-ref="card"],
+.page-reference[data-ref="card"] {
   opacity: 0.3;
 }
 
-.ls-card a[data-ref="card"], .ls-card .page-reference[data-ref="card"] {
+.ls-card a[data-ref="card"],
+.ls-card .page-reference[data-ref="card"] {
   display: none;
 }
 
@@ -707,6 +715,7 @@ a.cloze-revealed {
 
 .page-property-key {
   @apply font-medium whitespace-nowrap;
+
   color: var(--ls-secondary-text-color);
 }
 

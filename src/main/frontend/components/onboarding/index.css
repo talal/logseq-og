@@ -1,5 +1,5 @@
-body[data-page=repo-add],
-body[data-page=import] {
+body[data-page="repo-add"],
+body[data-page="import"] {
   .cp__header .add-graph-btn {
     display: none;
   }
@@ -80,7 +80,7 @@ body[data-page=import] {
               cursor: pointer;
 
               &:active {
-                opacity: .8;
+                opacity: 0.8;
               }
 
               i {
@@ -91,7 +91,7 @@ body[data-page=import] {
               }
 
               .control {
-                padding: 20px 20px 0 20px;
+                padding: 20px 20px 0;
                 width: 100%;
               }
             }
@@ -130,13 +130,13 @@ body[data-page=import] {
                 &.hr {
                   height: 1px;
                   border-bottom: 1px solid var(--ls-border-color);
-                  margin: 20px 0px;
+                  margin: 20px 0;
                   opacity: 0.6;
                 }
 
                 > i {
                   width: 48px;
-                  background-image: url(../img/folder.png);
+                  background-image: url("../img/folder.png");
                   background-size: contain;
                   background-repeat: no-repeat;
                   background-position-y: 2px;
@@ -149,8 +149,9 @@ body[data-page=import] {
                     background-position-x: center;
                   }
 
-                  > .ti, .tie {
-                    opacity: .25;
+                  > .ti,
+                  .tie {
+                    opacity: 0.25;
                     color: black;
                   }
                 }
@@ -225,7 +226,6 @@ body[data-page=import] {
         }
       }
 
-
       @screen lg {
         background-color: unset;
 
@@ -256,7 +256,7 @@ body[data-page=import] {
 
               > .choose {
                 .control {
-                  padding: 30px 70px 0 70px;
+                  padding: 30px 70px 0;
                 }
               }
             }
@@ -308,7 +308,7 @@ body[data-page=import] {
       }
 
       &:active {
-        opacity: .5;
+        opacity: 0.5;
       }
 
       &[disabled] {
@@ -323,7 +323,8 @@ body[data-page=import] {
   }
 
   &-quick-tour {
-    &.shepherd-element, .shepherd-arrow:before {
+    &.shepherd-element,
+    .shepherd-arrow::before {
       background-color: var(--ls-quaternary-background-color);
       font-size: 14px;
     }
@@ -333,7 +334,7 @@ body[data-page=import] {
       border-radius: 8px;
       box-shadow: none;
 
-      &[data-shepherd-step-id=nav-journal-page] {
+      &[data-shepherd-step-id="nav-journal-page"] {
         .shepherd-arrow {
           left: 30px !important;
         }
@@ -372,7 +373,7 @@ body[data-page=import] {
         font-size: 12px;
 
         strong {
-          opacity: .5;
+          opacity: 0.5;
           font-size: 11px;
         }
 
@@ -389,7 +390,7 @@ body[data-page=import] {
             width: 5px;
             height: 5px;
             margin: 0 5px 0 0;
-            background-color: rgba(0, 0, 0, .2);
+            background-color: rgb(0 0 0 / 20%);
             border-radius: 100%;
             font-size: 0;
 
@@ -412,7 +413,7 @@ body[data-page=import] {
         font-weight: 500;
 
         &.back {
-          background-color: rgba(0, 0, 0, .3);
+          background-color: rgb(0 0 0 / 30%);
         }
 
         &.bg-gray {
@@ -421,7 +422,7 @@ body[data-page=import] {
       }
 
       button:hover {
-          background-color: var(--lx-accent-10, var(--ls-button-background));
+        background-color: var(--lx-accent-10, var(--ls-button-background));
       }
     }
   }
@@ -433,14 +434,15 @@ body[data-page=import] {
     left: 50%;
     transform: translateX(-60px);
     z-index: 10001;
-    background-color: #4B5563;
+    background-color: #4b5563;
     padding: 12px 20px;
     border-radius: 8px;
     color: white;
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+    box-shadow: 0 1px 2px rgb(16 24 40 / 5%);
     font-weight: 700;
 
-    .ti, .tie {
+    .ti,
+    .tie {
       padding-right: 6px;
       font-size: 18px;
       position: relative;
@@ -449,7 +451,7 @@ body[data-page=import] {
     }
 
     &:hover {
-      opacity: .8;
+      opacity: 0.8;
     }
 
     &:active {
@@ -460,12 +462,12 @@ body[data-page=import] {
 
 .shepherd-modal-overlay-container.shepherd-modal-is-visible {
   transition: none;
-  opacity: .4;
+  opacity: 0.4;
 }
 
 .shepherd-target {
   &.nav-content-item {
-    background-color: rgba(0, 0, 0, .4);
+    background-color: rgb(0 0 0 / 40%);
     padding-left: 15px;
     padding-right: 15px;
   }
@@ -486,7 +488,7 @@ body[data-page=import] {
   }
 
   &.page-title {
-    background-color: rgba(0, 0, 0, .4);
+    background-color: rgb(0 0 0 / 40%);
 
     > h1 {
       background-color: var(--ls-primary-background-color);
@@ -495,7 +497,7 @@ body[data-page=import] {
   }
 
   &.cp__sidebar-help-btn {
-    background-color: rgba(0, 0, 0, .4);
+    background-color: rgb(0 0 0 / 40%);
     z-index: 9;
 
     > .inner {
@@ -504,13 +506,13 @@ body[data-page=import] {
   }
 
   &.cp__header-left-menu {
-    background-color: rgba(0, 0, 0, .4);
+    background-color: rgb(0 0 0 / 40%);
     border-radius: 0;
     opacity: 1 !important;
     transition: none;
 
     &:hover {
-      background-color: rgba(0, 0, 0, .4);
+      background-color: rgb(0 0 0 / 40%);
     }
 
     > .inner {
@@ -521,33 +523,35 @@ body[data-page=import] {
 }
 
 .shepherd-element {
-  &[data-popper-placement^=right] > .shepherd-arrow {
+  &[data-popper-placement^="right"] > .shepherd-arrow {
     left: -4px;
   }
 
-  &[data-popper-placement^=top] > .shepherd-arrow {
+  &[data-popper-placement^="top"] > .shepherd-arrow {
     bottom: -4px !important;
   }
 
-  &[data-popper-placement^=left] > .shepherd-arrow {
+  &[data-popper-placement^="left"] > .shepherd-arrow {
     right: -4px !important;
   }
 
-  &[data-popper-placement^=bottom] > .shepherd-arrow {
+  &[data-popper-placement^="bottom"] > .shepherd-arrow {
     top: -4px !important;
   }
 }
 
-.shepherd-arrow, .shepherd-arrow:before {
+.shepherd-arrow,
+.shepherd-arrow::before {
   width: 8px;
   height: 8px;
 }
 
-html[data-theme=light] {
+html[data-theme="light"] {
   .cp__onboarding {
     &-quick-tour {
-      &.shepherd-element, .shepherd-arrow:before {
-        background-color: #E8E5DE;
+      &.shepherd-element,
+      .shepherd-arrow::before {
+        background-color: #e8e5de;
       }
     }
   }

@@ -1,7 +1,6 @@
 #ui__ac {
   &-inner {
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden auto;
     position: relative;
     -webkit-overflow-scrolling: touch;
 
@@ -22,7 +21,8 @@
         }
       }
 
-      &:hover, &.chosen {
+      &:hover,
+      &.chosen {
         background-color: var(--lx-gray-05, var(--ls-menu-hover-color, hsl(var(--secondary))));
 
         .has-help small {
@@ -61,8 +61,8 @@
 
   &-content {
     @apply inset-0 flex items-end justify-center px-4 py-3
-    pointer-events-none sm:px-6 sm:py-3 sm:items-start
-    sm:justify-end;
+      pointer-events-none sm:px-6 sm:py-3 sm:items-start
+      sm:justify-end;
   }
 
   .notification-area {
@@ -76,8 +76,8 @@
 .ui__toggle {
   .wrapper {
     @apply relative flex-shrink-0
-    h-6 w-11 border-2 border-transparent flex
-    rounded-full cursor-pointer focus:outline-none;
+      h-6 w-11 border-2 border-transparent flex
+      rounded-full cursor-pointer focus:outline-none;
   }
 
   .switcher {
@@ -97,7 +97,7 @@
 
 .ui__modal {
   @apply fixed px-4 pb-4 inset-0 flex items-baseline justify-center
-  top-12 sm:top-[calc(3vh+50px)];
+    top-12 sm:top-[calc(3vh+50px)];
 
   &-overlay {
     @apply fixed inset-0;
@@ -106,6 +106,7 @@
   &-overlay div {
     --from: or(--ls-modal-overlay-gradient-start, --lx-gray-03, --ls-primary-background-color);
     --to: or(--ls-modal-overlay-gradient-end, --lx-gray-06, --ls-quaternary-background-color);
+
     background-image: linear-gradient(to bottom, var(--from), var(--to));
   }
 
@@ -115,14 +116,13 @@
     background: var(--lx-gray-02, var(--ls-secondary-background-color, hsl(var(--popover))));
 
     .panel-content {
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden auto;
       width: calc(96vw - 2rem);
       max-height: 89vh;
       padding: 2rem 1.5rem;
 
       @screen sm {
-        overflow-y: overlay;
+        overflow-y: auto;
         max-height: 85vh;
         padding: 2rem;
         width: auto;
@@ -150,9 +150,9 @@
 
   &-close {
     @apply text-gray-400 hover:text-gray-500
-    focus:outline-none focus:text-gray-500
-    transition ease-in-out duration-150 opacity-60
-    hover:opacity-100;
+      focus:outline-none focus:text-gray-500
+      transition ease-in-out duration-150 opacity-60
+      hover:opacity-100;
 
     &-wrap {
       @apply z-10 absolute top-0 right-0 pt-2 pr-2;
@@ -160,7 +160,7 @@
   }
 
   &[label="ls-modal-align-center"],
-  &.as-center{
+  &.as-center {
     top: 0;
 
     .ui__modal-panel {
@@ -184,13 +184,12 @@
       padding: 2rem 0;
 
       @screen sm {
-        padding: 2rem 2rem;
+        padding: 2rem;
       }
     }
   }
 
   &[label="instruction__cp"] {
-
     .ui__modal-panel {
       height: 90%;
     }
@@ -230,8 +229,8 @@ html.is-native-iphone-without-notch {
         width: 90vw;
 
         .cards-review {
-          padding-left: 0px;
-          padding-right: 0px;
+          padding-left: 0;
+          padding-right: 0;
         }
 
         .blocks-container {
@@ -302,7 +301,7 @@ html.is-mobile {
 
 .form-select {
   @apply block w-full pl-3 pr-10 py-2 text-base leading-6 rounded
-  border-gray-300 focus:outline-none sm:text-sm sm:leading-5;
+    border-gray-300 focus:outline-none sm:text-sm sm:leading-5;
 
   background-color: var(--lx-gray-03, var(--ls-primary-background-color, transparent));
   background-repeat: no-repeat;
@@ -318,7 +317,7 @@ html.is-mobile {
   @apply block w-full pl-2 sm:text-sm sm:leading-5 rounded bg-background border border-gray-07;
 
   &:focus {
-    box-shadow: 0 0 0 2px rgba(164, 202, 254, 0.45);
+    box-shadow: 0 0 0 2px rgb(164 202 254 / 45%);
   }
 
   &.is-small {
@@ -357,8 +356,9 @@ html.is-mobile {
     z-index: 1;
   }
 
-  &:before {
+  &::before {
     @apply block absolute inset-0 ;
+
     background: var(--lx-gray-03, var(--ls-primary-background-color));
     content: " ";
   }
@@ -373,7 +373,7 @@ html.is-mobile {
 }
 
 .ui__toggle-background-off {
-  background: var(--lx-gray-08, rgb(212, 212, 212));
+  background: var(--lx-gray-08, rgb(212 212 212));
 }
 
 input[type='range'] {

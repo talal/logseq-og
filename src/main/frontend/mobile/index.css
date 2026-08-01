@@ -10,14 +10,15 @@
   white-space: nowrap;
   height: 80px;
   align-items: flex-start;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 10px 0 rgb(0 0 0 / 5%);
 
   .bottom-action {
     width: 23px;
     height: 23px;
   }
 
-  .ti, .timer {
+  .ti,
+  .timer {
     color: var(--ls-primary-text-color);
   }
 
@@ -34,9 +35,8 @@
   padding: 6px;
   border-radius: 10px;
   background-color: var(--ls-secondary-background-color);
-  overflow-x: overlay;
-  overflow-y: hidden;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 1px 0px, rgba(27, 31, 35, 0.10) 0px 0px 0px 1px;
+  overflow: auto hidden;
+  box-shadow: rgb(0 0 0 / 2%) 0 1px 1px 0, rgb(27 31 35 / 10%) 0 0 0 1px;
   z-index: 100;
 
   .action-bar-commands {
@@ -45,17 +45,17 @@
     justify-content: space-around;
     width: 120%;
 
-
-    .ti, .tie {
+    .ti,
+    .tie {
       color: var(--ls-primary-text-color);
       font-size: 23px;
-      opacity: 50%;
+      opacity: 0.5;
     }
 
     .description {
       color: var(--ls-primary-text-color);
       font-size: 13px;
-      opacity: 60%;
+      opacity: 0.6;
     }
 
     button {
@@ -81,9 +81,9 @@
 
   .submenu {
     @apply fixed left-0 bottom-0 w-full flex-row justify-evenly items-center z-10 bg-base-2;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02);
-    overflow-x: overlay;
-    overflow-y: hidden;
+
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 2%);
+    overflow: auto hidden;
     height: 40px;
     display: none;
 
@@ -96,9 +96,8 @@
     justify-content: space-between;
     display: flex;
     align-items: center;
-    overflow-x: overlay;
-    overflow-y: hidden;
-    overflow-scrolling: touch;
+    overflow: auto hidden;
+    -webkit-overflow-scrolling: touch;
     width: 95%;
 
     &::-webkit-scrollbar {
@@ -118,7 +117,7 @@ html.is-native-ipad {
     right: 0;
     box-shadow: none;
     flex: 1;
-    index: 0;
+    z-index: 0;
   }
 
   .action-bar {
@@ -136,7 +135,6 @@ html.is-native-ipad {
 }
 
 html.is-native-iphone {
-
   .action-bar {
     left: 3%;
     right: 3%;
@@ -173,7 +171,6 @@ html.is-native-android {
   }
 
   @media (orientation: landscape) {
-
     .action-bar {
       bottom: 50px;
       left: 15%;
@@ -205,13 +202,13 @@ html.is-zoomed-native-ios {
 
 .cp__graph-picker {
   button.toggle-item {
-    opacity: .5;
+    opacity: 0.5;
     background: transparent !important;
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
       color: inherit;
-      opacity: .5;
+      opacity: 0.5;
     }
 
     &.is-on {
@@ -221,7 +218,7 @@ html.is-zoomed-native-ios {
 }
 
 .ui__modal {
-  &[label=graph-setup] {
+  &[label="graph-setup"] {
     align-items: center;
 
     .ui__modal-panel {
@@ -233,7 +230,7 @@ html.is-zoomed-native-ios {
     }
 
     .cp__graph-picker {
-      padding: 58px 20px 20px 20px;
+      padding: 58px 20px 20px;
       background: var(--ls-primary-background-color);
 
       > h1 {
@@ -242,7 +239,7 @@ html.is-zoomed-native-ios {
         font-weight: 500;
         top: 12px;
         left: 20px;
-        opacity: .9;
+        opacity: 0.9;
       }
     }
   }

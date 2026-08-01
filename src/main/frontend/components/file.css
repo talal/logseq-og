@@ -1,13 +1,14 @@
 .file {
   max-width: 86vw;
 
-  textarea, pre {
+  textarea,
+  pre {
     margin: 0;
   }
 }
 
 html.is-mobile {
-    .file {
-        max-width: 95vw;
-    }
+  .file {
+    max-width: 95vw;
+  }
 }

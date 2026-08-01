@@ -1,4 +1,4 @@
- .cp__select {
+.cp__select {
   --palettle-input-height: 64px;
   --palettle-container-height: 75vh;
 
@@ -25,7 +25,7 @@
           color: var(--ls-selection-text-color);
           border-color: var(--ls-selection-background-color);
 
-          &:before {
+          &::before {
             opacity: 0.5;
             background: var(--ls-selection-background-color);
           }
@@ -56,8 +56,7 @@
     .command-results-wrap,
     .item-results-wrap,
     .search-results-wrap > div:first-child {
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow: hidden auto;
       max-height: calc(var(--palettle-container-height) - var(--palettle-input-height));
     }
 
@@ -113,6 +112,7 @@ html.is-ios {
   .cp__palette-main {
     margin-bottom: 0;
     min-height: var(--palettle-input-height);
+
     --palettle-container-height: calc(98vh - 6rem - var(--ls-native-kb-height));
   }
 }
@@ -120,6 +120,7 @@ html.is-ios {
 .cards-review .cp__select {
   &-main {
     margin: 0;
+
     @screen lg {
       width: 240px;
     }

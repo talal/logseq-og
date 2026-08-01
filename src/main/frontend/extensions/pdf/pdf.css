@@ -4,47 +4,43 @@
   --ph-highlight-color-red: var(--color-red-300);
   --ph-highlight-color-purple: var(--color-purple-300);
   --ph-highlight-color-yellow: var(--color-yellow-300);
-
   --ph-link-color: #106ba3;
-
-  --ph-highlight-scroll-into-color: rgba(255, 75, 93, 0.67);
-
+  --ph-highlight-scroll-into-color: rgb(255 75 93 / 67%);
   --ph-view-container-width: 42vw;
 }
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 
 .extensions__pdf {
-
   &-container {
     display: flex;
 
-    *[data-color=yellow] {
+    *[data-color="yellow"] {
       background-color: var(--ph-highlight-color-yellow);
       border-color: var(--ph-highlight-color-yellow);
     }
 
-    *[data-color=blue] {
+    *[data-color="blue"] {
       background-color: var(--ph-highlight-color-blue);
       border-color: var(--ph-highlight-color-blue);
     }
 
-    *[data-color=green] {
+    *[data-color="green"] {
       background-color: var(--ph-highlight-color-green);
       border-color: var(--ph-highlight-color-green);
     }
 
-    *[data-color=red] {
+    *[data-color="red"] {
       background-color: var(--ph-highlight-color-red);
       border-color: var(--ph-highlight-color-red);
     }
 
-    *[data-color=purple] {
+    *[data-color="purple"] {
       background-color: var(--ph-highlight-color-purple);
       border-color: var(--ph-highlight-color-purple);
     }
@@ -94,7 +90,7 @@ input::-webkit-inner-spin-button {
           }
 
           &:active {
-            opacity: .6;
+            opacity: 0.6;
           }
         }
       }
@@ -178,7 +174,6 @@ input::-webkit-inner-spin-button {
           user-select: none;
           border-radius: 4px;
           cursor: default;
-
           margin-right: 10px;
           transition: none;
 
@@ -191,8 +186,8 @@ input::-webkit-inner-spin-button {
 
             svg {
               color: #565656;
-              transform: scale(.8);
-              transition: .3s transform;
+              transform: scale(0.8);
+              transition: 0.3s transform;
             }
           }
 
@@ -200,7 +195,8 @@ input::-webkit-inner-spin-button {
             color: var(--ph-link-color);
           }
 
-          &:active, &:focus {
+          &:active,
+          &:focus {
             background-color: var(--ph-link-color);
             color: white;
 
@@ -240,7 +236,7 @@ input::-webkit-inner-spin-button {
 
         &:hover {
           border: none;
-          opacity: .8;
+          opacity: 0.8;
           color: black;
           border-radius: 3px;
         }
@@ -281,7 +277,7 @@ input::-webkit-inner-spin-button {
 
     &-item {
       display: flex;
-      color: rgb(115, 115, 115);
+      color: rgb(115 115 115);
 
       &.theme-picker {
         justify-content: center;
@@ -298,7 +294,7 @@ input::-webkit-inner-spin-button {
           font-size: 0;
 
           &:hover {
-            opacity: .8;
+            opacity: 0.8;
             border-color: #a3a3a3;
           }
 
@@ -352,9 +348,11 @@ input::-webkit-inner-spin-button {
 
         .input-wrap {
           @apply mr-1.5 border border-gray-300;
+
           border-radius: 4px;
 
-          &:active, &:focus-within {
+          &:active,
+          &:focus-within {
             border-color: transparent;
           }
         }
@@ -369,7 +367,7 @@ input::-webkit-inner-spin-button {
           border: 2px solid transparent;
 
           &:focus {
-            border: 2px solid rgba(16, 107, 163, 0.75);
+            border: 2px solid rgb(16 107 163 / 75%);
           }
         }
 
@@ -382,7 +380,8 @@ input::-webkit-inner-spin-button {
             color: #989898;
           }
 
-          &.active .ti, &:hover .ti {
+          &.active .ti,
+          &:hover .ti {
             color: #1f1f1f !important;
           }
 
@@ -420,8 +419,6 @@ input::-webkit-inner-spin-button {
         pointer-events: none;
       }
     }
-
-
   }
 
   &-resizer {
@@ -431,8 +428,10 @@ input::-webkit-inner-spin-button {
     transition: background-color 300ms;
     transition-delay: 300ms;
 
-    &.is-active, &:hover,
-    &:focus, &:active {
+    &.is-active,
+    &:hover,
+    &:focus,
+    &:active {
       @apply bg-primary/90;
     }
   }
@@ -445,9 +444,9 @@ input::-webkit-inner-spin-button {
   &-hls-area-region {
     cursor: pointer;
     position: absolute;
-    opacity: .8;
+    opacity: 0.8;
     z-index: 2;
-    background-color: #FCD713FF;
+    background-color: #fcd713ff;
     mix-blend-mode: multiply;
     touch-action: none;
     border-style: dashed;
@@ -466,26 +465,19 @@ input::-webkit-inner-spin-button {
   &-hls-ctx-menu {
     position: absolute;
     z-index: 9;
-
     color: #343434;
     border-radius: 4px;
-
     font-size: 13px;
     padding: 8px 10px;
     background-color: #e3e7e8;
-
-    box-shadow: 0 2px 4px 0 rgba(134, 134, 134, 0.59);
-
+    box-shadow: 0 2px 4px 0 rgb(134 134 134 / 59%);
     list-style: none;
     margin: 0;
 
     &::after {
       content: "";
       position: absolute;
-      top: -50%;
-      right: -50%;
-      bottom: -50%;
-      left: -50%;
+      inset: -50%;
       border: solid 1px #b2b2b2;
       transform: scale(0.5);
       transform-origin: center center;
@@ -520,31 +512,31 @@ input::-webkit-inner-spin-button {
           opacity: 1;
           margin: 0 5px;
           font-size: 0;
-          border: 1px inset rgba(0, 0, 0, .2);
+          border: 1px inset rgb(0 0 0 / 20%);
           cursor: default;
 
           &:hover {
-            opacity: .8;
+            opacity: 0.8;
             transform: scale(1.1);
           }
 
-          &[data-color=yellow] {
+          &[data-color="yellow"] {
             background-color: var(--color-yellow-500);
           }
 
-          &[data-color=blue] {
+          &[data-color="blue"] {
             background-color: var(--color-blue-500);
           }
 
-          &[data-color=green] {
+          &[data-color="green"] {
             background-color: var(--color-green-500);
           }
 
-          &[data-color=red] {
+          &[data-color="red"] {
             background-color: var(--color-red-500);
           }
 
-          &[data-color=purple] {
+          &[data-color="purple"] {
             background-color: var(--color-purple-500);
           }
         }
@@ -553,10 +545,9 @@ input::-webkit-inner-spin-button {
   }
 
   &-area-selection {
-
     .shadow-rect {
       position: absolute;
-      background: rgba(252, 232, 151, 1);
+      background: rgb(252 232 151 / 100%);
       mix-blend-mode: multiply;
     }
   }
@@ -589,7 +580,7 @@ input::-webkit-inner-spin-button {
         height: 8px;
         border-radius: 100%;
         margin-right: 6px;
-        border-color: #cccccc !important;
+        border-color: #ccc !important;
       }
 
       button {
@@ -632,7 +623,8 @@ input::-webkit-inner-spin-button {
     &.active {
       background-color: var(--ph-link-color);
 
-      > h6, > p {
+      > h6,
+      > p {
         color: white;
 
         button {
@@ -642,7 +634,7 @@ input::-webkit-inner-spin-button {
     }
 
     &:hover:not(.active) {
-      opacity: .9;
+      opacity: 0.9;
     }
   }
 }
@@ -652,27 +644,26 @@ input::-webkit-inner-spin-button {
   position: absolute;
   z-index: 2;
   transition: background 0.3s;
+  background-color: rgb(252 219 97 / 70%);
 
-  background-color: rgba(252, 219, 97, 0.7);
-
-  &[data-color=yellow] {
+  &[data-color="yellow"] {
     background-color: var(--ph-highlight-color-yellow);
-    opacity: .5;
+    opacity: 0.5;
   }
 
-  &[data-color=blue] {
+  &[data-color="blue"] {
     background-color: var(--ph-highlight-color-blue);
   }
 
-  &[data-color=green] {
+  &[data-color="green"] {
     background-color: var(--ph-highlight-color-green);
   }
 
-  &[data-color=red] {
+  &[data-color="red"] {
     background-color: var(--ph-highlight-color-red);
   }
 
-  &[data-color=purple] {
+  &[data-color="purple"] {
     background-color: var(--ph-highlight-color-purple);
   }
 }
@@ -685,7 +676,7 @@ input::-webkit-inner-spin-button {
     left: 0;
     width: 100%;
     height: 92vh;
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgb(0 0 0 / 0%);
     display: none;
 
     &.visible {
@@ -700,15 +691,12 @@ input::-webkit-inner-spin-button {
     overflow-y: auto;
     background-color: #e3e7e8;
     outline: none;
-    box-shadow: 0 2px 4px 0 rgba(134, 134, 134, 0.59);
+    box-shadow: 0 2px 4px 0 rgb(134 134 134 / 59%);
 
     &::after {
       content: "";
       position: absolute;
-      top: -50%;
-      right: -50%;
-      bottom: -50%;
-      left: -50%;
+      inset: -50%;
       border: solid 1px #b2b2b2;
       transform: scale(0.5);
       transform-origin: center center;
@@ -718,7 +706,7 @@ input::-webkit-inner-spin-button {
   }
 }
 
-.extensions__pdf-container {
+.extensions__pdf-container-wrapper {
   --lx-pdf-container-dark-bg: var(--lx-gray-03);
 
   background-color: transparent;
@@ -727,39 +715,37 @@ input::-webkit-inner-spin-button {
     background-color: var(--ls-primary-background-color);
   }
 
-  &[data-theme=light] {
-    background-color: #FFFFFF;
+  &[data-theme="light"] {
+    background-color: #fff;
   }
 
-  &[data-theme=dark] {
+  &[data-theme="dark"] {
     background-color: var(--lx-pdf-container-dark-bg, var(--ls-primary-background-color, #042f3c));
 
     .pdfViewer {
       background: transparent;
 
       .page {
-        -webkit-filter: invert(100%);
         filter: invert(100%);
       }
     }
 
     .textLayer {
       background-color: var(--lx-pdf-container-dark-bg, var(--ls-primary-background-color, #042f3c));
-      -webkit-filter: invert(100%);
       filter: invert(100%);
     }
 
     .extensions__pdf-toolbar {
-      background: linear-gradient(0deg, rgba(255, 255, 255, 0) 10%, rgb(15 31 37) 100%)
+      background: linear-gradient(0deg, rgb(255 255 255 / 0%) 10%, rgb(15 31 37) 100%)
     }
 
     .extensions__pdf-hls-area-region {
       mix-blend-mode: revert;
-      opacity: .4;
+      opacity: 0.4;
     }
   }
 
-  &[data-theme=warm] {
+  &[data-theme="warm"] {
     background-color: #f6efdf;
 
     .textLayer {
@@ -776,25 +762,25 @@ input::-webkit-inner-spin-button {
 
 .asset-ref {
   &.is-pdf {
-    &:before {
+    &::before {
       content: "[[📚";
-      opacity: .7;
+      opacity: 0.7;
       margin-right: 4px;
     }
 
-    &:after {
+    &::after {
       content: "]]";
-      opacity: .7;
+      opacity: 0.7;
     }
   }
 }
 
 .block-ref {
   &-wrap {
-    &[data-type=annotation] {
+    &[data-type="annotation"] {
     }
 
-    &[data-hl-type=area] {
+    &[data-hl-type="area"] {
       display: block;
 
       .block-ref {
@@ -810,7 +796,7 @@ input::-webkit-inner-spin-button {
 }
 
 .block-content {
-  &[data-type=annotation] {
+  &[data-type="annotation"] {
     .prefix-link {
       display: inline-flex;
       align-items: center;
@@ -818,12 +804,12 @@ input::-webkit-inner-spin-button {
       cursor: alias;
       color: var(--ls-link-ref-text-color);
 
-      &:before {
+      &::before {
         content: "📌 ";
       }
     }
 
-    [data-hl-type=area] {
+    [data-hl-type="area"] {
       .prefix-link {
         padding-top: 5px;
         display: block;
@@ -866,41 +852,41 @@ input::-webkit-inner-spin-button {
 }
 
 .ls-hl-colored .block-content {
-  &[data-hl-color=green] {
+  &[data-hl-color="green"] {
     .prefix-link {
-      &:before {
+      &::before {
         content: "🟢 ";
       }
     }
   }
 
-  &[data-hl-color=purple] {
+  &[data-hl-color="purple"] {
     .prefix-link {
-      &:before {
+      &::before {
         content: "🟣 ";
       }
     }
   }
 
-  &[data-hl-color=blue] {
+  &[data-hl-color="blue"] {
     .prefix-link {
-      &:before {
+      &::before {
         content: "🔵 ";
       }
     }
   }
 
-  &[data-hl-color=yellow] {
+  &[data-hl-color="yellow"] {
     .prefix-link {
-      &:before {
+      &::before {
         content: "🟡 ";
       }
     }
   }
 
-  &[data-hl-color=red] {
+  &[data-hl-color="red"] {
     .prefix-link {
-      &:before {
+      &::before {
         content: "🔴 ";
       }
     }
@@ -923,7 +909,6 @@ body[data-page] {
   }
 
   .extensions__pdf {
-
     &-viewer {
       left: 0;
       width: 100%;
@@ -939,7 +924,7 @@ body[data-page] {
       position: absolute;
       top: 20px;
       left: 20px;
-      background-color: rgba(231, 231, 231, 0.9);
+      background-color: rgb(231 231 231 / 90%);
       padding: 20px;
       z-index: 6;
       max-width: 400px;
@@ -990,18 +975,19 @@ html.is-system-window {
 
 .textLayer {
   z-index: 2;
-  opacity: .8;
+  opacity: 0.8;
   mix-blend-mode: multiply;
 }
 
 .annotationLayer {
-  .highlightAnnotation, .underlineAnnotation {
+  .highlightAnnotation,
+  .underlineAnnotation {
     display: none;
   }
 }
 
 .textLayer ::selection {
-  background: rgb(185, 231, 255);
+  background: rgb(185 231 255);
   mix-blend-mode: multiply;
   color: unset;
 }
@@ -1031,6 +1017,7 @@ html.is-system-window {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

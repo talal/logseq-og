@@ -34,11 +34,12 @@
 
 #main-container {
   /* Hack: (overflow-y) to fix sticky header not working */
+
   /* To reproduce: quick creating blocks */
   overflow-y: hidden;
   position: relative;
   height: 100%;
-  transition: padding-left .3s;
+  transition: padding-left 0.3s;
 
   &.is-left-sidebar-open {
     padding-left: 0;
@@ -60,7 +61,7 @@
   font-size: 1em;
 }
 
-#main-content-container[data-is-margin-less-pages=true] {
+#main-content-container[data-is-margin-less-pages="true"] {
   padding: 0 !important;
   position: relative;
   overflow: auto;
@@ -71,14 +72,12 @@
   height: 100%;
   padding-top: 12px;
   width: var(--ls-left-sidebar-sm-width);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   background-color: var(--left-sidebar-bg-color);
   border-right: 1px solid or(--ls-left-sidebar-border-color, --lx-gray-03, --ls-tertiary-background-color);
-  transition: transform .3s;
+  transition: transform 0.3s;
   transform: translate3d(-100%, 0, 0);
   z-index: 3;
-
   -webkit-font-smoothing: antialiased;
 
   > .wrap {
@@ -100,7 +99,7 @@
 
     .menu-link {
       padding: 5px 15px;
-      opacity: .8;
+      opacity: 0.8;
 
       &:hover {
         opacity: 1;
@@ -140,21 +139,22 @@
     @apply px-2 py-2 sm:py-1.5;
 
     user-select: none;
-    transition: background-color .3s;
+    transition: background-color 0.3s;
 
     .ui__icon {
       @apply flex justify-center;
+
       width: 20px;
       font-size: 16px;
       margin-right: 8px;
-      opacity: .7;
+      opacity: 0.7;
       position: relative;
     }
 
     .graph-icon .ui__icon {
       padding: 0;
       width: unset;
-      margin-right: 0px;
+      margin-right: 0;
     }
 
     .graph-icon {
@@ -162,12 +162,13 @@
       margin-right: 11px;
     }
 
-    &:hover, &.active {
+    &:hover,
+    &.active {
       background-color: var(--lx-gray-04, var(--color-level-3, var(--rx-gray-04)));
       color: var(--lx-gray-12, var(--rx-gray-12));
 
       .ui__icon {
-        opacity: .9;
+        opacity: 0.9;
       }
     }
   }
@@ -197,15 +198,15 @@
       @apply pl-6 pr-4 py-1 flex justify-between items-center select-none sticky top-[-4px];
       @apply cursor-pointer z-[2] active:opacity-80;
 
-
       .ui__icon {
         @apply flex justify-center;
+
         width: 20px;
       }
 
       .more {
         opacity: 0;
-        transition: .15s transform;
+        transition: 0.15s transform;
       }
 
       &:hover {
@@ -216,7 +217,7 @@
         }
 
         .more {
-          opacity: .8 !important;
+          opacity: 0.8 !important;
         }
       }
 
@@ -251,8 +252,8 @@
         a {
           width: 100%;
           padding: 4px 24px;
-          opacity: .8;
-          transition: background-color .3s, opacity .3s;
+          opacity: 0.8;
+          transition: background-color 0.3s, opacity 0.3s;
 
           .page-title {
             white-space: nowrap;
@@ -287,7 +288,7 @@
 
     &.has-children:not(.is-expand) {
       .header .more {
-        opacity: .4;
+        opacity: 0.4;
       }
     }
   }
@@ -308,7 +309,7 @@
 
     &-link {
       background-color: var(--ls-primary-background-color);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+      box-shadow: 0 1px 2px rgb(16 24 40 / 5%);
     }
 
     .dropdown-wrapper {
@@ -326,6 +327,7 @@
 
     #create-button {
       @apply flex items-center justify-center p-2 text-sm font-medium rounded-md w-full border;
+
       background-color: or(--ls-create-button-color, --lx-gray-03, --ls-secondary-background-color) !important;
       border-color: transparent;
 
@@ -373,8 +375,8 @@
 
   a {
     @apply opacity-90 hover:opacity-100;
-    transition: all 120ms ease-out;
 
+    transition: all 120ms ease-out;
     color: var(--ls-left-sidebar-text-color, var(--ls-header-button-background));
   }
 
@@ -383,15 +385,12 @@
   }
 
   > .shade-mask {
-    background-color: rgba(0, 0, 0, .7);
+    background-color: rgb(0 0 0 / 70%);
     position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+    inset: 0;
     z-index: 1;
     opacity: 0;
-    transition: opacity .4s;
+    transition: opacity 0.4s;
     touch-action: none;
   }
 
@@ -425,7 +424,7 @@
 
   &.is-closing {
     .left-sidebar-inner {
-      transition: transform .3s;
+      transition: transform 0.3s;
       transform: translate3d(-100%, 0, 0) !important;
     }
 
@@ -443,7 +442,7 @@
     }
   }
 
-  &:before {
+  &::before {
     content: " ";
     height: 3rem;
     background-color: var(--ls-primary-background-color);
@@ -461,8 +460,10 @@
     transition: background-color 300ms;
     transition-delay: 300ms;
 
-    &.is-active, &:hover,
-    &:focus, &:active {
+    &.is-active,
+    &:hover,
+    &:focus,
+    &:active {
       @apply bg-primary/90;
     }
   }
@@ -470,9 +471,9 @@
   @screen sm {
     width: 0;
     z-index: var(--ls-z-index-level-1);
-    transition: width .3s;
+    transition: width 0.3s;
 
-    &:before {
+    &::before {
       background-color: or(--ls-left-sidebar-container-sm, --lx-gray-02, --ls-secondary-background-color);
       width: 0;
       overflow: hidden;
@@ -493,7 +494,6 @@
 }
 
 .ls-left-sidebar-open {
-
   @screen sm {
     .cp__header > .r {
       display: flex;
@@ -531,6 +531,7 @@
 
 .settings-modal {
   @apply -m-8 rounded-lg;
+
   /* box-shadow: inset 0 0 0 1px var(--ls-border-color); */
 }
 
@@ -558,7 +559,7 @@
 
     > .inner {
       @apply rounded-full h-8 w-8 flex items-center justify-center
-      font-bold select-none cursor-pointer;
+        font-bold select-none cursor-pointer;
 
       background-color: var(--lx-gray-02, var(--ls-secondary-background-color, var(--rx-gray-02)));
     }
@@ -575,7 +576,8 @@
       .it {
         color: var(--ls-primary-text-color);
 
-        &:active, &:hover {
+        &:active,
+        &:hover {
           background-color: var(--ls-tertiary-background-color, var(--rx-gray-05));
         }
       }
@@ -601,7 +603,6 @@
     width: 3px;
     user-select: none;
     cursor: col-resize !important;
-
     transition: background-color 300ms;
     transition-delay: 300ms;
     z-index: 1000;
@@ -633,6 +634,7 @@
 
   &-settings {
     @apply flex flex-row;
+
     margin-bottom: 0;
     margin-top: 0;
     overflow: auto;
@@ -645,7 +647,6 @@
 
   &-topbar {
     position: sticky;
-    position: -webkit-sticky;
     top: 0;
     left: 0;
     right: 0;
@@ -680,10 +681,12 @@
 
   .sidebar-drop-indicator {
     @apply relative;
+
     height: 8px;
 
     &::after {
       @apply absolute block w-full rounded;
+
       top: 2px;
       height: 4px;
       content: " ";
@@ -770,7 +773,8 @@
 
 /* Workaround for Linux Intel GPU text rendering issue GH#7233 */
 .is-electron.is-linux .cp__menubar-repos {
-  #repo-switch, .nav-header .flex-1 {
+  #repo-switch,
+  .nav-header .flex-1 {
     position: relative;
   }
 }
@@ -783,7 +787,7 @@
 
 @supports (overflow-y: overlay) {
   .scrollbar-spacing {
-    overflow-y: overlay;
+    overflow-y: auto;
   }
 }
 
@@ -795,23 +799,27 @@
   height: calc(100vh - var(--ls-headbar-height) - 4rem);
 }
 
-a.ui__modal-close svg, a.close svg, span.rotating-arrow svg {
+a.ui__modal-close svg,
+a.close svg,
+span.rotating-arrow svg {
   color: var(--ls-primary-text-color);
 }
 
-a.ui__modal-close, a.close {
+a.ui__modal-close,
+a.close {
   color: var(--ls-primary-text-color);
   opacity: 0.6;
 }
 
-a.ui__modal-close:hover, a.close:hover {
+a.ui__modal-close:hover,
+a.close:hover {
   opacity: 1;
 }
 
 html[data-theme='dark'] {
   #left-sidebar {
     > .shade-mask {
-      background-color: rgba(0, 0, 0, .15);
+      background-color: rgb(0 0 0 / 15%);
     }
   }
 

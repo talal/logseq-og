@@ -10,6 +10,7 @@ are defined in `package.json`.
 - **Build:** `zig build`
 - **Unit tests (ClojureScript):** `bb test`
 - **E2E test suite:** `yarn test:e2e`
+  - Prefer to run the targeted test spec because the full test suite is slow to run.
 - **Linting (Clojure/ClojureScript)**: `bb cljs:lint && bb dev:lint`
 - **Linting (JS/CSS)**: `yarn css:lint`
 - **Formatting (Clojure/ClojureScript)**: `bb format`

@@ -1,0 +1,2 @@
+{:paths ["src" "scripts/src" "deps"]
+ :sort-ns-references? true}

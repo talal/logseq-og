@@ -13,7 +13,7 @@ related commands are defined in `package.json`.
     to run.
 - **Linting (Clojure/ClojureScript)**: `bb lint`
 - **Linting (JS/CSS)**: `yarn css:lint`
-- **Formatting (Clojure/ClojureScript)**: `bb format`
+- **Formatting (Clojure/ClojureScript)**: `bb fmt`
 - **Clojure/ClojureScript Parenthesis Repair**: `bb clj-paren-repair <files>`
 - **Formatting (JS/CSS)**: `npx prettier --write .`
 - **Formatting (other)**: `nix fmt`

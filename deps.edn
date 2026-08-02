@@ -57,6 +57,9 @@
                                :git/sha "d625610c6434dd6e466d6d24dd657498ff4b6153"}}
                  :exec-fn clojure-mcp.main/start}
 
+           :cljfmt {:replace-deps {dev.weavejester/cljfmt {:mvn/version "0.16.5"}}
+                    :main-opts ["-m" "cljfmt.main"]}
+
            ;; Use :replace-deps for tools. See https://github.com/clj-kondo/clj-kondo/issues/1536#issuecomment-1013006889
            :clj-kondo {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2026.07.24"}}
                        :main-opts  ["-m" "clj-kondo.main"]}}}

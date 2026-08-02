@@ -107,7 +107,7 @@
 
   lint
   {:doc "Run all linter tasks"
-   :depends [lint:clj-kondo lang:validate-translations]}
+   :depends [lint:clj-kondo lint:cljfmt lang:validate-translations]}
 
   dev:gen-malli-kondo-config
   logseq.tasks.dev/gen-malli-kondo-config
@@ -208,7 +208,15 @@
 
   lint:clj-kondo
   {:doc "Run clj-kondo over the ClojureScript source"
-   :task (shell "clojure -M:clj-kondo --parallel --lint src --cache false")}
+   :task (apply shell "clojure -M:clj-kondo --parallel --lint src" *command-line-args*)}
+
+  lint:cljfmt
+  {:doc "Check Clojure and ClojureScript formatting"
+   :task (shell "clojure -M:cljfmt check")}
+
+  fmt
+  {:doc "Format Clojure and ClojureScript code"
+   :task (shell "clojure -M:cljfmt fix")}
 
   ;; Complete build and packaging workflows
   build:app

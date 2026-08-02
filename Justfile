@@ -44,12 +44,13 @@ test-all: test test-e2e
 # Lint all code.
 [group('Quality')]
 lint: check-version
-    yarn css:lint
     bb lint
+    yarn css:lint
 
 # Format all code.
 [group('Quality')]
-format:
+fmt:
+    bb fmt
     npx prettier --write .
     nix fmt
 

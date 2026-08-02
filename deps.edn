@@ -1,6 +1,6 @@
 {:paths ["src/main" "src/electron" "src/resources"]
  :deps
- {org.clojure/clojure                   {:mvn/version "1.11.1"}
+ {org.clojure/clojure                   {:mvn/version "1.12.5"}
   rum/rum                               {:mvn/version "0.12.9"}
   datascript/datascript                 {:mvn/version "1.5.3"}
   datascript-transit/datascript-transit {:mvn/version "0.3.0"}

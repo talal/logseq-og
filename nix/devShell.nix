@@ -44,10 +44,11 @@ in
     packages = with pkgs;
       [
         # Clojure
+        jdk
         clojure
         clojure-lsp
         babashka
-        jdk
+        parinfer-rust
 
         # Node
         nodejs_22

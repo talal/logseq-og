@@ -6,6 +6,10 @@
   {:local/root "deps/bb-tasks"}
   logseq/graph-parser
   {:local/root "deps/graph-parser"}
+  io.github.bhauman/clojure-mcp-light
+  {:git/url "https://github.com/bhauman/clojure-mcp-light"
+   :git/tag "v0.2.2"
+   :git/sha "c92841e7f16acd02311bc61f5c06dd42e95e1cb0"}
   org.clj-commons/digest
   {:mvn/version "1.4.100"}}
  :pods
@@ -141,6 +145,10 @@
    :task (shell "yarn gulp:build")}
 
   ;; ClojureScript commands
+  clj-paren-repair
+  {:doc "Repair and format Clojure delimiters"
+   :task (apply shell "bb" "-m" "clojure-mcp-light.paren-repair" *command-line-args*)}
+
   cljs:watch
   {:doc "Watch the browser and Electron ClojureScript builds"
    :task (shell "clojure -M:cljs watch app electron")}

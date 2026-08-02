@@ -4,16 +4,17 @@ Conventions and instructions for coding agents.
 
 ## Commands
 
-Clojure commands are defined primarily in `bb.edn`. Node/Yarn related commands
-are defined in `package.json`.
+Clojure/ClojureScript commands are defined primarily in `bb.edn`. Node/Yarn
+related commands are defined in `package.json`.
 
-- **Build:** `zig build`
 - **Unit tests (ClojureScript):** `bb test`
 - **E2E test suite:** `yarn test:e2e`
-  - Prefer to run the targeted test spec because the full test suite is slow to run.
+  - Prefer to run the targeted test spec because the full E2E test suite is slow
+    to run.
 - **Linting (Clojure/ClojureScript)**: `bb cljs:lint && bb dev:lint`
 - **Linting (JS/CSS)**: `yarn css:lint`
 - **Formatting (Clojure/ClojureScript)**: `bb format`
+- **Clojure/ClojureScript Parenthesis Repair**: `bb clj-paren-repair <files>`
 - **Formatting (JS/CSS)**: `npx prettier --write .`
 - **Formatting (other)**: `nix fmt`
 
@@ -48,6 +49,25 @@ The `docs/` directory is the source for repository explanations.
 
 ## Coding standards
 
+- **Make the smallest coherent change.**
+- Do not add backward compatibility unless explicitly requested.
+- Do not introduce default values to mask invalid state.
+- **Every changed or added behaviour must have a test**. Do not add tests for
+  pre-existing logic that was already present before, and do not test
+  standard-library or third-party functions. The exception is deliberate
+  behaviour or integration tests, which may cross those boundaries by design.
+- When fixing a bug or regression, first write a test for it that fails, then
+  change the code to fix the bug and make sure the test passes.
+- When writing tests, prefer existing test namespaces and fixtures over
+  introducing a new framework.
+- Use the `clojure-mcp` MCP server for Clojure-aware exploration and evaluation
+  when working on `.clj`, `.cljc`, `.cljs`, `deps.edn`, or other Clojure project
+  files.
+- **Do not try to manually repair Clojure parenthesis errors.** If you encounter
+  unbalanced delimiters, run `bb clj-paren-repair` on the file instead of
+  attempting to fix them yourself. If the tool doesn't work, report to the user
+  that they need to fix the delimiter error manually. The tool automatically
+  formats files with cljfmt when it processes them.
 - **Always lint and format the relevant files** when you change something before
   moving on to the next step.
 - **Comment sparingly — code says _what_, comments say _why_.** Add a comment
@@ -60,15 +80,6 @@ The `docs/` directory is the source for repository explanations.
   or non-obvious logic (e.g. a security check whose threat model isn't
   apparent), and keep even that as tight as it can be. Over-commenting is noise
   that ages badly and obscures the code it wraps.
-- **Make the smallest coherent change.**
-- **Every changed or added behaviour must have a test**. Do not add tests for
-  pre-existing logic that was already present before, and do not test
-  standard-library or third-party functions. The exception is deliberate
-  behaviour or integration tests, which may cross those boundaries by design.
-- When fixing a bug or regression, first write a test for it that fails, then
-  change the code to fix the bug and make sure the test passes.
-- When writing tests, prefer existing test namespaces and fixtures over
-  introducing a new framework.
 - When a change invalidates documented behavior or structure, update the
   relevant document in `docs/`.
 - Put any files you generate (plan, reports, scratch output) under `files/`

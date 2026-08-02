@@ -1,0 +1,8 @@
+[mcp_servers.clojure-mcp]
+enabled = true
+command = "clojure"
+args = ["-Tmcp", "start", ":config-profile", ":cli-assist"]
+
+# [mcp_servers.clojure-mcp]
+# command = "clojure"
+# args = ["-X:mcp", ":config-profile", ":cli-assist-full"]

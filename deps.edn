@@ -52,6 +52,11 @@
                                 fipp/fipp {:mvn/version "0.6.26"}}
                    :main-opts ["-m" "cljs-test-runner.main" "-d" "src/bench" "-n" "frontend.benchmark-test-runner"]}
 
+           :mcp {:extra-deps {io.github.bhauman/clojure-mcp
+                              {:git/url "https://github.com/bhauman/clojure-mcp"
+                               :git/sha "d625610c6434dd6e466d6d24dd657498ff4b6153"}}
+                 :exec-fn clojure-mcp.main/start}
+
            ;; Use :replace-deps for tools. See https://github.com/clj-kondo/clj-kondo/issues/1536#issuecomment-1013006889
            :clj-kondo {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2026.07.24"}}
                        :main-opts  ["-m" "clj-kondo.main"]}}}

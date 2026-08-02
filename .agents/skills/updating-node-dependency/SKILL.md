@@ -48,11 +48,11 @@ Before changing anything:
   accidentally.
 - Find every relevant manifest and workspace containing the package. Search
   `package.json` files, workspace configuration, `resolutions`, and
-  package-specific build configuration. A package may be direct in one
-  workspace and transitive or peer-constrained in another.
-- Record the current declared range, installed version, dependency section,
-  Yarn version, Node engine requirement, and whether the working tree
-  already has lockfile or manifest drift.
+  package-specific build configuration. A package may be direct in one workspace
+  and transitive or peer-constrained in another.
+- Record the current declared range, installed version, dependency section, Yarn
+  version, Node engine requirement, and whether the working tree already has
+  lockfile or manifest drift.
 
 Use narrow inventory commands appropriate to the repository, for example:
 
@@ -68,10 +68,11 @@ inspect both its local manifest and the root workspace configuration.
 
 ### 2. Choose and assess the target
 
-Use the version requested by the user. If no version is specified, determine
-the current stable release from Yarn's registry metadata with `yarn info
-the-package version` and state the target before applying it. Do not rely on
-memory for a changing version number.
+Use the version requested by the user. If no version is specified, determine the
+current stable release from Yarn's registry metadata with
+`yarn info
+the-package version` and state the target before applying it. Do not
+rely on memory for a changing version number.
 
 Compare the target with the installed version and classify the update as patch,
 minor, or major. For a major update—or any package with native code, a compiler,
@@ -92,8 +93,8 @@ package without checking the repository's policy and compatibility.
 ### 3. Apply one targeted update
 
 Update the owning manifest while preserving its dependency section and existing
-range style. Run the targeted Yarn command from the owning package directory,
-or scope it to the correct workspace:
+range style. Run the targeted Yarn command from the owning package directory, or
+scope it to the correct workspace:
 
 ```bash
 yarn add the-package@<target>
@@ -102,10 +103,10 @@ yarn workspace <workspace> add the-package@<target>
 ```
 
 Use `yarn add --dev` for a devDependency and `yarn add` for a runtime
-dependency. If a targeted command would move the package to the wrong
-dependency section, make the smallest manifest edit allowed by repository
-conventions, then run Yarn to regenerate the lockfile. Never use a broad
-`yarn upgrade --latest` invocation without a package filter.
+dependency. If a targeted command would move the package to the wrong dependency
+section, make the smallest manifest edit allowed by repository conventions, then
+run Yarn to regenerate the lockfile. Never use a broad `yarn upgrade --latest`
+invocation without a package filter.
 
 If resolution fails, inspect the peer-dependency and engine error, the package's
 published metadata, and the existing overrides before trying anything else.
@@ -119,15 +120,15 @@ After the package manager finishes:
 - Confirm the manifest, lockfile, and workspace metadata agree.
 - Verify the resolved version with `yarn why` and check for invalid or unmet
   peers.
-- Review `git diff` for the intended manifest entry, required transitive changes,
-  integrity data, and no accidental upgrades or formatting churn.
+- Review `git diff` for the intended manifest entry, required transitive
+  changes, integrity data, and no accidental upgrades or formatting churn.
 - Check that the lockfile remains reproducible using the repository's frozen or
   CI-style install mode, `yarn install --frozen-lockfile`, when practical.
 
-Do not discard unrelated changes in a dirty worktree. If Yarn
-rewrites broad lockfile sections, determine whether they are required. If not,
-stop and use a narrower workspace command or ask for direction rather than
-committing noisy churn.
+Do not discard unrelated changes in a dirty worktree. If Yarn rewrites broad
+lockfile sections, determine whether they are required. If not, stop and use a
+narrower workspace command or ask for direction rather than committing noisy
+churn.
 
 ### 5. Validate affected behavior
 
@@ -159,8 +160,8 @@ request unless the user explicitly requests it.
 ### A package has a peer-dependency conflict
 
 Inspect the complete peer chain and identify which installed package violates
-it. Prefer a compatible version range or the smallest coupled upgrade. Keep
-peer warnings visible; do not hide them with `--force` or `--ignore-engines`.
+it. Prefer a compatible version range or the smallest coupled upgrade. Keep peer
+warnings visible; do not hide them with `--force` or `--ignore-engines`.
 
 ### The requested package is only transitive
 
@@ -172,8 +173,8 @@ compatible; validate the resulting graph and document the reason.
 ### The update is a security fix
 
 Confirm the advisory and affected range, prefer the narrowest patched stable
-version, and run tests for every code path exposed by the vulnerable package.
-Do not expand the work into unrelated modernization unless required to reach a
+version, and run tests for every code path exposed by the vulnerable package. Do
+not expand the work into unrelated modernization unless required to reach a
 patched compatible version.
 
 ### The package has native bindings

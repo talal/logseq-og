@@ -15,7 +15,7 @@ watch:
 # Build the publishing application. Pass --dev for watch mode.
 [group('Development')]
 publishing *args:
-    bb dev:publishing {{args}}
+    bb dev:publishing {{ args }}
 
 # Start iOS development.
 [group('Development')]

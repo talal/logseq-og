@@ -328,7 +328,7 @@
                                                      (fn [] (js/setTimeout
                                                              #(do
                                                                 ;; reset dom effects
-                                                                (set! (.. target -style -transform) (str "translate(0, 0)"))
+                                                                (set! (.. target -style -transform) "translate(0, 0)")
                                                                 (.removeAttribute target "data-x")
                                                                 (.removeAttribute target "data-y")
 

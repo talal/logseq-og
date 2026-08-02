@@ -463,21 +463,21 @@ should be done through this fn in order to get global config and config defaults
 (defn get-pages-directory
   []
   (or
-    (when-let [repo (get-current-repo)]
+    (let [repo (get-current-repo)]
       (:pages-directory (get-config repo)))
     "pages"))
 
 (defn get-journals-directory
   []
   (or
-    (when-let [repo (get-current-repo)]
+    (let [repo (get-current-repo)]
       (:journals-directory (get-config repo)))
     "journals"))
 
 (defn get-whiteboards-directory
   []
   (or
-   (when-let [repo (get-current-repo)]
+   (let [repo (get-current-repo)]
      (:whiteboards-directory (get-config repo)))
    "whiteboards"))
 
@@ -487,7 +487,7 @@ should be done through this fn in order to get global config and config defaults
 
 (defn get-journal-file-name-format
   []
-  (when-let [repo (get-current-repo)]
+  (let [repo (get-current-repo)]
     (:journal/file-name-format (get-config repo))))
 
 (defn get-preferred-workflow
@@ -1593,20 +1593,21 @@ Similar to re-frame subscriptions"
 
 (defn uninstall-plugin-service
   [pid type-or-all]
-  (when-let [pid (keyword pid)]
-    (when-let [installed (get (:plugin/installed-services @state) pid)]
-      (let [remove-all? (or (true? type-or-all) (nil? type-or-all))
-            remains     (if remove-all? nil (filterv #(not= type-or-all (:type %)) installed))
-            removed     (if remove-all? installed (filterv #(= type-or-all (:type %)) installed))]
-        (set-state! [:plugin/installed-services pid] remains)
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (when-let [installed (get (:plugin/installed-services @state) pid)]
+        (let [remove-all? (or (true? type-or-all) (nil? type-or-all))
+              remains     (if remove-all? nil (filterv #(not= type-or-all (:type %)) installed))
+              removed     (if remove-all? installed (filterv #(= type-or-all (:type %)) installed))]
+          (set-state! [:plugin/installed-services pid] remains)
 
-        ;; search engines state for results
-        (when-let [removed' (seq (filter #(= :search (:type %)) removed))]
-          (update-state! :search/engines #(apply dissoc % (mapv (fn [{:keys [pid name]}] (str pid name)) removed'))))))))
+          ;; search engines state for results
+          (when-let [removed' (seq (filter #(= :search (:type %)) removed))]
+            (update-state! :search/engines #(apply dissoc % (mapv (fn [{:keys [pid name]}] (str pid name)) removed')))))))))
 
 (defn get-all-plugin-services-with-type
   [type]
-  (when-let [installed (vals (:plugin/installed-services @state))]
+  (let [installed (vals (:plugin/installed-services @state))]
     (mapcat (fn [s] (filter #(= (keyword type) (:type %)) s)) installed)))
 
 (defn get-all-plugin-search-engines
@@ -1615,11 +1616,12 @@ Similar to re-frame subscriptions"
 
 (defn update-plugin-search-engine
   [pid name f]
-  (when-let [pid (keyword pid)]
-    (set-state! :search/engines
-                (update-vals (get-all-plugin-search-engines)
-                             #(if (and (= pid (:pid %)) (= name (:name %)))
-                                (f %) %)))))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (set-state! :search/engines
+                  (update-vals (get-all-plugin-search-engines)
+                               #(if (and (= pid (:pid %)) (= name (:name %)))
+                                  (f %) %))))))
 
 (defn reset-plugin-search-engines
   []
@@ -1630,21 +1632,23 @@ Similar to re-frame subscriptions"
 (defn install-plugin-hook
   ([pid hook] (install-plugin-hook pid hook true))
   ([pid hook opts]
-   (when-let [pid (keyword pid)]
-     (set-state!
-      [:plugin/installed-hooks hook]
-      (assoc
-        ((fnil identity {}) (get-in @state [:plugin/installed-hooks hook]))
-        pid opts)) true)))
+   (when (some? pid)
+     (let [pid (keyword pid)]
+       (set-state!
+        [:plugin/installed-hooks hook]
+        (assoc
+          ((fnil identity {}) (get-in @state [:plugin/installed-hooks hook]))
+          pid opts)) true))))
 
 (defn uninstall-plugin-hook
   [pid hook-or-all]
-  (when-let [pid (keyword pid)]
-    (if (nil? hook-or-all)
-      (swap! state update :plugin/installed-hooks #(update-vals % (fn [ids] (dissoc ids pid))))
-      (when-let [coll (get-in @state [:plugin/installed-hooks hook-or-all])]
-        (set-state! [:plugin/installed-hooks hook-or-all] (dissoc coll pid))))
-    true))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (if (nil? hook-or-all)
+        (swap! state update :plugin/installed-hooks #(update-vals % (fn [ids] (dissoc ids pid))))
+        (when-let [coll (get-in @state [:plugin/installed-hooks hook-or-all])]
+          (set-state! [:plugin/installed-hooks hook-or-all] (dissoc coll pid))))
+      true)))
 
 (defn slot-hook-exist?
   [uuid]
@@ -1970,7 +1974,7 @@ Similar to re-frame subscriptions"
    (filterv
      #(and (if include-unpacked? true (:iir %))
            (if-not (boolean? enabled?) true (= (not enabled?) (boolean (get-in % [:settings :disabled]))))
-           (or include-all? (if (boolean? theme?) (= (boolean theme?) (:theme %)) true)))
+           (or include-all? (if (boolean? theme?) (= theme? (:theme %)) true)))
      (vals (:plugin/installed-plugins @state)))))
 
 (defn lsp-enabled?-or-theme
@@ -1982,8 +1986,10 @@ Similar to re-frame subscriptions"
 
 (defn consume-updates-from-coming-plugin!
   [payload updated?]
-  (when-let [id (keyword (:id payload))]
-    (let [prev-pending? (boolean (seq (:plugin/updates-pending @state)))]
+  (when (some? (:id payload))
+    (let [raw-id (:id payload)
+          id (keyword raw-id)
+          prev-pending? (boolean (seq (:plugin/updates-pending @state)))]
       (println "Updates: consumed pending - " id)
       (swap! state update :plugin/updates-pending dissoc id)
       (if updated?
@@ -2004,15 +2010,15 @@ Similar to re-frame subscriptions"
 
 (defn all-available-coming-updates
   ([] (all-available-coming-updates (:plugin/updates-coming @state)))
-  ([updates] (when-let [updates (vals updates)]
+  ([updates] (let [updates (vals updates)]
                (filterv #(coming-update-new-version? %) updates))))
 
 (defn get-next-selected-coming-update
   []
-  (when-let [updates (all-available-coming-updates)]
-    (let [unchecked (:plugin/updates-unchecked @state)]
-      (first (filter #(and (not (and (seq unchecked) (contains? unchecked (:id %))))
-                           (not (:error-code %))) updates)))))
+  (let [updates (all-available-coming-updates)
+        unchecked (:plugin/updates-unchecked @state)]
+    (first (filter #(and (not (and (seq unchecked) (contains? unchecked (:id %))))
+                         (not (:error-code %))) updates))))
 
 (defn set-unchecked-update
   [id unchecked?]
@@ -2032,7 +2038,7 @@ Similar to re-frame subscriptions"
 
 (defn sub-right-sidebar-blocks
   []
-  (when-let [current-repo (get-current-repo)]
+  (let [current-repo (get-current-repo)]
     (->> (sub :sidebar/blocks)
          (filter #(= (first %) current-repo)))))
 

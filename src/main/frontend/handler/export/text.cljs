@@ -1,6 +1,5 @@
 (ns frontend.handler.export.text
   "export blocks/pages as text"
-  (:refer-clojure :exclude [map filter mapcat concat remove newline])
   (:require [clojure.string :as string]
             [frontend.db :as db]
             [frontend.extensions.zip :as zip]

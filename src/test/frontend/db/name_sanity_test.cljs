@@ -46,6 +46,15 @@
   (test-page-name ".NET.")
   (mapv test-page-name fs-util/windows-reserved-filebodies))
 
+(deftest legacy-file-name-sanitization-tests
+  (let [page-name "a:b\\c*d?e\"f<g>h|i#j%k"]
+    (testing "legacy dot format keeps reserved characters sanitized"
+      (is (= "a_b_c_d_e_f_g_h_i_j_k"
+             (fs-util/legacy-dot-file-name-sanity page-name))))
+    (testing "legacy URL format keeps reserved characters encoded"
+      (is (= "a%3Ab%5Cc%2Ad%3Fe%22f%3Cg%3Eh%7Ci%23j%25k"
+             (fs-util/legacy-url-file-name-sanity page-name))))))
+
 (deftest new-path-computation-tests
   (is (= (#'page-handler/compute-new-file-path "/data/app/dsal dsalfjk aldsaf.jkl" "ddd") "/data/app/ddd.jkl"))
   (is (= (#'page-handler/compute-new-file-path "c://data/a sdfpp/dsal dsalf% * _ dsaf.mnk" "c d / f") "c://data/a sdfpp/c d / f.mnk")))

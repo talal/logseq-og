@@ -60,11 +60,11 @@
 
 (defn toggle-contents!
   []
-  (when-let [current-repo (state/get-current-repo)]
-    (let [id "contents"]
+  (let [current-repo (state/get-current-repo)
+        id "contents"]
       (if (state/sidebar-block-exists? id)
         (state/sidebar-remove-block! id)
-        (state/sidebar-add-block! current-repo id :contents)))))
+        (state/sidebar-add-block! current-repo id :contents))))
 
 (defn toggle-help!
   []

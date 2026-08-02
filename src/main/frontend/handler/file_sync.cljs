@@ -87,7 +87,7 @@
             (when same-graph?
               (sync/clear-graphs-txid! graph-uuid)
               (swap! refresh-file-sync-component not))
-            (notification/show! (str "Graph deleted") :success)))))))
+            (notification/show! "Graph deleted" :success)))))))
 
 (defn <list-graphs
   []
@@ -203,7 +203,7 @@
       (async/sub p topic c))
 
     (async/go-loop []
-      (let [{:keys [event data]} (async/<! c)]
+      (let [{:keys [event data]} (<! c)]
         (case event
           (list :finished-local->remote :finished-remote->local)
           (when-let [current-uuid (state/get-current-file-sync-graph-uuid)]

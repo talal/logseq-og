@@ -18,10 +18,8 @@
 
 (defn- setup-configure!
   []
-  #_:clj-kondo/ignore
-  (def setupAuthConfigure! (.-setupAuthConfigure js/LSAmplify))
-  #_:clj-kondo/ignore
-  (def LSAuthenticator
+  (set! setupAuthConfigure! (.-setupAuthConfigure js/LSAmplify))
+  (set! LSAuthenticator
     (adapt-class (.-LSAuthenticator js/LSAmplify)))
 
   (.setLanguage js/LSAmplify.I18n (or (:preferred-language @state/state) "en"))

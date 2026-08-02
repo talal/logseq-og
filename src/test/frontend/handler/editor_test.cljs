@@ -3,7 +3,7 @@
             [frontend.db :as db]
             [clojure.test :refer [deftest is testing are use-fixtures]]
             [datascript.core :as d]
-            [frontend.test.helper :as test-helper :refer [load-test-files]]
+            [frontend.test.helper :as test-helper]
             [frontend.db.model :as model]
             [frontend.state :as state]
             [frontend.util.cursor :as cursor]
@@ -223,7 +223,7 @@
   (state/set-editor-action! nil))
 
 (deftest save-block-aux!
-  (load-test-files [{:file/path "pages/page1.md"
+  (test-helper/load-test-files [{:file/path "pages/page1.md"
                      :file/content "\n
 - b1 #foo"}])
   (testing "updating block's content changes content and preserves path-refs"
@@ -286,7 +286,7 @@
 
 (deftest delete-block!
   (testing "backspace deletes empty block"
-    (load-test-files [{:file/path "pages/page1.md"
+    (test-helper/load-test-files [{:file/path "pages/page1.md"
                        :file/content "\n
 - b1
 - b2
@@ -307,7 +307,7 @@
   (testing "backspace deletes empty block in embedded context"
     ;; testing embed at this layer doesn't require an embed block since
     ;; delete-block handles all the embed setup
-    (load-test-files [{:file/path "pages/page1.md"
+    (test-helper/load-test-files [{:file/path "pages/page1.md"
                        :file/content "\n
 - b1
 - b2

@@ -283,7 +283,7 @@
                               :color    "#2563EB"
                               :icon     "command"})]
         (for [{:keys [key title children color icon] :as category} categories
-              :let [total (if counted? (count children) 0)]]
+              :let [total (if (counted? children) (count children) 0)]]
           [:button.category-card.text-left
            {:key      key
             :style    {:border-left-color (or (ui/->block-background-color color) "var(--ls-secondary-background-color)")}

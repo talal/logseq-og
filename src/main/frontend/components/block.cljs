@@ -1376,6 +1376,10 @@
     [:span.warning.mr-1 {:title "Empty URL"}
      (macro->text "video" arguments)]))
 
+(defn- parsed-int?
+  [value]
+  (some? value))
+
 (defn- macro-else-cp
   [name config arguments]
   (if-let [block-uuid (:block/uuid config)]
@@ -1396,20 +1400,22 @@
                             1
                             (util/format "[:img {:src \"%s\"}]" (first arguments))
                             4
-                            (when (and (util/safe-parse-int (nth arguments 1))
-                                       (util/safe-parse-int (nth arguments 2)))
-                              (util/format "[:img.%s {:src \"%s\" :style {:width %s :height %s}}]"
-                                           (nth arguments 3)
-                                           (first arguments)
-                                           (util/safe-parse-int (nth arguments 1))
-                                           (util/safe-parse-int (nth arguments 2))))
+                            (let [width (util/safe-parse-int (nth arguments 1))
+                                  height (util/safe-parse-int (nth arguments 2))]
+                              (when (and (parsed-int? width) (parsed-int? height))
+                                (util/format "[:img.%s {:src \"%s\" :style {:width %s :height %s}}]"
+                                             (nth arguments 3)
+                                             (first arguments)
+                                             width
+                                             height)))
                             3
-                            (when (and (util/safe-parse-int (nth arguments 1))
-                                       (util/safe-parse-int (nth arguments 2)))
-                              (util/format "[:img {:src \"%s\" :style {:width %s :height %s}}]"
-                                           (first arguments)
-                                           (util/safe-parse-int (nth arguments 1))
-                                           (util/safe-parse-int (nth arguments 2))))
+                            (let [width (util/safe-parse-int (nth arguments 1))
+                                  height (util/safe-parse-int (nth arguments 2))]
+                              (when (and (parsed-int? width) (parsed-int? height))
+                                (util/format "[:img {:src \"%s\" :style {:width %s :height %s}}]"
+                                             (first arguments)
+                                             width
+                                             height)))
 
                             2
                             (cond
@@ -1466,8 +1472,8 @@
   (let [{:keys [name arguments]} options
         arguments (if (and
                        (>= (count arguments) 2)
-                       (and (string/starts-with? (first arguments) page-ref/left-brackets)
-                            (string/ends-with? (last arguments) page-ref/right-brackets))) ; page reference
+                       (string/starts-with? (first arguments) page-ref/left-brackets)
+                       (string/ends-with? (last arguments) page-ref/right-brackets)) ; page reference
                     (let [title (string/join ", " arguments)]
                       [title])
                     arguments)]
@@ -1532,8 +1538,8 @@
 
       (= name "renderer")
       (when config/lsp-enabled?
-        (when-let [block-uuid (str (:block/uuid config))]
-          (plugins/hook-ui-slot :macro-renderer-slotted (assoc options :uuid block-uuid))))
+        (when-let [block-uuid (:block/uuid config)]
+          (plugins/hook-ui-slot :macro-renderer-slotted (assoc options :uuid (str block-uuid)))))
 
       (get @macro/macros name)
       ((get @macro/macros name) config options)
@@ -1925,8 +1931,6 @@
                   (str "#" tag)])))
            tags))))
 
-(declare block-content)
-
 (defn build-block-title
   [config {:block/keys [title marker pre-block? properties level]
            :as t}]
@@ -1937,7 +1941,7 @@
         html-export? (:html-export? config)
         checkbox (when (and (not pre-block?)
                             (not html-export?))
-                   (block-checkbox t (str "mr-1 cursor")))
+                   (block-checkbox t "mr-1 cursor"))
         marker-switch (when (and (not pre-block?)
                                  (not html-export?))
                         (marker-switch t))
@@ -2973,7 +2977,7 @@
                                                       (select-keys b2 compare-keys))
                                                 (not= (select-keys (first (:rum/args old-state)) config-compare-keys)
                                                       (select-keys (first (:rum/args new-state)) config-compare-keys)))]
-                      (boolean result)))
+                      result))
    :will-unmount (fn [state]
                    ;; restore root block's collapsed state
                    (let [[config block] (:rum/args state)
@@ -3146,8 +3150,6 @@
 (defn map-inline
   [config col]
   (map #(inline config %) col))
-
-(declare ->hiccup)
 
 (rum/defc src-cp < rum/static
   [config options html-export?]

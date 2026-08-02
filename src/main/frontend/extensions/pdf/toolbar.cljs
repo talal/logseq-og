@@ -18,11 +18,10 @@
 
 (declare make-docinfo-in-modal)
 
-(def *area-dashed? (atom ((fnil identity false) (storage/get (str "ls-pdf-area-is-dashed")))))
+(def *area-dashed? (atom ((fnil identity false) (storage/get "ls-pdf-area-is-dashed"))))
 (def *area-mode? (atom false))
 (def *highlight-mode? (atom false))
-#_:clj-kondo/ignore
-(rum/defcontext *highlights-ctx*)
+(rum/defcontext *highlights-ctx* nil)
 
 (rum/defc pdf-settings
   [^js viewer theme {:keys [hide-settings! select-theme! t]}]
@@ -331,11 +330,11 @@
        (fn []
          (p/catch
           (p/let [^js data (.getOutline pdf-doc)]
-            #_:clj-kondo/ignore
-            (when-let [data (and data (.map data (fn [^js it]
-                                                   (set! (.-href it) (.. viewer -linkService (getDestinationHash (.-dest it))))
-                                                   (set! (.-expanded it) false)
-                                                   it)))])
+            (when data
+              (.map data (fn [^js it]
+                            (set! (.-href it) (.. viewer -linkService (getDestinationHash (.-dest it))))
+                            (set! (.-expanded it) false)
+                            it)))
             (set-outline-data! (bean/->clj data)))
 
           (fn [e]

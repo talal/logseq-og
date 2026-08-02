@@ -276,7 +276,7 @@
         (string? (second clause))
         (str "#" (second clause))
         (symbol? (second clause))
-        (str "#" (str (second clause)))
+        (str "#" (second clause))
         :else
         (str "#" (second (second clause))))
 

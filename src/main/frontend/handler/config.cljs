@@ -13,7 +13,7 @@
 
 (defn- repo-config-set-key-value
   [path k v]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when-let [content (db/get-file path)]
       (repo-config-handler/read-repo-config content)
       (let [result (parse-repo-config content)

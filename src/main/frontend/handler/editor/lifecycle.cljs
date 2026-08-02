@@ -19,7 +19,7 @@
     (js/setTimeout #(keyboards-handler/esc-save! state) 100)
 
     ;; try to close all opened dropdown menu
-    (when-let [close-fns (vals (sub :modal/dropdowns))]
+    (let [close-fns (vals (sub :modal/dropdowns))]
       (try (doseq [f close-fns] (f)) (catch :default _e ())))
 
     (when-let [element (gdom/getElement id)]

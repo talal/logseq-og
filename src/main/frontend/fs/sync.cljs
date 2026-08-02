@@ -274,7 +274,7 @@
 
 (defn- get-json-body [body]
   (or (and (not (string? body)) body)
-      (or (string/blank? body) nil)
+      (string/blank? body)
       (try (js->clj (js/JSON.parse body) :keywordize-keys true)
            (catch :default e
              (prn :invalid-json body)
@@ -360,7 +360,7 @@
       (remove-user-graph-uuid-prefix o)
 
       :else
-      (throw (js/Error. (str "unsupported type " (str o)))))))
+      (throw (js/Error. (str "unsupported type " o))))))
 
 (defprotocol IChecksum
   (-checksum [this]))
@@ -1911,7 +1911,7 @@
 (defn file-watch-handler
   "file-watcher callback"
   [type {:keys [dir path _content stat] :as _payload}]
-  (when-let [current-graph (state/get-current-repo)]
+  (let [current-graph (state/get-current-repo)]
     (when (string/ends-with? current-graph dir)
       (when-let [sync-state (state/get-file-sync-state (state/get-current-file-sync-graph-uuid))]
         (when (sync-state--valid-to-accept-filewatcher-event? sync-state)
@@ -2542,7 +2542,7 @@
               origin-map           (into {} (mapv (juxt relative-path identity) es))]
           (->>
            (merge-with
-            #(boolean (or (nil? %1) (= "fake-checksum" %1) (= %1 %2)))
+            #(or (nil? %1) (= "fake-checksum" %1) (= %1 %2))
             origin-checksum-map current-checksum-map)
            (filterv (comp true? second))
            (mapv first)

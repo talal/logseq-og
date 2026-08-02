@@ -354,33 +354,33 @@
                            :or {delete-file? true}}]
   (route-handler/redirect-to-home!)
   (when page-name
-    (when-let [repo (state/get-current-repo)]
-      (let [page-name (util/page-name-sanity-lc page-name)
-            blocks (db/get-page-blocks-no-cache page-name)
-            tx-data (mapv
-                     (fn [block]
-                       [:db.fn/retractEntity [:block/uuid (:block/uuid block)]])
-                     blocks)
-            page (db/entity [:block/name page-name])]
-        (db/transact! tx-data)
+    (let [repo (state/get-current-repo)
+          page-name (util/page-name-sanity-lc page-name)
+          blocks (db/get-page-blocks-no-cache page-name)
+          tx-data (mapv
+                   (fn [block]
+                     [:db.fn/retractEntity [:block/uuid (:block/uuid block)]])
+                   blocks)
+          page (db/entity [:block/name page-name])]
+      (db/transact! tx-data)
 
-        (delete-file! repo page-name delete-file?)
+      (delete-file! repo page-name delete-file?)
 
         ;; if other page alias this pagename,
         ;; then just remove some attrs of this entity instead of retractEntity
-        (when-not (:block/_namespace page)
-          (if (model/get-alias-source-page (state/get-current-repo) page-name)
-            (when-let [id (:db/id (db/entity [:block/name page-name]))]
-              (let [txs (mapv (fn [attribute]
-                                [:db/retract id attribute])
-                              db-schema/retract-page-attributes)]
-                (db/transact! txs)))
-            (db/transact! [[:db.fn/retractEntity [:block/name page-name]]])))
+      (when-not (:block/_namespace page)
+        (if (model/get-alias-source-page (state/get-current-repo) page-name)
+          (when-let [id (:db/id (db/entity [:block/name page-name]))]
+            (let [txs (mapv (fn [attribute]
+                              [:db/retract id attribute])
+                            db-schema/retract-page-attributes)]
+              (db/transact! txs)))
+          (db/transact! [[:db.fn/retractEntity [:block/name page-name]]])))
 
-        (unfavorite-page! page-name)
+      (unfavorite-page! page-name)
 
-        (when (fn? ok-handler) (ok-handler))
-        (ui-handler/re-render-root!)))))
+      (when (fn? ok-handler) (ok-handler))
+      (ui-handler/re-render-root!))))
 
 (defn- rename-update-block-refs!
   [refs from-id to-id]
@@ -822,7 +822,7 @@
 
 (defn create-today-journal!
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when (and (state/enable-journals? repo)
                (not (state/loading-files? repo))
                (not (state/whiteboard-route?)))

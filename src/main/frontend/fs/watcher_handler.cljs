@@ -45,7 +45,7 @@
   [repo path content db-content mtime backup?]
   (p/let [;; save the previous content in a versioned bak file to avoid data overwritten.
           _ (when backup?
-              (-> (when-let [repo-dir (config/get-local-dir repo)]
+              (-> (let [repo-dir (config/get-local-dir repo)]
                     (file-handler/backup-file! repo-dir path db-content content))
                   (p/catch #(js/console.error "❌ Bak Error: " path %))))
 
@@ -143,7 +143,7 @@
    - current graph is set
    - config is loaded"
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when (and (not (state/loading-files? repo))
                (config/local-db? repo))
       (let [repo-dir (config/get-repo-dir repo)

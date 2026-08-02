@@ -228,15 +228,15 @@
                              :markdown (let [columns (count (last (first children)))]
                                          (str
                                           (map-join children)
-                                          (str "| " (string/join " | "
-                                                                 (repeat columns "----"))
-                                               " |")))
+                                         "| " (string/join " | "
+                                                            (repeat columns "----"))
+                                         " |"))
                              :org (let [columns (count (last (first children)))]
                                     (str
                                      (map-join children)
-                                     (str "|" (string/join "+"
-                                                           (repeat columns "----"))
-                                          "|")))
+                                     "|" (string/join "+"
+                                                        (repeat columns "----"))
+                                     "|"))
                              nil)
                            :tr
                            (str "| "

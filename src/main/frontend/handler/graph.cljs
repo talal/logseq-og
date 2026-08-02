@@ -84,135 +84,125 @@
 (defn build-global-graph
   [theme {:keys [journal? orphan-pages? builtin-pages? excluded-pages?]}]
   (let [dark? (= "dark" theme)
-        current-page (or (:block/name (db/get-current-page)) "")]
-    (when-let [repo (state/get-current-repo)]
-      (let [relation (db/get-pages-relation repo journal?)
-            tagged-pages (db/get-all-tagged-pages repo)
-            namespaces (db/get-all-namespace-relation repo)
-            tags (set (map second tagged-pages))
-            full-pages (db/get-all-pages repo)
-            all-pages (map db/get-original-name full-pages)
-            page-name->original-name (zipmap (map :block/name full-pages) all-pages)
-            pages-after-journal-filter (if-not journal?
-                                         (remove :block/journal? full-pages)
-                                         full-pages)
-
-           pages-after-exclude-filter (cond->> pages-after-journal-filter
-                                        (not excluded-pages?)
-                                        (remove (fn [p] (=  true (:exclude-from-graph-view (:block/properties p))))))
-
-            links (concat (seq relation)
-                          (seq tagged-pages)
-                          (seq namespaces))
-            linked (set (flatten links))
-            build-in-pages (set (map string/lower-case default-db/built-in-pages-names))
-            nodes (cond->> (map :block/name pages-after-exclude-filter)
-                    (not builtin-pages?)
-                    (remove (fn [p] (contains? build-in-pages (string/lower-case p))))
-                    (not orphan-pages?)
-                    (filter #(contains? linked (string/lower-case %))))
-            page-links (reduce (fn [m [k v]] (-> (update m k inc)
-                                                 (update v inc))) {} links)
-            links (build-links (remove (fn [[_ to]] (nil? to)) links))
-            nodes (build-nodes dark? (string/lower-case current-page) page-links tags nodes namespaces)]
-        (normalize-page-name
-         {:nodes nodes
-          :links links
-          :page-name->original-name page-name->original-name})))))
+        current-page (or (:block/name (db/get-current-page)) "")
+        repo (state/get-current-repo)
+        relation (db/get-pages-relation repo journal?)
+        tagged-pages (db/get-all-tagged-pages repo)
+        namespaces (db/get-all-namespace-relation repo)
+        tags (set (map second tagged-pages))
+        full-pages (db/get-all-pages repo)
+        all-pages (map db/get-original-name full-pages)
+        page-name->original-name (zipmap (map :block/name full-pages) all-pages)
+        pages-after-journal-filter (if-not journal?
+                                     (remove :block/journal? full-pages)
+                                     full-pages)
+        pages-after-exclude-filter (cond->> pages-after-journal-filter
+                                     (not excluded-pages?)
+                                     (remove (fn [p] (= true (:exclude-from-graph-view (:block/properties p))))))
+        links (concat (seq relation)
+                      (seq tagged-pages)
+                      (seq namespaces))
+        linked (set (flatten links))
+        build-in-pages (set (map string/lower-case default-db/built-in-pages-names))
+        nodes (cond->> (map :block/name pages-after-exclude-filter)
+                (not builtin-pages?)
+                (remove (fn [p] (contains? build-in-pages (string/lower-case p))))
+                (not orphan-pages?)
+                (filter #(contains? linked (string/lower-case %))))
+        page-links (reduce (fn [m [k v]] (-> (update m k inc)
+                                             (update v inc))) {} links)
+        links (build-links (remove (fn [[_ to]] (nil? to)) links))
+        nodes (build-nodes dark? (string/lower-case current-page) page-links tags nodes namespaces)]
+    (normalize-page-name
+     {:nodes nodes
+      :links links
+      :page-name->original-name page-name->original-name})))
 
 (defn build-page-graph
   [page theme show-journal]
-  (let [dark? (= "dark" theme)]
-    (when-let [repo (state/get-current-repo)]
-      (let [page (util/page-name-sanity-lc page)
-            page-entity (db/entity [:block/name page])
-            tags (:tags (:block/properties page-entity))
-            tags (remove #(= page %) tags)
-            ref-pages (db/get-page-referenced-pages repo page)
-            mentioned-pages (db/get-pages-that-mentioned-page repo page show-journal)
-            namespaces (db/get-all-namespace-relation repo)
-            links (concat
-                   namespaces
-                   (map (fn [[p _aliases]]
-                          [page p]) ref-pages)
-                   (map (fn [[p _aliases]]
-                          [p page]) mentioned-pages)
-                   (map (fn [tag]
-                          [page tag])
-                        tags))
-            other-pages (->> (concat (map first ref-pages)
-                                     (map first mentioned-pages))
-                             (remove nil?)
-                             (set))
-            other-pages-links (mapcat
-                               (fn [page]
-                                 (let [ref-pages (-> (map first (db/get-page-referenced-pages repo page))
-                                                     (set)
-                                                     (set/intersection other-pages))
-                                       mentioned-pages (-> (map first (db/get-pages-that-mentioned-page repo page show-journal))
-                                                           (set)
-                                                           (set/intersection other-pages))]
-                                   (concat
-                                    (map (fn [p] [page p]) ref-pages)
-                                    (map (fn [p] [p page]) mentioned-pages))))
-                               other-pages)
-            links (->> (concat links other-pages-links)
-                       (remove nil?)
-                       (distinct)
-                       (build-links))
-            nodes (->> (concat
-                        [page]
-                        (map first ref-pages)
-                        (map first mentioned-pages)
-                        tags)
-                       (remove nil?)
-                       (distinct))
-            nodes (build-nodes dark? page links (set tags) nodes namespaces)
-            full-pages (db/get-all-pages repo)
-            all-pages (map db/get-original-name full-pages)
-            page-name->original-name (zipmap (map :block/name full-pages) all-pages)]
-        (normalize-page-name
-         {:nodes nodes
-          :links links
-          :page-name->original-name page-name->original-name})))))
+  (let [dark? (= "dark" theme)
+        repo (state/get-current-repo)
+        page (util/page-name-sanity-lc page)
+        page-entity (db/entity [:block/name page])
+        tags (:tags (:block/properties page-entity))
+        tags (remove #(= page %) tags)
+        ref-pages (db/get-page-referenced-pages repo page)
+        mentioned-pages (db/get-pages-that-mentioned-page repo page show-journal)
+        namespaces (db/get-all-namespace-relation repo)
+        links (concat
+               namespaces
+               (map (fn [[p _aliases]] [page p]) ref-pages)
+               (map (fn [[p _aliases]] [p page]) mentioned-pages)
+               (map (fn [tag] [page tag]) tags))
+        other-pages (->> (concat (map first ref-pages)
+                                 (map first mentioned-pages))
+                         (remove nil?)
+                         (set))
+        other-pages-links (mapcat
+                           (fn [page]
+                             (let [ref-pages (-> (map first (db/get-page-referenced-pages repo page))
+                                                 (set)
+                                                 (set/intersection other-pages))
+                                   mentioned-pages (-> (map first (db/get-pages-that-mentioned-page repo page show-journal))
+                                                       (set)
+                                                       (set/intersection other-pages))]
+                               (concat
+                                (map (fn [p] [page p]) ref-pages)
+                                (map (fn [p] [p page]) mentioned-pages))))
+                           other-pages)
+        links (->> (concat links other-pages-links)
+                   (remove nil?)
+                   (distinct)
+                   (build-links))
+        nodes (->> (concat [page]
+                           (map first ref-pages)
+                           (map first mentioned-pages)
+                           tags)
+                   (remove nil?)
+                   (distinct))
+        nodes (build-nodes dark? page links (set tags) nodes namespaces)
+        full-pages (db/get-all-pages repo)
+        all-pages (map db/get-original-name full-pages)
+        page-name->original-name (zipmap (map :block/name full-pages) all-pages)]
+    (normalize-page-name
+     {:nodes nodes
+      :links links
+      :page-name->original-name page-name->original-name})))
 
 (defn build-block-graph
   "Builds a citation/reference graph for a given block uuid."
   [block theme]
-  (let [dark? (= "dark" theme)]
-    (when-let [repo (state/get-current-repo)]
-      (let [ref-blocks (db/get-block-referenced-blocks block)
-            namespaces (db/get-all-namespace-relation repo)
-            links (concat
-                   (map (fn [[p _aliases]]
-                          [block p]) ref-blocks)
-                   namespaces)
-            other-blocks (->> (concat (map first ref-blocks))
-                              (remove nil?)
-                              (set))
-            other-blocks-links (mapcat
-                                (fn [block]
-                                  (let [ref-blocks (-> (map first (db/get-block-referenced-blocks block))
-                                                       (set)
-                                                       (set/intersection other-blocks))]
-                                    (concat
-                                     (map (fn [p] [block p]) ref-blocks))))
-                                other-blocks)
-            links (->> (concat links other-blocks-links)
-                       (remove nil?)
-                       (distinct)
-                       (build-links))
-            nodes (->> (concat
-                        [block]
-                        (map first ref-blocks))
-                       (remove nil?)
-                       (distinct)
-                       ;; FIXME: get block tags
-                       )
-            nodes (build-nodes dark? block links #{} nodes namespaces)]
-        (normalize-page-name
-         {:nodes nodes
-          :links links})))))
+  (let [dark? (= "dark" theme)
+        repo (state/get-current-repo)
+        ref-blocks (db/get-block-referenced-blocks block)
+        namespaces (db/get-all-namespace-relation repo)
+        links (concat
+               (map (fn [[p _aliases]] [block p]) ref-blocks)
+               namespaces)
+        other-blocks (->> (concat (map first ref-blocks))
+                          (remove nil?)
+                          (set))
+        other-blocks-links (mapcat
+                            (fn [block]
+                              (let [ref-blocks (-> (map first (db/get-block-referenced-blocks block))
+                                                   (set)
+                                                   (set/intersection other-blocks))]
+                                (map (fn [p] [block p]) ref-blocks)))
+                            other-blocks)
+        links (->> (concat links other-blocks-links)
+                   (remove nil?)
+                   (distinct)
+                   (build-links))
+        nodes (->> (concat [block]
+                           (map first ref-blocks))
+                   (remove nil?)
+                   (distinct)
+                   ;; FIXME: get block tags
+                   )
+        nodes (build-nodes dark? block links #{} nodes namespaces)]
+    (normalize-page-name
+     {:nodes nodes
+      :links links})))
 
 (defn n-hops
   "Get all nodes that are n hops from nodes (a collection of node ids)"

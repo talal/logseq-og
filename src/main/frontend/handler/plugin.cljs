@@ -244,7 +244,7 @@
                              (notification/show!
                               (str
                                (if (= :error type) "[Error]" "")
-                               (str "<" (:id payload) "> ")
+                               "<" (:id payload) "> "
                                msg) type)))
 
                          (when-not fake-error?
@@ -260,8 +260,10 @@
 
 (defn register-plugin
   [plugin-metadata]
-  (when-let [pid (keyword (:id plugin-metadata))]
-    (swap! state/state update-in [:plugin/installed-plugins] assoc pid plugin-metadata)))
+  (when (some? (:id plugin-metadata))
+    (let [raw-pid (:id plugin-metadata)
+          pid (keyword raw-pid)]
+      (swap! state/state update-in [:plugin/installed-plugins] assoc pid plugin-metadata))))
 
 (defn host-mounted!
   []
@@ -269,12 +271,13 @@
 
 (defn register-plugin-slash-command
   [pid [cmd actions]]
-  (when-let [pid (keyword pid)]
-    (when (contains? (:plugin/installed-plugins @state/state) pid)
-      (swap! state/state update-in [:plugin/installed-slash-commands pid]
-             (fnil merge {}) (hash-map cmd (mapv #(conj % {:pid pid}) actions)))
-      (state/pub-event! [:rebuild-slash-commands-list])
-      true)))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (when (contains? (:plugin/installed-plugins @state/state) pid)
+        (swap! state/state update-in [:plugin/installed-slash-commands pid]
+               (fnil merge {}) (hash-map cmd (mapv #(conj % {:pid pid}) actions)))
+        (state/pub-event! [:rebuild-slash-commands-list])
+        true))))
 
 (defn unregister-plugin-slash-command
   [pid]
@@ -317,11 +320,12 @@
 (defn register-plugin-simple-command
   ;; action => [:action-key :event-key]
   [pid {:keys [type] :as cmd} action]
-  (when-let [pid (keyword pid)]
-    (when (contains? (:plugin/installed-plugins @state/state) pid)
-      (swap! state/state update-in [:plugin/simple-commands pid]
-             (fnil conj []) [type cmd action pid])
-      true)))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (when (contains? (:plugin/installed-plugins @state/state) pid)
+        (swap! state/state update-in [:plugin/simple-commands pid]
+               (fnil conj []) [type cmd action pid])
+        true))))
 
 (defn unregister-plugin-simple-command
   [pid]
@@ -329,13 +333,14 @@
 
 (defn register-plugin-ui-item
   [pid {:keys [key type] :as opts}]
-  (when-let [pid (keyword pid)]
-    (when (contains? (:plugin/installed-plugins @state/state) pid)
-      (let [items (or (get-in @state/state [:plugin/installed-ui-items pid]) [])
-            items (filter #(not= key (:key (second %))) items)]
-        (swap! state/state assoc-in [:plugin/installed-ui-items pid]
-               (conj items [type opts pid])))
-      true)))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (when (contains? (:plugin/installed-plugins @state/state) pid)
+        (let [items (or (get-in @state/state [:plugin/installed-ui-items pid]) [])
+              items (filter #(not= key (:key (second %))) items)]
+          (swap! state/state assoc-in [:plugin/installed-ui-items pid]
+                 (conj items [type opts pid])))
+        true))))
 
 (defn unregister-plugin-ui-items
   [pid]
@@ -343,19 +348,21 @@
 
 (defn register-plugin-resources
   [pid type {:keys [key] :as opts}]
-  (when-let [pid (keyword pid)]
-    (when-let [type (and key (keyword type))]
-      (let [path [:plugin/installed-resources pid type]]
-        (when (contains? #{:error nil} (get-in @state/state (conj path key)))
-          (swap! state/state update-in path
-                 (fnil assoc {}) key (merge opts {:pid pid}))
-          true)))))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (when-let [type (and key (keyword type))]
+        (let [path [:plugin/installed-resources pid type]]
+          (when (contains? #{:error nil} (get-in @state/state (conj path key)))
+            (swap! state/state update-in path
+                   (fnil assoc {}) key (merge opts {:pid pid}))
+            true))))))
 
 (defn unregister-plugin-resources
   [pid]
-  (when-let [pid (keyword pid)]
-    (swap! state/state medley/dissoc-in [:plugin/installed-resources pid])
-    true))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (swap! state/state medley/dissoc-in [:plugin/installed-resources pid])
+      true)))
 
 (defn register-plugin-search-service
   [pid name opts]
@@ -364,8 +371,9 @@
 
 (defn unregister-plugin-search-services
   [pid]
-  (when-let [pid (keyword pid)]
-    (state/uninstall-plugin-service pid :search)))
+  (when (some? pid)
+    (let [pid (keyword pid)]
+      (state/uninstall-plugin-service pid :search))))
 
 (defn unregister-plugin-themes
   ([pid] (unregister-plugin-themes pid true))

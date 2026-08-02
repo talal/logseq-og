@@ -8,7 +8,7 @@
             [frontend.db.model :as db-model]
             [frontend.regex :as regex]
             [frontend.search.agency :as search-agency]
-            [frontend.search.db :as search-db :refer [indices]]
+            [frontend.search.db :as search-db]
             [frontend.search.protocol :as protocol]
             [frontend.state :as state]
             [frontend.util :as util]
@@ -137,24 +137,24 @@
   ([q]
    (page-search q 100))
   ([q limit]
-   (when-let [repo (state/get-current-repo)]
-     (let [q (util/search-normalize q (state/enable-search-remove-accents?))
-           q (clean-str q)]
-       (when-not (string/blank? q)
-         (let [indice (or (get-in @indices [repo :pages])
-                          (search-db/make-pages-title-indice!))
-               result (->> (.search indice q (clj->js {:limit limit}))
-                           (bean/->clj))]
-           (->> result
-                (util/distinct-by (fn [i] (string/trim (get-in i [:item :name]))))
-                (map
-                 (fn [{:keys [item]}]
-                   (:original-name item)))
-                (remove nil?)
-                (map string/trim)
-                (distinct)
-                (filter (fn [original-name]
-                          (exact-matched? q original-name))))))))))
+   (let [repo (state/get-current-repo)
+         q (util/search-normalize q (state/enable-search-remove-accents?))
+         q (clean-str q)]
+     (when-not (string/blank? q)
+       (let [indice (or (get-in @search-db/indices [repo :pages])
+                        (search-db/make-pages-title-indice!))
+             result (->> (.search indice q (clj->js {:limit limit}))
+                         (bean/->clj))]
+         (->> result
+              (util/distinct-by (fn [i] (string/trim (get-in i [:item :name]))))
+              (map
+               (fn [{:keys [item]}]
+                 (:original-name item)))
+              (remove nil?)
+              (map string/trim)
+              (distinct)
+              (filter (fn [original-name]
+                        (exact-matched? q original-name)))))))))
 
 (defn file-search
   ([q]
@@ -351,14 +351,14 @@
          (p/let [blocks (protocol/rebuild-blocks-indice! engine)]
            (let [result {:pages         page-titles ;; TODO: rename key to :page-titles
                          :blocks        blocks}]
-             (swap! indices assoc repo result)
-             indices)))))))
+             (swap! search-db/indices assoc repo result)
+             search-db/indices)))))))
 
 (defn reset-indice!
   [repo]
   (when-let [engine (get-engine repo)]
     (protocol/truncate-blocks! engine))
-  (swap! indices assoc-in [repo :pages] nil))
+  (swap! search-db/indices assoc-in [repo :pages] nil))
 
 (defn remove-db!
   [repo]

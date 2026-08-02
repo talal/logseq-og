@@ -61,7 +61,6 @@
 (defn- watch-for-date!
   []
   (let [f (fn []
-            #_:clj-kondo/ignore
             (let [repo (state/get-current-repo)]
               (when (and (not (state/nfs-refreshing?))
                          (not (contains? (:file/unlinked-dirs @state/state)

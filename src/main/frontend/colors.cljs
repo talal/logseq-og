@@ -10,7 +10,7 @@
   ; ([value])
   ([color value] (variable color value false))
   ([color value alpha?]
-   (str "var(--rx-" (name color) "-" (cond-> value keyword? name) (if alpha? "-alpha" "") ")")))
+   (str "var(--rx-" (name color) "-" (cond-> value (keyword? value) name) (if alpha? "-alpha" "") ")")))
 
 (defn linear-gradient [color-name color-stop gradient-level]
   (let [color-index (.indexOf color-list color-name)

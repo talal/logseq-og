@@ -1084,7 +1084,7 @@
          [:label.flex.font-medium.leading-5.self-start.mt-1
           (ui/icon  (if logged-in? "lock-open" "lock") {:class "mr-1"}) (t :settings-page/beta-features)]]
         [:div.flex.flex-col.gap-4
-         {:class (when-not user-handler/alpha-or-beta-user? "opacity-50 pointer-events-none cursor-not-allowed")}
+         {:class (when-not (user-handler/alpha-or-beta-user?) "opacity-50 pointer-events-none cursor-not-allowed")}
          (sync-switcher-row enable-sync?)
          (when enable-sync?
            (sync-diff-merge-switcher-row enable-sync-diff-merge?))
@@ -1179,7 +1179,7 @@
             [:li.settings-menu-item
              {:key      text
               :data-id  id
-              :class    (util/classnames [{:active (= label (first @*active))}])
+              :class    (classnames [{:active (= label (first @*active))}])
               :on-click #(reset! *active [label (first @*active)])}
 
              [:a.flex.items-center.settings-menu-link icon [:strong text]]]))]]

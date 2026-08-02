@@ -85,7 +85,7 @@
 
   (safe-api-call "setCurrentGraph"
                  (fn []
-                   (when-let [graph (state/get-current-repo)]
+                   (let [graph (state/get-current-repo)]
                      (ipc/ipc :setCurrentGraph graph))))
 
   (safe-api-call "redirect"

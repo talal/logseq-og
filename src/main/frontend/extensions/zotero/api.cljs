@@ -100,7 +100,7 @@
 (defn all-top-items-count []
   (go
     (:count
-     (<! (get* (config) (str "/items/top")
+     (<! (get* (config) "/items/top"
                {:limit     1
                 :item-type "-attachment"})))))
 
@@ -108,7 +108,7 @@
   (go-loop [start "0"
             result-acc []]
     (let [{:keys [success next result]}
-          (<! (get* (config) (str "/items/top")
+          (<! (get* (config) "/items/top"
                     {:item-type "-attachment"
                      :start     start}))]
       (cond
@@ -126,7 +126,7 @@
   ([term]
    (query-top-items term "0"))
   ([term start]
-   (get* (config) (str "/items/top")
+   (get* (config) "/items/top"
          {:qmode     "everything"
           :q         term
           :limit     10

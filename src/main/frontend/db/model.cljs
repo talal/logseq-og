@@ -65,7 +65,7 @@
 
 (defn sub-block
   [id]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (->
      (react/q repo [:frontend.db.react/block id]
               {:query-fn (fn [_]
@@ -257,7 +257,7 @@
 
 (defn get-custom-css
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (get-file repo "logseq/custom.css")))
 
 (defn get-block-by-uuid
@@ -987,7 +987,7 @@ independent of format as format specific heading characters are stripped"
   ([file-path]
    (get-file-page file-path true))
   ([file-path original-name?]
-   (when-let [repo (state/get-current-repo)]
+   (let [repo (state/get-current-repo)]
      (when-let [db (conn/get-db repo)]
        (some->
         (d/q
@@ -1023,7 +1023,7 @@ independent of format as format specific heading characters are stripped"
 
 (defn get-file-page-id
   [file-path]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when-let [db (conn/get-db repo)]
       (some->
        (d/q
@@ -1292,7 +1292,7 @@ independent of format as format specific heading characters are stripped"
                               (tf/unparse date-format)
                               (parse-long))]
       (when future-day
-        (when-let [repo (state/get-current-repo)]
+        (let [repo (state/get-current-repo)]
           (->> (react/q repo [:custom :scheduled-deadline journal-title]
                  {:use-cache? false}
                  '[:find [(pull ?block ?block-attrs) ...]
@@ -1324,7 +1324,7 @@ independent of format as format specific heading characters are stripped"
 
 (defn get-page-unlinked-references
   [page]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when (conn/get-db repo)
       (let [page (util/safe-page-name-sanity-lc page)
             page-id     (:db/id (db-utils/entity [:block/name page]))
@@ -1353,7 +1353,7 @@ independent of format as format specific heading characters are stripped"
   ([block-uuid]
    (get-block-referenced-blocks block-uuid {}))
   ([block-uuid options]
-   (when-let [repo (state/get-current-repo)]
+   (let [repo (state/get-current-repo)]
      (when (conn/get-db repo)
        (let [block (db-utils/entity [:block/uuid block-uuid])
              query-result (->> (react/q repo [:frontend.db.react/refs

@@ -173,8 +173,7 @@
                         (reset! *dragging? false))]
       (.on pixi-graph "nodeMousedown"
            (fn [event node-key]
-             #_:clj-kondo/ignore
-             (when-let [node (.get nodes node-key)]
+             (when (.get nodes node-key)
                (when-let [s @*simulation]
                  (when-not (or (.-active event)
                                @*simulation-paused?)

@@ -584,7 +584,7 @@
          [:div {:class "pl-1.5 text-gray-12 rounded-full"
                 :style {:font-size "0.7rem"}}
           (if (<= 100 (count items))
-            (str "99+")
+            "99+"
             (count items))])
 
        [:div {:class "flex-1"}]

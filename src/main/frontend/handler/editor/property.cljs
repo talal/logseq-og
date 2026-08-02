@@ -76,9 +76,7 @@
 (defn batch-set-block-property!
   "col: a collection of [block-id property-key property-value]."
   [col]
-  #_:clj-kondo/ignore
-  (when-let [repo (state/get-current-repo)]
-    (let [col' (group-by first col)]
+  (let [col' (group-by first col)]
       (outliner-tx/transact!
        {:outliner-op :save-block}
        (doseq [[block-id items] col']
@@ -111,7 +109,7 @@
                           :block/content content}]
                (outliner-core/save-block! block)))))))
 
-    (let [block-id (ffirst col)
+  (let [block-id (ffirst col)
           block-id (if (string? block-id) (uuid block-id) block-id)
           input-pos (or (state/get-edit-pos) :max)]
       ;; update editing input content
@@ -119,7 +117,7 @@
         (when (= (:block/uuid editing-block) block-id)
           (edit-block! editing-block
                        input-pos
-                       (state/get-edit-input-id)))))))
+                       (state/get-edit-input-id))))))
 
 (defn batch-add-block-property!
   [block-ids property-key property-value]

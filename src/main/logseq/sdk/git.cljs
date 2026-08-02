@@ -13,7 +13,7 @@
 
 (defn ^:export load_ignore_file
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (p/let [file ".gitignore"
             dir (config/get-repo-dir repo)
             _ (fs/create-if-not-exists repo dir file)

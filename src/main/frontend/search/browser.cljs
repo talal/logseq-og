@@ -1,7 +1,7 @@
 (ns frontend.search.browser
   "Browser implementation of search protocol"
   (:require [cljs-bean.core :as bean]
-            [frontend.search.db :as search-db :refer [indices]]
+            [frontend.search.db :as search-db]
             [frontend.search.protocol :as protocol]
             [goog.object :as gobj]
             [promesa.core :as p]))
@@ -11,7 +11,7 @@
 (defn search-blocks
   [repo q {:keys [limit page]
             :or {limit 20}}]
-  (let [indice (or (get-in @indices [repo :blocks])
+  (let [indice (or (get-in @search-db/indices [repo :blocks])
                    (search-db/make-blocks-indice! repo))
         result
         (if page
@@ -54,6 +54,6 @@
              indice)))
   (transact-pages! [_this _data] nil) ;; Page index is not available with fuse.js until sufficient performance benchmarking
   (truncate-blocks! [_this]
-    (swap! indices assoc-in [repo :blocks] nil))
+    (swap! search-db/indices assoc-in [repo :blocks] nil))
   (remove-db! [_this]
     nil))

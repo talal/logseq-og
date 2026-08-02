@@ -703,10 +703,10 @@
                 blocks (if @*random-mode? (shuffle blocks) blocks)]
             (view-fn blocks
                      (merge config
-                            (merge options
-                                   {:random-mode? @*random-mode?
-                                    :preview? @*preview-mode?
-                                    :callback callback-fn}))
+                            options
+                            {:random-mode? @*random-mode?
+                             :preview? @*preview-mode?
+                             :callback callback-fn})
                      *card-index))]])
       (if (:global? config)
         [:div.ls-card.content

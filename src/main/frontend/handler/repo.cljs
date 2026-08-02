@@ -1,6 +1,5 @@
 (ns frontend.handler.repo
   "System-component-like ns that manages user's repos/graphs"
-  (:refer-clojure :exclude [clone])
   (:require [clojure.string :as string]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
@@ -422,7 +421,7 @@
 
 (defn re-index!
   [nfs-rebuild-index! ok-handler]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (state/reset-parsing-state!)
     (let [dir (config/get-repo-dir repo)]
       (when-not (state/unlinked-dir? dir)

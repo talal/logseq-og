@@ -2,7 +2,6 @@
   "common fns for exporting.
   exclude some fns which produce lazy-seq, which can cause strange behaviors
   when use together with dynamic var."
-  (:refer-clojure :exclude [map filter mapcat concat remove])
   (:require [cljs.core.match :refer [match]]
             [clojure.string :as string]
             [datascript.core :as d]

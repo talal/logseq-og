@@ -291,8 +291,6 @@
                            (notification/clear! uid))
                :icon "x"})]]]]]])))
 
-(declare button)
-
 (rum/defc notification-clear-all
   []
   [:div.ui__notifications-content

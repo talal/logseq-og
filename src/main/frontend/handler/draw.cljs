@@ -1,6 +1,5 @@
 (ns frontend.handler.draw
   "Provides util handler fns for drawing"
-  (:refer-clojure :exclude [load-file])
   (:require [frontend.config :as config]
             [frontend.date :as date]
             [frontend.db :as db]
@@ -16,32 +15,31 @@
   (when repo
     (let [repo-dir (config/get-repo-dir repo)]
       (util/p-handle
-       (fs/mkdir! (str repo-dir (str "/" gp-config/default-draw-directory)))
+       (fs/mkdir! (str repo-dir "/" gp-config/default-draw-directory))
        (fn [_result] nil)
        (fn [_error] nil)))))
 
 (defn save-excalidraw!
   [file data]
   (let [path file
-        repo (state/get-current-repo)]
-    (when repo
-      (let [repo-dir (config/get-repo-dir repo)]
-        (->
-         (p/do!
-          (create-draws-directory! repo)
-          (fs/write-plain-text-file! repo repo-dir path data nil)
-          (db/transact! repo
-                        [{:file/path path
-                          :block/name (util/page-name-sanity-lc file)
-                          :block/file {:file/path path}
-                          :block/journal? false}]))
-         (p/catch (fn [error]
-                    (prn "Write file failed, path: " path ", data: " data)
-                    (js/console.dir error))))))))
+        repo (state/get-current-repo)
+        repo-dir (config/get-repo-dir repo)]
+    (->
+     (p/do!
+      (create-draws-directory! repo)
+      (fs/write-plain-text-file! repo repo-dir path data nil)
+      (db/transact! repo
+                    [{:file/path path
+                      :block/name (util/page-name-sanity-lc file)
+                      :block/file {:file/path path}
+                      :block/journal? false}]))
+     (p/catch (fn [error]
+                (prn "Write file failed, path: " path ", data: " data)
+                (js/console.dir error))))))
 
 (defn load-excalidraw-file
   [file ok-handler]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (util/p-handle
      (file-handler/load-file repo file)
      (fn [content]
@@ -61,7 +59,7 @@
 
 (defn create-draw-with-default-content
   [current-file]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (p/let [exists? (fs/file-exists? (config/get-repo-dir repo)
                                      (str gp-config/default-draw-directory current-file))]
       (when-not exists?

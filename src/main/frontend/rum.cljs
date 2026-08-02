@@ -3,7 +3,7 @@
   (:require [clojure.string :as s]
             [clojure.set :as set]
             [clojure.walk :as w]
-            [rum.core :refer [use-state use-effect!] :as rum]
+            [rum.core :as rum]
             [daiquiri.interpreter :as interpreter]
             [cljs-bean.core :as bean]))
 
@@ -67,8 +67,8 @@
 
 (defn use-atom-fn
   [a getter-fn setter-fn]
-  (let [[val set-val] (use-state (getter-fn @a))]
-    (use-effect!
+  (let [[val set-val] (rum/use-state (getter-fn @a))]
+    (rum/use-effect!
       (fn []
         (let [id (str (random-uuid))]
           (add-watch a id (fn [_ _ prev-state next-state]
@@ -88,7 +88,7 @@
 (defn use-mounted
   []
   (let [*mounted (rum/use-ref false)]
-    (use-effect!
+    (rum/use-effect!
       (fn []
          (rum/set-ref! *mounted true)
          #(rum/set-ref! *mounted false))

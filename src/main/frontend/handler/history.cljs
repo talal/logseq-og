@@ -10,8 +10,7 @@
 (defn restore-cursor!
   [{:keys [last-edit-block container pos]}]
   (when (and container last-edit-block)
-    #_:clj-kondo/ignore
-    (when-let [container (gdom/getElement container)]
+    (when (gdom/getElement container)
       (when-let [block-uuid (:block/uuid last-edit-block)]
         (when-let [block (db/pull [:block/uuid block-uuid])]
           (editor/edit-block! block pos

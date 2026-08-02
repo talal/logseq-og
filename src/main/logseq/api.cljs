@@ -138,15 +138,14 @@
 
 (def ^:export get_current_graph_templates
   (fn []
-    (when (state/get-current-repo)
-      (some-> (db-model/get-all-templates)
-              (update-vals db/pull)
-              (sdk-utils/normalize-keyword-for-json)
-              (bean/->js)))))
+    (some-> (db-model/get-all-templates)
+            (update-vals db/pull)
+            (sdk-utils/normalize-keyword-for-json)
+            (bean/->js))))
 
 (def ^:export get_current_graph
   (fn []
-    (when-let [repo (state/get-current-repo)]
+    (let [repo (state/get-current-repo)]
       (when-not (= config/local-repo repo)
         (bean/->js {:url  repo
                     :name (util/node-path.basename repo)
@@ -792,8 +791,9 @@
 
 (defn ^:export get_pages_tree_from_namespace
   [ns]
-  (when-let [repo (and ns (state/get-current-repo))]
-    (when-let [pages (db-model/get-namespace-hierarchy repo ns)]
+  (when ns
+    (let [repo (state/get-current-repo)
+          pages (db-model/get-namespace-hierarchy repo ns)]
       (bean/->js (sdk-utils/normalize-keyword-for-json pages)))))
 
 (defn first-child-of-block
@@ -858,14 +858,14 @@
 ;; db
 (defn ^:export q
   [query-string]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when-let [result (query-dsl/query repo query-string
                                        {:disable-reactive? true})]
       (bean/->js (sdk-utils/normalize-keyword-for-json (flatten @result))))))
 
 (defn ^:export datascript_query
   [query & inputs]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when-let [db (db/get-db repo)]
       (let [query           (cljs.reader/read-string query)
             resolved-inputs (map #(cond
@@ -890,7 +890,7 @@
 
 (defn ^:export download_graph_db
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when-let [db (db/get-db repo)]
       (let [db-str   (if db (db/db->string db) "")
             data-str (str "data:text/edn;charset=utf-8," (js/encodeURIComponent db-str))]
@@ -901,7 +901,7 @@
 
 (defn ^:export download_graph_pages
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (export-handler/export-repo-as-zip! repo)))
 
 (defn ^:export exec_git_command

@@ -91,7 +91,7 @@
      (notification/show!
       "Write file failed, can't find the current page!"
       :error)
-     (when-let [repo (state/get-current-repo)]
+     (let [repo (state/get-current-repo)]
        (if (:graph/importing @state/state) ; write immediately
          (write-files! [[repo page-db-id outliner-op]])
          (async/put! (state/get-file-write-chan) [repo page-db-id outliner-op (tc/to-long (t/now))]))))))

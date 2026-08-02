@@ -205,7 +205,7 @@
 
 (defn contents-page
   [page]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (page-blocks-cp repo page {:sidebar? true})))
 
 (rum/defc today-queries < rum/reactive
@@ -1036,7 +1036,7 @@
         *indeterminate (rum/derived-atom
                         [*checks] ::indeterminate
                         (fn [checks]
-                          (when-let [checks (vals checks)]
+                          (let [checks (vals checks)]
                             (if (every? true? checks)
                               1 (if (some true? checks) -1 0)))))
 

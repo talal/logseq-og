@@ -16,7 +16,7 @@
             [cljs-bean.core :as bean]
             [cljs-time.coerce :as tc]
             [cljs-time.core :as t]
-            [clojure.pprint]
+            [clojure.pprint :as pprint]
             [dommy.core :as d]
             [frontend.mobile.util :as mobile-util]
             [logseq.graph-parser.util :as gp-util]
@@ -32,7 +32,7 @@
             [frontend.pubsub :as pubsub]))
   #?(:cljs (:import [goog.async Debouncer]))
   (:require
-   [clojure.pprint]
+   [clojure.pprint :as pprint]
    [clojure.string :as string]
    [clojure.walk :as walk]))
 
@@ -66,7 +66,7 @@
   "Replace all `strings/join` used to construct paths with this function to reduce lint output.
   https://github.com/logseq/logseq/pull/8679"
   [parts]
-  (string/join "/" parts))
+  (apply str (interpose "/" parts)))
 
 #?(:cljs
    (defn safe-re-find
@@ -303,7 +303,7 @@
 #?(:cljs
    (defn safe-parse-int
      "Use if arg could be an int or string. If arg is only a string, use `parse-long`."
-     {:malli/schema [:=> [:cat [:or :int :string]] :int]}
+     {:malli/schema [:=> [:cat [:or :int :string]] [:or :nil :int]]}
      [x]
      (if (string? x)
        (parse-long x)
@@ -958,8 +958,7 @@
   (str (rand-str 6) (rand-str 3)))
 
 (defn pp-str [x]
-  #_:clj-kondo/ignore
-  (with-out-str (clojure.pprint/pprint x)))
+  (with-out-str (pprint/pprint x)))
 
 (defn hiccup-keywordize
   [hiccup]
@@ -1218,7 +1217,7 @@
           (cons x (inner xs))))))
    coll))
 
-(def pprint clojure.pprint/pprint)
+(def pprint pprint/pprint)
 
 #?(:cljs
    (defn backward-kill-word

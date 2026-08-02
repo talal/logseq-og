@@ -106,7 +106,7 @@
               (enable-beta-features!)
               (async/<! (file-sync-handler/load-session-graphs))
               (p/let [repos (repo-handler/refresh-repos!)]
-                (when-let [repo (state/get-current-repo)]
+                (let [repo (state/get-current-repo)]
                   (when (some #(and (= (:url %) repo)
                                     (vector? (:sync-meta %))
                                     (util/uuid-string? (first (:sync-meta %)))
@@ -261,7 +261,7 @@
 
 (defn get-local-repo
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when (config/local-db? repo)
       repo)))
 
@@ -373,7 +373,7 @@
 
 (defmethod handle :file/not-matched-from-disk [[_ path disk-content db-content]]
   (state/clear-edit!)
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when (and disk-content db-content
                (not= (util/trim-safe disk-content) (util/trim-safe db-content)))
       (state/set-modal! #(diff/local-file repo path disk-content db-content)
@@ -518,7 +518,7 @@
       app-id)))
 
 (defmethod handle :validate-appId [[_ graph-switch-f graph]]
-  (when-let [deprecated-repo (or graph (state/get-current-repo))]
+  (let [deprecated-repo (or graph (state/get-current-repo))]
     (if (mobile-util/in-iCloud-container-path? deprecated-repo)
       ;; Installation is not changed for iCloud
       (when graph-switch-f

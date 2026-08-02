@@ -756,8 +756,7 @@
 
 (defn cycle-todo!
   []
-  #_:clj-kondo/ignore
-  (if-let [blocks (seq (get-selected-blocks))]
+  (if (seq (get-selected-blocks))
     (cycle-todos!)
     (when (state/get-edit-block)
       (let [edit-input-id (state/get-edit-input-id)
@@ -1327,7 +1326,7 @@
    ;; non English input method
    (when-not (or (state/editor-in-composition?)
                  (:editor/skip-saving-current-block? @state/state))
-     (when (state/get-current-repo)
+     (let [_repo (state/get-current-repo)]
        (when-not (state/get-editor-action)
          (try
            (let [input-id (state/get-edit-input-id)
@@ -1517,15 +1516,13 @@
 
    Requires editing state"
   [file-path]
-  (if-let [current-file-rpath (or (db-model/get-block-file-path (state/get-edit-block))
-                                  ;; fix dummy file path of page
-                                  (when (config/get-pages-directory)
-                                    (path/path-join (config/get-pages-directory) "_.md"))
-                                  "pages/contents.md")]
-    (let [repo-dir (config/get-repo-dir (state/get-current-repo))
-          current-file-fpath (path/path-join repo-dir current-file-rpath)]
-      (path/get-relative-path current-file-fpath file-path))
-    file-path))
+  (let [current-file-rpath (or (db-model/get-block-file-path (state/get-edit-block))
+                               ;; fix dummy file path of page
+                               (path/path-join (config/get-pages-directory) "_.md")
+                               "pages/contents.md")
+        repo-dir (config/get-repo-dir (state/get-current-repo))
+        current-file-fpath (path/path-join repo-dir current-file-rpath)]
+    (path/get-relative-path current-file-fpath file-path)))
 
 (defn upload-asset
   "Paste asset and insert link to current editing block"
@@ -1594,26 +1591,25 @@
         selected (util/get-selected-text)
         postfix (str selected value)
         value (str prefix postfix)
-        input (gdom/getElement input-id)]
-    (when value
-      (let [[prefix _pos] (commands/simple-replace! input-id value selected
-                                                    {:backward-pos (count postfix)
-                                                     :check-fn (fn [new-value prefix-pos]
-                                                                 (when (>= prefix-pos 0)
-                                                                   [(subs new-value prefix-pos (+ prefix-pos 2))
-                                                                    (+ prefix-pos 2)]))})]
-        (cond
-          (= prefix page-ref/left-brackets)
-          (do
-            (commands/handle-step [:editor/search-page])
-            (state/set-editor-action-data! {:pos (cursor/get-caret-pos input)
-                                            :selected selected}))
+        input (gdom/getElement input-id)
+        [prefix _pos] (commands/simple-replace! input-id value selected
+                                                 {:backward-pos (count postfix)
+                                                  :check-fn (fn [new-value prefix-pos]
+                                                              (when (>= prefix-pos 0)
+                                                                [(subs new-value prefix-pos (+ prefix-pos 2))
+                                                                 (+ prefix-pos 2)]))})]
+    (cond
+      (= prefix page-ref/left-brackets)
+      (do
+        (commands/handle-step [:editor/search-page])
+        (state/set-editor-action-data! {:pos (cursor/get-caret-pos input)
+                                        :selected selected}))
 
-          (= prefix block-ref/left-parens)
-          (do
-            (commands/handle-step [:editor/search-block :reference])
-            (state/set-editor-action-data! {:pos (cursor/get-caret-pos input)
-                                            :selected selected})))))))
+      (= prefix block-ref/left-parens)
+      (do
+        (commands/handle-step [:editor/search-block :reference])
+        (state/set-editor-action-data! {:pos (cursor/get-caret-pos input)
+                                        :selected selected})))))
 
 (defn surround-by?
   [input before end]
@@ -2883,8 +2879,8 @@
         (keydown-backspace-handler false e)
 
         (and (= key "#")
-             (and (> pos 0)
-                  (= "#" (util/nth-safe value (dec pos)))))
+             (> pos 0)
+             (= "#" (util/nth-safe value (dec pos))))
         (state/clear-editor-action!)
 
         (and (contains? (set/difference (set (keys reversed-autopair-map))
@@ -3482,10 +3478,8 @@
 (defn- set-blocks-collapsed!
   [block-ids value]
   (let [block-ids (map (fn [block-id] (if (string? block-id) (uuid block-id) block-id)) block-ids)
-        repo (state/get-current-repo)
         value (boolean value)]
-    (when repo
-      (save-current-block!) ;; Save the input contents before collapsing
+    (save-current-block!) ;; Save the input contents before collapsing
       (outliner-tx/transact! ;; Save the new collapsed state as an undo transaction (if it changed)
        {:outliner-op :collapse-expand-blocks}
        (doseq [block-id block-ids]
@@ -3495,8 +3489,8 @@
                (let [block {:block/uuid block-id
                             :block/collapsed? value}]
                  (outliner-core/save-block! block)))))))
-      (doseq [block-id block-ids]
-        (state/set-collapsed-block! block-id value)))))
+    (doseq [block-id block-ids]
+      (state/set-collapsed-block! block-id value))))
 
 (defn collapse-block! [block-id]
   (when (collapsable? block-id)

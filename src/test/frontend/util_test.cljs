@@ -1,8 +1,16 @@
 (ns frontend.util-test
   (:require [cljs.test :refer [deftest is testing]]
+            [clojure.string :as string]
+            [frontend.colors :as colors]
             [frontend.util :as util]
             [frontend.config :as config]
             [frontend.modules.shortcut.data-helper :as shortcut-data-helper]))
+
+(deftest test-pp-str
+  (testing "pretty-printing returns the same readable representation"
+    (let [printed (util/pp-str {:foo "bar"})]
+      (is (string/starts-with? printed "{:foo \"bar\"}"))
+      (is (string/ends-with? printed "\n")))))
 
 (deftest test-find-first
   (testing "find-first"
@@ -114,3 +122,15 @@
     (is (= (config/ext-of-image? "file.svg") true))
     (is (= (config/ext-of-image? "a.file.png") true))
     (is (= (config/ext-of-image? "file.tiff") false))))
+
+(deftest test-color-variable-values
+  (testing "color variables accept keyword, string, and numeric values"
+    (is (= "var(--rx-red-09)" (colors/variable :red :09)))
+    (is (= "var(--rx-red-09)" (colors/variable :red "09")))
+    (is (= "var(--rx-red-9)" (colors/variable :red 9)))))
+
+(deftest test-safe-parse-int
+  (testing "invalid numeric strings return nil"
+    (is (nil? (util/safe-parse-int "not-a-number"))))
+  (testing "numeric values pass through unchanged"
+    (is (= 42 (util/safe-parse-int 42)))))

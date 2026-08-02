@@ -122,6 +122,12 @@
     (let [old-path (path/url-to-path old-path)
           new-path (path/url-to-path new-path)]
       (js/window.pfs.rename old-path new-path)))
+  (copy! [_this _repo old-path new-path]
+    (let [old-path (path/url-to-path old-path)
+          new-path (path/url-to-path new-path)]
+      (p/let [content (js/window.pfs.readFile old-path)
+              _ (<ensure-dir! (path/parent new-path))]
+        (js/window.pfs.writeFile new-path content))))
   (stat [_this fpath]
     (let [fpath (path/url-to-path fpath)]
       (js/window.pfs.stat fpath)))

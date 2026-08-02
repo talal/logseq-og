@@ -205,10 +205,8 @@
 
 (defn del-ref-block!
   [{:keys [id]}]
-  #_:clj-kondo/ignore
-  (when-let [repo (state/get-current-repo)]
-    (when-let [block (db-model/get-block-by-uuid id)]
-      (editor-handler/delete-block-aux! block true))))
+  (when-let [block (db-model/get-block-by-uuid id)]
+    (editor-handler/delete-block-aux! block true)))
 
 (defn copy-hl-ref!
   [highlight ^js viewer]

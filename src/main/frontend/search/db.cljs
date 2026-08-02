@@ -64,8 +64,7 @@
 
 (defn build-blocks-indice
   ;; TODO: Remove repo effects fns further up the call stack. db fns need standardization on taking connection
-  #_:clj-kondo/ignore
-  [repo]
+  [_repo]
   (->> (db/get-all-block-contents)
        (map block->index)
        (remove nil?)
@@ -104,17 +103,17 @@
    Rename from the page indice since 10.25.2022, since this is only used for page title search.
    From now on, page indice is talking about page content search."
   []
-  (when-let [repo (state/get-current-repo)]
-    (let [pages (->> (db/get-pages (state/get-current-repo))
+  (let [repo (state/get-current-repo)
+        pages (->> (db/get-pages repo)
                      (remove string/blank?)
                      (map original-page-name->index)
                      (bean/->js))
-          indice (fuse. pages
-                        (clj->js {:keys ["name"]
-                                  :shouldSort true
-                                  :tokenize true
-                                  :distance 1024
-                                  :threshold 0.5 ;; search for 50% match from the start
-                                  :minMatchCharLength 1}))]
-      (swap! indices assoc-in [repo :pages] indice)
-      indice)))
+        indice (fuse. pages
+                      (clj->js {:keys ["name"]
+                                :shouldSort true
+                                :tokenize true
+                                :distance 1024
+                                :threshold 0.5 ;; search for 50% match from the start
+                                :minMatchCharLength 1}))]
+    (swap! indices assoc-in [repo :pages] indice)
+    indice))

@@ -138,7 +138,7 @@
       {:graph test-db}
       (outliner-core/move-blocks! [(get-block 3)] (get-block 14) true))
     (is (= [6 9] (get-children 2)))
-    (is (= [13 14 3 15] (get-children 12))))
+    (is (= [13 14 3 15] (get-children 12)))))
 
   (deftest test-move-block-as-first-child
     (testing "
@@ -159,7 +159,7 @@
         {:graph test-db}
         (outliner-core/move-blocks! [(get-block 3)] (get-block 12) false))
       (is (= [6 9] (get-children 2)))
-      (is (= [3 13 14 15] (get-children 12))))))
+      (is (= [3 13 14 15] (get-children 12)))))
 
 (deftest test-indent-blocks
   (testing "

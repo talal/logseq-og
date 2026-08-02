@@ -63,7 +63,7 @@
 
 (defn download-file!
   [file-path]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when-let [content (get-file-content repo file-path)]
       (let [data (js/Blob. ["\ufeff" (array content)] ; prepend BOM
                            (clj->js {:type "text/plain;charset=utf-8,"}))

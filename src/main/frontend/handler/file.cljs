@@ -214,7 +214,7 @@
                                (p/catch (fn [error]
                                           (state/pub-event! [:notification/show
                                                              {:content (str "Failed to save the file " path ". Error: "
-                                                                            (str error))
+                                                                            error)
                                                               :status :error
                                                               :clear? false}])
                                           (state/pub-event! [:capture-error
@@ -252,7 +252,7 @@
 
 (defn watch-for-current-graph-dir!
   []
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (when-let [dir (config/get-repo-dir repo)]
       ;; An unwatch shouldn't be needed on startup. However not having this
       ;; after an app refresh can cause stale page data to load

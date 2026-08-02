@@ -71,19 +71,17 @@
 
 (defn import-from-roam-json!
   [data finished-ok-handler]
-  (when-let [repo (state/get-current-repo)]
-    (let [files (external/to-markdown-files :roam data {})]
-      (index-files! repo files
-                    (fn []
-                      (finished-ok-handler))))))
+  (let [repo (state/get-current-repo)
+        files (external/to-markdown-files :roam data {})]
+    (index-files! repo files
+                  (fn []
+                    (finished-ok-handler)))))
 
 
 ;;; import OPML files
 (defn import-from-opml!
   [data finished-ok-handler]
-  #_:clj-kondo/ignore
-  (when-let [repo (state/get-current-repo)]
-    (let [config (gp-mldoc/default-config :markdown)
+  (let [config (gp-mldoc/default-config :markdown)
           [headers parsed-blocks] (mldoc/opml->edn config data)
           ;; add empty pos metadata
           parsed-blocks (map (fn [b] [b {}]) parsed-blocks)
@@ -107,7 +105,7 @@
          parsed-blocks
          {:target-block target-block
           :sibling? sibling?})
-        (finished-ok-handler [page-name])))))
+        (finished-ok-handler [page-name]))))
 
 (defn create-page-with-exported-tree!
   "Create page from the per page object generated in `export-repo-as-edn-v2!`

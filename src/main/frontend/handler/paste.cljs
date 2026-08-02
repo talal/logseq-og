@@ -79,7 +79,7 @@
               (some (fn [[start-index matched-text]]
                       (and (<= start-index selection-start)
                            (>= (+ start-index (count matched-text)) selection-end)
-                           (clojure.string/includes? matched-text selection))))
+                           (string/includes? matched-text selection))))
               some?))))
 
 ;; See https://developer.chrome.com/blog/web-custom-formats-for-the-async-clipboard-api/

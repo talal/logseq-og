@@ -16,7 +16,7 @@
 
 (rum/defc export
   []
-  (when-let [current-repo (state/get-current-repo)]
+  (let [current-repo (state/get-current-repo)]
     [:div.export
      [:h1.title (t :export)]
      [:ul.mr-1
@@ -95,7 +95,7 @@
         page? (string? block-uuids-or-page-name)
         selector (if page?
                    "#main-content-container"
-                   (str "[blockid='" (str (first block-uuids-or-page-name)) "']"))
+                   (str "[blockid='" (first block-uuids-or-page-name) "']"))
         container  (js/document.querySelector selector)
         scale (if page? (/ 1 (or zoom (get-zoom-level block-uuids-or-page-name))) 1)
         options #js {:allowTaint true

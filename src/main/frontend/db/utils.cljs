@@ -107,5 +107,5 @@
 
 (defn q
   [query & inputs]
-  (when-let [repo (state/get-current-repo)]
+  (let [repo (state/get-current-repo)]
     (apply d/q query (conn/get-db repo) inputs)))

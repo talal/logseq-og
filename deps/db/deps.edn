@@ -3,5 +3,5 @@
  {datascript/datascript {:mvn/version "1.5.3"}}
  :aliases
  {:clj-kondo
-  {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2023.05.26"}}
+  {:replace-deps {clj-kondo/clj-kondo {:mvn/version "2026.07.24"}}
    :main-opts  ["-m" "clj-kondo.main"]}}}

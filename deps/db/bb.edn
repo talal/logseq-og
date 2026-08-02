@@ -5,7 +5,7 @@
   {:local/root "../bb-tasks"}}
 
  :pods
- {clj-kondo/clj-kondo {:version "2023.05.26"}}
+ {clj-kondo/clj-kondo {:version "2026.07.24"}}
 
  :tasks
  {test:load-all-namespaces-with-nbb

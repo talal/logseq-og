@@ -176,7 +176,7 @@ export function safetyPathNormalize(basePath: string) {
 export function deferred<T = any>(timeout?: number, tag?: string) {
   let resolve: any, reject: any
   let settled = false
-  const timeFn = (r: Function) => {
+  const timeFn = (r: (...args: any[]) => any) => {
     return (v: T) => {
       timeout && clearTimeout(timeout)
       r(v)
@@ -189,7 +189,7 @@ export function deferred<T = any>(timeout?: number, tag?: string) {
     reject = timeFn(reject1)
 
     if (timeout) {
-      // @ts-ignore
+      // @ts-expect-error: timeout is reassigned to the timer handle.
       timeout = setTimeout(
         () => reject(new Error(`[deferred timeout] ${tag}`)),
         timeout
@@ -213,7 +213,7 @@ export function invokeHostExportedApi(method: string, ...args: Array<any>) {
   method = method?.startsWith('_call') ? method : method?.replace(/^[_$]+/, '')
   let method1 = safeSnakeCase(method)
 
-  // @ts-ignore
+  // @ts-expect-error: logseq is provided by the host runtime.
   const nsSDK = window.logseq?.sdk
   const supportedNS = nsSDK && Object.keys(nsSDK)
   let nsTarget = {}
@@ -225,7 +225,7 @@ export function invokeHostExportedApi(method: string, ...args: Array<any>) {
   }
 
   const logseqHostExportedApi = Object.assign(
-    // @ts-ignore
+    // @ts-expect-error: logseq API is provided by the host runtime.
     {}, window.logseq?.api,
     nsTarget, callables
   )
@@ -290,7 +290,7 @@ export function setupInjectedStyle(
 
 const injectedUIEffects = new Map<string, () => void>()
 
-// @ts-ignore
+// @ts-expect-error: injected UI state is attached to the host window.
 window.__injectedUIEffects = injectedUIEffects
 
 export function setupInjectedUI(
@@ -299,11 +299,9 @@ export function setupInjectedUI(
   attrs: Record<string, string>,
   initialCallback?: (e: { el: HTMLElement; float: boolean }) => void
 ) {
-  let slot: string = ''
+  let slot = ''
   let selector: string
   let float: boolean
-
-  const pl = this
 
   if ('slot' in ui) {
     slot = ui.slot
@@ -314,7 +312,7 @@ export function setupInjectedUI(
     float = true
   }
 
-  const id = `${pl.id}--${ui.key || genID()}`
+  const id = `${this.id}--${ui.key || genID()}`
   const key = id
 
   const target = float
@@ -359,7 +357,7 @@ export function setupInjectedUI(
       el.setAttribute(k, v)
     })
 
-    let positionDirty = el.dataset.dx != null
+    const positionDirty = el.dataset.dx != null
     ui.style &&
     Object.entries(ui.style).forEach(([k, v]) => {
       if (
@@ -399,8 +397,12 @@ export function setupInjectedUI(
     el.style[k] = v
   })
 
-  let teardownUI: () => void
   let disposeFloat: () => void
+  const teardownUI = () => {
+    disposeFloat?.()
+    injectedUIEffects.delete(id)
+    target!.removeChild(el)
+  }
 
   // seu up float container
   if (float) {
@@ -409,8 +411,8 @@ export function setupInjectedUI(
     ui.close && (el.dataset.close = ui.close)
     el.classList.add('lsp-ui-float-container', 'visible')
     disposeFloat =
-      (pl._setupResizableContainer(el, key),
-        pl._setupDraggableContainer(el, {
+      (this._setupResizableContainer(el, key),
+        this._setupDraggableContainer(el, {
           key,
           close: () => teardownUI(),
           title: attrs?.title,
@@ -454,7 +456,7 @@ export function setupInjectedUI(
         const { preventDefault } = trigger.dataset
         const msgType = trigger.dataset[`on${ucFirst(type)}`]
         if (msgType)
-          pl.caller?.callUserModel(msgType, transformableEvent(trigger, e))
+          this.caller?.callUserModel(msgType, transformableEvent(trigger, e))
         if (preventDefault?.toLowerCase() === 'true') e.preventDefault()
       },
       false
@@ -463,12 +465,6 @@ export function setupInjectedUI(
 
   // callback
   initialCallback?.({ el, float })
-
-  teardownUI = () => {
-    disposeFloat?.()
-    injectedUIEffects.delete(id)
-    target!.removeChild(el)
-  }
 
   injectedUIEffects.set(id, teardownUI)
   return teardownUI
@@ -504,7 +500,7 @@ export function transformableEvent(target: HTMLElement, e: Event) {
 
       switch (k) {
         case FLAG_RECT:
-          if (!ds.hasOwnProperty(FLAG_RECT)) return
+          if (!Object.prototype.hasOwnProperty.call(ds, FLAG_RECT)) return
           v = target.getBoundingClientRect().toJSON()
           break
         default:

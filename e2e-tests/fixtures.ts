@@ -10,18 +10,18 @@ let context: BrowserContext
 let page: Page
 
 // For testing special characters in graph name / path
-let repoName = "@" + randomString(10)
-let testTmpDir = path.resolve(__dirname, '../tmp')
+const repoName = "@" + randomString(10)
+const testTmpDir = path.resolve(__dirname, '../tmp')
 
 if (fs.existsSync(testTmpDir)) {
   fs.rmSync(testTmpDir, { recursive: true })
 }
 
-export let graphDir = path.resolve(testTmpDir, "#e2e-test", repoName)
+export const graphDir = path.resolve(testTmpDir, "#e2e-test", repoName)
 
 // NOTE: This following is a console log watcher for error logs.
 // Save and print all logs when error happens.
-let logs: string = '';
+let logs = '';
 const consoleLogWatcher = (msg: ConsoleMessage) => {
   const text = msg.text();
 
@@ -140,7 +140,7 @@ base.beforeEach(async () => {
 // hijack electron app into the test context
 // FIXME: add type to `block`
 export const test = base.extend<LogseqFixtures>({
-  page: async ({ }, use) => {
+  page: async ({ browserName: _browserName }, use) => {
     await use(page);
   },
 
@@ -164,7 +164,7 @@ export const test = base.extend<LogseqFixtures>({
         await expect(locator).toHaveText(toBe, { timeout: 1000 })
       },
       enterNext: async (): Promise<Locator> => {
-        let blockCount = await page.locator('.page-blocks-inner .ls-block').count()
+        const blockCount = await page.locator('.page-blocks-inner .ls-block').count()
         await page.press('textarea >> nth=0', 'Enter')
         await page.waitForSelector(`.ls-block >> nth=${blockCount} >> textarea`, { state: 'visible', timeout: 1000 })
         return page.locator('textarea >> nth=0')
@@ -173,7 +173,7 @@ export const test = base.extend<LogseqFixtures>({
         await page.$eval('.add-button-link-wrap', (element) => {
           element.scrollIntoView();
         });
-        let blockCount = await page.locator('.page-blocks-inner .ls-block').count()
+        const blockCount = await page.locator('.page-blocks-inner .ls-block').count()
         // the next element after all blocks.
         await page.click('.add-button-link-wrap', { delay: 100 })
         await page.waitForSelector(`.ls-block >> nth=${blockCount} >> textarea`, { state: 'visible', timeout: 1000 })
@@ -245,7 +245,7 @@ export const test = base.extend<LogseqFixtures>({
     use(block)
   },
 
-  autocompleteMenu: async ({ }, use) => {
+  autocompleteMenu: async ({ browserName: _browserName }, use) => {
     const autocompleteMenu: autocompleteMenu = {
       expectVisible: async (modalName?: string) => {
         const modal = page.locator(modalName ? `[data-modal-name="${modalName}"]` : `[data-modal-name]`)
@@ -269,19 +269,19 @@ export const test = base.extend<LogseqFixtures>({
     await use(autocompleteMenu)
   },
 
-  context: async ({ }, use) => {
+  context: async ({ browserName: _browserName }, use) => {
     await use(context);
   },
-  app: async ({ }, use) => {
+  app: async ({ browserName: _browserName }, use) => {
     await use(electronApp);
   },
-  graphDir: async ({ }, use) => {
+  graphDir: async ({ browserName: _browserName }, use) => {
     await use(graphDir);
   },
 });
 
 
-let getTracingFilePath = function(): string {
+const getTracingFilePath = function(): string {
   return `e2e-dump/trace-${Date.now()}.zip.dump`
 }
 
@@ -294,7 +294,7 @@ test.afterAll(async () => {
 /**
  * Trace all tests in a file
  */
-export let traceAll = function(){
+export const traceAll = function(){
   test.beforeAll(async () => {
     await context.tracing.startChunk();
   })

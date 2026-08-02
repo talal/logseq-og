@@ -99,7 +99,7 @@ export function useCanvasEvents() {
       onDragOver,
       // fix touch callout in iOS
       onTouchEnd: (e: TouchEvent) => {
-        let tool = app.selectedTool.id
+        const tool = app.selectedTool.id
         if (tool === 'pencil' || tool === 'highlighter') {
           e.preventDefault()
         }

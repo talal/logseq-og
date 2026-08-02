@@ -98,7 +98,7 @@ const handleCreatingShapes = async (
   handlers: LogseqContextValue['handlers']
 ) => {
   let imageAssetsToCreate: Asset[] = []
-  let assetsToClone: TLAsset[] = []
+  const assetsToClone: TLAsset[] = []
   const bindingsToCreate: TLBinding[] = []
 
   async function createAssetsFromURL(url: string, type: string): Promise<Asset> {
@@ -368,7 +368,7 @@ const handleCreatingShapes = async (
             fill: app.settings.color,
             stroke: app.settings.color,
             scaleLevel: app.settings.scaleLevel,
-            blockType: 'B' as 'B',
+            blockType: 'B' as const,
           },
         ]
       }
@@ -385,7 +385,7 @@ const handleCreatingShapes = async (
           fill: app.settings.color,
           stroke: app.settings.color,
           scaleLevel: app.settings.scaleLevel,
-          blockType: 'P' as 'P',
+          blockType: 'P' as const,
         },
       ]
     }
@@ -410,7 +410,7 @@ const handleCreatingShapes = async (
             fill: app.settings.color,
             stroke: app.settings.color,
             scaleLevel: app.settings.scaleLevel,
-            blockType: 'B' as 'B',
+            blockType: 'B' as const,
             compact: true,
           },
         ]
@@ -422,7 +422,7 @@ const handleCreatingShapes = async (
 
   app.cursors.setCursor(TLCursor.Progress)
 
-  let newShapes: TLShapeModel[] = []
+  const newShapes: TLShapeModel[] = []
   try {
     if (dataTransfer) {
       newShapes.push(...((await tryCreateShapesFromDataTransfer(dataTransfer)) ?? []))

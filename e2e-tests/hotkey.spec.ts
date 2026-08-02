@@ -15,8 +15,8 @@ test('open search dialog', async ({ page }) => {
 test('insert link #3278', async ({ page }) => {
   await createRandomPage(page)
 
-  let hotKey = modKey + '+l'
-  let selectAll = modKey + '+a'
+  const hotKey = modKey + '+l'
+  const selectAll = modKey + '+a'
 
   // Case 1: empty link
   await lastBlock(page)

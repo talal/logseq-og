@@ -1,7 +1,6 @@
 const pkg = require('./package.json')
 const path = require('path')
 const webpack = require('webpack')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = (env, argv) => {

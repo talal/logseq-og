@@ -10,7 +10,7 @@ addons.register('my/toolbar', () => {
     type: types.TOOL,
     //👇 Shows the Toolbar UI element if either the Canvas or Docs tab is active
     match: ({ viewMode }) => !!(viewMode && viewMode.match(/^(story|docs)$/)),
-    render: ({ active }) => {
+    render: () => {
       const defaultTheme = window.localStorage.getItem('__ls-theme-color__')
       return (
         <div style={{ display: 'flex', alignItems: 'center', padding: 15 }}>

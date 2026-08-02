@@ -23,7 +23,7 @@ export const AWAIT_LSPMSGFn = (id: string) => `${FLAG_AWAIT}${id}`
  * Call between core and user
  */
 class LSPluginCaller extends EventEmitter {
-  private _connected: boolean = false
+  private _connected = false
 
   private _parent?: ParentAPI
   private _child?: ChildAPI
@@ -66,7 +66,6 @@ class LSPluginCaller extends EventEmitter {
   async connectToParent(userModel = {}) {
     if (this._connected) return
 
-    const caller = this
     const isShadowMode = this._pluginLocal != null
 
     let syncGCTimer: any = 0
@@ -86,7 +85,7 @@ class LSPluginCaller extends EventEmitter {
         }) => {
           debug(`[host (_call) -> *user] ${this._debugTag}`, type, payload)
           // host._call without async
-          caller.emit(type, payload)
+          this.emit(type, payload)
         }
 
         await readyDeferred.resolve()
@@ -94,12 +93,12 @@ class LSPluginCaller extends EventEmitter {
 
       [LSPMSG_BEFORE_UNLOAD]: async (e) => {
         const actor = deferred(10 * 1000)
-        caller.emit('beforeunload', Object.assign({ actor }, e))
+        this.emit('beforeunload', Object.assign({ actor }, e))
         await actor.promise
       },
 
       [LSPMSG_SETTINGS]: async ({ type, payload }) => {
-        caller.emit('settings:changed', payload)
+        this.emit('settings:changed', payload)
       },
 
       [LSPMSG]: async ({ ns, type, payload }: any) => {
@@ -109,11 +108,11 @@ class LSPluginCaller extends EventEmitter {
         )
 
         if (ns && ns.startsWith('hook')) {
-          caller.emit(`${ns}:${type}`, payload)
+          this.emit(`${ns}:${type}`, payload)
           return
         }
 
-        caller.emit(type, payload)
+        this.emit(type, payload)
       },
 
       [LSPMSG_SYNC]: ({ _sync, result }: any) => {
@@ -123,7 +122,7 @@ class LSPluginCaller extends EventEmitter {
           const actor = syncActors.get(_sync)
 
           if (actor) {
-            if (result?.hasOwnProperty(LSPMSG_ERROR_TAG)) {
+            if (Object.prototype.hasOwnProperty.call(result, LSPMSG_ERROR_TAG)) {
               actor.reject(result[LSPMSG_ERROR_TAG])
             } else {
               actor.resolve(result)
@@ -240,7 +239,8 @@ class LSPluginCaller extends EventEmitter {
       const mainLayoutInfo = (await this._pluginLocal._loadLayoutsData())?.$$0
       if (mainLayoutInfo) {
         cnt.dataset.inited_layout = 'true'
-        let { width, height, left, top, vw, vh } = mainLayoutInfo
+        const { width, height, vw, vh } = mainLayoutInfo
+        let { left, top } = mainLayoutInfo
 
         left = Math.max(left, 0)
         left =
@@ -276,7 +276,7 @@ class LSPluginCaller extends EventEmitter {
       model: { baseInfo: JSON.parse(JSON.stringify(pl.toJSON())) },
     })
 
-    let handshake = pt.sendHandshake()
+    const handshake = pt.sendHandshake()
     this._status = 'pending'
 
     // timeout for handshake
@@ -355,7 +355,7 @@ class LSPluginCaller extends EventEmitter {
       this._call = async (type, payload = {}, actor) => {
         actor && (payload.actor = actor)
 
-        // @ts-ignore Call in same thread
+        // @ts-expect-error Call in same thread
         this._pluginLocal?.emit(
           type,
           Object.assign(payload, {

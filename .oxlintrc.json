@@ -2,7 +2,9 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript"],
   "env": {
-    "builtin": true
+    "builtin": true,
+    "browser": true,
+    "node": true
   },
   "ignorePatterns": [
     "**/node_modules/**",
@@ -116,6 +118,28 @@
         "typescript/triple-slash-reference": "error",
         "typescript/explicit-module-boundary-types": "off",
         "typescript/explicit-function-return-type": "off"
+      }
+    },
+    {
+      "files": ["externs.js"],
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["deps/cljs-time/resources/runner.js"],
+      "env": {
+        "phantomjs": true
+      },
+      "globals": {
+        "cemerick": "readonly"
+      }
+    },
+    {
+      "files": ["src/main/frontend/extensions/pdf/finder.js"],
+      "globals": {
+        "PDFJSDev": "readonly",
+        "createPromiseCapability": "readonly"
       }
     }
   ]

@@ -2,7 +2,6 @@ import path from 'path/path.js'
 
 // TODO split the capacitor abilities to a separate file for capacitor APIs
 import { Capacitor } from '@capacitor/core'
-import { StatusBar, Style } from '@capacitor/status-bar'
 import { Clipboard as CapacitorClipboard } from '@capacitor/clipboard'
 
 if (typeof window === 'undefined') {
@@ -184,7 +183,7 @@ export const triggerInputChange = (node, value = '', name = 'change') => {
   if (inputTypes.indexOf(node.__proto__.constructor) > -1) {
 
     const setValue = Object.getOwnPropertyDescriptor(node.__proto__, 'value').set
-    const event = new Event('change', {
+    const event = new Event(name, {
       bubbles: true
     })
 
@@ -364,7 +363,9 @@ export const nodePath = Object.assign({}, path, {
         input = input.replace(orURI.protocol + '//', '')
           .replace(orURI.protocol, '')
           .replace(/^\/+/, '/')
-      } catch (_e) {}
+      } catch {
+        // Keep the original value when it is not a valid URI.
+      }
     }
 
     input = path.join(input, ...paths)

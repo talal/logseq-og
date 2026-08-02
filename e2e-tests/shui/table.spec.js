@@ -1,8 +1,6 @@
 import { expect } from '@playwright/test'
-import fs from 'fs/promises'
-import path from 'path'
 import { test } from '../fixtures'
-import { randomString, editFirstBlock, navigateToStartOfBlock, createRandomPage } from '../utils'
+import { editFirstBlock, navigateToStartOfBlock, createRandomPage } from '../utils'
 
 test.setTimeout(60000)
 
@@ -16,25 +14,6 @@ const inputSimpleTable = async (page) => {
   await page.keyboard.type('| A1 | B1 |') 
   await page.keyboard.press('Shift+Enter')
   await page.keyboard.type('| A2 | B2 |')
-  await page.keyboard.press('Escape')
-  await page.waitForTimeout(KEY_DELAY)
-}
-
-// The following function does not assume any state, and will prepend the provided lines to the 
-// first block of the document 
-const prependPropsToFirstBlock = async (page, block, ...props) => {
-  await editFirstBlock(page) 
-  await page.waitForTimeout(KEY_DELAY) 
-  await navigateToStartOfBlock(page, block)
-  await page.waitForTimeout(KEY_DELAY) 
-
-  for (const prop of props) {
-    await page.keyboard.type(prop)
-    await page.waitForTimeout(KEY_DELAY)
-    await page.keyboard.press('Shift+Enter')
-    await page.waitForTimeout(KEY_DELAY)
-  }
-
   await page.keyboard.press('Escape')
   await page.waitForTimeout(KEY_DELAY)
 }
@@ -87,8 +66,8 @@ const setPropInFirstBlock = async (page, block, prop, value) => {
 }
 
 
-test('table can have it\'s version changed via props', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can have it\'s version changed via props', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a v1 table 
   inputSimpleTable(page)
@@ -103,8 +82,8 @@ test('table can have it\'s version changed via props', async ({ page, block, gra
   await expect(await page.getByTestId('v2-table-container').innerHTML()).toContain('A1</div>')
 })
 
-test('table can configure logseq.color::', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can configure logseq.color::', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a v1 table 
   await page.keyboard.type('logseq.table.version:: 2')
@@ -120,8 +99,8 @@ test('table can configure logseq.color::', async ({ page, block, graphDir }) => 
   await expect(await page.getByTestId('v2-table-gradient-accent')).toBeVisible()
 })
 
-test('table can configure logseq.table.hover::', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can configure logseq.table.hover::', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a v1 table 
   await page.keyboard.type('logseq.table.version:: 2')
@@ -172,8 +151,8 @@ test('table can configure logseq.table.hover::', async ({ page, block, graphDir 
   await expect(await page.getByText('B2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
 })
 
-test('table can configure logseq.table.headers', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can configure logseq.table.headers', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a table
   await page.keyboard.type('logseq.table.version:: 2')
@@ -205,8 +184,8 @@ test('table can configure logseq.table.headers', async ({ page, block, graphDir 
   await expect(await page.getByText('Header A', { exact: true }).innerText()).toEqual("Header a")
 })
 
-test('table can configure logseq.table.borders', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can configure logseq.table.borders', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a table
   await page.keyboard.type('logseq.table.version:: 2')
@@ -225,8 +204,8 @@ test('table can configure logseq.table.borders', async ({ page, block, graphDir 
   await expect(await page.getByTestId('v2-table-container')).not.toHaveCSS("gap", /^[1-9].*/)
 })
 
-test('table can configure logseq.table.stripes', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can configure logseq.table.stripes', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a table
   await page.keyboard.type('logseq.table.version:: 2')
@@ -249,8 +228,8 @@ test('table can configure logseq.table.stripes', async ({ page, block, graphDir 
   await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).toContain("bg-[color:var(--ls-secondary-background-color)]")
 })
 
-test('table can configure logseq.table.compact', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can configure logseq.table.compact', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a table
   await page.keyboard.type('logseq.table.version:: 2')
@@ -270,7 +249,7 @@ test('table can configure logseq.table.compact', async ({ page, block, graphDir 
   const trueClasses = await page.getByText('A1', { exact: true }).getAttribute('class')
 
   const getPX = (str) => {
-    const match = str.match(/px-\[([0-9\.]*)[a-z]*\]/)
+    const match = str.match(/px-\[([0-9.]*)[a-z]*\]/)
     return match ? parseFloat(match[1]) : null
   }
 
@@ -278,8 +257,8 @@ test('table can configure logseq.table.compact', async ({ page, block, graphDir 
   await expect(getPX(defaultClasses)).toBeGreaterThan(getPX(trueClasses))
 })
 
-test('table can configure logseq.table.cols::', async ({ page, block, graphDir }) => {
-  const pageTitle = await createRandomPage(page)
+test('table can configure logseq.table.cols::', async ({ page, block, graphDir: _graphDir }) => {
+  await createRandomPage(page)
 
   // create a v1 table 
   await page.keyboard.type('logseq.table.version:: 2')

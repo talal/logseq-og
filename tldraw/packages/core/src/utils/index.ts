@@ -108,6 +108,6 @@ export function isNonNullable<TValue>(value: TValue): value is NonNullable<TValu
   return Boolean(value)
 }
 
-export function delay(ms: number = 0) {
+export function delay(ms = 0) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }

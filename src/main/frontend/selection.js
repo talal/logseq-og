@@ -23,6 +23,7 @@ const getNodesBetween=(rootNode, node1, node2)=> {
       }
       resultNodes.push(rootNode.childNodes[i]);
     } else if (resultNodes.length == 0) {
+      // Ignore nodes before the first selected node.
     } else if (isBetweenNodes) {
       resultNodes.push(rootNode.childNodes[i]);
     } else {

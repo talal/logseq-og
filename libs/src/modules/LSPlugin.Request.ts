@@ -6,7 +6,7 @@ export type IRequestOptions<R = any> = {
   abortable: boolean
   headers: Record<string, string>
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
-  data: Object | ArrayBuffer
+  data: object | ArrayBuffer
   timeout: number
   returnType: 'json' | 'text' | 'base64' | 'arraybuffer'
   success: (result: R) => void
@@ -24,7 +24,7 @@ const genTaskCallbackType = (id: RequestTaskID) => `task_callback_${id}`
  */
 export class LSPluginRequestTask<R = any> {
   private readonly _promise: Promise<R>
-  private _aborted: boolean = false
+  private _aborted = false
 
   constructor(
     private _client: LSPluginRequest,
@@ -106,7 +106,7 @@ export class LSPluginRequest extends EventEmitter {
   }
 
   async _request<
-    R extends {},
+    R extends object,
     T extends WithOptional<
       IRequestOptions<R>,
       keyof Omit<IRequestOptions, 'url'>

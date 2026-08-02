@@ -4,7 +4,7 @@ const objectURLToBlob=(url, callback)=> {
   const http = new XMLHttpRequest();
   http.open("GET", url, true);
   http.responseType = "blob";
-  http.onload = (e)=> {
+  http.onload = ()=> {
     if (http.status == 200 || http.status === 0) {
       callback(http.response);
     }

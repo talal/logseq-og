@@ -60,7 +60,7 @@ export async function enterNextBlock(page: Page): Promise<Locator> {
   // Move cursor to the end of the editor
   await page.press('textarea >> nth=0', modKey + '+a') // select all
   await page.press('textarea >> nth=0', 'ArrowRight')
-  let blockCount = await page.locator('.page-blocks-inner .ls-block').count()
+  const blockCount = await page.locator('.page-blocks-inner .ls-block').count()
   await page.press('textarea >> nth=0', 'Enter')
   await page.waitForTimeout(10)
   await page.waitForSelector(`.ls-block >> nth=${blockCount} >> textarea`, { state: 'visible' })
@@ -115,7 +115,7 @@ export async function setMockedOpenDirPath(
 }
 
 export async function openLeftSidebar(page: Page): Promise<void> {
-  let sidebar = page.locator('#left-sidebar')
+  const sidebar = page.locator('#left-sidebar')
 
   // Left sidebar is toggled by `is-open` class
   if (!/is-open/.test(await sidebar.getAttribute('class') || '')) {
@@ -134,7 +134,7 @@ export async function loadLocalGraph(page: Page, path: string): Promise<void> {
     await onboardingOpenButton.click()
   } else {
     console.log("No onboarding button, loading file manually")
-    let sidebar = page.locator('#left-sidebar')
+    const sidebar = page.locator('#left-sidebar')
     if (!/is-open/.test(await sidebar.getAttribute('class') || '')) {
       await page.click('#left-menu.button')
       await expect(sidebar).toHaveClass(/is-open/)
@@ -165,7 +165,7 @@ export async function loadLocalGraph(page: Page, path: string): Promise<void> {
 
   // If there is an error notification from a previous test graph being deleted,
   // close it first so it doesn't cover up the UI
-  let n = await page.locator('.notification-close-button').count()
+  const n = await page.locator('.notification-close-button').count()
   if (n > 1) {
     await page.locator('button >> text="Clear all"').click()
   } else if (n == 1) {
@@ -193,10 +193,10 @@ export async function editFirstBlock(page: Page) {
  * @param timeout - the timeout in ms
  * @returns the full text of the console message
  */
-export async function captureConsoleWithPrefix(page: Page, prefix: string, timeout: number = 3000): Promise<string> {
+export async function captureConsoleWithPrefix(page: Page, prefix: string, timeout = 3000): Promise<string> {
   return new Promise((resolve, reject) => {
-    let console_handler = (msg: ConsoleMessage) => {
-      let text = msg.text()
+    const console_handler = (msg: ConsoleMessage) => {
+      const text = msg.text()
       if (text.startsWith(prefix)) {
         page.removeListener('console', console_handler)
         resolve(text.substring(prefix.length))
@@ -228,7 +228,7 @@ export async function doesClipboardItemExists(page: Page): Promise<boolean> {
 }
 
 export async function getIsWebAPIClipboardSupported(page: Page): Promise<boolean> {
-  // @ts-ignore "clipboard-write" is not included in TS's type definition for permissionName
+  // @ts-expect-error "clipboard-write" is not included in TS's type definition for permissionName
   return await queryPermission(page, "clipboard-write") && await doesClipboardItemExists(page)
 }
 
@@ -311,7 +311,7 @@ export async function getCursorPos(page: Page): Promise<number | null> {
  */
 export async function callPageAPI(page, method, ...args) {
   return await page.evaluate(([method, args]) => {
-    // @ts-ignore
+    // @ts-expect-error: the runtime API is dynamically keyed.
     return window.logseq.api[method]?.(...args)
   }, [method, args])
 }

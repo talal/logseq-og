@@ -17,7 +17,8 @@ test('hashtag and quare brackets in same line #4178', async ({ page }) => {
   try {
     await page.waitForSelector('.notification-clear', { timeout: 10 })
     page.click('.notification-clear')
-  } catch (error) {
+  } catch {
+    // The notification may not exist in a fresh graph.
   }
 
   await createRandomPage(page)
@@ -98,7 +99,7 @@ test('disappeared children #4814', async ({ page, block }) => {
 })
 
 test('create new page from bracketing text #4971', async ({ page, block }) => {
-  let title = 'Page not Exists yet'
+  const title = 'Page not Exists yet'
   await createRandomPage(page)
 
   await block.mustType(`[[${title}]]`)
@@ -158,15 +159,15 @@ test(
     // This test requires dev mode
     test.skip(process.env.RELEASE === 'true', 'not available for release version')
 
-    // @ts-ignore
-    for (let [idx, events] of [
+    // @ts-expect-error: keyboard event tuples are broader than the helper type.
+    for (const [idx, events] of [
       kb_events.win10_pinyin_left_full_square_bracket,
       kb_events.macos_pinyin_left_full_square_bracket
       // TODO: support #3741
       // kb_events.win10_legacy_pinyin_left_full_square_bracket,
     ].entries()) {
       await createRandomPage(page)
-      let check_text = "#3251 test " + idx
+      const check_text = "#3251 test " + idx
       await block.mustFill(check_text + "【")
       await dispatch_kb_events(page, ':nth-match(textarea, 1)', events)
       expect(await page.inputValue(':nth-match(textarea, 1)')).toBe(check_text + '【')
@@ -175,13 +176,13 @@ test(
       expect(await page.inputValue(':nth-match(textarea, 1)')).toBe(check_text + '[[]]')
     };
 
-    // @ts-ignore dont trigger RIME #3440
-    for (let [idx, events] of [
+    // @ts-expect-error: RIME event tuples are broader than the helper type.
+    for (const [idx, events] of [
       kb_events.macos_pinyin_selecting_candidate_double_left_square_bracket,
       kb_events.win10_RIME_selecting_candidate_double_left_square_bracket
     ].entries()) {
       await createRandomPage(page)
-      let check_text = "#3440 test " + idx
+      const check_text = "#3440 test " + idx
       await block.mustFill(check_text)
       await dispatch_kb_events(page, ':nth-match(textarea, 1)', events)
       expect(await page.inputValue(':nth-match(textarea, 1)')).toBe(check_text)

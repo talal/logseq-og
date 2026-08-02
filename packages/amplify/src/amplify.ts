@@ -15,7 +15,7 @@ dict.zh['User already exists'] = '用户名已经存在'
 dict.zh['Username or Email'] = '用户名或邮箱'
 dict.zh['Enter your Username or Email'] = '请输入用户名或邮箱'
 
-// @ts-ignore attach defaults
+// @ts-expect-error attach defaults
 dict.en = {
   'Incorrect username or password.': 'Incorrect username or password!   ' +
     'For unconfirmed users, please input your username instead of Email to receive the code.',
@@ -36,7 +36,7 @@ const fixesMapping = {
 Object.keys(dict).forEach((k) => {
   const target = dict[k]
   Object.entries(fixesMapping).forEach(([k1, v1]) => {
-    if (target?.hasOwnProperty(k1)) {
+    if (Object.prototype.hasOwnProperty.call(target, k1)) {
       const vs = Array.isArray(v1) ? v1 : [v1]
       vs.forEach(it => {
         target[it] = target[k1]
@@ -95,7 +95,7 @@ function setupAuthConfigure(config) {
   })
 }
 
-//@ts-ignore
+// @ts-expect-error: expose the runtime API on the browser global.
 window.LSAmplify = {
   setupAuthConfigure,
   LSAuthenticator, LSAuthenticatorChangePassword,

@@ -8,8 +8,8 @@ import { closeSearchBox, createPage, randomLowerString, randomString, renamePage
 
 async function page_rename_test(page: Page, original_page_name: string, new_page_name: string) {
   const rand = randomString(10)
-  let original_name = original_page_name + rand
-  let new_name = new_page_name + rand
+  const original_name = original_page_name + rand
+  const new_name = new_page_name + rand
 
   await createPage(page, original_name)
 
@@ -27,8 +27,8 @@ async function page_rename_test(page: Page, original_page_name: string, new_page
 async function homepage_rename_test(page: Page, original_page_name: string, new_page_name: string) {
 
   const rand = randomString(10)
-  let original_name = original_page_name + rand
-  let new_name = new_page_name + rand
+  const original_name = original_page_name + rand
+  const new_name = new_page_name + rand
 
   await createPage(page, original_name)
 

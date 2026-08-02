@@ -219,7 +219,7 @@ export class TLApp<
       }
     })
 
-    let ids: Set<string> = new Set([...normalizedShapes, ...shapesInGroups].map(s => s.id))
+    const ids: Set<string> = new Set([...normalizedShapes, ...shapesInGroups].map(s => s.id))
 
     shapesInGroups.forEach(shape => {
       // delete a shape in a group should also update the group shape
@@ -861,10 +861,10 @@ export class TLApp<
       // monkey patch Shape
       if (Shape.id === 'group') {
         // Group Shape requires this hack to get the real children shapes
-        const app = this
+        const getShapeById = this.getShapeById.bind(this)
         Shape.prototype.getShapes = function () {
           // @ts-expect-error FIXME: this is a hack to get around the fact that we can't use computed properties in the constructor
-          return this.props.children?.map(id => app.getShapeById(id)).filter(Boolean) ?? []
+          return this.props.children?.map(id => getShapeById(id)).filter(Boolean) ?? []
         }
       }
       return this.Shapes.set(Shape.id, Shape)

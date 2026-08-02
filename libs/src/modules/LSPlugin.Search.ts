@@ -48,12 +48,12 @@ export class LSPluginSearchService {
           let ret = null
 
           try {
-            ret = await serviceHooks[v.f].apply(
+            ret = await serviceHooks[v.f].call(
               serviceHooks,
-              (v.args || []).map((prop: any) => {
+              ...(v.args || []).map((prop: any) => {
                 if (!payload) return
                 if (prop === true) return payload
-                if (payload.hasOwnProperty(prop)) {
+                if (Object.prototype.hasOwnProperty.call(payload, prop)) {
                   const ret = payload[prop]
                   delete payload[prop]
                   return ret

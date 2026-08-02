@@ -398,7 +398,7 @@ export class PDFFindController {
       return true
     }
     switch (state.type) {
-      case 'again':
+      case 'again': {
         const pageNumber = this._selected.pageIdx + 1
         const linkService = this._linkService
         // Only treat a 'findagain' event as a new search operation when it's
@@ -413,6 +413,7 @@ export class PDFFindController {
           return true
         }
         return false
+      }
       case 'highlightallchange':
         return false
     }
@@ -792,7 +793,7 @@ export class PDFFindController {
     }
   }
 
-  __onFindBarClose (evt) {
+  __onFindBarClose () {
     const pdfDocument = this._pdfDocument
     // Since searching is asynchronous, ensure that the removal of highlighted
     // matches (from the UI) is async too such that the 'updatetextlayermatches'

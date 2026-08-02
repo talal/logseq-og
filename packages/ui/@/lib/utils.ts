@@ -12,10 +12,9 @@ const Id = createContext<() => number>(() => {
 })
 
 // NOTE: compatible for React 18 (useId hook)
-export const useId = (prefix: string = 'id') => {
+export const useId = (prefix = 'id') => {
   const getter = useContext(Id)
   const ref = useRef<string>()
   if (!ref.current) ref.current = `${prefix}:${getter()}`
   return ref.current
 }
-

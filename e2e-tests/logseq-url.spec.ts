@@ -6,13 +6,14 @@ test("Logseq URLs (same graph)", async ({ page, block }) => {
   try {
     await page.waitForSelector('.notification-clear', { timeout: 10 })
     page.click('.notification-clear')
-  } catch (error) {
+  } catch {
+    // The notification may not exist in a fresh graph.
   }
 
-  let paste_key = IsMac ? 'Meta+v' : 'Control+v'
+  const paste_key = IsMac ? 'Meta+v' : 'Control+v'
   // create a page with identify block
-  let identify_text = "URL redirect target"
-  let page_title = await createRandomPage(page)
+  const identify_text = "URL redirect target"
+  const page_title = await createRandomPage(page)
   await block.mustFill(identify_text)
 
   // paste current page's URL to another page, then redirect through the URL

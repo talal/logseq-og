@@ -1,5 +1,4 @@
 const colors = require('tailwindcss/colors')
-const plugin = require('tailwindcss/plugin')
 const radix = require('@radix-ui/colors')
 
 const accent = {
@@ -78,27 +77,6 @@ function exposeColorsToCssVars ({ addBase, theme }) {
     ':root': extractColorVars(theme('colors')),
   })
 }
-
-const withOverride = plugin(function ({ matchUtilities }) {
-  matchUtilities({
-    'or': (value, b) => {
-      // check if the value starts with "bg-"
-      if (value.startsWith('bg-')) {
-        return { [`--lx-bg-override`]: `var(--lx-${value})` }
-      }
-      // check if the value starts with "text-"
-      if (value.startsWith('text-')) {
-        return { [`--lx-text-override`]: `var(--lx-${value})` }
-      }
-      // check if the value starts with "border-"
-      if (value.startsWith('border-')) {
-        return { [`--lx-border-override`]: `var(--lx-${value})` }
-      }
-    }
-  }, {
-    values: {}
-  })
-})
 
 function mapRadixColorToTailwind (color) {
   const radixColor = radix[color]

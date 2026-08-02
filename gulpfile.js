@@ -11,7 +11,6 @@ const ip = require('ip')
 const outputPath = path.join(__dirname, 'static')
 const resourcesPath = path.join(__dirname, 'resources')
 const publicStaticPath = path.join(__dirname, 'public/static')
-const sourcePath = path.join(__dirname, 'src/main/frontend')
 const resourceFilePath = path.join(resourcesPath, '**')
 const outputFilePath = path.join(outputPath, '**')
 
@@ -122,7 +121,7 @@ const common = {
     if (typeof global.fetch === 'function') {
       try {
         await fetch(LOGSEQ_APP_SERVER_URL)
-      } catch (e) {
+      } catch {
         return cb(new Error(`/* ❌ Please check if the service is ON. (${LOGSEQ_APP_SERVER_URL}) ❌ */`))
       }
     }

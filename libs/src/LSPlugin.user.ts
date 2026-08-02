@@ -123,7 +123,7 @@ function checkEffect (p: LSPluginUser) {
 }
 
 let _appBaseInfo: AppInfo = null
-let _searchServices: Map<string, LSPluginSearchService> = new Map()
+const _searchServices: Map<string, LSPluginSearchService> = new Map()
 
 const app: Partial<IAppProxy> = {
   async getInfo (this: LSPluginUser, key) {
@@ -245,7 +245,7 @@ const app: Partial<IAppProxy> = {
   invokeExternalPlugin (this: LSPluginUser, type: string, ...args: Array<any>) {
     type = type?.trim()
     if (!type) return
-    let [pid, group] = type.split('.')
+    const [pid, group] = type.split('.')
     if (!['models', 'commands'].includes(group?.toLowerCase())) {
       throw new Error(`Type only support '.models' or '.commands' currently.`)
     }
@@ -302,8 +302,8 @@ const editor: Partial<IEditorProxy> = {
       const [tag, ...args] = it
 
       switch (tag) {
-        case 'editor/hook':
-          let key = args[0]
+        case 'editor/hook': {
+          const key = args[0]
           let fn = () => {
             this.caller?.callUserModel(key)
           }
@@ -319,6 +319,7 @@ const editor: Partial<IEditorProxy> = {
           // register command listener
           this.Editor['on' + eventKey](fn)
           break
+        }
         default:
       }
 
@@ -470,11 +471,11 @@ const KEY_MAIN_UI = 0
 export class LSPluginUser
   extends EventEmitter<LSPluginUserEvents>
   implements ILSPluginUser {
-  // @ts-ignore
+  // @ts-expect-error: the version is supplied by the build system.
   private _version: string = LIB_VERSION
-  private _debugTag: string = ''
+  private _debugTag = ''
   private _settingsSchema?: Array<SettingSchemaDesc>
-  private _connected: boolean = false
+  private _connected = false
 
   /**
    * ui frame identities
@@ -698,7 +699,7 @@ export class LSPluginUser
     return this._baseInfo
   }
 
-  get effect (): Boolean {
+  get effect (): boolean {
     return checkEffect(this)
   }
 
@@ -725,16 +726,13 @@ export class LSPluginUser
    * @internal
    */
   _makeUserProxy (target: any, tag?: UserProxyTags) {
-    const that = this
-    const caller = this.caller
-
     return new Proxy(target, {
-      get (target: any, propKey, receiver) {
+      get: (target: any, propKey) => {
         const origMethod = target[propKey]
 
-        return function (this: any, ...args: any) {
+        return (...args: any) => {
           if (origMethod) {
-            const ret = origMethod.apply(that, args.concat(tag))
+            const ret = origMethod.apply(this, args.concat(tag))
             if (ret !== PROXY_CONTINUE) return ret
           }
 
@@ -746,7 +744,7 @@ export class LSPluginUser
               const f = hookMatcher[0].toLowerCase()
               const s = hookMatcher.input!
               const isOff = f === 'off'
-              const pid = that.baseInfo.id
+              const pid = this.baseInfo.id
 
               let type = s.slice(f.length)
               let handler = args[0]
@@ -762,17 +760,17 @@ export class LSPluginUser
 
               type = `hook:${tag}:${safeSnakeCase(type)}`
 
-              caller[f](type, handler)
+              this.caller[f](type, handler)
 
               const unlisten = () => {
-                caller.off(type, handler)
-                if (!caller.listenerCount(type)) {
-                  that.App._uninstallPluginHook(pid, type)
+                this.caller.off(type, handler)
+                if (!this.caller.listenerCount(type)) {
+                  this.App._uninstallPluginHook(pid, type)
                 }
               }
 
               if (!isOff) {
-                that.App._installPluginHook(pid, type, opts)
+                this.App._installPluginHook(pid, type, opts)
               } else {
                 unlisten()
                 return
@@ -789,7 +787,7 @@ export class LSPluginUser
           }
 
           // Call host
-          return caller.callAsync(`api:call`, {
+          return this.caller.callAsync(`api:call`, {
             tag,
             method,
             args: args,

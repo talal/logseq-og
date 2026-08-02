@@ -615,7 +615,8 @@ class PluginLocal extends EventEmitter<
   }
 
   async _tryToNormalizeEntry() {
-    let { entry, settings, devEntry } = this.options
+    let { entry, devEntry } = this.options
+    const { settings } = this.options
     devEntry = devEntry || settings?.get('_devEntry')
 
     if (devEntry) {
@@ -806,7 +807,7 @@ class PluginLocal extends EventEmitter<
     handle.classList.add('resizable-handle')
     el.prepend(handle)
 
-    // @ts-expect-error
+    // @ts-expect-error: frontend layout API is injected by the host.
     const layoutCore = window.frontend.modules.layout.core
     const dispose = layoutCore.setup_resizable_container_BANG_(
       el,
@@ -897,7 +898,7 @@ class PluginLocal extends EventEmitter<
   /**
    * @param unregister If true delete plugin files
    */
-  async unload(unregister: boolean = false) {
+  async unload(unregister = false) {
     if (this.pending) {
       return
     }
@@ -968,7 +969,7 @@ class PluginLocal extends EventEmitter<
   }
 
   get layoutCore(): any {
-    // @ts-expect-error
+    // @ts-expect-error: frontend layout API is injected by the host.
     return window.frontend.modules.layout.core
   }
 
@@ -1225,7 +1226,7 @@ class LSPluginCore
       console.table(data)
     }
 
-    // @ts-expect-error
+    // @ts-expect-error: debug data is exposed by the host.
     window.__debugPluginsPerfInfo = debugPerfInfo
 
     try {
@@ -1510,7 +1511,7 @@ class LSPluginCore
 
   get enabledPlugins() {
     return [...this.registeredPlugins.entries()].reduce((a, b) => {
-      let p = b?.[1]
+      const p = b?.[1]
       if (p?.disabled !== true) {
         a.set(b?.[0], p)
       }

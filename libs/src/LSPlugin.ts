@@ -339,7 +339,7 @@ export interface IPluginSearchServiceHooks {
       removed: Array<EntityID>
     }
   ) => Promise<void>
-  onGraphRemoved: (graph: string, opts?: {}) => Promise<any>
+  onGraphRemoved: (graph: string, opts?: object) => Promise<any>
 }
 
 /**
@@ -419,7 +419,7 @@ export interface IAppProxy {
    * @added 0.0.13
    * @param pid
    */
-  getExternalPlugin: (pid: string) => Promise<{} | null>
+  getExternalPlugin: (pid: string) => Promise<object | null>
 
   /**
    * Get state from app store
@@ -450,7 +450,7 @@ export interface IAppProxy {
   // graph
   getCurrentGraph: () => Promise<AppGraphInfo | null>
   getCurrentGraphConfigs: (...keys: string[]) => Promise<any>
-  setCurrentGraphConfigs: (configs: {}) => Promise<void>
+  setCurrentGraphConfigs: (configs: object) => Promise<void>
   getCurrentGraphFavorites: () => Promise<Array<string> | null>
   getCurrentGraphRecent: () => Promise<Array<string> | null>
   getCurrentGraphTemplates: () => Promise<Record<string, BlockEntity> | null>
@@ -469,7 +469,7 @@ export interface IAppProxy {
 
   // templates
   getTemplate: (name: string) => Promise<BlockEntity | null>
-  existTemplate: (name: string) => Promise<Boolean>
+  existTemplate: (name: string) => Promise<boolean>
   createTemplate: (
     target: BlockUUID,
     name: string,
@@ -687,7 +687,7 @@ export interface IEditorProxy extends Record<string, any> {
       isPageBlock: boolean
       focus: boolean
       customUUID: string
-      properties: {}
+      properties: object
     }>
   ) => Promise<BlockEntity | null>
 
@@ -705,7 +705,7 @@ export interface IEditorProxy extends Record<string, any> {
   updateBlock: (
     srcBlock: BlockIdentity,
     content: string,
-    opts?: Partial<{ properties: {} }>
+    opts?: Partial<{ properties: object }>
   ) => Promise<void>
 
   removeBlock: (srcBlock: BlockIdentity) => Promise<void>
@@ -737,7 +737,7 @@ export interface IEditorProxy extends Record<string, any> {
 
   createPage: (
     pageName: BlockPageName,
-    properties?: {},
+    properties?: object,
     opts?: Partial<{
       redirect: boolean
       createFirstBlock: boolean
@@ -755,13 +755,13 @@ export interface IEditorProxy extends Record<string, any> {
   prependBlockInPage: (
     page: PageIdentity,
     content: string,
-    opts?: Partial<{ properties: {} }>
+    opts?: Partial<{ properties: object }>
   ) => Promise<BlockEntity | null>
 
   appendBlockInPage: (
     page: PageIdentity,
     content: string,
-    opts?: Partial<{ properties: {} }>
+    opts?: Partial<{ properties: object }>
   ) => Promise<BlockEntity | null>
 
   getPreviousSiblingBlock: (
@@ -979,11 +979,11 @@ export interface ILSPluginUser extends EventEmitter<LSPluginUserEvents> {
   /**
    * @param callback - a function to run when the main Logseq app is ready
    */
-  ready(callback?: (e: any) => void | {}): Promise<any>
+  ready(callback?: (e: any) => void | object): Promise<any>
 
   ready(
     model?: Record<string, any>,
-    callback?: (e: any) => void | {}
+    callback?: (e: any) => void | object
   ): Promise<any>
 
   beforeunload: (callback: () => Promise<void>) => void

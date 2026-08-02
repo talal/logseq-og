@@ -2,25 +2,25 @@ import EventEmitter from 'eventemitter3'
 import { PluginLocal } from './LSPlugin.core'
 import { LSPluginUser } from './LSPlugin.user'
 
-// @ts-ignore
+// @ts-expect-error: QSandbox is injected by the host runtime.
 const { importHTML, createSandboxContainer } = window.QSandbox || {}
 
 function userFetch(url, opts) {
   if (!url.startsWith('http')) {
     url = url.replace('file://', '')
-    return new Promise(async (resolve, reject) => {
+    return (async () => {
       try {
         const content = await window.apis.doAction(['readFile', url])
-        resolve({
+        return {
           text() {
             return content
           },
-        })
+        }
       } catch (e) {
         console.error(e)
-        reject(e)
+        throw e
       }
-    })
+    })()
   }
 
   return fetch(url, opts)

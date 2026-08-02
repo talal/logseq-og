@@ -10,8 +10,8 @@ test('favorite item and recent item test', async ({ page }) => {
   await openLeftSidebar(page)
   // add page to fav
   const fav_page_name = await createRandomPage(page)
-  let favs = await page.$$('.favorite-item a')
-  let previous_fav_count = favs.length
+  const favs = await page.$$('.favorite-item a')
+  const previous_fav_count = favs.length
   await page.click('.ui__dropdown-trigger .toolbar-dots-btn')
   await page.locator("text=Add to Favorites").click()
   // click from another page

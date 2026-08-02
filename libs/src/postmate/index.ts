@@ -315,10 +315,7 @@ export class Postmate {
     this.frame = document.createElement('iframe')
     if (opts.id) this.frame.id = opts.id
     if (opts.name) this.frame.name = opts.name
-    this.frame.classList.add.apply(
-      this.frame.classList,
-      opts.classListArray || []
-    )
+    this.frame.classList.add(...(opts.classListArray || []))
     this.container.appendChild(this.frame)
     this.child = this.frame.contentWindow
     this.model = opts.model || {}

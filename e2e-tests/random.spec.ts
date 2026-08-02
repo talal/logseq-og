@@ -41,14 +41,14 @@ const availableOps = [
 
 const generateRandomTest = (size: number): RandomTestStep[] => {
   let blockCount = 1; // default block
-  let steps: RandomTestStep[] = []
+  const steps: RandomTestStep[] = []
   for (let i = 0; i < size; i++) {
     let op = availableOps[Math.floor(Math.random() * availableOps.length)];
     // freq adjust
     if (Math.random() > 0.9) {
       op = "insertByEnter"
     }
-    let loc = Math.floor(Math.random() * blockCount)
+    const loc = Math.floor(Math.random() * blockCount)
     let text = randomString(randomInt(2, 3))
 
     if (op === "insertByEnter" || op === "insertAtLast") {
@@ -84,7 +84,7 @@ const generateRandomTest = (size: number): RandomTestStep[] => {
       blockCount = 1
     }
 
-    let step: RandomTestStep = {
+    const step: RandomTestStep = {
       target: loc,
       op,
       text,
@@ -104,14 +104,14 @@ test.skip('Random editor operations', async ({ page, block }) => {
   await block.mustType("randomized test!")
 
   for (let i = 0; i < steps.length; i++) {
-    let step = steps[i]
+    const step = steps[i]
     const { target, op, expectedBlocks, text } = step;
 
     console.log(step)
 
     if (op === "insertByEnter") {
       await block.activeEditing(target)
-      let charCount = (await page.inputValue('textarea >> nth=0')).length
+      const charCount = (await page.inputValue('textarea >> nth=0')).length
       // FIXME: CHECK expect(await block.selectionStart()).toBe(charCount)
 
       await page.keyboard.press('Enter', { delay: 50 })

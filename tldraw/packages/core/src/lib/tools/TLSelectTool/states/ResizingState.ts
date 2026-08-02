@@ -179,7 +179,7 @@ export class ResizingState<
       }
       let scale = [scaleX, scaleY]
       let rotation = initialShapeProps.rotation ?? 0
-      let center = BoundsUtils.getBoundsCenter(relativeBounds)
+      const center = BoundsUtils.getBoundsCenter(relativeBounds)
       // If the shape can't flip, make sure that scale is [+,+]
       if (!shape.canFlip) {
         scale = Vec.abs(scale)

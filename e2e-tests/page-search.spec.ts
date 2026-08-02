@@ -10,8 +10,8 @@ import { searchPage, closeSearchBox } from './util/search-modal'
  * Consider diacritics
  ***/
 
-let hotkeyOpenLink = modKey + '+o'
-let hotkeyBack = modKey + '+['
+const hotkeyOpenLink = modKey + '+o'
+const hotkeyBack = modKey + '+['
 
 test('Search page and blocks (diacritics)', async ({ page, block }) => {
   const rand = randomString(20)
@@ -69,11 +69,11 @@ async function alias_test(block: Block, page: Page, page_name: string, search_kw
   await createRandomPage(page)
 
   const rand = randomString(10)
-  let target_name = page_name + ' target ' + rand
-  let alias_name = page_name + ' alias ' + rand
-  let alias_test_content_1 = randomString(20)
-  let alias_test_content_2 = randomString(20)
-  let alias_test_content_3 = randomString(20)
+  const target_name = page_name + ' target ' + rand
+  const alias_name = page_name + ' alias ' + rand
+  const alias_test_content_1 = randomString(20)
+  const alias_test_content_2 = randomString(20)
+  const alias_test_content_3 = randomString(20)
 
   await page.type('textarea >> nth=0', '[[' + target_name)
   await page.keyboard.press(hotkeyOpenLink)
@@ -145,8 +145,8 @@ async function alias_test(block: Block, page: Page, page_name: string, search_kw
   // TODO: test alias from graph clicking
 
   // test alias from search
-  for (let kw of search_kws) {
-    let kw_name = kw + ' alias ' + rand
+  for (const kw of search_kws) {
+    const kw_name = kw + ' alias ' + rand
 
     const results = await searchPage(page, kw_name)
 

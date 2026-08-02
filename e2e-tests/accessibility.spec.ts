@@ -8,7 +8,8 @@ test.skip('should not have any automatically detectable accessibility issues', a
   try {
     await page.waitForSelector('.notification-clear', { timeout: 10 })
     page.click('.notification-clear')
-  } catch (error) {
+  } catch {
+    // The notification may not exist in a fresh graph.
   }
 
   await createRandomPage(page)

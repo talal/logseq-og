@@ -1494,7 +1494,7 @@
 (defn delete-asset-of-block!
   [{:keys [repo href full-text block-id local? delete-local?] :as _opts}]
   (let [block (db-model/query-block-by-uuid block-id)
-        _ (or block (throw (str block-id " not exists")))
+        _ (or block (throw (js/Error. (str block-id " not exists"))))
         text (:block/content block)
         content (string/replace text full-text "")]
     (save-block! repo block content)

@@ -16,6 +16,10 @@
   (testing "find-first"
     (is (= 1 (util/find-first identity [1])))))
 
+(deftest test-react-outside-component
+  (testing "react dereferences refs outside a Rum component"
+    (is (= :value (util/react (atom :value))))))
+
 (deftest test-delete-emoji-current-pos
   (testing "safe current position from end for emoji"
     (is (= 3 (util/safe-dec-current-pos-from-end "abc😀d" 5)))

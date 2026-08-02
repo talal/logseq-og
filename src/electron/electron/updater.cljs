@@ -55,50 +55,54 @@
     (p/create
      (fn [resolve reject]
        (emit "checking-for-update" nil)
-       (-> (p/let
-            [artifact (get-latest-artifact-info repo)
-
-             artifact (when-let [remote-version (and artifact (re-find #"\d+\.\d+\.\d+" (:url artifact)))]
-                        (when (and (. semver valid remote-version)
-                                   (. semver lt electron-version remote-version)) artifact))
-
-             url (if-not artifact (do (emit "update-not-available" nil) (throw nil)) (:url artifact))
-             _ (if url (emit "update-available" (bean/->js artifact)) (throw (js/Error. "download url not exists")))
-               ;; start download FIXME: user's preference about auto download
-             _ (when-not auto-download (throw nil))
-             ^js dl-res (fetch url)
-             _ (when-not (.-ok dl-res) (throw (js/Error. "download resource not available")))
-             dest-info (p/create
-                        (fn [resolve1 reject1]
-                          (let [headers (. dl-res -headers)
-                                total-size (js/parseInt (.get headers "content-length"))
-                                body (.-body dl-res)
-                                start-at (.now js/Date)
-                                *downloaded (atom 0)
-                                dest-basename (node-path/basename url)
-                                tmp-dest-file (node-path/join (os/tmpdir) (str dest-basename ".pending"))
-                                dest-file (.createWriteStream fs tmp-dest-file)]
-                            (doto body
-                              (.on "data" (fn [chunk]
-                                            (let [downloaded (+ @*downloaded (.-length chunk))
-                                                  percent (.toFixed (/ (* 100 downloaded) total-size) 2)
-                                                  elapsed (/ (- (js/Date.now) start-at) 1000)]
-                                              (.write dest-file chunk)
-                                              (emit "download-progress" {:total      total-size
-                                                                         :downloaded downloaded
-                                                                         :percent    percent
-                                                                         :elapsed    elapsed})
-                                              (reset! *downloaded downloaded))))
-                              (.on "error" (fn [e]
-                                             (reject1 e)))
-                              (.on "end" (fn [_e]
-                                           (.close dest-file)
-                                           (let [dest-file (string/replace tmp-dest-file ".pending" "")]
-                                             (fs/renameSync tmp-dest-file dest-file)
-                                             (resolve1 (merge artifact {:dest-file dest-file})))))))))]
-             (reset! *update-ready-to-install dest-info)
-             (emit "update-downloaded" dest-info)
-             (resolve nil))
+       (-> (p/let [artifact (get-latest-artifact-info repo)
+                   artifact (when-let [remote-version (and artifact (re-find #"\d+\.\d+\.\d+" (:url artifact)))]
+                              (when (and (. semver valid remote-version)
+                                         (. semver lt electron-version remote-version)) artifact))]
+             (if-not artifact
+               (do
+                 (emit "update-not-available" nil)
+                 (resolve nil))
+               (let [url (:url artifact)]
+                 (if-not url
+                   (throw (js/Error. "download url not exists"))
+                   (do
+                     (emit "update-available" (bean/->js artifact))
+                     (if-not auto-download
+                       (resolve nil)
+                       (p/let [^js dl-res (fetch url)
+                               _ (when-not (.-ok dl-res) (throw (js/Error. "download resource not available")))
+                               dest-info (p/create
+                                          (fn [resolve1 reject1]
+                                            (let [headers (. dl-res -headers)
+                                                  total-size (js/parseInt (.get headers "content-length"))
+                                                  body (.-body dl-res)
+                                                  start-at (.now js/Date)
+                                                  *downloaded (atom 0)
+                                                  dest-basename (node-path/basename url)
+                                                  tmp-dest-file (node-path/join (os/tmpdir) (str dest-basename ".pending"))
+                                                  dest-file (.createWriteStream fs tmp-dest-file)]
+                                              (doto body
+                                                (.on "data" (fn [chunk]
+                                                              (let [downloaded (+ @*downloaded (.-length chunk))
+                                                                    percent (.toFixed (/ (* 100 downloaded) total-size) 2)
+                                                                    elapsed (/ (- (js/Date.now) start-at) 1000)]
+                                                                (.write dest-file chunk)
+                                                                (emit "download-progress" {:total      total-size
+                                                                                           :downloaded downloaded
+                                                                                           :percent    percent
+                                                                                           :elapsed    elapsed})
+                                                                (reset! *downloaded downloaded))))
+                                                (.on "error" (fn [e]
+                                                               (reject1 e)))
+                                                (.on "end" (fn [_e]
+                                                             (.close dest-file)
+                                                             (let [dest-file (string/replace tmp-dest-file ".pending" "")]
+                                                               (fs/renameSync tmp-dest-file dest-file)
+                                                               (resolve1 (merge artifact {:dest-file dest-file})))))))))]
+                         (reset! *update-ready-to-install dest-info)
+                         (emit "update-downloaded" dest-info)
+                         (resolve nil))))))))
            (p/catch
             (fn [e]
               (if e

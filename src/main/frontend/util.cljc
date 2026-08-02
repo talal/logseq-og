@@ -852,9 +852,13 @@
 #?(:cljs
    (defn react
      [ref]
-     (if rum/*reactions*
+     (try
        (rum/react ref)
-       @ref)))
+       (catch js/Error e
+         (if (string/includes? (.-message e)
+                               "rum.core/react is only supported in conjunction with rum.core/reactive")
+           @ref
+           (throw e))))))
 
 (defn time-ms
   []

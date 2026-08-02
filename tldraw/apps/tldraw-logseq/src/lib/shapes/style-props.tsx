@@ -15,7 +15,7 @@ export function withClampedStyles<P>(self: Shape, props: P & Partial<CustomStyle
   if (props.strokeWidth !== undefined) props.strokeWidth = Math.max(props.strokeWidth, 1)
   if (props.opacity !== undefined) props.opacity = Math.min(1, Math.max(props.opacity, 0))
 
-  let fill = props.fill ?? (self.props as any).fill
+  const fill = props.fill ?? (self.props as any).fill
   if (
     fill !== undefined &&
     !isBuiltInColor(fill) &&

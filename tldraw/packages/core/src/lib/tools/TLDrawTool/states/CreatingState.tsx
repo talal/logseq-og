@@ -100,7 +100,7 @@ export class CreatingState<
     })
     this.tool.previousShape = this.shape
     this.tool.transition('idle')
-    let tool = this.app.selectedTool.id
+    const tool = this.app.selectedTool.id
     if (tool === 'pencil' || tool === 'highlighter') {
       this.persistDebounced()
     } else {

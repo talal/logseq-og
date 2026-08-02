@@ -15,7 +15,7 @@ export const SelectionForeground = observer(function SelectionForeground<S exten
   shapes,
 }: TLSelectionComponentProps<S>) {
   const app = useApp()
-  let { width, height } = bounds
+  const { width, height } = bounds
   const zoom = app.viewport.camera.zoom
 
   const size = 8 / zoom

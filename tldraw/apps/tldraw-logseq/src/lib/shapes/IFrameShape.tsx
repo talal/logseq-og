@@ -31,7 +31,8 @@ export class IFrameShape extends TLBoxShape<IFrameShapeProps> {
 
   @action reload = () => {
     if (this.frameRef.current) {
-      this.frameRef.current.src = this.frameRef?.current?.src
+      const src = this.frameRef.current.src
+      this.frameRef.current.src = src
     }
   }
 

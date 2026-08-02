@@ -256,7 +256,7 @@ export const LogseqQuickSearch = observer(
         options.push(
           ...searchResult.pages.map(page => {
             return {
-              actionIcon: 'search' as 'search',
+              actionIcon: 'search' as const,
               onChosen: () => {
                 finishSearching(page)
                 return true
@@ -280,7 +280,7 @@ export const LogseqQuickSearch = observer(
             .map(({ content, uuid }) => {
               const block = handlers.queryBlockByUUID(uuid)
               return {
-                actionIcon: 'search' as 'search',
+                actionIcon: 'search' as const,
                 onChosen: () => {
                   if (block) {
                     finishSearching(uuid)

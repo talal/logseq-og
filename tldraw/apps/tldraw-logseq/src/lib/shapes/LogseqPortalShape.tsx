@@ -265,7 +265,7 @@ export class LogseqPortalShape extends TLBoxShape<LogseqPortalShapeProps> {
     })
   }
 
-  PortalComponent = observer(({}: TLComponentProps) => {
+  PortalComponent = observer((_props: TLComponentProps) => {
     const {
       props: { pageId, fill, opacity },
     } = this

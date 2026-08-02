@@ -16,7 +16,7 @@ export const BlockLink = ({
   } = React.useContext(LogseqContext)
 
   let iconName = ''
-  let linkType = validUUID(id) ? 'B' : 'P'
+  const linkType = validUUID(id) ? 'B' : 'P'
   let blockContent = ''
 
   if (validUUID(id)) {

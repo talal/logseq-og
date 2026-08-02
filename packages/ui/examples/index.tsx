@@ -3,7 +3,6 @@ import { setupGlobals } from '../src'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-// @ts-ignore
 import { Button } from '@/components/ui/button'
 
 // bootstrap

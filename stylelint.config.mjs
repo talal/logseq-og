@@ -1,6 +1,7 @@
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-standard'],
+  ignoreFiles: ['src/test/docs*/logseq/custom.css'],
   rules: {
     'at-rule-no-unknown': [
       true,

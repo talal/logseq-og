@@ -2,7 +2,7 @@ import { GROUP_PADDING, TLGroupShape, TLGroupShapeProps } from '@tldraw/core'
 import { SVGContainer, TLComponentProps, useApp } from '@tldraw/react'
 import { observer } from 'mobx-react-lite'
 
-export interface GroupShapeProps extends TLGroupShapeProps {}
+export type GroupShapeProps = TLGroupShapeProps
 
 export class GroupShape extends TLGroupShape<GroupShapeProps> {
   static id = 'group'

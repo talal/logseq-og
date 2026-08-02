@@ -10,7 +10,7 @@ import * as React from 'react'
 import * as Separator from '@radix-ui/react-separator'
 import { toJS } from 'mobx'
 
-// @ts-ignore
+// @ts-expect-error LSUI is initialized by the UI bundle at runtime.
 const LSUI = window.LSUI
 
 interface ContextMenuProps {
@@ -27,7 +27,7 @@ export const ContextMenu = observer(function ContextMenu({
   const t = handlers.t
   const rContent = React.useRef<HTMLDivElement>(null)
 
-  const runAndTransition = (f: Function) => {
+  const runAndTransition = (f: () => void) => {
     f()
     app.transition('select')
   }

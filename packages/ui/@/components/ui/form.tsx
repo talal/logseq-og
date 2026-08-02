@@ -12,7 +12,6 @@ import {
   useForm,
 } from 'react-hook-form'
 
-// @ts-ignore
 import { cn, useId } from '@/lib/utils'
 import { Label } from './label'
 

@@ -30,7 +30,6 @@ export function Toaster() {
         ...props
       }) {
         const duration = props?.duration
-        // @ts-ignore
         if (Number.isInteger(duration) && duration <= 0) {
           props.duration = 1000 * 120
         }

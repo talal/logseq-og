@@ -2,15 +2,15 @@
 default:
     @just --list
 
-# Start Electron development with asset and ClojureScript watchers.
+# Open Electron using the watcher from `bb watch`.
 [group('Development')]
 electron:
-    bb dev:electron-start
+    bb electron-start
 
-# Watch desktop assets and ClojureScript without opening Electron.
+# Build assets and start the desktop asset and ClojureScript watchers.
 [group('Development')]
 watch:
-    bb dev:desktop-watch
+    bb watch
 
 # Build the publishing application. Pass --dev for watch mode.
 [group('Development')]

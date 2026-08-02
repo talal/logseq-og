@@ -17,19 +17,14 @@
   org.babashka/fswatcher {:version "0.0.3"}}
  :tasks
  {;; Development
-  dev:desktop-watch
-  logseq.tasks.dev.desktop/watch
+  watch
+  {:doc "Build assets and start the desktop asset and ClojureScript watchers"
+   :depends [assets:build]
+   :task logseq.tasks.dev.desktop/watch}
 
-  dev:open-dev-electron-app
-  logseq.tasks.dev.desktop/open-dev-electron-app
-
-  -dev:electron-start
-  {:depends [dev:desktop-watch dev:open-dev-electron-app]}
-
-  dev:electron-start
-  {:doc "Start electron dev by watching assets and opening dev app"
-   ;; Parallel execution - https://book.babashka.org/#parallel
-   :task (run '-dev:electron-start {:parallel true})}
+  electron-start
+  {:doc "Open Electron using the watcher started by `bb watch`"
+   :task logseq.tasks.dev.desktop/electron-start}
 
   dev:app-watch
   logseq.tasks.dev.mobile/app-watch
@@ -140,10 +135,6 @@
   {:doc "Repair and format Clojure delimiters"
    :task (apply shell "bb" "-m" "clojure-mcp-light.paren-repair" *command-line-args*)}
 
-  cljs:watch
-  {:doc "Watch the browser and Electron ClojureScript builds"
-   :task (shell "clojure -M:cljs watch app electron")}
-
   cljs:watch-storybook
   {:doc "Watch the Storybook ClojureScript module"
    :task (shell "clojure -M:cljs watch stories-dev")}
@@ -151,10 +142,6 @@
   cljs:app-watch
   {:doc "Watch the browser ClojureScript build"
    :task (shell "clojure -M:cljs watch app")}
-
-  cljs:electron-watch
-  {:doc "Watch browser and Electron builds with the Electron asset path"
-   :task (shell "clojure -M:cljs watch app electron --config-merge" "{:asset-path \"./js\"}")}
 
   cljs:release
   {:doc "Build the app, publishing, and Electron ClojureScript releases"
@@ -234,13 +221,10 @@
    :depends [assets:build]
    :task (shell "clojure -M:cljs release app publishing electron")}
 
-  -release:electron
-  {:depends [assets:build cljs:release-electron]
-   :task (shell "yarn electron:package")}
-
   release:electron
   {:doc "Build and package the Electron application"
-   :task (run '-release:electron)}
+   :depends [assets:build cljs:release-electron]
+   :task (shell "yarn electron:package")}
 
   -release:ios-app
   {:depends [build:app]

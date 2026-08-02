@@ -39,8 +39,9 @@ and externalized globals.
 
 The clearest supported entry points are the Babashka tasks:
 
-- `bb dev:electron-start`: run desktop asset/CLJS watches and open Electron
-  concurrently.
+- `bb watch`: build static assets and keep the desktop asset/CLJS watchers
+  running. Stop it with Ctrl+C; it owns and cleans up both watcher processes.
+- `bb electron-start`: open Electron using an already-running `bb watch`.
 - `bb dev:ios-app` / `bb dev:android-app`: watch app assets and run Capacitor
   against a reachable development server.
 - `bb dev:publishing`: build publishing output, optionally in watch mode.

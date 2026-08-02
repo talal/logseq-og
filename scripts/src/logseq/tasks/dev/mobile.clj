@@ -1,8 +1,10 @@
 (ns logseq.tasks.dev.mobile
   "Tasks for mobile development"
   (:require [babashka.fs :as fs]
+            [babashka.process :as process]
             [babashka.tasks :refer [shell]]
             [clojure.string :as string]
+            [logseq.tasks.dev.process :as dev-process]
             [logseq.tasks.util :as task-util]))
 
 (defn- local-server-url
@@ -36,7 +38,22 @@
   "Watches environment to reload cljs, css and other assets for mobile"
   []
   (shell "yarn clean")
-  (shell "sh" "-c" "yarn gulp:watch & clojure -M:cljs watch app & wait"))
+  (let [processes (atom [])
+        cleaned? (atom false)
+        cleanup! (fn []
+                   (when (compare-and-set! cleaned? false true)
+                     (dev-process/stop! @processes)))
+        shutdown-hook (dev-process/install-shutdown-hook! cleanup!)]
+    (try
+      (swap! processes conj (dev-process/start! ["yarn" "gulp:watch"]))
+      (swap! processes conj (dev-process/start! ["clojure" "-M:cljs" "watch" "app"]))
+      (loop []
+        (when (some process/alive? @processes)
+          (Thread/sleep 1000)
+          (recur)))
+      (finally
+        (cleanup!)
+        (dev-process/remove-shutdown-hook! shutdown-hook)))))
 
 (defn npx-cap-run-ios
   "Copy assets files to iOS build directory, and run app in Xcode"

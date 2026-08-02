@@ -104,10 +104,11 @@ depends on existing files, configuration, or graph state.
 Start the desktop development flow before attaching:
 
 ```bash
-bb dev:electron-start
+bb watch
 ```
 
-Run it in one terminal and attach from another after the Electron window opens.
+Run `bb watch` in one terminal. After it reports that the watch build is ready,
+run `bb electron-start` in another and attach after the Electron window opens.
 
 Check the live runtime counts:
 
@@ -144,8 +145,8 @@ async, or persistence issues.
 
 Start with:
 
-- the terminal running `bb dev:electron-start`
-- the terminal output from `yarn dev-electron-app` when started separately
+- the terminal running `bb watch`
+- the terminal running `bb electron-start`
 - the platform-specific `electron-log` output for Logseq OG
 - the graph files, backups, and error files involved in the reproduction
 

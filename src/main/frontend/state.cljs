@@ -21,7 +21,7 @@
             [rum.core :as rum]))
 
 ;; Stores main application state
-(defonce ^:large-vars/data-var state
+(defonce state
   (let [document-mode? (or (storage/get :document/mode?) false)
         current-graph  (let [graph (storage/get :git/current-repo)]
                         (when graph (ipc/ipc "setCurrentGraph" graph))

@@ -20,18 +20,6 @@
   nbb:portal-watch
   logseq.bb-tasks.nbb.watch/portal-watch
 
-  lint:large-vars
-  logseq.bb-tasks.lint.large-vars/-main
-
-  lint:carve
-  logseq.bb-tasks.lint.carve/-main
-
-  lint:ns-docstrings
-  logseq.bb-tasks.lint.ns-docstrings/-main
-
-  lint:minimize-public-vars
-  logseq.bb-tasks.lint.minimize-public-vars/-main
-
   lint:rules
   {:requires ([logseq.bb-tasks.lint.datalog :as datalog])
    :task (datalog/lint-rules

@@ -916,7 +916,7 @@
   (<add-new-version [_this repo path content]
     (p->c (ipc/ipc "addVersionFile" (config/get-local-dir repo) path content))))
 
-(deftype ^:large-vars/cleanup-todo CapacitorAPI [^:mutable graph-uuid' ^:mutable private-key ^:mutable public-key']
+(deftype CapacitorAPI [^:mutable graph-uuid' ^:mutable private-key ^:mutable public-key']
   IToken
   (<get-token [_this]
     (user/<wrap-ensure-id&access-token
@@ -2379,7 +2379,7 @@
   (<sync-local->remote-all-files! [this] "compare all local files to remote ones, sync when not equal.
   if local-txid != remote-txid, return {:need-sync-remote true}"))
 
-(defrecord ^:large-vars/cleanup-todo
+(defrecord
  Remote->LocalSyncer [user-uuid graph-uuid base-path repo *txid *txid-for-get-deletion-log *sync-state remoteapi
                       ^:mutable local->remote-syncer *stopped *paused]
   Object
@@ -2617,7 +2617,7 @@
           (map second))
          local-files-meta-map))))
 
-(defrecord ^:large-vars/cleanup-todo
+(defrecord
  Local->RemoteSyncer [user-uuid graph-uuid base-path repo *sync-state remoteapi
                       ^:mutable rate *txid *txid-for-get-deletion-log
                       ^:mutable remote->local-syncer stop-chan *stopped *paused
@@ -2847,7 +2847,7 @@
 
 ;;; ### put all stuff together
 
-(defrecord ^:large-vars/cleanup-todo
+(defrecord
  SyncManager [user-uuid graph-uuid base-path *sync-state
               ^Local->RemoteSyncer local->remote-syncer ^Remote->LocalSyncer remote->local-syncer remoteapi
               ^:mutable ratelimit-local-changes-chan

@@ -150,7 +150,7 @@
               [:a.flex {:tabIndex "0" :on-click #(on-select (:key c))}
                (or (:title c) (:key c))]]))])]]))
 
-(rum/defc ^:large-vars/cleanup-todo pane-topic-detail
+(rum/defc pane-topic-detail
   [handbook-nodes pane-state nav!]
 
   (let [[deps-pending?, set-deps-pending?] (rum/use-state false)
@@ -477,7 +477,7 @@
            [:strong.opacity-60 "800+"]
            [:span.opacity-70.font-light " monthly posts"]]]])]]))
 
-(rum/defc ^:large-vars/data-var content
+(rum/defc content
   []
   (let [[active-pane-state, set-active-pane-state!]
         (rum/use-state [:dashboard nil (t :handbook/title)])

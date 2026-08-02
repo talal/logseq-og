@@ -21,7 +21,7 @@
 (def *area-dashed? (atom ((fnil identity false) (storage/get "ls-pdf-area-is-dashed"))))
 (def *area-mode? (atom false))
 (def *highlight-mode? (atom false))
-(rum/defcontext *highlights-ctx* nil)
+(rum/defcontext ^:dynamic *highlights-ctx* nil)
 
 (rum/defc pdf-settings
   [^js viewer theme {:keys [hide-settings! select-theme! t]}]
@@ -135,7 +135,7 @@
    2 ::wrapped
    3 ::pending})
 
-(rum/defc ^:large-vars/data-var pdf-finder
+(rum/defc pdf-finder
   [^js viewer {:keys [hide-finder!]}]
 
   (let [*el-finder    (rum/use-ref nil)
@@ -444,7 +444,7 @@
          (pdf-outline viewer contents? set-outline-visible!)
          (pdf-highlights-list viewer))]]]))
 
-(rum/defc ^:large-vars/cleanup-todo pdf-toolbar
+(rum/defc pdf-toolbar
   [^js viewer {:keys [on-external-window!]}]
   (let [[area-mode?, set-area-mode!] (use-atom *area-mode?)
         [outline-visible?, set-outline-visible!] (rum/use-state false)

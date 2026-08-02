@@ -49,7 +49,7 @@ definitions rather than forming part of the graph-parser runtime chain.
   use.
 - `deps/publishing`: publishing-specific code built on the database model.
 - `deps/shui`: shared Rum UI components and callbacks into host context.
-- `deps/bb-tasks`: reusable Babashka linting and `nbb` tasks.
+- `deps/bb-tasks`: reusable Babashka `nbb` and domain-specific Datalog tasks.
 - `deps/cljs-time`: a locally carried fork/library dependency.
 
 The root app depends on `common`, `graph-parser`, `publishing`, and `shui`

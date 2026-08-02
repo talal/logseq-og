@@ -165,7 +165,7 @@
                     (reset! edit? true))}
        (t :context-menu/make-a-template)))))
 
-(rum/defc ^:large-vars/cleanup-todo block-context-menu-content <
+(rum/defc block-context-menu-content <
   shortcut/disable-all-shortcuts
   [_target block-id]
     (when-let [block (db/entity [:block/uuid block-id])]

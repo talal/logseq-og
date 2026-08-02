@@ -161,7 +161,7 @@
                           :file/file   file
                           :file/handle (.-handle file)})))))))
 
-(defrecord ^:large-vars/cleanup-todo Nfs []
+(defrecord Nfs []
   protocol/Fs
   (mkdir! [_this dir]
     (let [dir (path/path-normalize dir)

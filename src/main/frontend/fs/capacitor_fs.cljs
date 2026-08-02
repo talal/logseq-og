@@ -327,7 +327,7 @@
     {:path path
      :files (into [] files)}))
 
-(defrecord ^:large-vars/cleanup-todo Capacitorfs []
+(defrecord Capacitorfs []
   protocol/Fs
   (mkdir! [_this dir]
     (-> (<dir-exists? dir)

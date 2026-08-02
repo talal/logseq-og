@@ -262,7 +262,7 @@
       (lightbox/preview-images! images))))
 
 (defonce *resizing-image? (atom false))
-(rum/defcs ^:large-vars/cleanup-todo resizable-image <
+(rum/defcs resizable-image <
   (rum/local nil ::size)
   {:will-unmount (fn [state]
                    (reset! *resizing-image? false)
@@ -2818,7 +2818,7 @@
           block)]
     (merge block' (block/parse-title-and-body uuid format pre-block? content))))
 
-(rum/defc ^:large-vars/cleanup-todo block-container-inner < rum/reactive db-mixins/query
+(rum/defc block-container-inner < rum/reactive db-mixins/query
   [state repo config* block*]
   (let [ref? (:ref? config*)
         custom-query? (boolean (:custom-query? config*))
@@ -3184,7 +3184,7 @@
                 (when (and (= language "clojure") (contains? (set options) ":results"))
                   (sci/eval-result code block)))])])))))
 
-(defn ^:large-vars/cleanup-todo markup-element-cp
+(defn markup-element-cp
   [{:keys [html-export?] :as config} item]
   (try
     (match item

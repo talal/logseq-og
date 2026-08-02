@@ -20,7 +20,7 @@
                   :id        "show-password"})
     [:span.text-sm.ml-1.opacity-80.select-none.px-1 "Show password"]]])
 
-(rum/defcs ^:large-vars/cleanup-todo input-password-inner < rum/reactive
+(rum/defcs input-password-inner < rum/reactive
   (rum/local "" ::password)
   (rum/local "" ::pw-confirm)
   (rum/local false ::pw-confirm-focused?)

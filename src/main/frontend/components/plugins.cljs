@@ -476,7 +476,7 @@
      [:span.pr-3.opacity-80 text]
      (ui/toggle enabled #() true)]))
 
-(rum/defc ^:large-vars/cleanup-todo panel-control-tabs < rum/static
+(rum/defc panel-control-tabs < rum/static
   [search-key *search-key category *category
    sort-by *sort-by filter-by *filter-by total-nums
    selected-unpacked-pkg market? develop-mode?
@@ -646,7 +646,7 @@
     [:div {:ref (.-ref inViewState)}
      [:p.py-1.text-center.opacity-0 (when (.-inView inViewState) "·")]]))
 
-(rum/defcs ^:large-vars/data-var marketplace-plugins
+(rum/defcs marketplace-plugins
   < rum/static rum/reactive
     plugin-items-list-mixins
     (rum/local false ::fetching)

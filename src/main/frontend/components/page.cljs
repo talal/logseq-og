@@ -407,7 +407,7 @@
     (ui/rotating-arrow @*all-collapsed?)]])
 
 ;; A page is just a logical block
-(rum/defcs ^:large-vars/cleanup-todo page < rum/reactive
+(rum/defcs page < rum/reactive
   (rum/local false ::all-collapsed?)
   (rum/local false ::control-show?)
   (rum/local nil   ::current-page)
@@ -573,7 +573,7 @@
             (pixi/stop-simulation!))))
       true)]))
 
-(rum/defc ^:large-vars/cleanup-todo graph-filters < rum/reactive
+(rum/defc graph-filters < rum/reactive
   [graph settings forcesettings n-hops]
   (let [{:keys [journal? orphan-pages? builtin-pages? excluded-pages?]
          :or {orphan-pages? true}} settings
@@ -1005,7 +1005,7 @@
          {:on-click #(on-change total-pages)}
          (ui/icon "chevrons-right")]])]))
 
-(rum/defcs ^:large-vars/cleanup-todo all-pages < rum/reactive
+(rum/defcs all-pages < rum/reactive
   (rum/local nil ::pages)
   (rum/local nil ::search-key)
   (rum/local nil ::results-all)

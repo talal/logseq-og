@@ -188,7 +188,7 @@
          {:on-click #(handler/quit-and-install-new-version!)}
          (svg/reload 16) [:strong (t :updater/quit-and-install)]]]])))
 
-(rum/defc ^:large-vars/cleanup-todo header < rum/reactive
+(rum/defc header < rum/reactive
   [{:keys [open-fn current-repo default-home new-block-mode]}]
   (let [repos (->> (state/sub [:me :repos])
                    (remove #(= (:url %) config/local-repo)))

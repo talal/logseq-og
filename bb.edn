@@ -105,21 +105,12 @@
   dev:validate-ast
   logseq.tasks.malli/validate-ast
 
-  dev:lint
-  {:doc "Run all ClojureScript lint tasks"
-   :depends [cljs:lint lint:carve lint:large-vars lang:validate-translations lint:ns-docstrings]}
+  lint
+  {:doc "Run all linter tasks"
+   :depends [lint:clj-kondo lang:validate-translations]}
 
   dev:gen-malli-kondo-config
   logseq.tasks.dev/gen-malli-kondo-config
-
-  lint:large-vars
-  logseq.bb-tasks.lint.large-vars/-main
-
-  lint:carve
-  logseq.bb-tasks.lint.carve/-main
-
-  lint:ns-docstrings
-  logseq.bb-tasks.lint.ns-docstrings/-main
 
   nbb:watch
   logseq.bb-tasks.nbb.watch/watch
@@ -182,17 +173,17 @@
   {:doc "Build the publishing ClojureScript release"
    :task (shell "clojure -M:cljs release publishing")}
 
-  cljs:test
+  test:compile
   {:doc "Compile the ClojureScript test bundle"
    :task (shell "clojure -M:test compile test")}
 
-  cljs:run-test
+  test:run
   {:doc "Run the compiled ClojureScript test bundle"
    :task (shell "node static/tests.js")}
 
   test
-  {:doc "Compile and run the ClojureScript tests"
-   :depends [cljs:test cljs:run-test]}
+  {:doc "Compile and run the tests"
+   :depends [test:compile test:run]}
 
   cljs:dev-release-app
   {:doc "Build the development browser release"
@@ -215,7 +206,7 @@
   {:doc "Compile the app and Electron builds"
    :task (shell "clojure -M:cljs compile app electron")}
 
-  cljs:lint
+  lint:clj-kondo
   {:doc "Run clj-kondo over the ClojureScript source"
    :task (shell "clojure -M:clj-kondo --parallel --lint src --cache false")}
 
@@ -249,19 +240,4 @@
 
   -release:android-app
   {:depends [build:app]
-   :task (logseq.tasks.dev.mobile/run-android-release)}}
-
- :tasks/config
- {:large-vars
-  ;; TODO: Get to a smaller max-lines-count
-  {:max-lines-count 100
-   ;; TODO: Address vars tagged with cleanup-todo. These
-   ;; are left mostly because they are not high priority
-   ;; or not well understood
-   :metadata-exceptions #{:large-vars/cleanup-todo}}
-
-  :ns-docstrings
-  {:paths ["src/main"]
-   ;; Ignore namespaces that won't be helpful to document initially
-   ;; e.g. frontend.components.onboarding -> "Onboarding fns"
-   :ignore-regex "^(frontend.components|frontend.extensions|frontend.modules|frontend.mobile|logseq.sdk)"}}}
+   :task (logseq.tasks.dev.mobile/run-android-release)}}}

@@ -52,7 +52,7 @@
                     (delete-page! page-name))
         :button-props {:autoFocus "on"}})]]))
 
-(defn ^:large-vars/cleanup-todo page-menu
+(defn page-menu
   [page-name]
   (when-let [page-name (or
                         page-name

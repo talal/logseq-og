@@ -18,9 +18,9 @@ See the frontend for example usage.
 ## Dev
 
 This follows the practices that [the Logseq frontend
-follows](/docs/dev-practices.md). Most of the same linters are used, with
-configurations that are specific to this library. See [this library's CI
-file](/.github/workflows/db.yml) for linting examples.
+follows](/docs/dev-practices.md). The library uses clj-kondo's defaults and a
+small Datalog-specific check for its standalone rule data. See [this library's
+CI file](/.github/workflows/db.yml) for linting examples.
 
 ### Setup
 
@@ -35,7 +35,10 @@ This step is not needed if you're just running the application.
 
 ### Datalog linting
 
-Our rules are linted through a script that also uses the datalog-parser. To run this linter:
+Our standalone rules are linted through a task that checks both parsing and
+unbound variables. clj-kondo's `:datalog-syntax` linter covers quoted queries
+passed to known `q` functions, but does not inspect these rule collections. To
+run the additional check:
 ```
 bb lint:rules
 ```

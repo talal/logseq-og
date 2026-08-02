@@ -2842,7 +2842,7 @@
         (on-tab direction)))
     nil))
 
-(defn ^:large-vars/cleanup-todo keydown-not-matched-handler
+(defn keydown-not-matched-handler
   "NOTE: Keydown cannot be used on Android platform"
   [format]
   (fn [e _key-code]

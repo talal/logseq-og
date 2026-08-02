@@ -203,7 +203,7 @@
               (ui/icon "external-link" {:size 18})]
              [:code [:small (str id')]]]]))]])])
 
-(rum/defc ^:large-vars/cleanup-todo customize-shortcut-dialog-inner
+(rum/defc customize-shortcut-dialog-inner
   [k action-name binding user-binding {:keys [saved-cb modal-id]}]
   (let [*ref-el (rum/use-ref nil)
         [modal-life _] (r/use-atom *customize-modal-life-sentry)
@@ -351,7 +351,7 @@
   (->> categories
        (map #(vector % (into (sorted-map) (dh/binding-by-category %))))))
 
-(rum/defc ^:large-vars/cleanup-todo shortcut-keymap-x
+(rum/defc shortcut-keymap-x
   []
   (let [_ (r/use-atom shortcut-config/*category)
         _ (r/use-atom *refresh-sentry)

@@ -132,7 +132,7 @@
        [:span.opacity-60.text-sm.ml-2.results-count
         (str result-count (if (> result-count 1) " results" " result"))])]))
 
-(rum/defcs ^:large-vars/cleanup-todo custom-query* < rum/reactive rum/static db-mixins/query
+(rum/defcs custom-query* < rum/reactive rum/static db-mixins/query
   {:init (fn [state]
            (let [[config {:keys [title collapsed?]}] (:rum/args state)
                  built-in? (built-in-custom-query? title)

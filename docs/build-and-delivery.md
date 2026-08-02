@@ -45,7 +45,7 @@ The clearest supported entry points are the Babashka tasks:
   against a reachable development server.
 - `bb dev:publishing`: build publishing output, optionally in watch mode.
 - `bb test`: compile and execute the main CLJS tests.
-- `bb dev:lint`: aggregate repository linting.
+- `bb lint`: aggregate repository linting.
 
 Lower-level Yarn/Gulp scripts remain for Node-only asset and packaging steps.
 Project workflows are orchestrated through Babashka.
@@ -87,8 +87,7 @@ about 30 TypeScript Playwright files. Test layers include:
 - Playwright end-to-end tests, serialised to one worker and stopping after the
   first failure.
 - Babashka validation of Malli schemas, storage/config formats, AST data,
-  translations, file sync, namespace documentation, large vars, unused vars, and
-  clj-kondo rules.
+  translations, file sync, and clj-kondo rules.
 - Package-local TypeScript/format/lint/build checks.
 
 No `.github/workflows` directory is present in this checkout, even though local

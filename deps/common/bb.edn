@@ -8,17 +8,4 @@
 
  :tasks
  {test:load-all-namespaces-with-nbb
-  logseq.bb-tasks.nbb.test/load-all-namespaces
-
-  lint:large-vars
-  logseq.bb-tasks.lint.large-vars/-main
-
-  lint:carve
-  logseq.bb-tasks.lint.carve/-main
-
-  lint:ns-docstrings
-  logseq.bb-tasks.lint.ns-docstrings/-main}
-
- :tasks/config
- {:large-vars
-  {:max-lines-count 45}}}
+  logseq.bb-tasks.nbb.test/load-all-namespaces}}

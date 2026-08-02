@@ -331,7 +331,7 @@
                            :extension? true})}])
    {}))
 
-(rum/defc ^:large-vars/cleanup-todo sidebar-nav
+(rum/defc sidebar-nav
   [route-match close-modal-fn left-sidebar-open? enable-whiteboards? srs-open?
    *closing? close-signal touching-x-offset]
   (let [[local-closing? set-local-closing?] (rum/use-state false)
@@ -867,7 +867,7 @@
      (when handbooks-open?
        (handbooks/handbooks-popup))]))
 
-(rum/defcs ^:large-vars/cleanup-todo sidebar <
+(rum/defcs sidebar <
   (mixins/modal :modal/show?)
   rum/reactive
   (mixins/event-mixin

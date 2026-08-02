@@ -695,7 +695,7 @@
         [:small.scale-250.opacity-70.mb-10.animate-pulse (svg/logo)]
         [:small.block.text-sm.relative.opacity-50 {:style {:right "-8px"}} text]]])))
 
-(defn ^:large-vars/cleanup-todo init-plugins!
+(defn init-plugins!
   [callback]
 
   (let [el (js/document.createElement "div")]

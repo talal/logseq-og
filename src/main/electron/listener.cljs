@@ -44,7 +44,7 @@
   (safe-api-call "persistent-dbs" (fn [_data] (persist-dbs!))))
 
 
-(defn ^:large-vars/cleanup-todo listen-to-electron!
+(defn listen-to-electron!
   []
   ;; TODO: move "file-watcher" to electron.ipc.channels
   (safe-api-call "file-watcher"

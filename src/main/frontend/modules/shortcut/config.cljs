@@ -47,7 +47,7 @@
 ;;  * :fn - Fn or a qualified keyword that represents a fn
 ;;  * :inactive - Optional boolean to disable a shortcut for certain conditions
 ;;    e.g. a given platform or feature condition
-(def ^:large-vars/data-var all-built-in-keyboard-shortcuts
+(def all-built-in-keyboard-shortcuts
   ;; BUG: Actually, "enter" is registered by mixin behind a "when inputing" guard
   ;; So this setting item does not cover all cases.
   ;; See-also: frontend.components.datetime/time-repeater
@@ -596,7 +596,7 @@
     (into {})))
 
 ;; This is the only var that should be publicly expose :fn functionality
-(defonce ^:large-vars/data-var *config
+(defonce *config
   (atom
     {:shortcut.handler/date-picker
      (build-category-map {:ns :date-picker})
@@ -751,7 +751,7 @@
 ;; To add a new entry to this map, first add it here and then
 ;; a description for it in frontend.dicts.en/dicts
 ;; Full list of categories for docs purpose
-(defonce ^:large-vars/data-var *category
+(defonce *category
   (atom
     {:shortcut.category/basics
      [:go/search

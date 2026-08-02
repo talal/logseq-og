@@ -1,3 +1,0 @@
-{:linters
- {:missing-docstring {:level :warning}}
- :output {:progress true}}

@@ -103,7 +103,7 @@
      [])
     [:span.extensions__pdf-resizer {:ref el-ref}]))
 
-(rum/defc ^:large-vars/data-var pdf-highlights-ctx-menu
+(rum/defc pdf-highlights-ctx-menu
   "The contextual menu which appears over a text selection and allows e.g. creating a highlight."
   [^js viewer
    {:keys [highlight point ^js selection]}
@@ -263,7 +263,7 @@
           :data-color    color}])
       rects)]))
 
-(rum/defc ^:large-vars/cleanup-todo pdf-highlight-area-region
+(rum/defc pdf-highlight-area-region
   [^js viewer vw-hl hl {:keys [show-ctx-menu!] :as ops}]
 
   (let [{:keys [id]}      hl
@@ -388,7 +388,7 @@
            (pdf-highlights-text-region viewer vw-hl hl ops))
          (:id hl))))])
 
-(rum/defc ^:large-vars/cleanup-todo pdf-highlight-area-selection
+(rum/defc pdf-highlight-area-selection
   [^js viewer {:keys [show-ctx-menu!]}]
 
   (let [^js viewer-clt          (.. viewer -viewer -classList)
@@ -528,7 +528,7 @@
      (when (and start end)
        [:div.shadow-rect {:style (calc-rect start end)}])]))
 
-(rum/defc ^:large-vars/cleanup-todo pdf-highlights
+(rum/defc pdf-highlights
   [^js el ^js viewer initial-hls loaded-pages {:keys [set-dirty-hls!]}]
 
   (let [^js doc         (.-ownerDocument el)
@@ -712,7 +712,7 @@
        :show-ctx-menu!  show-ctx-menu!
        :add-hl!         add-hl!})]))
 
-(rum/defc ^:large-vars/data-var pdf-viewer
+(rum/defc pdf-viewer
   [_url ^js pdf-document {:keys [identity filename initial-hls initial-page initial-error]} ops]
 
   (let [*el-ref (rum/create-ref)
@@ -845,7 +845,7 @@
                     (let [password @password]
                       (confirm-fn password)))})]]))
 
-(rum/defc ^:large-vars/data-var pdf-loader
+(rum/defc pdf-loader
   [{:keys [url hls-file identity filename] :as pdf-current}]
   (let [*doc-ref       (rum/use-ref nil)
         [loader-state, set-loader-state!] (rum/use-state {:error nil :pdf-document nil :status nil})

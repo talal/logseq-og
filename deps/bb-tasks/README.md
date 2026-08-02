@@ -30,26 +30,11 @@ to your `bb.edn`. See `bb.edn` for pods and versions that are known to work.
 
 Tasks are described by namespace.
 
-### `logseq.bb-tasks.lint.carve`
-
-#### `logseq.bb-tasks.lint.carve/-main`
-
-Finds unused vars with https://github.com/borkdude/carve. Also provides more
-friendly commandline interface as the default config is preserved when
-additional options are given.
-
 ### `logseq.bb-tasks.lint.datalog`
 
 #### `logseq.bb-tasks.lint.datalog/lint-rules`
 
 Lints given datalog rules for valid parse-ability and unbound variables.
-
-### `logseq.bb-tasks.lint.large-vars`
-
-#### `logseq.bb-tasks.lint.large-vars/-main`
-
-Lints codebases for large vars. Large vars make it difficult for teams to
-maintain and understand codebases.
 
 ### `logseq.bb-tasks.nbb`
 

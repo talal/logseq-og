@@ -39,7 +39,7 @@ necessary db filtering"
     (string/join " " (map html v))
     :else (str v)))
 
-(defn- ^:large-vars/html publishing-html
+(defn- publishing-html
   [transit-db app-state options]
   (let [{:keys [icon name alias title description url]} options
         icon (or icon "static/img/logo.png")

@@ -4,6 +4,7 @@
             [clojure.walk :as walk]
             [frontend.config :as config]
             [frontend.util :as util]
+            [goog.string :as gstring]
             [hickory.core :as hickory]))
 
 (defonce *inside-pre? (atom false))
@@ -26,7 +27,7 @@
 (def denied-tags
   #{:script :base :head :link :meta :style :title :comment :xml :svg :frame :frameset :embed :object :canvas :applet})
 
-(defn ^:large-vars/cleanup-todo hiccup->doc-inner
+(defn hiccup->doc-inner
   [format hiccup opts]
   (let [transform-fn (fn [hiccup opts]
                        (hiccup->doc-inner format hiccup opts))
@@ -277,7 +278,7 @@
   [hiccup]
   (walk/postwalk (fn [f]
                    (if (string? f)
-                     (goog.string.unescapeEntities f)
+                     (gstring/unescapeEntities f)
                      f)) hiccup))
 
 (defn- remove-ending-dash-lines

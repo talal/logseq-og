@@ -118,7 +118,7 @@
                                                   (set! (.-src img) img-url)
                                                   (callback blob)))) "image/png"))))))
 
-(rum/defcs ^:large-vars/cleanup-todo
+(rum/defcs
   export-blocks < rum/static
   (rum/local false ::copied?)
   (rum/local nil ::text-remove-options)

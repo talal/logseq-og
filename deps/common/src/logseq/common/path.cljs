@@ -78,7 +78,6 @@
                   (case segs
                     []   "."
                     [""] "/"
-                    #_{:clj-kondo/ignore [:path-invalid-construct/string-join]}
                     (string/join "/" segs)))]
     (->> (filter seq segments)
          (mapcat split-fn)
@@ -117,7 +116,6 @@
                   (case segs
                     []   "."
                     [""] "/"
-                    #_{:clj-kondo/ignore [:path-invalid-construct/string-join]}
                     (string/join "/" segs)))]
     (->> (filter seq segments)
          (mapcat split-fn)
@@ -273,7 +271,6 @@
             remain-segs (drop (count common-segs) path-segs)
             base-prefix (apply str (repeat (max 0 (dec (count base-segs))) "../"))]
         (js/console.error (js/Error. "buggy relative-path") base-path sub-path)
-        #_{:clj-kondo/ignore [:path-invalid-construct/string-join]}
         (if is-url?
           (safe-decode-uri-component (str base-prefix (string/join "/" remain-segs)))
           (str base-prefix (string/join "/" remain-segs)))))))
@@ -310,7 +307,6 @@
         base-segs (drop (count common-segs) base-segs)
         remain-segs (drop (count common-segs) path-segs)
         base-prefix (apply str (repeat (max 0 (count base-segs)) "../"))]
-    #_{:clj-kondo/ignore [:path-invalid-construct/string-join]}
     (if is-url?
       (safe-decode-uri-component (str base-prefix (string/join "/" remain-segs)))
       (str base-prefix (string/join "/" remain-segs)))))

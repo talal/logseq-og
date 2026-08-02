@@ -200,7 +200,7 @@
 
 (def *last-calculated-time (atom nil))
 
-(rum/defc ^:large-vars/cleanup-todo indicator-progress-pane
+(rum/defc indicator-progress-pane
   [sync-state sync-progress
    {:keys [idle? syncing? no-active-files? online? history-files? queuing?]}]
 
@@ -318,7 +318,7 @@
   [files]
   (sort-by (fn [f] (or (:size f) 0)) > files))
 
-(rum/defcs ^:large-vars/cleanup-todo indicator <
+(rum/defcs indicator <
   rum/reactive
   {:key-fn #(identity "file-sync-indicator")}
   {:will-mount   (fn [state]

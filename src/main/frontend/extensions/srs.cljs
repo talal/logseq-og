@@ -600,7 +600,7 @@
                               :extract-fn nil})))
 
 ;;; register cards macro
-(rum/defcs ^:large-vars/cleanup-todo cards-inner < rum/reactive db-mixins/query
+(rum/defcs cards-inner < rum/reactive db-mixins/query
   (rum/local 0 ::card-index)
   (rum/local false ::random-mode?)
   (rum/local false ::preview-mode?)

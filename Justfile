@@ -45,7 +45,7 @@ test-all: test test-e2e
 [group('Quality')]
 lint: check-version
     yarn css:lint
-    bb dev:lint
+    bb lint
 
 # Format all code.
 [group('Quality')]

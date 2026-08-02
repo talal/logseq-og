@@ -8,7 +8,6 @@
             [frontend.handler.file-sync :as file-sync]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.web.nfs :as nfs-handler]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
@@ -102,8 +101,7 @@
            (repos-inner local-graphs))
 
          [:div.flex.flex-row.my-4
-          (when (or (nfs-handler/supported?)
-                    (mobile-util/native-platform?))
+          (when (nfs-handler/supported?)
             [:div.mr-8
              (ui/button
               (t :open-a-directory)
@@ -154,8 +152,7 @@
         refresh-link (let [nfs-repo? (config/local-db? current-repo)]
                        (when (and nfs-repo?
                                   (not= current-repo config/local-repo)
-                                  (or (nfs-handler/supported?)
-                                      (mobile-util/native-platform?)))
+                                  (nfs-handler/supported?))
                          {:title (t :sync-from-local-files)
                           :hover-detail (t :sync-from-local-files-detail)
                           :options {:on-click #(state/pub-event! [:graph/ask-for-re-fresh])}}))
@@ -173,7 +170,7 @@
     (->>
      (concat repo-links
              [(when (seq repo-links) {:hr true})
-              (if (or (nfs-handler/supported?) (mobile-util/native-platform?))
+              (if (nfs-handler/supported?)
                 {:title (t :new-graph) :options {:on-click #(state/pub-event! [:graph/setup-a-repo])}}
                 {:title (t :new-graph) :options {:href (rfe/href :repos)}}) ;; Brings to the repos page for showing fallback message
               {:title (t :all-graphs) :options {:href (rfe/href :repos)}}

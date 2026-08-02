@@ -1,7 +1,6 @@
 (ns frontend.modules.instrumentation.sentry
   (:require ["@sentry/react" :as Sentry]
             [frontend.config :as config]
-            [frontend.mobile.util :as mobile-util]
             [frontend.util :as util]
             [frontend.version :refer [version]]
             [medley.core :as medley]))
@@ -10,20 +9,13 @@
 
 (def config
   {:dsn SENTRY-DSN
-   :release (util/format "logseq%s@%s" (cond
-                                         (mobile-util/native-android?) "-android"
-                                         (mobile-util/native-ios?) "-ios"
-                                         :else "")
-                         version)
+   :release (util/format "logseq@%s" version)
    :environment (if config/dev? "development" "production")
    :initialScope {:tags
                   (merge
                    (when (not-empty config/revision)
                      {:revision config/revision})
-                   {:platform (cond
-                                (util/electron?) "electron"
-                                (mobile-util/native-platform?) "mobile"
-                                :else "web")
+                   {:platform (if (util/electron?) "electron" "web")
                     :publishing config/publishing?})}
    ;; :integrations [(new posthog/SentryIntegration posthog "logseq" 5311485)
    ;;                (new BrowserTracing)]

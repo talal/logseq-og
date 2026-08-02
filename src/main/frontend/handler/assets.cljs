@@ -1,7 +1,6 @@
 (ns ^:no-doc frontend.handler.assets
   (:require [clojure.string :as string]
             [frontend.config :as config]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
             [logseq.common.path :as path]
@@ -13,6 +12,10 @@
   []
   (and (util/electron?)
        (:assets/alias-enabled? @state/state)))
+
+(defn alias-enabled-changed?
+  [previous-enabled? enabled?]
+  (not= previous-enabled? enabled?))
 
 (defn clean-path-prefix
   [path]
@@ -42,15 +45,6 @@
     (medley/find-first #(= name (:name (second %1)))
                        (medley/indexed alias-dirs))))
 
-(defn- convert-platform-protocol
-  [full-path]
-
-  (cond-> full-path
-    (and (string? full-path)
-         (mobile-util/native-platform?))
-    (string/replace-first
-     #"^(file://|assets://)" gp-config/capacitor-protocol-with-prefix)))
-
 (defn resolve-asset-real-path-url
   [repo rpath]
   (when-let [rpath (and (string? rpath)
@@ -79,7 +73,7 @@
                     (if has-schema?
                       (path/path-join graph-root rpath)
                       (path/prepend-protocol "file:" (path/path-join graph-root rpath)))))]
-        (convert-platform-protocol ret)))))
+        ret))))
 
 (defn normalize-asset-resource-url
   "try to convert resource file to url asset link"

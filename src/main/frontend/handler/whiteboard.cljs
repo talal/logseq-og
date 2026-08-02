@@ -451,8 +451,7 @@
 (defn onboarding-show
   []
   (when (not (or (state/sub :whiteboard/onboarding-tour?)
-                 (config/demo-graph?)
-                 (util/mobile?)))
+                 (config/demo-graph?)))
     (state/pub-event! [:whiteboard/onboarding])
     (state/set-state! [:whiteboard/onboarding-tour?] true)
     (storage/set :whiteboard-onboarding-tour? true)))

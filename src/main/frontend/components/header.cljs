@@ -16,7 +16,6 @@
             [frontend.handler.route :as route-handler]
             [frontend.handler.user :as user-handler]
             [frontend.handler.web.nfs :as nfs]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
@@ -30,10 +29,7 @@
   (ui/with-shortcut :go/home "left"
     [:button.button.icon.inline.mx-1
      {:title (t :home)
-      :on-click #(do
-                   (when (mobile-util/native-iphone?)
-                     (state/set-left-sidebar-open! false))
-                   (route-handler/redirect-to-home!))}
+      :on-click #(route-handler/redirect-to-home!)}
      (ui/icon "home" {:size ui/icon-size})]))
 
 (rum/defc login < rum/reactive
@@ -197,7 +193,6 @@
         show-open-folder? (and (nfs/supported?)
                                (or (empty? repos)
                                    (nil? (state/sub :git/current-repo)))
-                               (not (mobile-util/native-platform?))
                                (not config/publishing?))
         left-menu (left-menu-button {:on-click (fn []
                                                  (open-fn)
@@ -207,38 +202,21 @@
                                (= (state/sub-default-home-page) (state/get-current-page)))
         sync-enabled? (file-sync-handler/enable-sync?)]
     [:div.cp__header.drag-region#head
-     {:class           (util/classnames [{:electron-mac   electron-mac?
-                                          :native-ios     (mobile-util/native-ios?)
-                                          :native-android (mobile-util/native-android?)}])
+     {:class           (util/classnames [{:electron-mac electron-mac?}])
       :on-double-click (fn [^js e]
                          (when-let [target (.-target e)]
-                           (cond
-                             (and (util/electron?)
-                                  (.. target -classList (contains "drag-region")))
-                             (js/window.apis.toggleMaxOrMinActiveWindow)
-
-                             (mobile-util/native-platform?)
-                             (util/scroll-to-top true))))
+                           (when (and (util/electron?)
+                                      (.. target -classList (contains "drag-region")))
+                             (js/window.apis.toggleMaxOrMinActiveWindow))))
       :style           {:fontSize 50}}
      [:div.l.flex.drag-region
       [left-menu
-       (if (mobile-util/native-platform?)
-         ;; back button for mobile
-         (when-not (or (state/home?) custom-home-page? (state/whiteboard-dashboard?))
-           (ui/with-shortcut :go/backward "bottom"
-             [:button.it.navigation.nav-left.button.icon.opacity-70
-              {:title (t :header/go-back) :on-click #(js/window.history.back)}
-              (ui/icon "chevron-left" {:size 26})]))
-         ;; search button for non-mobile
-         (when current-repo
-           (ui/with-shortcut :go/search "right"
-             [:button.button.icon#search-button
-              {:title (t :header/search)
-               :on-click #(do (when (or (mobile-util/native-android?)
-                                        (mobile-util/native-iphone?))
-                                (state/set-left-sidebar-open! false))
-                              (state/pub-event! [:go/search]))}
-              (ui/icon "search" {:size ui/icon-size})])))]]
+       (when current-repo
+         (ui/with-shortcut :go/search "right"
+           [:button.button.icon#search-button
+            {:title (t :header/search)
+             :on-click #(state/pub-event! [:go/search])}
+            (ui/icon "search" {:size ui/icon-size})]))]]
 
      [:div.r.flex.drag-region
       (when (and current-repo
@@ -264,16 +242,14 @@
       (when (util/electron?)
         (back-and-forward))
 
-      (when-not (mobile-util/native-platform?)
-        (new-block-mode))
+      (new-block-mode)
 
       (when show-open-folder?
         [:a.text-sm.font-medium.button.icon.add-graph-btn.flex.items-center
          {:on-click #(route-handler/redirect! {:to :repo-add})}
          (ui/icon "folder-plus")
-         (when-not config/mobile?
-           [:span.ml-1 {:style {:margin-top (if electron-mac? 0 2)}}
-            (t :on-boarding/add-graph)])])
+         [:span.ml-1 {:style {:margin-top (if electron-mac? 0 2)}}
+          (t :on-boarding/add-graph)]])
 
       (when config/publishing?
         [:a.text-sm.font-medium.button {:href (rfe/href :graph)}

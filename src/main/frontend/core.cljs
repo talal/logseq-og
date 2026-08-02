@@ -1,5 +1,5 @@
 (ns frontend.core
-  "Entry ns for the mobile, browser and electron frontend apps"
+  "Entry ns for the browser and Electron frontend apps"
   {:dev/always true}
   (:require [frontend.config :as config]
             [frontend.fs.sync :as sync]

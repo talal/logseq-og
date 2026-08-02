@@ -2,17 +2,16 @@
 
 ## Toolchain ownership
 
-| Tool             | Source of truth                                    | Responsibility                                                                                               |
-| ---------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Clojure CLI      | `deps.edn`                                         | JVM/CLJS dependencies, source paths, test/bench/lint aliases.                                                |
-| Shadow CLJS      | `shadow-cljs.edn`                                  | Browser modules, Electron Node script, publishing app, Node tests, Storybook CLJS module.                    |
-| Babashka         | `bb.edn`, `scripts/src`                            | Preferred task catalog and orchestration across CLJS, Electron, mobile, publishing, validation, and linting. |
-| Yarn             | multiple `package.json`/lockfiles                  | JS dependencies for root and independently managed subprojects.                                              |
-| Gulp             | `gulpfile.js`                                      | Copy resources/vendor assets, compile/minify CSS, assemble `static` and `public`, launch packaging.          |
-| PostCSS/Tailwind | root configs                                       | Main application stylesheet generation.                                                                      |
-| Electron Forge   | `resources/forge.config.js`, `static/package.json` | macOS, Windows, and Linux packages; signing/notarization and GitHub publishing.                              |
-| Capacitor        | `capacitor.config.ts`, native projects             | iOS/Android shells and native plugins.                                                                       |
-| Parcel/Webpack   | package-local configs                              | React UI/Amplify globals and plugin SDK builds.                                                              |
+| Tool             | Source of truth                                    | Responsibility                                                                                       |
+| ---------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Clojure CLI      | `deps.edn`                                         | JVM/CLJS dependencies, source paths, test/bench/lint aliases.                                        |
+| Shadow CLJS      | `shadow-cljs.edn`                                  | Browser modules, Electron Node script, publishing app, Node tests, Storybook CLJS module.            |
+| Babashka         | `bb.edn`, `scripts/src`                            | Preferred task catalog and orchestration across CLJS, Electron, publishing, validation, and linting. |
+| Yarn             | multiple `package.json`/lockfiles                  | JS dependencies for root and independently managed subprojects.                                      |
+| Gulp             | `gulpfile.js`                                      | Copy resources/vendor assets, compile/minify CSS, assemble `static`, and launch packaging.           |
+| PostCSS/Tailwind | root configs                                       | Main application stylesheet generation.                                                              |
+| Electron Forge   | `resources/forge.config.js`, `static/package.json` | macOS, Windows, and Linux packages; signing/notarization and GitHub publishing.                      |
+| Parcel/Webpack   | package-local configs                              | React UI/Amplify globals and plugin SDK builds.                                                      |
 
 ## Shadow build graph
 
@@ -42,8 +41,6 @@ The clearest supported entry points are the Babashka tasks:
 - `bb watch`: build static assets and keep the desktop asset/CLJS watchers
   running. Stop it with Ctrl+C; it owns and cleans up both watcher processes.
 - `bb electron-start`: open Electron using an already-running `bb watch`.
-- `bb dev:ios-app` / `bb dev:android-app`: watch app assets and run Capacitor
-  against a reachable development server.
 - `bb dev:publishing`: build publishing output, optionally in watch mode.
 - `bb test`: compile and execute the main CLJS tests.
 - `bb lint`: aggregate repository linting.
@@ -54,8 +51,7 @@ Project workflows are orchestrated through Babashka.
 ## Asset pipeline
 
 `resources/` is copied into `static/`. Gulp then copies selected prebuilt assets
-from `node_modules`, builds Tailwind/PostCSS CSS, and optionally mirrors
-assembled JS/CSS into `public/static` for Capacitor. Babashka orchestrates the
+from `node_modules` and builds Tailwind/PostCSS CSS. Babashka orchestrates the
 ClojureScript build before the Node-only Electron packaging step updates the
 nested static package version from `frontend/version.cljs`, installs nested
 dependencies if needed, and invokes Electron Forge.
@@ -72,11 +68,8 @@ AppImage/ZIP for Linux, code signing/notarization, the `logseq-og` protocol, and
 GitHub prerelease publishing. Runtime entry is `static/electron.js` as declared
 by the root/nested application package.
 
-Capacitor packages `public`, uses a development server when
-`LOGSEQ_APP_SERVER_URL` is set, and integrates native filesystem/sync, camera,
-clipboard, keyboard, share, background task, haptics, splash, and
-status/navigation bar plugins. The native Android and iOS projects are checked
-in.
+The browser application is delivered as the assembled web assets. Electron
+packages the same renderer with its Node main process and preload bridge.
 
 ## Test and quality model
 

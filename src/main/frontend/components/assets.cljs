@@ -202,7 +202,9 @@
 
   (let [*pre-alias-enabled?    (::alias-enabled? _state)
         alias-enabled?         (state/sub :assets/alias-enabled?)
-        alias-enabled-changed? (not= @*pre-alias-enabled? alias-enabled?)]
+        alias-enabled-changed? (assets-handler/alias-enabled-changed?
+                                @*pre-alias-enabled?
+                                alias-enabled?)]
 
     [:div.cp__assets-settings.panel-wrap
      [:div.it

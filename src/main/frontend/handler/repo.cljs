@@ -18,12 +18,10 @@
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.idb :as idb]
-            [frontend.mobile.util :as mobile-util]
             [frontend.search :as search]
             [frontend.spec :as spec]
             [frontend.state :as state]
             [frontend.util :as util]
-            [frontend.util.fs :as util-fs]
             [logseq.common.config :as common-config]
             [logseq.common.path :as path]
             [logseq.graph-parser :as graph-parser]
@@ -473,9 +471,6 @@
           nfs-dbs (and (seq nfs-dbs)
                        (cond (util/electron?)
                              (ipc/ipc :inflateGraphsInfo nfs-dbs)
-
-                             (mobile-util/native-platform?)
-                             (util-fs/inflate-graphs-info nfs-dbs)
 
                              :else
                              nil))

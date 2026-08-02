@@ -28,17 +28,12 @@
             [frontend.handler.user :as user-handler]
             [frontend.handler.whiteboard :as whiteboard-handler]
             [frontend.mixins :as mixins]
-            [frontend.mobile.action-bar :as action-bar]
-            [frontend.mobile.footer :as footer]
-            [frontend.mobile.mobile-bar :refer [mobile-bar]]
-            [frontend.mobile.util :as mobile-util]
             [frontend.modules.shortcut.data-helper :as shortcut-dh]
             [frontend.modules.shortcut.utils :as shortcut-utils]
             [frontend.state :as state]
             [frontend.storage :as storage]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [frontend.util.cursor :as cursor]
             [frontend.util.page :as page-util]
             [frontend.version :refer [version]]
             [goog.dom :as gdom]
@@ -48,7 +43,6 @@
             [logseq.shui.toaster.core :as shui-toaster]
             [logseq.shui.ui :as shui]
             [medley.core :as medley]
-            [react-draggable]
             [reitit.frontend.easy :as rfe]
             [rum.core :as rum]))
 
@@ -298,11 +292,6 @@
     (when shortcut
       [:span.ml-1 (ui/render-keyboard-shortcut (ui/keyboard-shortcut-from-config shortcut))])]])
 
-(defn close-sidebar-on-mobile!
-  []
-  (and (util/sm-breakpoint?)
-       (state/toggle-left-sidebar!)))
-
 (defn create-dropdown
   []
   (ui/dropdown-with-links
@@ -315,16 +304,14 @@
    (->>
     [{:title (t :left-side-bar/new-page)
       :class "new-page-link"
-      :options {:on-click #(do (close-sidebar-on-mobile!)
-                               (state/pub-event! [:go/search]))
+      :options {:on-click #(state/pub-event! [:go/search])
                 :shortcut (ui/keyboard-shortcut-from-config :go/search)}
       :icon (ui/type-icon {:name "new-page"
                            :class "highlight"
                            :extension? true})}
      {:title (t :left-side-bar/new-whiteboard)
       :class "new-whiteboard-link"
-      :options {:on-click #(do (close-sidebar-on-mobile!)
-                               (whiteboard-handler/create-new-whiteboard-and-redirect!))
+      :options {:on-click #(whiteboard-handler/create-new-whiteboard-and-redirect!)
                 :shortcut (ui/keyboard-shortcut-from-config :editor/new-whiteboard)}
       :icon (ui/type-icon {:name "new-whiteboard"
                            :class "highlight"
@@ -404,12 +391,6 @@
                                (close-fn)))}
 
       [:div.flex.flex-col.wrap.gap-1.relative
-       ;; temporarily remove fake hamburger menu
-       ;(when (mobile-util/native-platform?)
-       ;  [:div.fake-bar.absolute
-       ;   [:button
-       ;    {:on-click state/toggle-left-sidebar!}
-       ;    (ui/icon "menu-2" {:size ui/icon-size})]])
 
        [:nav.px-4.flex.flex-col.gap-1.cp__menubar-repos
         {:aria-label "Navigation menu"}
@@ -578,22 +559,6 @@
      ;; resizer
      (sidebar-resizer)]))
 
-(rum/defc recording-bar
-  []
-  [:> react-draggable
-   {:onStart (fn [_event]
-               (when-let [pos (some-> (state/get-input) cursor/pos)]
-                 (state/set-editor-last-pos! pos)))
-    :onStop (fn [_event]
-              (when-let [block (get-in @state/state [:editor/block :block/uuid])]
-                (editor-handler/edit-block! block :max (:block/uuid block))
-                (when-let [input (state/get-input)]
-                  (when-let [saved-cursor (state/get-editor-last-pos)]
-                    (cursor/move-cursor-to input saved-cursor)))))}
-   [:div#audio-record-toolbar
-    {:style {:bottom (+ @util/keyboard-height 45)}}
-    (footer/audio-record-cp)]])
-
 (rum/defc main <
   {:did-mount (fn [state]
                 (when-let [element (gdom/getElement "app-container")]
@@ -612,12 +577,12 @@
                    (when-let [el (gdom/getElement "app-container")]
                      (dnd/unsubscribe! el :upload-files))
                    state)}
-  [{:keys [route-match margin-less-pages? route-name indexeddb-support? db-restoring? main-content show-action-bar? show-recording-bar?]}]
+  [{:keys [route-match margin-less-pages? route-name indexeddb-support? db-restoring? main-content]}]
   (let [left-sidebar-open?   (state/sub :ui/left-sidebar-open?)
         onboarding-and-home? (and (or (nil? (state/get-current-repo)) (config/demo-graph?))
                                   (not config/publishing?)
                                   (= :home route-name))
-        margin-less-pages?   (or (and (mobile-util/native-platform?) onboarding-and-home?) margin-less-pages?)]
+        margin-less-pages?   margin-less-pages?]
     [:div#main-container.cp__sidebar-main-layout.flex-1.flex
      {:class (util/classnames [{:is-left-sidebar-open left-sidebar-open?}])}
 
@@ -630,22 +595,12 @@
       {:tabIndex "-1"
        :data-is-margin-less-pages margin-less-pages?}
 
-      (when show-action-bar?
-        (action-bar/action-bar))
-
       [:div.cp__sidebar-main-content
        {:data-is-margin-less-pages margin-less-pages?
         :data-is-full-width        (or margin-less-pages?
                                        (contains? #{:all-files :all-pages :my-publishing} route-name))}
 
-       (when show-recording-bar?
-         (recording-bar))
-
-       (mobile-bar)
-       (footer/footer)
-
-       (when (and (not (mobile-util/native-platform?))
-                  (contains? #{:page :home} route-name))
+       (when (contains? #{:page :home} route-name)
          (widgets/demo-graph-alert))
 
        (cond
@@ -704,8 +659,6 @@
                                               [(:db/id (db/pull [:block/name page])) :page])]
                      (state/sidebar-add-block! current-repo db-id block-type)))
                  (reset! sidebar-inited? true))))
-           (when (state/mobile?)
-             (state/set-state! :mobile/show-tabbar? true))
            state)}
   []
   (let [default-home (get-default-home-if-valid)
@@ -910,9 +863,6 @@
         edit? (:editor/editing? @state/state)
         default-home (get-default-home-if-valid)
         logged? (user-handler/logged-in?)
-        fold-button-on-right? (state/enable-fold-button-right?)
-        show-action-bar? (state/sub :mobile/show-action-bar?)
-        show-recording-bar? (state/sub :mobile/show-recording-bar?)
         preferred-language (state/sub [:preferred-language])]
     (theme/container
      {:t             t
@@ -938,7 +888,6 @@
                                  :ls-right-sidebar-open   sidebar-open?
                                  :ls-wide-mode            wide-mode?
                                  :ls-window-controls      window-controls?
-                                 :ls-fold-button-on-right fold-button-on-right?
                                  :ls-hl-colored           ls-block-hl-colored?}])}
 
       [:button#skip-to-main
@@ -969,9 +918,7 @@
                :indexeddb-support?  indexeddb-support?
                :light?              light?
                :db-restoring?       db-restoring?
-               :main-content        main-content
-               :show-action-bar?    show-action-bar?
-               :show-recording-bar? show-recording-bar?})]
+               :main-content        main-content})]
 
        (when window-controls?
          (window-controls/container))
@@ -992,6 +939,5 @@
                                     :nfs-granted? granted?
                                     :db-restoring? db-restoring?})
       [:a#download.hidden]
-      (when (and (not config/mobile?)
-                 (not config/publishing?))
+      (when-not config/publishing?
         (help-button))])))

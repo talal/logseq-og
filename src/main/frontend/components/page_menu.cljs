@@ -12,7 +12,6 @@
             [frontend.handler.route :as route-handler]
             [frontend.handler.shell :as shell]
             [frontend.handler.user :as user-handler]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
@@ -105,8 +104,7 @@
                            nil))
                        :class "cp__btn_history_version"}})
 
-          (when (or (util/electron?)
-                    (mobile-util/native-platform?))
+          (when (util/electron?)
             {:title   (t :page/copy-page-url)
              :options {:on-click #(page-handler/copy-page-url page-original-name)}})
 
@@ -115,8 +113,7 @@
             {:title   (t :page/delete)
              :options {:on-click #(state/set-modal! (delete-page-dialog page-name))}})
 
-          (when (and (not (mobile-util/native-platform?))
-                     (state/get-current-page))
+          (when (state/get-current-page)
             {:title (t :page/slide-view)
              :options {:on-click (fn []
                                    (state/sidebar-add-block!

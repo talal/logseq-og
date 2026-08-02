@@ -2,14 +2,12 @@
   "App config and fns built on top of configuration"
   (:require [clojure.set :as set]
             [clojure.string :as string]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
             [goog.crypt :as crypt]
             [goog.crypt.Md5]
             [logseq.common.path :as path]
             [logseq.graph-parser.config :as gp-config]
-            [logseq.graph-parser.util :as gp-util]
             [shadow.resource :as rc]))
 
 (goog-define DEV-RELEASE false)
@@ -165,16 +163,6 @@
   [s]
   (when-let [s (and (string? s) (util/get-file-ext s))]
     (extname-of-supported? s [image-formats])))
-
-(def mobile?
-  "Triggering condition: Mobile phones
-   *** Warning!!! ***
-   For UX logic only! Don't use for FS logic
-   iPad / Android Pad doesn't trigger!
-
-   Same as config/mobile?"
-  (when-not util/node-test?
-    (util/safe-re-find #"Mobi" js/navigator.userAgent)))
 
 ;; TODO: protocol design for future formats support
 
@@ -352,9 +340,9 @@
 
 ;; NOTE: repo-url is the unique identifier of a repo.
 ;; - `local` => in-memory demo graph
-;; - `logseq_local_/absolute/path/to/graph` => local graph, native fs backend
-;; - `logseq_local_x:/absolute/path/to/graph` => local graph, native fs backend, on Windows
-;; - `logseq_local_GraphName` => local graph, browser fs backend
+;; - `logseq_local_/absolute/path/to/graph` => local graph, Electron fs backend
+;; - `logseq_local_x:/absolute/path/to/graph` => local graph, Electron fs backend, on Windows
+;; - `logseq_local_GraphName` => local graph, browser NFS backend
 ;; - Use `""` while writing global files
 
 (defonce idb-db-prefix "logseq-db/")
@@ -390,12 +378,6 @@
     (and (util/electron?) (local-db? repo-url))
     (get-local-dir repo-url)
 
-    (and (mobile-util/native-platform?) (local-db? repo-url))
-    (let [dir (get-local-dir repo-url)]
-      (if (string/starts-with? dir "file://")
-        dir
-        (path/path-join "file://" dir)))
-
     ;; Special handling for demo graph
     (= repo-url "local")
     "memory:///local"
@@ -418,22 +400,7 @@
 
 (defn get-string-repo-dir
   [repo-dir]
-  (if (mobile-util/native-ios?)
-    (str (if (mobile-util/in-iCloud-container-path? repo-dir)
-           "iCloud"
-           (cond (mobile-util/native-iphone?)
-                 "On My iPhone"
-
-                 (mobile-util/native-ipad?)
-                 "On My iPad"
-
-                 :else
-                 "Local"))
-         (->> (string/split repo-dir "Documents/")
-              last
-              gp-util/safe-decode-uri-component
-              (str "/" (string/capitalize app-name) "/")))
-    (get-repo-dir (get-local-repo repo-dir))))
+  (get-repo-dir (get-local-repo repo-dir)))
 
 (defn get-repo-fpath
   [repo-url path]
@@ -470,10 +437,7 @@
                            (let [graph-root (get-repo-dir (state/get-current-repo))
                                  protocol (if (string/starts-with? graph-root "file:") "" protocol)
                                  full-path (path/path-join protocol graph-root "assets")]
-                             (str (cond-> full-path
-                                    (mobile-util/native-platform?)
-                                    (mobile-util/convert-file-src))
-                                  "/")))]
+                             (str full-path "/")))]
       (string/replace source #"\.\./assets/" assets-link-fn))))
 
 (defn get-current-repo-assets-root

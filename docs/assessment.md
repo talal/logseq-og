@@ -19,10 +19,9 @@ the product's graph model.
 
 ### Cross-platform renderer reuse
 
-Browser, Electron, mobile, and publishing builds share most application code.
-Platform checks and adapter namespaces isolate enough host behavior to avoid
-separate products, while Shadow compile-time defines allow meaningful
-specialization.
+Browser, Electron, and publishing builds share most application code. Platform
+checks and adapter namespaces isolate enough host behavior to avoid separate
+products, while Shadow compile-time defines allow meaningful specialization.
 
 ### Functional extension points
 
@@ -92,10 +91,9 @@ command that installs and verifies all intended subprojects deterministically.
 ### 4. Describe the build as an artifact DAG
 
 Create one root task for each supported artifact—web renderer, desktop app,
-publishing site, Android, iOS, SDK, and UI bundle—with declared inputs and
-outputs. Keep Babashka as the human-facing orchestrator, but move build output
-to clean platform-specific directories. Eliminate build-on-install where
-practical.
+publishing site, SDK, and UI bundle—with declared inputs and outputs. Keep
+Babashka as the human-facing orchestrator, but move build output to clean
+platform-specific directories. Eliminate build-on-install where practical.
 
 ### 5. Reduce global state by ownership, not wholesale rewrite
 
@@ -144,7 +142,7 @@ flowchart TB
     queries["Graph commands / queries"]
     publishing["Publishing"]
     services["Application services<br>(filesystem · persistence · sync · plugins)"]
-    hosts["Host adapters<br>(browser · Electron · Capacitor)"]
+    hosts["Host adapters<br>(browser · Electron)"]
     presentation["Presentation<br>(Rum + React islands)"]
 
     domain --> schema --> parser --> queries --> publishing

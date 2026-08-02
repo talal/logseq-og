@@ -8,7 +8,6 @@
             [frontend.handler.export.opml :as export-opml]
             [frontend.handler.export.text :as export-text]
             [frontend.image :as image]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
@@ -30,18 +29,15 @@
         [:li.mb-4
          [:a.font-medium {:on-click #(export/download-repo-as-html! current-repo)}
           (t :export-public-pages)]])
-      (when-not (mobile-util/native-platform?)
-        [:li.mb-4
-         [:a.font-medium {:on-click #(export-text/export-repo-as-markdown! current-repo)}
-          (t :export-markdown)]])
-      (when-not (mobile-util/native-platform?)
-        [:li.mb-4
-         [:a.font-medium {:on-click #(export-opml/export-repo-as-opml! current-repo)}
-          (t :export-opml)]])
-      (when-not (mobile-util/native-platform?)
-        [:li.mb-4
-         [:a.font-medium {:on-click #(export/export-repo-as-roam-json! current-repo)}
-          (t :export-roam-json)]])]
+      [:li.mb-4
+       [:a.font-medium {:on-click #(export-text/export-repo-as-markdown! current-repo)}
+        (t :export-markdown)]]
+      [:li.mb-4
+       [:a.font-medium {:on-click #(export-opml/export-repo-as-opml! current-repo)}
+        (t :export-opml)]]
+      [:li.mb-4
+       [:a.font-medium {:on-click #(export/export-repo-as-roam-json! current-repo)}
+        (t :export-roam-json)]]]
      [:a#download-as-edn-v2.hidden]
      [:a#download-as-json-v2.hidden]
      [:a#download-as-roam-json.hidden]

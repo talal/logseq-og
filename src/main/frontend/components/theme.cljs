@@ -102,8 +102,7 @@
          (let [repos (state/get-repos)]
            (if-not (or
                     ;; demo graph only
-                    (and (= 1 (count repos)) (:example? (first repos))
-                         (not (util/mobile?)))
+                    (and (= 1 (count repos)) (:example? (first repos)))
                     ;; not in publishing mode
                     config/publishing?
                     ;; other graphs exists

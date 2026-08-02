@@ -63,7 +63,6 @@
  :on-boarding/section-computer  "رایانه"
  :on-boarding/section-journals  "یادداشت‌های روزانه"
  :on-boarding/section-pages     "برگه‌ها"
- :on-boarding/section-phone     "گوشی"
  :on-boarding/section-app       "فرایندهای داخلی برنامه"
  :on-boarding/section-config    "پرونده پیکربندی"
  :help/title-usage            "استفاده"

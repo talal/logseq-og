@@ -11,15 +11,11 @@
             [frontend.config :as config]
             [frontend.db :as db]
             [frontend.db.model :as db-model]
-            [frontend.fs :as fs]
             [frontend.fs.sync :as fs-sync]
             [frontend.handler.file-sync :refer [*beta-unavailable?] :as file-sync-handler]
-            [frontend.handler.notification :as notification]
             [frontend.handler.page :as page-handler]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.user :as user-handler]
-            [frontend.handler.web.nfs :as web-nfs]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.storage :as storage]
             [frontend.ui :as ui]
@@ -27,95 +23,11 @@
             [frontend.util.fs :as fs-util]
             [frontend.util.persist-var :as persist-var]
             [goog.functions :refer [debounce]]
-            [logseq.graph-parser.util :as gp-util]
             [promesa.core :as p]
             [reitit.frontend.easy :as rfe]
             [rum.core :as rum]))
 
 (declare maybe-onboarding-show)
-(declare open-icloud-graph-clone-picker)
-
-(rum/defc clone-local-icloud-graph-panel
-  [repo graph-name close-fn]
-
-  (rum/use-effect!
-   #(some->> (state/sub :file-sync/jstour-inst)
-             (.complete))
-   [])
-
-  (let [graph-dir      (config/get-repo-dir repo)
-        [selected-path set-selected-path] (rum/use-state "")
-        selected-path? (and (not (string/blank? selected-path))
-                            (not (mobile-util/in-iCloud-container-path? selected-path)))
-        on-confirm     (fn []
-                         (when-let [dest-dir (and selected-path?
-                                                  ;; avoid using `util/node-path.join` to join mobile path since it replaces `file:///abc` to `file:/abc`
-                                                  (str (string/replace selected-path #"/+$" "") "/" graph-name))]
-                           (-> (cond
-                                 (util/electron?)
-                                 (ipc/ipc :copyDirectory graph-dir dest-dir)
-
-                                 (mobile-util/native-ios?)
-                                 (fs/copy! repo graph-dir dest-dir)
-
-                                 :else
-                                 nil)
-                               (.then #(do
-                                         (notification/show! (str "Cloned to => " dest-dir) :success)
-                                         (web-nfs/ls-dir-files-with-path! dest-dir)
-                                         (repo-handler/remove-repo! {:url repo})
-                                         (close-fn)))
-                               (.catch #(js/console.error %)))))]
-
-    [:div.cp__file-sync-related-normal-modal
-     [:div.flex.justify-center.pb-4 [:span.icon-wrap (ui/icon "folders")]]
-
-     [:h1.text-xl.font-semibold.opacity-90.text-center.py-2
-      "Clone your local graph away from " [:strong "☁️"] " iCloud!"]
-     [:h2.text-center.opacity-70.text-xs.leading-5
-      "Unfortunately, Logseq Sync and iCloud don't work perfectly together at the moment. To make sure"
-      [:br]
-      "You can always delete the remote graph at a later point."]
-
-     [:div.folder-tip.flex.flex-col.items-center
-      [:h3
-       [:span (ui/icon "folder") [:label.pl-0.5 (gp-util/safe-decode-uri-component graph-name)]]]
-      [:h4.px-6 (config/get-string-repo-dir repo)]
-
-      (when (not (string/blank? selected-path))
-        [:h5.text-xs.pt-1.-mb-1.flex.items-center.leading-none
-         (if (mobile-util/in-iCloud-container-path? selected-path)
-           [:span.inline-block.pr-1.text-error.scale-75 (ui/icon "alert-circle")]
-           [:span.inline-block.pr-1.text-success.scale-75 (ui/icon "circle-check")])
-         selected-path])
-
-      [:div.out-icloud
-       (ui/button
-        [:span.inline-flex.items-center.leading-none.opacity-90
-         "Select new parent folder outside of iCloud" (ui/icon "arrow-right")]
-
-        :on-click
-        (fn []
-          ;; TODO: support mobile
-          (cond
-            (util/electron?)
-            (p/let [path (ipc/ipc "openDialog")]
-              (set-selected-path path))
-
-            (mobile-util/native-ios?)
-            (p/let [{:keys [path _localDocumentsPath]}
-                    (p/chain
-                     (.pickFolder mobile-util/folder-picker)
-                     #(js->clj % :keywordize-keys true))]
-              (set-selected-path path))
-
-            :else
-            nil)))]]
-
-     [:p.flex.items-center.space-x-2.pt-6.flex.justify-center.sm:justify-end.-mb-2
-      (ui/button "Cancel" :background "gray" :class "opacity-50" :on-click close-fn)
-      (ui/button "Clone graph" :disabled (not selected-path?) :on-click on-confirm)]]))
-
 (rum/defc create-remote-graph-panel
   [repo graph-name close-fn]
 
@@ -128,24 +40,21 @@
         (fn []
           (async/go
             (close-fn)
-            (if (mobile-util/in-iCloud-container-path? repo)
-              (open-icloud-graph-clone-picker repo)
-              (do
-                (state/set-state! [:ui/loading? :graph/create-remote?] true)
-                (when-let [GraphUUID (get (async/<! (file-sync-handler/create-graph graph-name)) 2)]
-                  (async/<! (fs-sync/<sync-start))
-                  (state/set-state! [:ui/loading? :graph/create-remote?] false)
-                  ;; update both local && remote graphs
-                  (state/add-remote-graph! {:GraphUUID GraphUUID
-                                            :GraphName graph-name})
-                  (state/set-repos! (map (fn [r]
-                                           (if (= (:url r) repo)
-                                             (assoc r
-                                                    :GraphUUID GraphUUID
-                                                    :GraphName graph-name
-                                                    :remote? true)
-                                             r))
-                                         (state/get-repos))))))))]
+            (state/set-state! [:ui/loading? :graph/create-remote?] true)
+            (when-let [GraphUUID (get (async/<! (file-sync-handler/create-graph graph-name)) 2)]
+              (async/<! (fs-sync/<sync-start))
+              (state/set-state! [:ui/loading? :graph/create-remote?] false)
+              ;; update both local && remote graphs
+              (state/add-remote-graph! {:GraphUUID GraphUUID
+                                        :GraphName graph-name})
+              (state/set-repos! (map (fn [r]
+                                       (if (= (:url r) repo)
+                                         (assoc r
+                                                :GraphUUID GraphUUID
+                                                :GraphName graph-name
+                                                :remote? true)
+                                         r))
+                                     (state/get-repos))))))]
 
     [:div.cp__file-sync-related-normal-modal
      [:div.flex.justify-center.pb-4 [:span.icon-wrap (ui/icon "cloud-upload" {:size 20})]]
@@ -808,15 +717,6 @@
 
    [:div.pt-6.flex.justify-end.space-x-2
     (ui/button "Done" :on-click close-fn)]])
-
-(defn open-icloud-graph-clone-picker
-  ([] (open-icloud-graph-clone-picker (state/get-current-repo)))
-  ([repo]
-   (when (and repo (mobile-util/in-iCloud-container-path? repo))
-     (state/set-modal!
-      (fn [close-fn]
-        (clone-local-icloud-graph-panel repo (util/node-path.basename repo) close-fn))
-      {:close-btn? false :center? true}))))
 
 (defn make-onboarding-panel
   [type]

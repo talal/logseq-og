@@ -6,13 +6,10 @@ const path = require('path')
 const gulp = require('gulp')
 const cleanCSS = require('gulp-clean-css')
 const del = require('del')
-const ip = require('ip')
 
 const outputPath = path.join(__dirname, 'static')
 const resourcesPath = path.join(__dirname, 'resources')
-const publicStaticPath = path.join(__dirname, 'public/static')
 const resourceFilePath = path.join(resourcesPath, '**')
-const outputFilePath = path.join(outputPath, '**')
 
 const css = {
   watchCSS() {
@@ -117,71 +114,6 @@ const common = {
       common.syncResourceFile
     )
   },
-
-  syncAllStatic() {
-    return gulp
-      .src([outputFilePath, '!' + path.join(outputPath, 'node_modules/**')])
-      .pipe(gulp.dest(publicStaticPath))
-  },
-
-  syncJS_CSSinRt() {
-    return gulp
-      .src([path.join(outputPath, 'js/**'), path.join(outputPath, 'css/**')], {
-        base: outputPath,
-      })
-      .pipe(gulp.dest(publicStaticPath))
-  },
-
-  keepSyncStaticInRt() {
-    return gulp.watch(
-      [path.join(outputPath, 'js/**'), path.join(outputPath, 'css/**')],
-      { ignoreInitial: true },
-      common.syncJS_CSSinRt
-    )
-  },
-
-  async runCapWithLocalDevServerEntry(cb) {
-    const mode = process.env.PLATFORM || 'ios'
-
-    const IP = ip.address()
-    const LOGSEQ_APP_SERVER_URL = `http://${IP}:3001`
-
-    if (typeof global.fetch === 'function') {
-      try {
-        await fetch(LOGSEQ_APP_SERVER_URL)
-      } catch {
-        return cb(
-          new Error(
-            `/* ❌ Please check if the service is ON. (${LOGSEQ_APP_SERVER_URL}) ❌ */`
-          )
-        )
-      }
-    }
-
-    console.log(`------ Cap ${mode.toUpperCase()} -----`)
-    console.log(`Dev serve at: ${LOGSEQ_APP_SERVER_URL}`)
-    console.log(`--------------------------------------`)
-
-    cp.execSync(`npx cap sync ${mode}`, {
-      stdio: 'inherit',
-      env: Object.assign(process.env, {
-        LOGSEQ_APP_SERVER_URL,
-      }),
-    })
-
-    cp.execSync(`rm -rf ios/App/App/public/static/out`, {
-      stdio: 'inherit',
-    })
-
-    cp.execSync(`npx cap run ${mode} --external`, {
-      stdio: 'inherit',
-      env: Object.assign(process.env, {
-        LOGSEQ_APP_SERVER_URL,
-      }),
-    })
-
-    cb()
-  },
 }
 
 exports.electron = () => {
@@ -226,12 +158,10 @@ exports.electronMaker = async () => {
   })
 }
 
-exports.cap = common.runCapWithLocalDevServerEntry
 exports.clean = common.clean
 exports.watch = gulp.series(
   common.syncResourceFile,
   common.syncAssetFiles,
-  common.syncAllStatic,
   gulp.parallel(common.keepSyncResourceFile, css.watchCSS)
 )
 exports.build = gulp.series(

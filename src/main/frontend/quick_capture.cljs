@@ -1,5 +1,5 @@
 (ns frontend.quick-capture
-  "Quick-capture for both mobile and electron"
+  "Electron quick-capture support"
   (:require [cljs-bean.core :as bean]
             [clojure.string :as string]
             [frontend.config :as config]

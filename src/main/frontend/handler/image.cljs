@@ -3,7 +3,6 @@
             [frontend.config :as config]
             [frontend.fs :as fs]
             [frontend.image :as image]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
             [goog.dom :as gdom]
@@ -11,8 +10,7 @@
 
 (defn render-local-images!
   []
-  (when-not (and (or (util/electron?)
-                     (mobile-util/native-ios?))
+  (when-not (and (util/electron?)
                  (config/local-db? (state/get-current-repo)))
     (try
       (let [images (array-seq (gdom/getElementsByTagName "img"))

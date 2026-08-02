@@ -29,7 +29,6 @@
             [frontend.handler.page :as page-handler]
             [frontend.handler.route :as route-handler]
             [frontend.mixins :as mixins]
-            [frontend.mobile.util :as mobile-util]
             [frontend.search :as search]
             [frontend.state :as state]
             [frontend.ui :as ui]
@@ -377,39 +376,8 @@
                                                                                      (:block/format page))))
                  :else title))]]])))
 
-(defn- page-mouse-over
-  [e *control-show? *all-collapsed?]
-  (util/stop e)
-  (reset! *control-show? true)
-  (let [all-collapsed?
-        (->> (editor-handler/all-blocks-with-level {:collapse? true})
-             (filter (fn [b] (editor-handler/collapsable? (:block/uuid b))))
-             (empty?))]
-    (reset! *all-collapsed? all-collapsed?)))
-
-(defn- page-mouse-leave
-  [e *control-show?]
-  (util/stop e)
-  (reset! *control-show? false))
-
-(rum/defcs page-blocks-collapse-control <
-  [state title *control-show? *all-collapsed?]
-  [:a.page-blocks-collapse-control
-   {:id (str "control-" title)
-    :on-click (fn [event]
-                (util/stop event)
-                (if @*all-collapsed?
-                  (editor-handler/expand-all!)
-                  (editor-handler/collapse-all!))
-                (swap! *all-collapsed? not))}
-   [:span.mt-6 {:class (if @*control-show?
-                         "control-show cursor-pointer" "control-hide")}
-    (ui/rotating-arrow @*all-collapsed?)]])
-
 ;; A page is just a logical block
 (rum/defcs page < rum/reactive
-  (rum/local false ::all-collapsed?)
-  (rum/local false ::control-show?)
   (rum/local nil   ::current-page)
   [state {:keys [repo page-name] :as option}]
   (when-let [path-page-name (or page-name
@@ -448,8 +416,6 @@
           today? (and
                   journal?
                   (= page-name (util/page-name-sanity-lc (date/journal-name))))
-          *control-show? (::control-show? state)
-          *all-collapsed? (::all-collapsed? state)
           *current-block-page (::current-page state)
           block-or-whiteboard? (or block? whiteboard?)]
       [:div.flex-1.page.relative
@@ -466,14 +432,6 @@
          [:div.relative
           (when (and (not sidebar?) (not block?))
             [:div.flex.flex-row.space-between
-             (when (or (mobile-util/native-platform?) (util/mobile?))
-               [:div.flex.flex-row.pr-2
-                {:style {:margin-left -15}
-                 :on-mouse-over (fn [e]
-                                  (page-mouse-over e *control-show? *all-collapsed?))
-                 :on-mouse-leave (fn [e]
-                                   (page-mouse-leave e *control-show?))}
-                (page-blocks-collapse-control title *control-show? *all-collapsed?)])
              (when-not whiteboard?
                [:div.ls-page-title.flex-1.flex-row.w-full
                 (page-title page-name icon title format fmt-journal?)])
@@ -612,10 +570,10 @@
             [:div
              [:p.text-sm.opacity-70.px-4
               (let [c1 (count (:nodes graph))
-                    s1 (if (> c1 1) "s" "")
+                    s1 (if (> c1 1) "s" "")]
                     ;; c2 (count (:links graph))
                     ;; s2 (if (> c2 1) "s" "")
-                    ]
+
                 ;; (util/format "%d page%s, %d link%s" c1 s1 c2 s2)
                 (util/format "%d page%s" c1 s1))]
              [:div.p-6
@@ -1038,7 +996,6 @@
                             (if (every? true? checks)
                               1 (if (some true? checks) -1 0)))))
 
-        mobile? (util/mobile?)
         total-items (count @*results-all)
         ;; FIXME: "pages" is ambiguous here, it can be either "Logseq pages" or "result pages"
         total-pages (if-not @*results-all 0
@@ -1216,10 +1173,9 @@
                                                 (swap! *checks assoc idx (or indeterminate? (not all?))))))
                            :indeterminate (when (= -1 @*indeterminate) "indeterminate")})]
            (sortable-title (t :block/name) :block/name *sort-by-item *desc?)
-           (when-not mobile?
-             [(sortable-title (t :page/backlinks) :block/backlinks *sort-by-item *desc?)
-              (sortable-title (t :page/created-at) :block/created-at *sort-by-item *desc?)
-              (sortable-title (t :page/updated-at) :block/updated-at *sort-by-item *desc?)])]]
+           [(sortable-title (t :page/backlinks) :block/backlinks *sort-by-item *desc?)
+            (sortable-title (t :page/created-at) :block/created-at *sort-by-item *desc?)
+            (sortable-title (t :page/updated-at) :block/updated-at *sort-by-item *desc?)]]]
 
          [:tbody
           (for [{:block/keys [idx name created-at updated-at backlinks] :as page} @*results]
@@ -1244,14 +1200,13 @@
                    [:span.pr-1 icon])
                  (component-block/page-cp {} page)]]
 
-               (when-not mobile?
-                 [[:td.backlinks [:span backlinks]]
-                  [:td.created-at [:span (if created-at
-                                           (date/int->local-time-2 created-at)
-                                           "Unknown")]]
-                  [:td.updated-at [:span (if updated-at
-                                           (date/int->local-time-2 updated-at)
-                                           "Unknown")]]])]))]]
+               [[:td.backlinks [:span backlinks]]
+                [:td.created-at [:span (if created-at
+                                         (date/int->local-time-2 created-at)
+                                         "Unknown")]]
+                [:td.updated-at [:span (if updated-at
+                                         (date/int->local-time-2 updated-at)
+                                         "Unknown")]]]]))]]
 
         [:div.flex.justify-end.py-4
          (pagination :current @*current-page

@@ -235,63 +235,6 @@
   }
 }
 
-html.is-native-android,
-html.is-native-iphone,
-html.is-native-iphone-without-notch {
-  .references {
-    .blocks-container {
-      transform: translateX(-8px);
-      width: 104%;
-    }
-  }
-
-  .ls-card {
-    min-height: 65vh;
-  }
-
-  .ui__modal {
-    &[label='flashcards__cp'] {
-      .panel-content {
-        padding: 2rem 1rem 1rem;
-        width: 90vw;
-
-        .cards-review {
-          padding-left: 0;
-          padding-right: 0;
-        }
-
-        .blocks-container {
-          transform: translateX(-7px);
-          width: 103%;
-        }
-      }
-    }
-  }
-}
-
-html.is-mobile {
-  .ui__modal {
-    @apply bottom-0 inset-x-0 top-20;
-
-    &[label='ls-modal-search'] {
-      .panel-content {
-        padding-bottom: 0;
-      }
-
-      .ls-search {
-        padding-bottom: 0;
-      }
-    }
-
-    &[label='ls-modal-align-center'] {
-      .ui__modal-panel {
-        top: 8vh;
-        transform: translateY(-10%);
-      }
-    }
-  }
-}
-
 .ui__confirm-modal {
   .sublabel {
     display: flex;

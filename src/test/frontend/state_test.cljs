@@ -1,6 +1,17 @@
 (ns frontend.state-test
   (:require [clojure.test :refer [deftest is]]
-            [frontend.state :as state]))
+            [frontend.config :as config]
+            [frontend.db :as db]
+            [frontend.handler :as handler]
+            [frontend.handler.events :as events]
+            [frontend.handler.file :as file-handler]
+            [frontend.handler.page :as page-handler]
+            [frontend.handler.repo-config :as repo-config-handler]
+            [frontend.handler.ui :as ui-handler]
+            [frontend.modules.shortcut.core :as shortcut]
+            [frontend.state :as state]
+            [frontend.test.helper :as test-helper :include-macros true :refer [deftest-async]]
+            [promesa.core :as p]))
 
 (deftest merge-configs
   (let [global-config
@@ -30,3 +41,42 @@
                               {:shortcuts {:ui/toggle-brackets "t b"}}
                               {:shortcuts {:editor/up ["ctrl+p" "up"]}}))
       "Map values get merged across configs"))
+
+(deftest publish-graph-ready-publishes-current-repo
+  (let [published-events (atom [])]
+    (with-redefs [state/get-current-repo (constantly "repo")
+                  state/pub-event! (fn [event]
+                                     (swap! published-events conj event))]
+      (state/publish-graph-ready!))
+    (is (= [[:graph/ready "repo"]] @published-events))))
+
+(deftest-async restore-and-setup-publishes-graph-ready-once
+  (let [published-events (atom [])
+        repo             "repo"]
+    (test-helper/with-reset reset
+      [config/global-config-enabled?          (constantly false)
+       config/plugin-config-enabled?          (constantly false)
+       db/get-files                           (constantly [:existing-file])
+       db/restore!                            (constantly (p/resolved nil))
+       file-handler/watch-for-current-graph-dir! (constantly nil)
+       page-handler/create-today-journal!     (constantly nil)
+       page-handler/init-commands!            (constantly nil)
+       repo-config-handler/start              (constantly nil)
+       shortcut/refresh!                      (constantly nil)
+       state/get-current-repo                 (constantly repo)
+       state/pub-event!                       (fn [event]
+                                                (swap! published-events conj event))
+       ui-handler/add-style-if-exists!        (constantly nil)
+       js/setInterval                         (constantly nil)]
+      (p/finally
+        (p/then
+         (handler/restore-and-setup! [{:url repo}])
+         (fn []
+           (doseq [event @published-events]
+             (when (= :graph/restored (first event))
+               (events/handle event)))
+           (is (= [[:graph/restored repo]]
+                  (vec (filter #(= :graph/restored (first %)) @published-events))))
+           (is (= [[:graph/ready repo]]
+                  (vec (filter #(= :graph/ready (first %)) @published-events))))))
+        reset))))

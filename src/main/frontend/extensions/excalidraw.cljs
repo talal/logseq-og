@@ -9,7 +9,6 @@
    [frontend.handler.editor :as editor-handler]
    [frontend.handler.notification :as notification]
    [frontend.handler.ui :as ui-handler]
-   [frontend.mobile.util :as mobile-util]
    [frontend.rum :as r]
    [frontend.state :as state]
    [frontend.ui :as ui]
@@ -167,6 +166,5 @@
     ;; Web granted
     (when-not (and (config/local-db? repo)
                    (not granted?)
-                   (not (util/electron?))
-                   (not (mobile-util/native-platform?)))
+                   (not (util/electron?)))
       (draw-container option))))

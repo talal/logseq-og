@@ -7,7 +7,6 @@
             [clojure.string :as string]
             [dommy.core :as dom]
             [electron.ipc :as ipc]
-            [frontend.mobile.util :as mobile-util]
             [frontend.spec.storage :as storage-spec]
             [frontend.storage :as storage]
             [frontend.util :as util]
@@ -184,18 +183,6 @@
      ;; assets
       :assets/alias-enabled?                 (or (storage/get :assets/alias-enabled?) false)
       :assets/alias-dirs                     (or (storage/get :assets/alias-dirs) [])
-
-     ;; mobile
-      :mobile/container-urls                 nil
-      :mobile/show-action-bar?               false
-      :mobile/actioned-block                 nil
-      :mobile/show-toolbar?                  false
-      :mobile/show-recording-bar?            false
-      :mobile/show-tabbar?                   false
-     ;;; Used to monitor mobile app status,
-     ;;; value spec:
-     ;;; {:is-active? bool, :timestamp int}
-      :mobile/app-state-change                 (atom nil)
 
      ;; plugin
       :plugin/enabled                        (and (util/electron?)
@@ -600,12 +587,6 @@ Similar to re-frame subscriptions"
   []
   (not (false? (:feature/enable-timetracking? (sub-config)))))
 
-(defn enable-fold-button-right?
-  []
-  (let [_ (sub :ui/viewport)]
-    (and (util/mobile?)
-         (util/sm-breakpoint?))))
-
 (defn enable-journals?
   ([]
    (enable-journals? (get-current-repo)))
@@ -681,15 +662,9 @@ Similar to re-frame subscriptions"
   [repo]
   (or (:block/content-max-length (sub-config repo)) 10000))
 
-(defn mobile?
-  []
-  (or (util/mobile?) (mobile-util/native-platform?)))
-
 (defn enable-tooltip?
   []
-  (if (mobile?)
-    false
-    (get (sub-config) :ui/enable-tooltip? true)))
+  (get (sub-config) :ui/enable-tooltip? true))
 
 (defn show-command-doc?
   []
@@ -1238,10 +1213,6 @@ Similar to re-frame subscriptions"
 
 (defn set-theme-mode!
   [mode]
-  (when (mobile-util/native-platform?)
-    (if (= mode "light")
-      (util/set-theme-light)
-      (util/set-theme-dark)))
   (set-state! :ui/theme mode)
   (storage/set :ui/theme mode))
 
@@ -1275,17 +1246,6 @@ Similar to re-frame subscriptions"
   ([mode theme]
    (set-state! (if mode [:ui/custom-theme (keyword mode)] :ui/custom-theme) theme)
    (storage/set :ui/custom-theme (:ui/custom-theme @state))))
-
-(defn restore-mobile-theme!
-  "Restore mobile theme setting from local storage"
-  []
-  (let [mode (or (storage/get :ui/theme) "light")
-        system-theme? (storage/get :ui/system-theme?)]
-    (when (and (not system-theme?)
-               (mobile-util/native-platform?))
-      (if (= mode "light")
-        (util/set-theme-light)
-        (util/set-theme-dark)))))
 
 (defn set-editing-block-dom-id!
   [block-dom-id]
@@ -1815,6 +1775,10 @@ Similar to re-frame subscriptions"
     (async/put! chan [payload d])
     d))
 
+(defn publish-graph-ready!
+  []
+  (pub-event! [:graph/ready (get-current-repo)]))
+
 (defn get-export-block-text-indent-style []
   (:copy/export-block-text-indent-style @state))
 
@@ -1923,14 +1887,7 @@ Similar to re-frame subscriptions"
                (util/set-change-value input content))
 
              (when move-cursor?
-               (cursor/move-cursor-to input pos))
-
-             (when (or (util/mobile?) (mobile-util/native-platform?))
-               (set-state! :mobile/show-action-bar? false)))))))))
-
-(defn action-bar-open?
-  []
-  (:mobile/show-action-bar? @state))
+               (cursor/move-cursor-to input pos)))))))))
 
 (defn remove-watch-state [key]
   (remove-watch state key))
@@ -2138,12 +2095,6 @@ Similar to re-frame subscriptions"
                 (every? not-empty (vals agent-opts)))
       (str protocol "://" host ":" port))))
 
-(defn set-mobile-app-state-change
-  [is-active?]
-  (set-state! :mobile/app-state-change
-              {:is-active? is-active?
-               :timestamp (inst-ms (js/Date.))}))
-
 (defn get-sync-graph-by-id
   [graph-uuid]
   (when graph-uuid
@@ -2174,16 +2125,6 @@ Similar to re-frame subscriptions"
 (defn get-onboarding-whiteboard?
   []
   (get-in @state [:whiteboard/onboarding-whiteboard?]))
-
-(defn get-local-container-root-url
-  []
-  (when (mobile-util/native-ios?)
-    (get-in @state [:mobile/container-urls :localContainerUrl])))
-
-(defn get-icloud-container-root-url
-  []
-  (when (mobile-util/native-ios?)
-    (get-in @state [:mobile/container-urls :iCloudContainerUrl])))
 
 (defn get-current-pdf
   []
@@ -2231,13 +2172,11 @@ Similar to re-frame subscriptions"
 
 (defn set-color-accent! [color]
   (swap! state assoc :ui/radix-color color)
-  (storage/set :ui/radix-color color)
-  (util/set-android-theme))
+  (storage/set :ui/radix-color color))
 
 (defn unset-color-accent! []
   (swap! state assoc :ui/radix-color :logseq)
-  (storage/remove :ui/radix-color)
-  (util/set-android-theme))
+  (storage/remove :ui/radix-color))
 
 (defn handbook-open?
   []

@@ -5,14 +5,12 @@
             [frontend.config :as config]
             [frontend.db :as db]
             [frontend.fs :as fs]
-            [frontend.fs.capacitor-fs :as capacitor-fs]
             [frontend.fs.nfs :as nfs]
             [frontend.handler.common.config-edn :as config-edn-common-handler]
             [frontend.handler.common.file :as file-common-handler]
             [frontend.handler.global-config :as global-config-handler]
             [frontend.handler.repo-config :as repo-config-handler]
             [frontend.handler.ui :as ui-handler]
-            [frontend.mobile.util :as mobile-util]
             [frontend.schema.handler.global-config :as global-config-schema]
             [frontend.schema.handler.repo-config :as repo-config-schema]
             [frontend.state :as state]
@@ -81,9 +79,6 @@
   (cond
     (util/electron?)
     (ipc/ipc "backupDbFile" repo-url path db-content content)
-
-    (mobile-util/native-platform?)
-    (capacitor-fs/backup-file-handle-changed! repo-url path db-content)
 
     :else
     nil))

@@ -1,10 +1,3 @@
-@supports (padding: max(0px)) {
-  .post {
-    padding-left: max(12px, env(safe-area-inset-left));
-    padding-right: max(12px, env(safe-area-inset-right));
-  }
-}
-
 #root {
   font-size: var(--ls-page-text-size);
 }

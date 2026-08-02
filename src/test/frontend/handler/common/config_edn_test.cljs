@@ -66,3 +66,8 @@
 
   (is (= "" (deprecation-warnings-for "{:preferred-workflow :todo}"))
       "No warning when there is no deprecation"))
+
+(deftest removed-mobile-config-keys-are-absent-from-schema
+  (doseq [schema [global-config-schema/Config-edn repo-config-schema/Config-edn]]
+    (doseq [key [:mobile :mobile/photo]]
+      (is (not (some #{key} (tree-seq coll? seq schema)))))))

@@ -8,9 +8,11 @@ Clojure/ClojureScript commands are defined primarily in `bb.edn`. Node/Yarn
 related commands are defined in `package.json`.
 
 - **Unit tests (ClojureScript):** `bb test`
-- **E2E test suite:** `yarn test:e2e`
+- **E2E test suite:** `npx playwright test`
   - Prefer to run the targeted test spec because the full E2E test suite is slow
-    to run.
+    to run: `npx playwright e2e-tests/<name>.spec.ts`
+  - Do not specify the `--browser` flag or any browser related environment
+    variable. Run the tests without any browser related configuration.
 - **Linting (Clojure/ClojureScript)**: `bb lint`
 - **Linting (JavaScript/TypeScript)**: `yarn lint`
 - **Linting (CSS)**: `yarn css:lint`
@@ -22,10 +24,10 @@ related commands are defined in `package.json`.
 ## Repository structure
 
 Logseq OG monorepo has a ClojureScript application with a shared renderer for
-browser, Electron, publishing, and Capacitor mobile targets.
+browser and Electron targets, plus publishing and other build products.
 
 - `src/main/frontend/` — shared renderer, Rum UI, handlers, graph database
-  integration, state, plugins, search, extensions, and mobile adapters
+  integration, state, plugins, search, and extensions
 - `src/electron/electron/` — Electron main process compiled by Shadow CLJS.
 - `src/main/electron/` — renderer-side Electron adapters
 - `deps/` — Clojure local-root libraries
@@ -36,7 +38,7 @@ browser, Electron, publishing, and Capacitor mobile targets.
 - `packages/ui/` and `packages/amplify/` — independently built React/TypeScript
   bundles
 - `tldraw/` — vendored Yarn workspace for whiteboard functionality
-- `static/` and `public/` — assembled/generated runtime outputs
+- `static/` — assembled/generated runtime output and Electron package
 - `docs/` — repository analysis and project documentation
 
 ## Documentation map
@@ -103,7 +105,7 @@ The `docs/` directory is the source for repository explanations.
 - Use Malli/spec validation where a boundary already has a schema. Keep errors
   user-safe and follow existing logging conventions.
 
-## Electron, mobile, and security
+## Electron and security
 
 - Keep `nodeIntegration: false` and `contextIsolation: true` assumptions intact
   unless a platform change requires otherwise.
@@ -112,8 +114,6 @@ The `docs/` directory is the source for repository explanations.
   from renderer code.
 - Do not weaken navigation, protocol, CSP, sandbox, signing, or updater settings
   without documenting the threat model and testing the affected host.
-- Mobile changes may affect both checked-in native projects and the web bundle;
-  inspect `capacitor.config.ts` and the relevant `ios/` or `android/` project.
 - Never commit credentials, signing material, graph data, generated caches, or
   local machine paths.
 
@@ -125,9 +125,8 @@ The `docs/` directory is the source for repository explanations.
 - Do not edit `node_modules`, Shadow output, Gulp output, or other generated
   artifacts by hand. Change their source/configuration and regenerate them only
   when the task requires it.
-- Before changing `static/` or `public/`, determine whether the file is source,
-  assembled output, or a nested runtime package; prefer the owning source/config
-  file.
+- Before changing `static/`, determine whether the file is source, assembled
+  output, or a nested runtime package; prefer the owning source/config file.
 
 ## Documentation and handoff
 

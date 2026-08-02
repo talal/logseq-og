@@ -4,16 +4,15 @@
 
 | Path                    | Responsibility                               | Notes                                                                                                                        |
 | ----------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `src/main/frontend`     | Shared renderer application                  | Roughly 350 CLJS/CLJC files; UI, handlers, graph DB, parsing integration, mobile adapters, extensions, search, and state.    |
+| `src/main/frontend`     | Shared renderer application                  | Roughly 350 CLJS/CLJC files; UI, handlers, graph DB, parsing integration, extensions, search, and state.                     |
 | `src/main/electron`     | Renderer-side Electron adapters              | IPC and listener abstractions used without importing Node directly into the renderer.                                        |
 | `src/main/logseq`       | Public application API and plugin SDK bridge | The API exposed to plugins is implemented alongside the app.                                                                 |
 | `src/electron/electron` | Electron main process                        | Window lifecycle, filesystem, watchers, search, git, updater, plugins, server, protocol handlers, and IPC.                   |
 | `src/test`              | Main CLJS test suite                         | Compiled by Shadow CLJS to a Node test script.                                                                               |
 | `src/bench`             | CLJS benchmarks                              | Separate Clojure alias and test runner.                                                                                      |
-| `scripts/src`           | Babashka task implementations                | Development, publishing, mobile, validation, language, and file-sync automation.                                             |
-| `resources`             | Source assets and packaging inputs           | HTML, CSS, fonts, icons, preload bridge, Electron Forge configuration, and mobile assets.                                    |
+| `scripts/src`           | Babashka task implementations                | Development, publishing, validation, language, and file-sync automation.                                                     |
+| `resources`             | Source assets and packaging inputs           | HTML, CSS, fonts, icons, preload bridge, and Electron Forge configuration.                                                   |
 | `static`                | Desktop/web assembly output                  | Also a nested Node package used by Electron. Contains installed/generated material and should not be read as primary source. |
-| `public`                | Capacitor web output                         | Gulp mirrors assembled static assets here for mobile packaging.                                                              |
 
 ## Local Clojure libraries
 
@@ -87,11 +86,9 @@ dependency policy and reproducibility.
   structural editing.
 - `frontend.db`: connection lifecycle, queries, migrations, persistence, and
   reactive subscriptions.
-- `frontend.fs`: browser, Electron, and mobile filesystem
-  abstraction/synchronization.
+- `frontend.fs`: browser and Electron filesystem abstraction/synchronization.
 - `frontend.extensions`: code editor, drawing tools, SRS, PDF, video, and other
   rich content.
-- `frontend.mobile`: Capacitor lifecycle and native integrations.
 - `frontend.state`: the global application atom, event publication, selectors,
   and imperative registries.
 - `logseq.api` and `logseq.sdk`: plugin-facing application surface.

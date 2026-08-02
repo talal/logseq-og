@@ -2,8 +2,6 @@
   (:require [cljs.core.async :refer [<! chan go] :as a]
             [clojure.string :as str]
             [frontend.components.svg :as svg]
-            [frontend.handler.notification :as notification]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
             [goog.object :as gobj]
@@ -113,13 +111,7 @@
 (defn gen-youtube-ts-macro []
   (if-let [player (get-player (state/get-input))]
     (util/format "{{youtube-timestamp %s}}" (Math/floor (.getCurrentTime ^js player)))
-    (when (mobile-util/native-platform?)
-      (notification/show!
-       "Please embed a YouTube video at first, then use this icon.
-Remember: You can paste a raw YouTube url as embedded video on mobile."
-       :warning
-       false)
-      nil)))
+    nil))
 
 (defn parse-timestamp [timestamp]
   (let [reg #"^(?:(\d+):)?([0-5]?\d):([0-5]?\d)$"

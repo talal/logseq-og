@@ -202,7 +202,7 @@
                      (editor-handler/copy-block-ref! block-id #(util/format "{{embed ((%s))}}" %)))}
         (t :content/copy-block-emebed))
 
-         ;; TODO Logseq protocol mobile support
+         ;; TODO Logseq protocol support
        (when (util/electron?)
          (ui/menu-link
           {:key      "Copy block URL"

@@ -2,7 +2,6 @@
   "Main ns that handles application startup. Closest ns that we have to a
   system. Contains a couple of small system components"
   (:require [cljs.reader :refer [read-string]]
-            [clojure.string :as string]
             [electron.ipc :as ipc]
             [electron.listener :as el]
             [frontend.components.block :as block]
@@ -11,7 +10,7 @@
             [frontend.components.reference :as reference]
             [frontend.components.whiteboard :as whiteboard]
             [frontend.config :as config]
-            [frontend.context.i18n :as i18n :refer [t]]
+            [frontend.context.i18n :as i18n]
             [frontend.db :as db]
             [frontend.db.conn :as conn]
             [frontend.db.persist :as db-persist]
@@ -30,14 +29,11 @@
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.user :as user-handler]
             [frontend.idb :as idb]
-            [frontend.mobile.core :as mobile]
-            [frontend.mobile.util :as mobile-util]
             [frontend.modules.instrumentation.core :as instrument]
             [frontend.modules.outliner.datascript :as outliner-db]
             [frontend.modules.outliner.file :as file]
             [frontend.modules.shortcut.core :as shortcut]
             [frontend.state :as state]
-            [frontend.ui :as ui]
             [frontend.util :as util]
             [frontend.util.persist-var :as persist-var]
             [goog.object :as gobj]
@@ -96,9 +92,7 @@
 
                 (cond
                   (and (not (seq (db/get-files config/local-repo)))
-                       ;; Not native local directory
-                       (not (some config/local-db? (map :url repos)))
-                       (not (mobile-util/native-platform?)))
+                       (not (some config/local-db? (map :url repos))))
                   ;; will execute `(state/set-db-restoring! false)` inside
                   (repo-handler/setup-local-repo-if-not-exists!)
 
@@ -160,20 +154,7 @@
 (defn- get-repos
   []
   (p/let [nfs-dbs (db-persist/get-all-graphs)]
-    ;; TODO: Better IndexDB migration handling
     (cond
-      (and (mobile-util/native-platform?)
-           (some #(or (string/includes? % " ")
-                      (string/includes? % "logseq_local_/")) nfs-dbs))
-      (do (notification/show! ["DB version is not compatible, please clear cache then re-add your graph back."
-                               (ui/button
-                                (t :settings-page/clear-cache)
-                                :class    "ui__modal-enter"
-                                :class    "text-sm p-1"
-                                :on-click clear-cache!)] :error false)
-          {:url config/local-repo
-           :example? true})
-
       (seq nfs-dbs)
       (map (fn [db] {:url db :nfs? true}) nfs-dbs)
 
@@ -221,14 +202,9 @@
   (events/run!)
 
   (p/do!
-   (when (mobile-util/native-platform?)
-     (mobile/mobile-preinit))
    (-> (p/let [repos (get-repos)
                _ (state/set-repos! repos)
-               _ (mobile-util/hide-splash) ;; hide splash as early as ui is stable
-               _ (restore-and-setup! repos)]
-         (when (mobile-util/native-platform?)
-           (state/restore-mobile-theme!)))
+               _ (restore-and-setup! repos)])
        (p/catch (fn [e]
                   (js/console.error "Error while restoring repos: " e)))
        (p/finally (fn []

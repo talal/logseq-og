@@ -17,7 +17,6 @@
             [frontend.handler.notification :as notification]
             [frontend.handler.plugin :as plugin-handler]
             [frontend.mixins :as mixins]
-            [frontend.mobile.util :as mobile-util]
             [frontend.modules.shortcut.config :as shortcut-config]
             [frontend.modules.shortcut.core :as shortcut]
             [frontend.modules.shortcut.utils :as shortcut-utils]
@@ -48,13 +47,7 @@
 (def ReactTweetEmbed (r/adapt-class react-tweet-embed))
 (def useInView (gobj/get react-intersection-observer "useInView"))
 
-(defn reset-ios-whole-page-offset!
-  []
-  (and (util/ios?)
-       (util/safari?)
-       (js/window.scrollTo 0 0)))
-
-(defonce icon-size (if (mobile-util/native-platform?) 26 20))
+(defonce icon-size 20)
 
 (def built-in-colors
   ["yellow"
@@ -371,14 +364,7 @@
     (when util/win32? (.add cl "is-win32"))
     (when util/linux? (.add cl "is-linux"))
     (when (util/electron?) (.add cl "is-electron"))
-    (when (util/ios?) (.add cl "is-ios"))
-    (when (util/mobile?) (.add cl "is-mobile"))
     (when (util/safari?) (.add cl "is-safari"))
-    (when (mobile-util/native-ios?) (.add cl "is-native-ios"))
-    (when (mobile-util/native-android?) (.add cl "is-native-android"))
-    (when (mobile-util/native-iphone?) (.add cl "is-native-iphone"))
-    (when (mobile-util/native-iphone-without-notch?) (.add cl "is-native-iphone-without-notch"))
-    (when (mobile-util/native-ipad?) (.add cl "is-native-ipad"))
     (when (util/electron?)
       (doseq [[event function]
               [["persist-zoom-level" #(storage/set :zoom-level %)]
@@ -775,16 +761,15 @@
                                             (assoc :on-mouse-down on-mouse-down
                                                    :class "cursor"))
       [:div.flex.flex-row.items-center
-       (when-not (mobile-util/native-platform?)
-         [:a.block-control.opacity-50.hover:opacity-100.mr-2
-          (cond->
-           {:style    {:width       14
-                       :height      16
-                       :margin-left -30}}
-            (not title-trigger?)
-            (assoc :on-mouse-down on-mouse-down))
-          [:span {:class (if (or @control? @collapsed?) "control-show cursor-pointer" "control-hide")}
-           (rotating-arrow @collapsed?)]])
+       [:a.block-control.opacity-50.hover:opacity-100.mr-2
+        (cond->
+         {:style    {:width       14
+                     :height      16
+                     :margin-left -30}}
+          (not title-trigger?)
+          (assoc :on-mouse-down on-mouse-down))
+        [:span {:class (if (or @control? @collapsed?) "control-show cursor-pointer" "control-hide")}
+         (rotating-arrow @collapsed?)]]
        (if (fn? header)
          (header @collapsed?)
          header)]]]))

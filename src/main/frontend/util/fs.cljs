@@ -15,8 +15,8 @@
 ;; NOTE: This is not the same ignored-path? as src/electron/electron/utils.cljs.
 ;;       The assets directory is ignored.
 ;;
-;; When in nfs-mode, dir is "", path is relative path to graph dir.
-;; When in native-mode, dir and path are absolute paths.
+;; When using the browser NFS backend, dir is "" and path is relative to the graph dir.
+;; When using Electron, dir and path are absolute paths.
 (defn ignored-path?
   "Ignore path for ls-dir-files-with-handler! and reload-dir!"
   [dir path]
@@ -157,7 +157,7 @@
                        (remove-boundary-slashes)
                        ;; Windows reserved path characters
                        (string/replace #"[:*?\"<>|\\]+" "_")
-                       ;; for android filesystem compatibility
+                       ;; Preserve the legacy filename encoding contract.
                        (string/replace #"[#|%\\]+" "_")
                        (normalize))]
       (string/replace page #"/" "."))))
@@ -171,7 +171,7 @@
     ;; https://github.com/logseq/logseq/blob/1519e35e0c8308d8db90b2525bfe7a716c4cdf04/src/main/frontend/util.cljc#L892
     (some-> page-name
             gp-util/page-name-sanity
-            ;; for android filesystem compatibility
+            ;; Preserve the legacy filename encoding contract.
             (string/replace #"[#|%\\]+" url-encode)
              ;; Windows reserved path characters
             (string/replace #"[:*?\"<>|\\]+" url-encode)

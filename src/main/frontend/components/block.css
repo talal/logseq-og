@@ -249,39 +249,6 @@
   }
 }
 
-.block-left-menu {
-  background-color: var(--ls-secondary-background-color);
-  background-image: linear-gradient(
-    90deg,
-    var(--ls-primary-background-color) 0%,
-    var(--ls-secondary-background-color) 100%
-  );
-
-  .commands-button {
-    @apply overflow-hidden flex max-w-[40px];
-
-    .indent {
-      @apply flex items-center w-full justify-center opacity-30;
-    }
-  }
-}
-
-.block-right-menu {
-  background-color: var(--ls-secondary-background-color);
-
-  /* background: linear-gradient(-90deg, var(--ls-primary-background-color) 0%, var(--ls-secondary-background-color) 100%); */
-
-  .commands-button {
-    @apply overflow-hidden flex flex-nowrap;
-
-    .outdent,
-    .more {
-      @apply flex items-center justify-center
-        overflow-hidden opacity-30 m-0 w-[40px];
-    }
-  }
-}
-
 .block-ref {
   border-bottom: 0.5px solid;
   border-bottom-color: var(--ls-block-ref-link-text-color);
@@ -763,13 +730,6 @@ a.cloze-revealed {
 .cp__fenced-code-block {
   .not-edit {
     cursor: default;
-  }
-}
-
-html.is-native-ios {
-  audio {
-    width: 100%;
-    max-width: 350px;
   }
 }
 

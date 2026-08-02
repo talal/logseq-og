@@ -2,18 +2,15 @@
 
 ## Deployment model
 
-One ClojureScript renderer serves three hosts:
+One ClojureScript renderer serves two application hosts:
 
 - Browser: Shadow CLJS serves or builds `static/js`, and the app uses browser
   storage/filesystem capabilities.
 - Desktop: Electron loads assembled HTML and JS, while a CLJS-compiled Node main
-  process supplies privileged capabilities.
-- Mobile: Capacitor packages the assembled `public` web directory and native
-  plugins for iOS/Android.
-
-A fourth build, `publishing`, creates a read-oriented browser application from
-exported graph data. Code editor, Excalidraw, and tldraw are lazy Shadow modules
-depending on the main module, reducing initial loading cost.
+  process supplies privileged capabilities. The separate `publishing` build
+  creates a read-oriented browser application from exported graph data. Code
+  editor, Excalidraw, and tldraw are lazy Shadow modules depending on the main
+  module, reducing initial loading cost.
 
 ## Renderer startup
 
@@ -79,9 +76,9 @@ DataScript is a projection/cache and active editing model rather than the only
 durable store. [`frontend.db`](../src/main/frontend/db.cljs) creates one
 connection per repository using the shared schema, restores serialized data,
 migrates old schema versions, adds built-in pages, and registers a transaction
-listener. Browser/mobile transactions schedule persistence when input and DB
-activity become idle. Electron transactions can serialize transaction data over
-IPC to other windows that show the same graph.
+listener. Browser transactions schedule persistence when input and DB activity
+become idle. Electron transactions can serialize transaction data over IPC to
+other windows that show the same graph.
 
 The outliner pipeline is installed globally by assigning
 `frontend.db/*db-listener` to
@@ -94,7 +91,7 @@ Persistence is intentionally multi-layered:
 
 - User graph files are portable, inspectable durable data.
 - DataScript serialization is a performance cache with schema migration.
-- IndexedDB/local storage retains browser/mobile application state.
+- IndexedDB/local storage retains browser application state.
 - Electron owns filesystem access, watchers, backups, and cross-window
   coordination.
 - File-sync modules add remote graph synchronization and conflict/merge

@@ -47,10 +47,7 @@
             [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.repeated :as repeated]
             [frontend.handler.route :as route-handler]
-            [frontend.handler.ui :as ui-handler]
             [frontend.handler.whiteboard :as whiteboard-handler]
-            [frontend.mobile.intent :as mobile-intent]
-            [frontend.mobile.util :as mobile-util]
             [frontend.modules.outliner.tree :as tree]
             [frontend.security :as security]
             [frontend.shui :refer [get-shui-component-version make-shui-context]]
@@ -185,8 +182,6 @@
                     (if (and (gp-config/local-protocol-asset? src)
                              (file-sync/current-graph-sync-on?))
                       (let [*exist? (::exist? state)
-                            ;; special handling for asset:// protocol
-                            ;; Capacitor uses a special URL for assets loading
                             asset-path (gp-config/remove-asset-protocol src)
                             asset-path (fs/asset-path-normalize asset-path)]
                         (if (string/blank? asset-path)
@@ -270,8 +265,7 @@
         breadcrumb? (:breadcrumb? config)]
     (ui/resize-provider
      (ui/resize-consumer
-      (if (and (not (mobile-util/native-platform?))
-               (not breadcrumb?))
+      (if (not breadcrumb?)
         (cond->
          {:className "resize image-resize"
           :onSizeChanged (fn [value]
@@ -290,7 +284,7 @@
                          (js/setTimeout #(reset! *resizing-image? false) 200)))
           :onClick (fn [e]
                      (when @*resizing-image? (util/stop e)))}
-          (and (:width metadata) (not (util/mobile?)))
+          (:width metadata)
           (assoc :style {:width (:width metadata)}))
         {})
       [:div.asset-container {:key "resize-asset-container"}
@@ -375,7 +369,7 @@
   (let [src (::src state)
         granted? (state/sub [:nfs/user-granted? (state/get-current-repo)])
         href (config/get-local-asset-absolute-path href)]
-    (when (or granted? (util/electron?) (mobile-util/native-platform?))
+    (when (or granted? (util/electron?))
       (p/then (editor-handler/make-asset-url href) #(reset! src %)))
 
     (when @src
@@ -384,16 +378,7 @@
                              (util/get-file-ext href)))
             repo (state/get-current-repo)
             repo-dir (config/get-repo-dir repo)
-            path (str repo-dir href)
-            share-fn (fn [event]
-                       (util/stop event)
-                       (when (mobile-util/native-platform?)
-                         ;; File URL must be legal, so filename muse be URI-encoded
-                         ;; incoming href format: "/assets/whatever.ext"
-                         (let [[rel-dir basename] (util/get-dir-and-basename href)
-                               rel-dir (string/replace rel-dir #"^/+" "")
-                               asset-url (path/path-join repo-dir rel-dir basename)]
-                           (mobile-intent/open-or-share-file asset-url))))]
+            path (str repo-dir href)]
 
         (cond
           (contains? config/audio-formats ext)
@@ -412,13 +397,11 @@
            title]
 
           (= ext :pdf)
-          [:a.asset-ref.is-pdf {:href @src
-                                :on-click share-fn}
+          [:a.asset-ref.is-pdf {:href @src}
            title]
 
           :else
-          [:a.asset-ref.is-doc {:href @src
-                                :on-click share-fn}
+          [:a.asset-ref.is-doc {:href @src}
            title])))))
 
 (defn ar-url->http-url
@@ -498,7 +481,7 @@
 (declare page-reference)
 
 (defn open-page-ref
-  [e page-name redirect-page-name page-name-in-block contents-page? whiteboard-page?]
+  [e page-name redirect-page-name page-name-in-block _contents-page? whiteboard-page?]
   (util/stop e)
   (when (not (util/right-click? e))
     (cond
@@ -522,10 +505,7 @@
 
       :else
       (state/pub-event! [:page/create page-name-in-block])))
-  (when (and contents-page?
-             (util/mobile?)
-             (state/get-left-sidebar-open?))
-    (ui-handler/close-left-sidebar!)))
+  nil)
 
 (rum/defc page-inner
   "The inner div of page reference component
@@ -695,8 +675,7 @@
         (or (:block/original-name page)
             (:block/name page))
 
-        (and (not (util/mobile?))
-             (not preview?)
+        (and (not preview?)
              (not modal?))
         (page-preview-trigger (assoc config :children inner) page-name)
 
@@ -919,8 +898,7 @@
                       ;; default open block page
                       :else (route-handler/redirect-to-page! id))))))}
 
-           (if (and (not (util/mobile?))
-                    (not (:preview? config))
+           (if (and (not (:preview? config))
                     (not (:modal/show? @state/state))
                     (nil? block-type))
              (ui/tippy {:html        (fn []
@@ -1064,7 +1042,7 @@
          (or label-text
              (->elem :span (map-inline config label)))]
 
-        (mobile-util/native-platform?)
+        :else
         (asset-link config label-text s metadata full_text))
 
       (contains? config/doc-formats ext)
@@ -1749,7 +1727,6 @@
         control-show?      (util/react *control-show?)
         ref?               (:ref? config)
         empty-content?     (block-content-empty? block)
-        fold-button-right? (state/enable-fold-button-right?)
         own-number-list?   (:own-order-number-list? config)
         order-list?        (boolean own-number-list?)
         order-list-idx     (:own-order-list-index config)
@@ -1757,24 +1734,23 @@
     [:div.block-control-wrap.flex.flex-row.items-center
      {:class (util/classnames [{:is-order-list order-list?
                                 :bullet-closed collapsed?}])}
-     (when (or (not fold-button-right?) collapsable?)
-       [:a.block-control
-        {:id       (str "control-" uuid)
-         :on-click (fn [event]
-                     (util/stop event)
-                     (state/clear-edit!)
-                     (if ref?
-                       (state/toggle-collapsed-block! uuid)
-                       (if collapsed?
-                         (editor-handler/expand-block! uuid)
-                         (editor-handler/collapse-block! uuid))))}
-        [:span {:class (if (or (and control-show?
-                                    (or collapsed?
-                                        (editor-handler/collapsable? uuid {:semantic? true})))
-                               (and collapsed? order-list?))
-                         "control-show cursor-pointer"
-                         "control-hide")}
-         (ui/rotating-arrow collapsed?)]])
+     [:a.block-control
+      {:id       (str "control-" uuid)
+       :on-click (fn [event]
+                   (util/stop event)
+                   (state/clear-edit!)
+                   (if ref?
+                     (state/toggle-collapsed-block! uuid)
+                     (if collapsed?
+                       (editor-handler/expand-block! uuid)
+                       (editor-handler/collapse-block! uuid))))}
+      [:span {:class (if (or (and control-show?
+                                  (or collapsed?
+                                      (editor-handler/collapsable? uuid {:semantic? true})))
+                             (and collapsed? order-list?))
+                       "control-show cursor-pointer"
+                       "control-hide")}
+       (ui/rotating-arrow collapsed?)]]
 
      (let [bullet [:a.bullet-link-wrap {:on-click #(bullet-on-click % block uuid)}
                    [:span.bullet-container.cursor
@@ -1796,8 +1772,7 @@
                      (when order-list?
                        [:label (str order-list-idx ".")])]]]]
        (cond
-         (and (or (mobile-util/native-platform?)
-                  (:ui/show-empty-bullets? (state/get-config))
+         (and (or (:ui/show-empty-bullets? (state/get-config))
                   collapsed?
                   collapsable?)
               (not doc-mode?))
@@ -2215,9 +2190,7 @@
                           cursor-range
                           false))]
                 ;; wait a while for the value of the caret range
-                (if (util/ios?)
-                  (f)
-                  (js/setTimeout f 5))
+                (js/setTimeout f 5)
 
                 (state/set-selection-start-block! block-id)))))))))
 
@@ -2302,9 +2275,7 @@
         block-ref-with-title? (and block-ref? (not (state/show-full-blocks?)) (seq title))
         block-type (or (:ls-type properties) :default)
         content (if (string? content) (string/trim content) "")
-        mouse-down-key (if (util/ios?)
-                         :on-click
-                         :on-mouse-down) ; TODO: it seems that Safari doesn't work well with on-mouse-down
+        mouse-down-key :on-mouse-down
 
         attrs (cond->
                {:blockid       (str uuid)
@@ -2392,23 +2363,6 @@
                         :block-ref)
                        (swap! *hide-block-refs? not)))}
         block-refs-count]])))
-
-(rum/defc block-left-menu < rum/reactive
-  [_config {:block/keys [uuid] :as _block}]
-  [:div.block-left-menu.flex.bg-base-2.rounded-r-md.mr-1
-   [:div.commands-button.w-0.rounded-r-md
-    {:id (str "block-left-menu-" uuid)}
-    [:div.indent (ui/icon "indent-increase" {:size 18})]]])
-
-(rum/defc block-right-menu < rum/reactive
-  [_config {:block/keys [uuid] :as _block} edit?]
-  [:div.block-right-menu.flex.bg-base-2.rounded-md.ml-1
-   [:div.commands-button.w-0.rounded-md
-    {:id (str "block-right-menu-" uuid)
-     :style {:max-width (if edit? 40 80)}}
-    [:div.outdent (ui/icon "indent-decrease" {:size 18})]
-    (when-not edit?
-      [:div.more (ui/icon "dots-circle-horizontal" {:size 18})])]])
 
 (rum/defcs block-content-or-editor < rum/reactive
   {:init (fn [state]
@@ -2838,8 +2792,6 @@
                      :else
                      db-collapsed?)
         breadcrumb-show? (:breadcrumb-show? config)
-        *show-left-menu? (::show-block-left-menu? state)
-        *show-right-menu? (::show-block-right-menu? state)
         slide? (boolean (:slide? config))
         doc-mode? (:document/mode? config)
         embed? (:embed? config)
@@ -2901,13 +2853,6 @@
 
      [:div.block-main-container.flex.flex-row.pr-2
       {:class (if (and heading? (seq (:block/title block))) "items-baseline" "")
-       :on-touch-start (fn [event uuid] (block-handler/on-touch-start event uuid))
-       :on-touch-move (fn [event]
-                        (block-handler/on-touch-move event block uuid edit? *show-left-menu? *show-right-menu?))
-       :on-touch-end (fn [event]
-                       (block-handler/on-touch-end event block uuid *show-left-menu? *show-right-menu?))
-       :on-touch-cancel (fn [_e]
-                          (block-handler/on-touch-cancel *show-left-menu? *show-right-menu?))
        :on-mouse-over (fn [e]
                         (block-mouse-over e *control-show? block-id doc-mode?))
        :on-mouse-leave (fn [e]
@@ -2915,18 +2860,12 @@
       (when (not slide?)
         (block-control config block uuid block-id collapsed? *control-show? edit? selected?))
 
-      (when @*show-left-menu?
-        (block-left-menu config block))
-
       (if whiteboard-block?
         (block-reference {} (str uuid) nil)
         ;; Not embed self
         (let [hide-block-refs-count? (and (:embed? config)
                                           (= (:block/uuid block) (:embed-id config)))]
-          (block-content-or-editor config block edit-input-id block-id edit? hide-block-refs-count? selected?)))
-
-      (when @*show-right-menu?
-        (block-right-menu config block edit?))]
+          (block-content-or-editor config block edit-input-id block-id edit? hide-block-refs-count? selected?)))]
 
      (block-children config block children collapsed?)
 
@@ -2939,8 +2878,6 @@
            :rum/args (assoc (vec args) 0 (block-handler/attach-order-list-state (first args) (second args))))))
 
 (rum/defcs block-container < rum/reactive
-  (rum/local false ::show-block-left-menu?)
-  (rum/local false ::show-block-right-menu?)
   {:init (fn [state]
            (let [[config block] (:rum/args state)
                  block-id (:block/uuid block)]

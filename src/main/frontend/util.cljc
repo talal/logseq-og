@@ -5,8 +5,6 @@
   #?(:cljs (:require
             ["/frontend/selection" :as selection]
             ["/frontend/utils" :as utils]
-            ["@capacitor/status-bar" :refer [^js StatusBar Style]]
-            ["@capgo/capacitor-navigation-bar" :refer [^js NavigationBar]]
             ["grapheme-splitter" :as GraphemeSplitter]
             ["remove-accents" :as removeAccents]
             ["sanitize-filename" :as sanitizeFilename]
@@ -18,7 +16,6 @@
             [cljs-time.core :as t]
             [clojure.pprint :as pprint]
             [dommy.core :as d]
-            [frontend.mobile.util :as mobile-util]
             [logseq.graph-parser.util :as gp-util]
             [goog.dom :as gdom]
             [goog.object :as gobj]
@@ -105,31 +102,12 @@
 
 #?(:cljs
    (do
-     (defn- ios*?
-       []
-       (utils/ios))
-     (def ios? (memoize ios*?))))
-
-#?(:cljs
-   (do
      (defn- safari*?
        []
        (let [ua (string/lower-case js/navigator.userAgent)]
          (and (string/includes? ua "webkit")
               (not (string/includes? ua "chrome")))))
      (def safari? (memoize safari*?))))
-
-#?(:cljs
-   (do
-     (defn- mobile*?
-       "Triggering condition: Mobile phones
-        *** Warning!!! ***
-        For UX logic only! Don't use for FS logic
-        iPad / Android Pad doesn't trigger!"
-       []
-       (when-not node-test?
-         (safe-re-find #"Mobi" js/navigator.userAgent)))
-     (def mobile? (memoize mobile*?))))
 
 #?(:cljs
    (do
@@ -152,8 +130,7 @@
 
 #?(:cljs
    (do
-     (def nfs? (and (not (electron?))
-                    (not (mobile-util/native-platform?))))
+     (def nfs? (not (electron?)))
      (def web-platform? nfs?)))
 
 #?(:cljs
@@ -201,55 +178,6 @@
    (defn get-width
      []
      (gobj/get js/window "innerWidth")))
-
-;; Keep the following colors in sync with common.css
-#?(:cljs
-   (defn- get-computed-bg-color
-     []
-     ;; window.getComputedStyle(document.body, null).getPropertyValue('background-color');
-     (let [styles (js/window.getComputedStyle js/document.body)
-           bg-color (gobj/get styles "background-color")
-           ;; convert rgb(r,g,b) to #rrggbb
-           rgb2hex (fn [rgb]
-                     (->> rgb
-                          (map (comp #(.toString % 16) parse-long string/trim))
-                          (map #(if (< (count %) 2)
-                                  (str "0" %)
-                                  %))
-                          (string/join)
-                          (str "#")))]
-       (when (string/starts-with? bg-color "rgb")
-         (let [rgb (-> bg-color
-                       (string/replace #"^rgb[^\d]+" "")
-                       (string/replace #"\)$" "")
-                       (string/split #","))
-               rgb (take 3 rgb)]
-           (rgb2hex rgb))))))
-
-#?(:cljs
-   (defn set-android-theme
-     []
-     (let [f #(when (mobile-util/native-android?)
-                (when-let [bg-color (try (get-computed-bg-color)
-                                         (catch :default _
-                                           nil))]
-                  (.setNavigationBarColor NavigationBar (clj->js {:color bg-color}))
-                  (.setBackgroundColor StatusBar (clj->js {:color bg-color}))))]
-       (js/setTimeout f 32))))
-
-#?(:cljs
-   (defn set-theme-light
-     []
-     (p/do!
-      (.setStyle StatusBar (clj->js {:style (.-Light Style)}))
-      (set-android-theme))))
-
-#?(:cljs
-   (defn set-theme-dark
-     []
-     (p/do!
-      (.setStyle StatusBar (clj->js {:style (.-Dark Style)}))
-      (set-android-theme))))
 
 (defn find-first
   [pred coll]
@@ -855,8 +783,10 @@
      (try
        (rum/react ref)
        (catch js/Error e
-         (if (string/includes? (.-message e)
-                               "rum.core/react is only supported in conjunction with rum.core/reactive")
+         (if (or (string/includes? (.-message e)
+                                   "rum.core/react is only supported in conjunction with rum.core/reactive")
+                 (string/includes? (.-message e)
+                                   "No protocol method IDeref.-deref defined for type undefined"))
            @ref
            (throw e))))))
 
@@ -1064,8 +994,7 @@
                      (d/set-attr! :type "text/css")
                      (d/set-attr! :href style)
                      (d/set-attr! :media "all"))]
-           (d/append! parent-node link))
-         (set-android-theme)))))
+           (d/append! parent-node link))))))
 
 (defn remove-common-preceding
   [col1 col2]
@@ -1327,54 +1256,6 @@
            button (gobj/get e "button")]
        (or (= which 3)
            (= button 2)))))
-
-(def keyboard-height (atom nil))
-#?(:cljs
-   (defn scroll-editor-cursor
-     [^js/HTMLElement el & {:keys [to-vw-one-quarter?]}]
-     (when (and el (or (mobile-util/native-platform?) (mobile?)))
-       (let [box-rect    (.getBoundingClientRect el)
-             box-top     (.-top box-rect)
-             box-bottom  (.-bottom box-rect)
-
-             header-height (-> (gdom/getElementByClass "cp__header")
-                               .-clientHeight)
-
-             main-node   (app-scroll-container-node el)
-             scroll-top  (.-scrollTop main-node)
-
-             current-pos (get-selection-start el)
-             mock-text   (some-> (gdom/getElement "mock-text")
-                                 gdom/getChildren
-                                 array-seq
-                                 (nth-safe current-pos))
-             offset-top   (and mock-text (.-offsetTop mock-text))
-             offset-height (and mock-text (.-offsetHeight mock-text))
-
-             cursor-y    (if offset-top (+ offset-top box-top offset-height 2) box-bottom)
-             vw-height   (or (.-height js/window.visualViewport)
-                             (.-clientHeight js/document.documentElement))
-             ;; mobile toolbar height: 40px
-             scroll      (- cursor-y (- vw-height (+ @keyboard-height (+ 40 4))))]
-         (cond
-           (and to-vw-one-quarter? (> cursor-y (* vw-height 0.4)))
-           (set! (.-scrollTop main-node) (+ scroll-top (- cursor-y (/ vw-height 4))))
-
-           (and (< cursor-y (+ header-height offset-height 4)) ;; 4 is top+bottom padding for per line
-                (>= cursor-y header-height))
-           (.scrollBy main-node (bean/->js {:top (- (+ offset-height 4))}))
-
-           (< cursor-y header-height)
-           (let [_ (.scrollIntoView el true)
-                 main-node (app-scroll-container-node el)
-                 scroll-top (.-scrollTop main-node)]
-             (set! (.-scrollTop main-node) (- scroll-top (/ vw-height 4))))
-
-           (> scroll 0)
-           (set! (.-scrollTop main-node) (+ scroll-top scroll))
-
-           :else
-           nil)))))
 
 #?(:cljs
    (do

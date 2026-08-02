@@ -2,13 +2,10 @@
   "Contains db connections."
   (:require [clojure.string :as string]
             [frontend.config :as config]
-            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
-            [frontend.util.text :as text-util]
             [logseq.db :as ldb]
-            [logseq.graph-parser.text :as text]
-            [logseq.graph-parser.util :as gp-util]))
+            [logseq.graph-parser.text :as text]))
 
 (defonce conns (atom {}))
 
@@ -23,9 +20,6 @@
 (defn get-repo-name
   [repo-url]
   (cond
-    (mobile-util/native-platform?)
-    (text-util/get-graph-name-from-path repo-url)
-
     (config/local-db? repo-url)
     (config/get-local-dir repo-url)
 
@@ -38,9 +32,6 @@
   (cond
     (util/electron?)
     (text/get-file-basename repo-name)
-
-    (mobile-util/native-platform?)
-    (gp-util/safe-decode-uri-component (text/get-file-basename repo-name))
 
     :else
     repo-name))

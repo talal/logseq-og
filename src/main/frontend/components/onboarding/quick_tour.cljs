@@ -138,7 +138,7 @@
    {:id                "sync-history"
     :text              (h/render-html [:section [:h2 "⏱ Go back in time!"]
                                        [:p "With file sync you can now go through older versions of this page and revert back to them if you like!"]])
-    :attachTo          {:element ".cp__btn_history_version" :on (if (util/mobile?) "bottom" "left")}
+    :attachTo          {:element ".cp__btn_history_version" :on "left"}
     :beforeShowPromise #(when-let [^js target (js/document.querySelector ".toolbar-dots-btn")]
                           (.click target)
                           (p/delay 300))

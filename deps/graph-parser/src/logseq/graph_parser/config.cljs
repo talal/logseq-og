@@ -1,18 +1,12 @@
 (ns logseq.graph-parser.config
   "App config that is shared between graph-parser and rest of app"
-  (:require [clojure.string :as string]
-            [goog.object :as gobj]))
+  (:require [clojure.string :as string]))
 
 (def app-name
   "Copy of frontend.config/app-name. Too small to couple to main app"
   "logseq")
 
 (defonce asset-protocol "assets://")
-(defonce capacitor-protocol "capacitor://")
-(defonce capacitor-prefix "_capacitor_file_")
-(defonce capacitor-protocol-with-prefix (str capacitor-protocol "localhost/" capacitor-prefix))
-(defonce capacitor-x-protocol-with-prefix (str (gobj/getValueByKeys js/globalThis "location" "href") capacitor-prefix))
-
 (defonce local-assets-dir "assets")
 
 (defn local-asset?
@@ -23,17 +17,12 @@
 (defn local-protocol-asset?
   [s]
   (when (string? s)
-    (or (string/starts-with? s asset-protocol)
-        (string/starts-with? s capacitor-protocol)
-        (string/starts-with? s capacitor-x-protocol-with-prefix))))
+    (string/starts-with? s asset-protocol)))
 
 (defn remove-asset-protocol
   [s]
   (if (local-protocol-asset? s)
-    (-> s
-        (string/replace-first asset-protocol "file://")
-        (string/replace-first capacitor-protocol-with-prefix "file://")
-        (string/replace-first capacitor-x-protocol-with-prefix "file://"))
+    (string/replace-first s asset-protocol "file://")
     s))
 
 (defonce default-draw-directory "draws")

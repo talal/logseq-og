@@ -2,7 +2,6 @@
   (:require [frontend.handler.editor :as editor-handler :refer [get-state]]
             [frontend.handler.editor.keyboards :as keyboards-handler]
             [frontend.state :as state :refer [sub]]
-            [frontend.util :as util]
             [goog.dom :as gdom]))
 
 (defn did-mount!
@@ -23,8 +22,7 @@
       (try (doseq [f close-fns] (f)) (catch :default _e ())))
 
     (when-let [element (gdom/getElement id)]
-      (.focus element)
-      (js/setTimeout #(util/scroll-editor-cursor element) 50)))
+      (.focus element)))
   state)
 
 (defn will-remount!

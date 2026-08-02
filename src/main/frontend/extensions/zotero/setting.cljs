@@ -33,6 +33,15 @@
       profile
       (first (all-profiles)))))
 
+(defn profile-to-remove
+  [selected-profile active-profile]
+  (or selected-profile active-profile))
+
+(defn invalid-type-id?
+  [type-id]
+  (and (not (str/blank? (str type-id)))
+       (not (re-matches #"^\d+$" (str type-id)))))
+
 (defn api-key []
   (get (storage/get :zotero/api-key-v2) (profile)))
 

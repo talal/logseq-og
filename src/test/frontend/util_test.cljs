@@ -4,7 +4,8 @@
             [frontend.colors :as colors]
             [frontend.config :as config]
             [frontend.modules.shortcut.data-helper :as shortcut-data-helper]
-            [frontend.util :as util]))
+            [frontend.util :as util]
+            [rum.core :as rum]))
 
 (deftest test-pp-str
   (testing "pretty-printing returns the same readable representation"
@@ -18,7 +19,12 @@
 
 (deftest test-react-outside-component
   (testing "react dereferences refs outside a Rum component"
-    (is (= :value (util/react (atom :value))))))
+    (is (= :value (util/react (atom :value)))))
+  (testing "optimized Rum errors still dereference refs outside a component"
+    (with-redefs [rum/react (fn [_]
+                              (throw (js/Error.
+                                      "No protocol method IDeref.-deref defined for type undefined")))]
+      (is (= :value (util/react (atom :value)))))))
 
 (deftest test-delete-emoji-current-pos
   (testing "safe current position from end for emoji"
@@ -138,3 +144,8 @@
     (is (nil? (util/safe-parse-int "not-a-number"))))
   (testing "numeric values pass through unchanged"
     (is (= 42 (util/safe-parse-int 42)))))
+
+(deftest test-node-path-join-does-not-preserve-android-content-uris
+  (is (not (string/starts-with?
+            (util/node-path.join "content://provider/item" "attachment.pdf")
+            "content://"))))

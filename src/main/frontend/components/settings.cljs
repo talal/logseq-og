@@ -21,7 +21,6 @@
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.user :as user-handler]
-            [frontend.mobile.util :as mobile-util]
             [frontend.modules.instrumentation.core :as instrument]
             [frontend.modules.shortcut.data-helper :as shortcut-helper]
             [frontend.spec.storage :as storage-spec]
@@ -56,45 +55,29 @@
 
      [:div.ctls.flex.items-center
 
-      [:div.mt-1.sm:mt-0.sm:col-span-2.flex.gap-4.items-center.flex-wrap
-       [:div (cond
-               (mobile-util/native-android?)
-               (ui/button
-                (t :settings-page/check-for-updates)
-                :class "text-sm mr-1"
-                :href "https://github.com/talal/logseq-og/releases")
+      [:div.mt-1.sm:mt-0.sm:col-span-2.flex.gap-4.items-center.flex-wrap]
+      [:div (when (util/electron?)
+              (ui/button
+               (if update-pending? (t :settings-page/checking) (t :settings-page/check-for-updates))
+               :class "text-sm mr-1"
+               :disabled update-pending?
+               :on-click #(js/window.apis.checkForUpdates false)))]
 
-               (mobile-util/native-ios?)
-               (ui/button
-                (t :settings-page/check-for-updates)
-                :class "text-sm mr-1"
-                :href "https://apps.apple.com/app/logseq/id1601013908")
+      [:div.text-sm.cursor
+       {:title (str (t :settings-page/revision) config/revision)
+        :on-click (fn []
+                    (notification/show! [:div "Current Revision: "
+                                         [:a {:target "_blank"
+                                              :href (str "https://github.com/logseq/logseq/commit/" config/revision)}
+                                          config/revision]]
+                                        :info
+                                        false))}
+       version]
 
-               (util/electron?)
-               (ui/button
-                (if update-pending? (t :settings-page/checking) (t :settings-page/check-for-updates))
-                :class "text-sm mr-1"
-                :disabled update-pending?
-                :on-click #(js/window.apis.checkForUpdates false))
-
-               :else
-               nil)]
-
-       [:div.text-sm.cursor
-        {:title (str (t :settings-page/revision) config/revision)
-         :on-click (fn []
-                     (notification/show! [:div "Current Revision: "
-                                          [:a {:target "_blank"
-                                               :href (str "https://github.com/logseq/logseq/commit/" config/revision)}
-                                           config/revision]]
-                                         :info
-                                         false))}
-        version]
-
-       [:a.text-sm.fade-link.underline.inline
-        {:target "_blank"
-         :href "https://docs.logseq.com/#/page/changelog"}
-        (t :settings-page/changelog)]]]
+      [:a.text-sm.fade-link.underline.inline
+       {:target "_blank"
+        :href "https://docs.logseq.com/#/page/changelog"}
+       (t :settings-page/changelog)]]
 
      (when-not (or update-pending?
                    (string/blank? type))
@@ -170,9 +153,7 @@
                          :on-click on-click}
                         (if (string/blank? href) button-label
                             (shui-ui/link {:href href} button-label))))]
-    (when-not (or (util/mobile?)
-                  (mobile-util/native-platform?))
-      [:div.text-sm.flex desc])]])
+    [:div.text-sm.flex desc]]])
 
 (defn edit-config-edn []
   (row-with-button-action
@@ -216,9 +197,8 @@
      (ui/toggle show-brackets?
                 config-handler/toggle-ui-show-brackets!
                 true)]]
-   (when (not (or (util/mobile?) (mobile-util/native-platform?)))
-     [:div {:style {:text-align "right"}}
-      (ui/render-keyboard-shortcut (shortcut-helper/gen-shortcut-seq :ui/toggle-brackets))])])
+   [:div {:style {:text-align "right"}}
+    (ui/render-keyboard-shortcut (shortcut-helper/gen-shortcut-seq :ui/toggle-brackets))]])
 
 (rum/defcs switch-spell-check-row < rum/reactive
   [state t]
@@ -748,10 +728,8 @@
      (showing-full-blocks t show-full-blocks?)
      (preferred-pasting-file t preferred-pasting-file?)
      (auto-expand-row t auto-expand-block-refs?)
-     (when-not (or (util/mobile?) (mobile-util/native-platform?))
-       (shortcut-tooltip-row t enable-shortcut-tooltip?))
-     (when-not (or (util/mobile?) (mobile-util/native-platform?))
-       (tooltip-row t enable-tooltip?))
+     (shortcut-tooltip-row t enable-shortcut-tooltip?)
+     (tooltip-row t enable-tooltip?)
      (timetracking-row t enable-timetracking?)
      (enable-all-pages-public-row t enable-all-pages-public?)
      (auto-push-row t current-repo enable-git-auto-push?)]))
@@ -785,7 +763,7 @@
     [:div.panel-wrap.is-advanced
      (when (and (or util/mac? util/win32?) (util/electron?)) (app-auto-update-row t))
      (usage-diagnostics-row t instrument-disabled?)
-     (when-not (mobile-util/native-platform?) (developer-mode-row t developer-mode?))
+     (developer-mode-row t developer-mode?)
      (when (util/electron?) (https-user-agent-row https-agent-opts))
      (when (util/electron?) (auto-chmod-row t))
      (when (and (util/electron?) (not (config/demo-graph? current-repo))) (filename-format-row))

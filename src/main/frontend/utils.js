@@ -1,9 +1,5 @@
 import path from 'path/path.js'
 
-// TODO split the capacitor abilities to a separate file for capacitor APIs
-import { Capacitor } from '@capacitor/core'
-import { Clipboard as CapacitorClipboard } from '@capacitor/clipboard'
-
 if (typeof window === 'undefined') {
   global.window = {}
 }
@@ -230,21 +226,6 @@ export const win32 = (path) => {
   return Boolean(result[2] || isUnc)
 }
 
-export const ios = () => {
-  return (
-    [
-      'iPad Simulator',
-      'iPhone Simulator',
-      'iPod Simulator',
-      'iPad',
-      'iPhone',
-      'iPod',
-    ].includes(navigator.platform) ||
-    // iPad on iOS 13 detection
-    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
-  )
-}
-
 export const getClipText = (cb, errorHandler) => {
   navigator.permissions
     .query({
@@ -265,11 +246,6 @@ export const getClipText = (cb, errorHandler) => {
 }
 
 export const writeClipboard = ({ text, html, blocks }, ownerWindow) => {
-  if (Capacitor.isNativePlatform()) {
-    CapacitorClipboard.write({ string: text })
-    return
-  }
-
   const navigator = (ownerWindow || window).navigator
 
   navigator.permissions
@@ -375,7 +351,7 @@ export const nodePath = Object.assign({}, path, {
 
   join(input, ...paths) {
     let orURI = null
-    const s = ['file://', 'http://', 'https://', 'content://']
+    const s = ['file://', 'http://', 'https://']
 
     if (s.some((p) => input.startsWith(p))) {
       try {

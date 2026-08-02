@@ -74,17 +74,11 @@
     [:property/separated-by-commas [:set :keyword]]
     [:ignored-page-references-keywords [:set :keyword]]
     [:logbook/settings :map]
-    [:mobile/photo [:map
-                    [:allow-editing? {:optional true} :boolean]
-                    [:quality {:optional true} :int]]]
-    [:mobile [:map
-              [:gestures/disabled-in-block-with-tags {:optional true} [:vector :string]]]]
     [:editor/extra-codemirror-options :map]
     [:editor/logical-outdenting? :boolean]
     [:editor/preferred-pasting-file? :boolean]
     [:quick-capture-templates (mu/optional-keys [:map
-                                                 [:text :string]
-                                                 [:media :string]])]
+                                                 [:text :string]])]
     [:quick-capture-options (mu/optional-keys [:map
                                                [:insert-today? :boolean]
                                                [:redirect-page? :boolean]

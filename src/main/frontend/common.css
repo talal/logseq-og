@@ -14,7 +14,7 @@
   }
 }
 
-html:not(.is-native-android) {
+html {
   font-family:
     var(--ls-font-family),
     sans-serif,
@@ -30,10 +30,6 @@ html:not(.is-native-android) {
     'Apple Color Emoji',
     'Segoe UI Emoji',
     'Segoe UI Symbol' !important;
-}
-
-/* region Reset top elements */
-html {
   overflow: hidden;
 }
 
@@ -731,20 +727,6 @@ html[data-theme='dark'] .keyboard-shortcut > code {
 
 .katex .tag {
   overflow-x: clip;
-}
-
-html.is-mobile {
-  h1.title {
-    margin-bottom: 10px;
-  }
-
-  #journals .journal-item:first-child {
-    margin-top: 5px;
-  }
-
-  main.theme-inner {
-    @apply overflow-x-hidden;
-  }
 }
 
 @layer base {

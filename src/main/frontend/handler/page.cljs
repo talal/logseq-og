@@ -23,7 +23,6 @@
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.web.nfs :as web-nfs]
-            [frontend.mobile.util :as mobile-util]
             [frontend.modules.outliner.core :as outliner-core]
             [frontend.modules.outliner.file :as outliner-file]
             [frontend.modules.outliner.tree :as outliner-tree]
@@ -692,7 +691,7 @@
                      page)
         (let [journal? (date/valid-journal-title? page)
               ref-file-path (str
-                             (if (or (util/electron?) (mobile-util/native-platform?))
+                             (if (util/electron?)
                                (-> (config/get-repo-dir (state/get-current-repo))
                                    js/decodeURI
                                    (string/replace #"/+$" "")
@@ -826,7 +825,7 @@
                (not (state/whiteboard-route?)))
       (state/set-today! (date/today))
       (when (or (config/local-db? repo)
-                (and (= "local" repo) (not (mobile-util/native-platform?))))
+                (= "local" repo))
         (let [title (date/today)
               today-page (util/page-name-sanity-lc title)
               format (state/get-preferred-format repo)

@@ -8,20 +8,20 @@ installed dependencies, or historical assumptions about upstream Logseq.
 ## Executive summary
 
 Logseq OG is a local-first, cross-platform outliner whose primary implementation
-is ClojureScript. The same renderer build runs in a browser, an Electron desktop
-shell, and Capacitor mobile shells. Its application model is built around
-DataScript: Markdown/Org files are parsed into an in-memory graph, transactions
-drive reactive UI updates, and serialized graph databases are cached in
-IndexedDB or desktop storage. Rum supplies the ClojureScript component model
-while React supplies the rendering runtime.
+is ClojureScript. The same renderer build runs in a browser and an Electron
+desktop shell. Its application model is built around DataScript: Markdown/Org
+files are parsed into an in-memory graph, transactions drive reactive UI
+updates, and serialized graph databases are cached in IndexedDB or desktop
+storage. Rum supplies the ClojureScript component model while React supplies the
+rendering runtime.
 
 The repository is a federated monorepo rather than a single-package workspace.
 Clojure local-root libraries under `deps/` form the reusable domain core; the
 main CLJS app lives under `src/main`; Electron main-process code lives under
 `src/electron`; TypeScript packages provide the plugin SDK, UI islands, Amplify
 integration, and a vendored tldraw fork. Clojure CLI/Shadow CLJS, Babashka,
-Yarn, Gulp, Parcel, Webpack, Electron Forge, and Capacitor each own a different
-part of the build.
+Yarn, Gulp, Parcel, Webpack, and Electron Forge each own a different part of the
+build.
 
 The architecture's strongest qualities are a portable functional domain layer, a
 clear graph/database abstraction, local-first operation, and reuse of one
@@ -70,7 +70,7 @@ flowchart TD
     listeners --> handlers["Handlers / outliner"]
     handlers -->|file writes| files
     db --> ui["Rum components on React"]
-    ui --> hosts["Browser / Capacitor / Electron"]
+    ui --> hosts["Browser / Electron"]
     hosts --> bridge["Preload IPC bridge"]
     bridge --> main["Electron main process"]
     main --> capabilities["Filesystem · watcher · search · git · updater · windows · plugins · server"]

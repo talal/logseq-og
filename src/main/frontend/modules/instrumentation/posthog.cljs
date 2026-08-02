@@ -2,7 +2,6 @@
   (:require ["posthog-js" :as posthog]
             [cljs-bean.core :as bean]
             [frontend.config :as config]
-            [frontend.mobile.util :as mobile-util]
             [frontend.util :as util]
             [frontend.version :refer [version]]))
 
@@ -12,16 +11,7 @@
 (defn register []
   (posthog/register
    (clj->js
-    {:app_type (let [platform (mobile-util/platform)]
-                 (cond
-                   (util/electron?)
-                   "electron"
-
-                   platform
-                   platform
-
-                   :else
-                   "web"))
+    {:app_type (if (util/electron?) "electron" "web")
      :app_env (if config/dev? "development" "production")
      :app_ver version
      :schema_ver 0

@@ -1,6 +1,5 @@
 (ns ^:no-doc frontend.handler.export
   (:require
-   ["@capacitor/filesystem" :refer [Encoding Filesystem]]
    [cljs.pprint :as pprint]
    [clojure.set :as s]
    [clojure.string :as string]
@@ -11,15 +10,12 @@
    [frontend.extensions.zip :as zip]
    [frontend.external.roam-export :as roam-export]
    [frontend.format.mldoc :as mldoc]
-   [frontend.handler.notification :as notification]
-   [frontend.mobile.util :as mobile-util]
    [frontend.modules.file.core :as outliner-file]
    [frontend.modules.outliner.tree :as outliner-tree]
    [frontend.state :as state]
    [frontend.util :as util]
    [frontend.util.property :as property]
    [goog.dom :as gdom]
-   [lambdaisland.glogi :as log]
    [logseq.graph-parser.mldoc :as gp-mldoc]
    [logseq.graph-parser.property :as gp-property]
    [logseq.graph-parser.util.block-ref :as block-ref]
@@ -255,17 +251,6 @@
      :embed-blocks (s/union embed-blocks-1 embed-blocks-2 embed-blocks*)
      :block-refs (s/union block-refs-1 block-refs-2 block-refs*)}))
 
-(defn- export-file-on-mobile [data path]
-  (p/catch
-   (.writeFile Filesystem (clj->js {:path path
-                                    :data data
-                                    :encoding (.-UTF8 Encoding)
-                                    :recursive true}))
-   (notification/show! "Export succeeded! You can find you exported file in the root directory of your graph." :success)
-    (fn [error]
-      (notification/show! "Export failed!" :error)
-      (log/error :export-file-failed error))))
-
 (defn- dissoc-properties [m ks]
   (if (:block/properties m)
     (update m :block/properties
@@ -349,12 +334,10 @@
                             js/encodeURIComponent
                             (str "data:text/edn;charset=utf-8,"))
           filename (file-name repo :edn)]
-      (if (mobile-util/native-platform?)
-        (export-file-on-mobile edn-str filename)
-        (when-let [anchor (gdom/getElement "download-as-edn-v2")]
-          (.setAttribute anchor "href" data-str)
-          (.setAttribute anchor "download" filename)
-          (.click anchor))))))
+      (when-let [anchor (gdom/getElement "download-as-edn-v2")]
+        (.setAttribute anchor "href" data-str)
+        (.setAttribute anchor "download" filename)
+        (.click anchor)))))
 
 (defn- nested-update-id
   [vec-tree]
@@ -376,12 +359,10 @@
           filename (file-name repo :json)
           data-str (str "data:text/json;charset=utf-8,"
                         (js/encodeURIComponent json-str))]
-      (if (mobile-util/native-platform?)
-        (export-file-on-mobile json-str filename)
-        (when-let [anchor (gdom/getElement "download-as-json-v2")]
-          (.setAttribute anchor "href" data-str)
-          (.setAttribute anchor "download" filename)
-          (.click anchor))))))
+      (when-let [anchor (gdom/getElement "download-as-json-v2")]
+        (.setAttribute anchor "href" data-str)
+        (.setAttribute anchor "download" filename)
+        (.click anchor)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Export to roam json ;;

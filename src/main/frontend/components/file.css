@@ -6,9 +6,3 @@
     margin: 0;
   }
 }
-
-html.is-mobile {
-  .file {
-    max-width: 95vw;
-  }
-}

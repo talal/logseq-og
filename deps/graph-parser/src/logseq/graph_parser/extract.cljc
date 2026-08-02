@@ -33,7 +33,7 @@
      file name parsing
      first block content
    note: `page-name-order` is deprecated on Apr. 2021
-   uri-encoded? - since paths on mobile are uri-encoded, need to decode them first
+   uri-encoded? - whether the stored path is URI-encoded and needs decoding first
    filename-format - the format used to parse file name
    "
   [file-path ast uri-encoded? filename-format]

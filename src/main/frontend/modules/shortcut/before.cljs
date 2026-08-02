@@ -1,6 +1,5 @@
 (ns frontend.modules.shortcut.before
-  (:require [frontend.mobile.util :as mobile-util]
-            [frontend.state :as state]
+  (:require [frontend.state :as state]
             [frontend.util :as util]))
 
 ;; before function
@@ -24,9 +23,7 @@
   [f]
   (fn [e]
     (when (state/editing?)
-      (if (mobile-util/native-ios?)
-        (util/stop-propagation e)
-        (util/stop e))
+      (util/stop e)
       (f e))))
 
 (defn enable-when-not-component-editing!

@@ -280,16 +280,6 @@ a.page-title {
   }
 }
 
-html.is-native-android,
-html.is-native-ipad,
-html.is-native-iphone,
-html.is-native-iphone-without-notch {
-  .ls-page-title {
-    margin: 0 0 10px -15px;
-    padding: 0 !important;
-  }
-}
-
 /* Change to another cursor style if Shift key is active */
 [data-active-keystroke*='Shift' i]
   :is(
@@ -330,49 +320,6 @@ html.is-native-iphone-without-notch {
 
 .cp__right-sidebar .add-button-link {
   margin-left: 21px;
-}
-
-html.is-native-android,
-html.is-native-ios {
-  .cp__all_pages {
-    .actions > .r {
-      position: relative;
-      padding: 15px 10px 25px 0;
-      justify-content: space-between;
-
-      .paginates {
-        position: absolute;
-        top: 40px;
-        right: 0;
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-      }
-    }
-  }
-
-  .block-content-wrapper {
-    /* 38px is the width of block-control */
-    width: calc(100% - 35px);
-
-    @screen sm {
-      width: calc(100% - 33px);
-    }
-  }
-}
-
-.page-blocks-collapse-control,
-.page-blocks-collapse-control:hover {
-  text-decoration: none;
-  cursor: default;
-  min-width: 22px;
-  padding-top: 22px;
-  color: initial;
-  user-select: none;
-
-  .control-hide {
-    display: none;
-  }
 }
 
 .toned-down {

@@ -461,28 +461,6 @@
   }
 }
 
-html.is-native-android,
-html.is-native-iphone,
-html.is-native-iphone-without-notch {
-  .cp__settings-inner {
-    > article {
-      padding-bottom: 0;
-    }
-
-    .panel-wrap {
-      padding-bottom: 0;
-    }
-  }
-
-  .theme-row--swatch {
-    @apply w-5 h-5 rounded-full flex justify-center items-center;
-  }
-
-  .theme-row--swatch-active {
-    @apply w-5 h-5 rounded-full flex justify-center items-center;
-  }
-}
-
 svg.git {
   margin-left: -4px;
   transform: scale(0.9);

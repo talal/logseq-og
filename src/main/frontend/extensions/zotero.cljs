@@ -154,9 +154,7 @@
         :on-blur       (fn [e] (setting/set-setting! :type-id (util/evalue e)))
         :on-change     (fn [e] (reset! (::type-id state) (util/evalue e)))}]]]]
 
-   (when
-    (and (not (str/blank? (str @(::type-id state))))
-         (not (re-matches #"^\d+$" (str @(::type-id state)))))
+   (when (setting/invalid-type-id? @(::type-id state))
      (ui/admonition
       :warning
       [:p.text-error
@@ -380,7 +378,8 @@
      :class "ml-4"
      :on-click
      (fn []
-       (p/let [_ (setting/remove-profile @profile*)]
+       (p/let [_ (setting/remove-profile
+                  (setting/profile-to-remove @profile* (setting/profile)))]
          (reset! profile* (setting/profile)))))]])
 
 (rum/defcs add-all-items <

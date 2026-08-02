@@ -144,7 +144,7 @@
 (defn get-graph-name-from-path
   "Get `Dir/GraphName` style name for from repo-url.
 
-   On iOS, repo-url might be nil"
+   repo-url might be nil"
   [repo-url]
   (when (not-empty repo-url)
     (let [path (config/get-local-dir repo-url)

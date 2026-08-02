@@ -47,7 +47,6 @@ node_modules/
 build/
 dist/
 out/
-/public/static/
 static/**
 !static/package-lock.json
 !static/yarn.lock
@@ -64,11 +63,6 @@ debug/
 target/
 crates/**/artifacts/
 **/*.rs.bk
-
-# Mobile
-android/app/src/main/assets/capacitor.plugin.json
-android/app/src/main/assets/capacitor.config.json
-ios/App/App/capacitor.config.json
 
 # Project-specific
 .clj-kondo/babashka/sci

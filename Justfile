@@ -17,16 +17,6 @@ watch:
 publishing *args:
     bb dev:publishing {{ args }}
 
-# Start iOS development.
-[group('Development')]
-mobile-ios:
-    bb dev:ios-app
-
-# Start Android development.
-[group('Development')]
-mobile-android:
-    bb dev:android-app
-
 # Run ClojureScript unit tests.
 [group('Quality')]
 test:
@@ -99,16 +89,6 @@ release-app: check-version
 [group('Release')]
 dev-release-app: check-version
     bb build:dev-app
-
-# Build the iOS release application.
-[group('Release')]
-release-ios: check-version
-    bb release:ios-app
-
-# Build the Android release application.
-[group('Release')]
-release-android: check-version
-    bb release:android-app
 
 # Remove generated static assets.
 [group('Utility')]

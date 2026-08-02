@@ -142,16 +142,6 @@
   color: var(--ls-error-text-color);
 }
 
-html {
-  &.is-mobile .ui__modal[label='user-login'] .panel-content {
-    @apply pt-0;
-  }
-
-  &.has-mobile-keyboard .ui__modal[label='user-login'] {
-    transform: translateY(calc(-50px - 6%));
-  }
-}
-
 .federated-sign-in-container {
   display: none;
 }

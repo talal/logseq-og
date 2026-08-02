@@ -139,7 +139,7 @@ full suite. Typical checks include:
 - the package's focused unit or integration tests;
 - type checking, linting, and formatting for changed files;
 - the affected build, bundle, native compilation, or packaging command;
-- relevant browser, Electron, mobile, or end-to-end smoke tests;
+- relevant browser, Electron, or end-to-end smoke tests;
 - the full test/build matrix for major, security, native, or central toolchain
   upgrades.
 

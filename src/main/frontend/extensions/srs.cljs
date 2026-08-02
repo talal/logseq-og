@@ -403,7 +403,8 @@
     (when cb (cb @*review-records))
     (reset! *phase 1)))
 
-(def review-finished
+(defn- review-finished
+  []
   [:p.p-2 (t :flashcards/modal-finished)])
 
 (defn- btn-with-shortcut [{:keys [shortcut id btn-text background on-click class]}]
@@ -430,7 +431,7 @@
         card (when current-block (->card current-block))
         finished? (= (inc @card-index) (count blocks))]
     (if (nil? card)
-      review-finished
+      (review-finished)
       (let [phase (::phase state)
             {current-blocks :value next-phase :next-phase} (show-cycle card @phase)
             root-block (.-block card)
@@ -481,7 +482,7 @@
                                                  (let [tomorrow (tc/to-string (t/plus (t/today) (t/days 1)))]
                                                    (editor-property/set-block-property! root-block-id card-next-schedule-property tomorrow)))})
 
-               (btn-with-shortcut {:btn-text (if (util/mobile?) "Hard" (t :flashcards/modal-btn-recall))
+               (btn-with-shortcut {:btn-text (t :flashcards/modal-btn-recall)
                                    :shortcut "t"
                                    :id       "card-recall"
                                    :on-click #(score-and-next-card 3 card card-index finished? phase review-records cb)})

@@ -1,6 +1,5 @@
 (ns logseq.tasks.dev
-  "Tasks for general development. For desktop or mobile development see their
-  namespaces"
+  "Tasks for general browser and Electron development"
   (:require [babashka.fs :as fs]
             [babashka.process :refer [shell]]
             [clojure.edn :as edn]

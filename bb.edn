@@ -26,9 +26,6 @@
   {:doc "Open Electron using the watcher started by `bb watch`"
    :task logseq.tasks.dev.desktop/electron-start}
 
-  dev:app-watch
-  logseq.tasks.dev.mobile/app-watch
-
   -dev:build-publishing-frontend
   logseq.tasks.dev/build-publishing-frontend
 
@@ -55,34 +52,6 @@
    :task (if ((set *command-line-args*) "--dev")
            (run '-dev:publishing-dev {:parallel true})
            (run '-dev:publishing-release))}
-
-  dev:npx-cap-run-ios
-  logseq.tasks.dev.mobile/npx-cap-run-ios
-
-  -dev:ios-app
-  {:depends [dev:app-watch dev:npx-cap-run-ios]}
-
-  dev:ios-app
-  {:doc "iOS development environment"
-   :task (run '-dev:ios-app {:parallel true})}
-
-  release:ios-app
-  {:doc "Build and run the iOS release application"
-   :task (run '-release:ios-app)}
-
-  dev:npx-cap-run-android
-  logseq.tasks.dev.mobile/npx-cap-run-android
-
-  -dev:android-app
-  {:depends [dev:app-watch dev:npx-cap-run-android]}
-
-  dev:android-app
-  {:doc "Android development environment"
-   :task (run '-dev:android-app {:parallel true})}
-
-  release:android-app
-  {:doc "Build and run the Android release application"
-   :task (run '-release:android-app)}
 
   ;; Validation and linting
   dev:validate-local-storage
@@ -226,10 +195,4 @@
    :depends [assets:build cljs:release-electron]
    :task (shell "yarn electron:package")}
 
-  -release:ios-app
-  {:depends [build:app]
-   :task (logseq.tasks.dev.mobile/run-ios-release)}
-
-  -release:android-app
-  {:depends [build:app]
-   :task (logseq.tasks.dev.mobile/run-android-release)}}}
+  }}

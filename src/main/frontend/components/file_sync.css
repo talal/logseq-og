@@ -454,14 +454,6 @@
       h4 {
         @apply text-sm opacity-50 pt-1;
       }
-
-      .out-icloud {
-        @apply w-full;
-
-        button {
-          @apply w-full border-none rounded-t-none translate-y-4;
-        }
-      }
     }
 
     > .input-hints {

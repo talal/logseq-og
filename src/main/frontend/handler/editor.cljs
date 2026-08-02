@@ -16,7 +16,6 @@
             [frontend.format.block :as block]
             [frontend.format.mldoc :as mldoc]
             [frontend.fs :as fs]
-            [frontend.fs.capacitor-fs :as capacitor-fs]
             [frontend.fs.nfs :as nfs]
             [frontend.handler.assets :as assets-handler]
             [frontend.handler.block :as block-handler]
@@ -27,7 +26,6 @@
             [frontend.handler.notification :as notification]
             [frontend.handler.repeated :as repeated]
             [frontend.handler.route :as route-handler]
-            [frontend.mobile.util :as mobile-util]
             [frontend.modules.outliner.core :as outliner-core]
             [frontend.modules.outliner.transaction :as outliner-tx]
             [frontend.modules.outliner.tree :as tree]
@@ -44,7 +42,6 @@
             [frontend.util.property :as property]
             [frontend.util.text :as text-util]
             [frontend.util.thingatpt :as thingatpt]
-            [goog.crypt.base64 :as base64]
             [goog.dom :as gdom]
             [goog.dom.classes :as gdom-classes]
             [goog.object :as gobj]
@@ -1437,17 +1434,11 @@
             dir (or (:dir matched-alias) repo-dir)]
 
         (p/do! (js/console.debug "Debug: Writing Asset #" dir file-rpath)
-               (if (mobile-util/native-platform?)
-            ;; capacitor fs accepts Blob, File implements Blob
-                 (p/let [buffer (.arrayBuffer file)
-                         content (base64/encodeByteArray (js/Uint8Array. buffer))
-                         fpath (path/path-join dir file-rpath)]
-                   (capacitor-fs/<write-file-with-base64 fpath content))
-                 (p/let [content (if (util/electron?)
-                                   (.arrayBuffer file)
-                                   (.stream file))
-                         file-fpath (path/path-join dir file-rpath)]
-                   (ipc/ipc "writeFile" repo file-fpath content)))
+               (p/let [content (if (util/electron?)
+                                 (.arrayBuffer file)
+                                 (.stream file))
+                       file-fpath (path/path-join dir file-rpath)]
+                 (ipc/ipc "writeFile" repo file-fpath content))
                [file-rpath file (path/path-join dir file-rpath) matched-alias]))))))
 
 (defonce *assets-url-cache (atom {}))
@@ -1473,9 +1464,6 @@
 
         (util/electron?)
         (path/prepend-protocol "assets:" full-path)
-
-        (mobile-util/native-platform?)
-        (mobile-util/convert-file-src full-path)
 
         :else ;; nfs
         (let [handle-path (str "handle/" full-path)
@@ -1742,8 +1730,7 @@
             (move-nodes blocks))
           (when-let [input-id (state/get-edit-input-id)]
             (when-let [input (gdom/getElement input-id)]
-              (.focus input)
-              (js/setTimeout #(util/scroll-editor-cursor input) 100))))
+              (.focus input))))
         (let [ids (state/get-selection-block-ids)]
           (when (seq ids)
             (let [lookup-refs (map (fn [id] [:block/uuid id]) ids)
@@ -2804,7 +2791,7 @@
 
       ;; just delete
       :else
-      (when-not (mobile-util/native-ios?)
+      (do
         (util/stop e)
         (delete-and-update
          input (util/safe-dec-current-pos-from-end (.-value input) current-pos) current-pos)))))
@@ -2843,7 +2830,6 @@
     nil))
 
 (defn keydown-not-matched-handler
-  "NOTE: Keydown cannot be used on Android platform"
   [format]
   (fn [e _key-code]
     (let [input-id (state/get-edit-input-id)
@@ -2868,15 +2854,6 @@
 
         (or ctrlKey metaKey)
         nil
-
-        ;; FIXME: On mobile, a backspace click to call keydown-backspace-handler
-        ;; does not work if cursor is at the beginning of a block, hence the block
-        ;; can't be deleted. Need to figure out why and find a better solution.
-        (and (mobile-util/native-platform?)
-             (= key "Backspace")
-             (zero? pos)
-             (string/blank? (.toString (js/window.getSelection))))
-        (keydown-backspace-handler false e)
 
         (and (= key "#")
              (> pos 0)
@@ -3023,29 +3000,11 @@
             value (gobj/get input "value")
             c (util/nth-safe value (dec current-pos))
             [key-code k code is-processed?]
-            (if (and c
-                     (mobile-util/native-android?)
-                     (or (= key-code 229)
-                         (= key-code 0)))
-              [(.charCodeAt value (dec current-pos))
-               c
-               (cond
-                 (= c " ")
-                 "Space"
-
-                 (parse-long c)
-                 (str "Digit" c)
-
-                 :else
-                 (str "Key" (string/upper-case c)))
-               false]
-              [key-code
-               (gobj/get e "key")
-               (if (mobile-util/native-android?)
-                 (gobj/get e "key")
-                 (gobj/getValueByKeys e "event_" "code"))
-                ;; #3440
-               (util/goog-event-is-composing? e true)])]
+            [key-code
+             (gobj/get e "key")
+             (gobj/getValueByKeys e "event_" "code")
+             ;; #3440
+             (util/goog-event-is-composing? e true)]]
         (cond
           ;; When you type something after /
           (and (= :commands (state/get-editor-action)) (not= k commands/command-trigger))
@@ -3099,9 +3058,7 @@
 (defn editor-on-click!
   [id]
   (fn [_e]
-    (let [input (gdom/getElement id)]
-      (util/scroll-editor-cursor input)
-      (close-autocomplete-if-outside input))))
+    (close-autocomplete-if-outside (gdom/getElement id))))
 
 (defn editor-on-change!
   [block id search-timeout]
@@ -3114,9 +3071,7 @@
                 (js/setTimeout
                  #(edit-box-on-change! e block id)
                  timeout)))
-      (let [input (gdom/getElement id)]
-        (edit-box-on-change! e block id)
-        (util/scroll-editor-cursor input)))))
+      (edit-box-on-change! e block id))))
 
 (defn- cut-blocks-and-clear-selections!
   [copy?]

@@ -102,7 +102,7 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         handleUnselect(item)
                       }}
                     >
-                      <X className="h-3 w-3 text-muted-foreground hover:text-foreground"/>
+                      <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                     </Button>
                   )}
                 </Badge>
@@ -111,7 +111,7 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                 <span>{props.placeholder ?? 'Select ...'}</span>
               )}
             </div>
-            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50"/>
+            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">

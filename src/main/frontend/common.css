@@ -27,9 +27,9 @@ html:not(.is-native-android) {
     Arial,
     'Noto Sans',
     serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol" !important;
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol' !important;
 }
 
 /* region Reset top elements */
@@ -38,8 +38,14 @@ html {
 }
 
 body {
-  color: var(--lx-gray-12, var(--ls-primary-text-color, hsl(var(--foreground))));
-  background-color: var(--lx-gray-01, var(--ls-primary-background-color, hsl(var(--background))));
+  color: var(
+    --lx-gray-12,
+    var(--ls-primary-text-color, hsl(var(--foreground)))
+  );
+  background-color: var(
+    --lx-gray-01,
+    var(--ls-primary-background-color, hsl(var(--background)))
+  );
   line-height: 1.5;
   min-height: 100%;
   word-break: break-word; /* compatible for overflow-wrap: anywhere */
@@ -95,12 +101,18 @@ body {
 
   a {
     cursor: pointer;
-    color: var(--lx-accent-11, var(--ls-link-text-color, hsl(var(--primary)/80%)));
+    color: var(
+      --lx-accent-11,
+      var(--ls-link-text-color, hsl(var(--primary)/80%))
+    );
     text-decoration: none;
   }
 
   a:hover {
-    color: var(--lx-accent-12, var(--ls-link-text-hover-color, hsl(var(--primary))));
+    color: var(
+      --lx-accent-12,
+      var(--ls-link-text-hover-color, hsl(var(--primary)))
+    );
   }
 
   code {
@@ -127,7 +139,10 @@ body {
     text-indent: 0;
     padding: 8px 20px;
     border-left: 4px solid;
-    border-left-color: var(--ls-page-blockquote-border-color, hsl(var(--primary)/40%));
+    border-left-color: var(
+      --ls-page-blockquote-border-color,
+      hsl(var(--primary)/40%)
+    );
     background-color: var(--ls-page-blockquote-bg-color, hsl(var(--secondary)));
     color: var(--ls-page-blockquote-color, hsl(var(--secondary-foreground)));
     margin: 1rem 0;
@@ -153,8 +168,6 @@ body {
     background: var(--ls-selection-background-color);
     color: var(--ls-primary-text-color);
   }
-
-
 }
 
 /* endregion */
@@ -603,15 +616,12 @@ mark {
   font-size: 0.9em;
   font-style: normal;
   font-family:
-    MonoLisa,
-    'Fira Code',
-    Monaco,
-    Menlo,
-    Consolas,
-    'COURIER NEW',
-    monospace;
+    MonoLisa, 'Fira Code', Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
   letter-spacing: 0;
-  background-color: var(--lx-gray-06, var(--ls-page-inline-code-bg-color, var(--rx-gray-05)));
+  background-color: var(
+    --lx-gray-06,
+    var(--ls-page-inline-code-bg-color, var(--rx-gray-05))
+  );
   color: var(--lx-gray-11, var(--ls-page-inline-code-color, var(--rx-gray-11)));
   text-rendering: optimizespeed;
 }
@@ -642,11 +652,17 @@ a {
 }
 
 .page-reference:hover {
-  background: var(--lx-accent-04-alpha, var(--ls-secondary-background-color, hsl(var(--primary)/40%)));
+  background: var(
+    --lx-accent-04-alpha,
+    var(--ls-secondary-background-color, hsl(var(--primary)/40%))
+  );
 }
 
 .references-blocks .page-reference:hover {
-  background: var(--lx-accent-04-alpha, var(--ls-tertiary-background-color, hsl(var(--primary)/40%)));
+  background: var(
+    --lx-accent-04-alpha,
+    var(--ls-tertiary-background-color, hsl(var(--primary)/40%))
+  );
 }
 
 #head .fade-link {
@@ -683,7 +699,9 @@ a.page-op svg {
 }
 
 html[data-theme='light'] .keyboard-shortcut > code {
-  box-shadow: inset 0 -1px 0 #433f3855, 0 0 1px 1px #433f3822;
+  box-shadow:
+    inset 0 -1px 0 #433f3855,
+    0 0 1px 1px #433f3822;
 }
 
 html[data-theme='dark'] .keyboard-shortcut > code {

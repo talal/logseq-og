@@ -52,7 +52,10 @@ h1.title.whiteboard-dashboard-title {
 .dashboard-create-card {
   @apply items-center justify-center relative border opacity-90 hover:shadow-lg;
 
-  background-color: var(--lx-gray-02, var(--ls-secondary-background-color, var(--rx-gray-02)));
+  background-color: var(
+    --lx-gray-02,
+    var(--ls-secondary-background-color, var(--rx-gray-02))
+  );
   box-shadow: inset 0 2px 4px rgb(0 0 0 / 6%);
 
   .ls-icon-plus,
@@ -71,7 +74,10 @@ h1.title.whiteboard-dashboard-title {
 }
 
 .dark .dashboard-create-card {
-  background-color: var(--lx-gray-03, var(--ls-secondary-background-color, var(--rx-gray-03)));
+  background-color: var(
+    --lx-gray-03,
+    var(--ls-secondary-background-color, var(--rx-gray-03))
+  );
 }
 
 .dashboard-create-card i {
@@ -90,11 +96,17 @@ h1.title.whiteboard-dashboard-title {
 .dashboard-card-title {
   @apply px-4 py-3 flex flex-col gap-1 border-b;
 
-  background-color: var(--lx-gray-02, var(--ls-secondary-background-color, var(--rx-gray-02)));
+  background-color: var(
+    --lx-gray-02,
+    var(--ls-secondary-background-color, var(--rx-gray-02))
+  );
 }
 
 .dark .dashboard-card-title {
-  background-color: var(--lx-gray-03, var(--ls-secondary-background-color, var(--rx-gray-03)));
+  background-color: var(
+    --lx-gray-03,
+    var(--ls-secondary-background-color, var(--rx-gray-03))
+  );
 }
 
 .dashboard-card-title-name {
@@ -163,13 +175,19 @@ input.tl-text-input {
   z-index: 2000;
   gap: 4px;
   line-height: 1.4;
-  background: var(--lx-gray-01, var(--ls-primary-background-color, hsl(var(--background))));
+  background: var(
+    --lx-gray-01,
+    var(--ls-primary-background-color, hsl(var(--background)))
+  );
   max-width: 70%;
   overflow: hidden;
 }
 
 .dark .whiteboard-page-title-root {
-  background: var(--lx-gray-02, var(--ls-primary-background-color, hsl(var(--background))));
+  background: var(
+    --lx-gray-02,
+    var(--ls-primary-background-color, hsl(var(--background)))
+  );
 }
 
 .whiteboard-page-title {
@@ -214,7 +232,7 @@ input.tl-text-input {
   @apply flex-shrink-0;
 }
 
-.whiteboard-page[data-breakpoint="sm"] {
+.whiteboard-page[data-breakpoint='sm'] {
   .whiteboard-page-refs-count-label {
     display: none;
   }
@@ -234,7 +252,7 @@ input.tl-text-input {
 }
 
 /* disable user select globally for whiteboard on iOS/iPad. Is there a better option? */
-html:is(.is-ios, .is-native-ios, .is-native-ipad) [data-page="whiteboard"] * {
+html:is(.is-ios, .is-native-ios, .is-native-ipad) [data-page='whiteboard'] * {
   -webkit-touch-callout: none;
   user-select: none;
 }
@@ -243,7 +261,7 @@ html:is(.is-ios, .is-native-ios, .is-native-ipad) [data-page="whiteboard"] * {
   > .head-bg {
     @apply flex m-auto mb-10 w-auto sm:w-[500px];
 
-    background-image: url("../img/whiteboard-welcome-dark.png");
+    background-image: url('../img/whiteboard-welcome-dark.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -278,7 +296,7 @@ html:is(.is-ios, .is-native-ios, .is-native-ipad) [data-page="whiteboard"] * {
 html[data-theme='light'] {
   .cp__whiteboard-welcome {
     > .head-bg {
-      background-image: url("../img/whiteboard-welcome-light.png");
+      background-image: url('../img/whiteboard-welcome-light.png');
     }
   }
 }

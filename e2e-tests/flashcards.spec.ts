@@ -2,7 +2,6 @@ import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import { createRandomPage } from './utils'
 
-
 test('flashcard demo', async ({ page, block }) => {
   await createRandomPage(page)
 

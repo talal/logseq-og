@@ -14,8 +14,10 @@ if (!fs.existsSync(targetFile))
 
 const targetFileContent = fs.readFileSync(targetFile)?.toString()
 
-const exportHSLFileContent =
-  targetFileContent.replace(/: (.+)%;/g, `: hsl($1%);`)
+const exportHSLFileContent = targetFileContent.replace(
+  /: (.+)%;/g,
+  `: hsl($1%);`
+)
 
 const exportHSLFilePath = targetFile.replace(/\.css$/, '_hsl.css')
 

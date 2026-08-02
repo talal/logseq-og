@@ -111,7 +111,7 @@ export const SelectionForeground = observer(function SelectionForeground<S exten
             isHidden={!showRotateHandles}
           />
           <CloneHandle
-            cx={- clonePadding}
+            cx={-clonePadding}
             cy={height / 2}
             size={cloneHandleSize}
             direction={TLCloneDirection.Left}

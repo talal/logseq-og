@@ -12,7 +12,7 @@ function mapRadixColorToTailwind(color) {
     // base color
     colors[twStep] = radixColor[`${color}${rxStep}`]
     // theme vars color
-    const rxStepName = `${(rxStep < 10) ? '0' : ''}${rxStep}`
+    const rxStepName = `${rxStep < 10 ? '0' : ''}${rxStep}`
     const rxVarName = `--rx-${color}-${rxStepName}`
     colors[`rx-${rxStepName}`] = `var(${rxVarName})`
     colors[`rx-${rxStepName}-alpha`] = `var(${rxVarName}-alpha)`
@@ -28,10 +28,13 @@ module.exports = {
     './@/components/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
     './examples/**/*.{ts,tsx}',
-    '../../deps/shui/src/**/*.cljs'
+    '../../deps/shui/src/**/*.cljs',
   ],
   safelist: [
-    { pattern: /primary-(gray|red|yellow|green|blue|orange|indigo|rose|purple|pink)/ }
+    {
+      pattern:
+        /primary-(gray|red|yellow|green|blue|orange|indigo|rose|purple|pink)/,
+    },
   ],
   theme: {
     container: {
@@ -105,7 +108,7 @@ module.exports = {
         slate: mapRadixColorToTailwind('slate'),
         teal: mapRadixColorToTailwind('teal'),
         tomato: mapRadixColorToTailwind('tomato'),
-        violet: mapRadixColorToTailwind('violet')
+        violet: mapRadixColorToTailwind('violet'),
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -125,11 +128,11 @@ module.exports = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-      }
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],
   corePlugins: {
     preflight: true,
-  }
+  },
 }

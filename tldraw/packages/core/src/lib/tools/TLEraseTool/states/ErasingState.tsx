@@ -9,7 +9,7 @@ export class ErasingState<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLEraseTool<S, K, R>
+  P extends TLEraseTool<S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'erasing'
 

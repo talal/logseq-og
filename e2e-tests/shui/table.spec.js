@@ -1,17 +1,21 @@
 import { expect } from '@playwright/test'
 import { test } from '../fixtures'
-import { editFirstBlock, navigateToStartOfBlock, createRandomPage } from '../utils'
+import {
+  editFirstBlock,
+  navigateToStartOfBlock,
+  createRandomPage,
+} from '../utils'
 
 test.setTimeout(60000)
 
 const KEY_DELAY = 100
 
-// The following function assumes that the block is currently in edit mode, 
+// The following function assumes that the block is currently in edit mode,
 // and it just enters a simple table
 const inputSimpleTable = async (page) => {
   await page.keyboard.type('| Header A | Header B |')
   await page.keyboard.press('Shift+Enter')
-  await page.keyboard.type('| A1 | B1 |') 
+  await page.keyboard.type('| A1 | B1 |')
   await page.keyboard.press('Shift+Enter')
   await page.keyboard.type('| A2 | B2 |')
   await page.keyboard.press('Escape')
@@ -53,105 +57,166 @@ const setPropInFirstBlock = async (page, block, prop, value) => {
     await page.keyboard.press('ArrowRight')
   }
 
-  // Delete the value of the prop 
+  // Delete the value of the prop
   for (let i = 0; i < propValue.length; i++) {
     await page.keyboard.press('Backspace')
   }
 
   // Input the new value of the prop
-  await page.keyboard.type(" " + value.trim())
+  await page.keyboard.type(' ' + value.trim())
   await page.waitForTimeout(KEY_DELAY)
   await page.keyboard.press('Escape')
   return await page.waitForTimeout(KEY_DELAY)
 }
 
-
-test('table can have it\'s version changed via props', async ({ page, block, graphDir: _graphDir }) => {
+test("table can have it's version changed via props", async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
-  // create a v1 table 
+  // create a v1 table
   inputSimpleTable(page)
 
   // find and confirm existence of first data cell
-  await expect(await page.locator('table tbody tr >> nth=0').innerHTML()).toContain('A1</td>')
+  await expect(
+    await page.locator('table tbody tr >> nth=0').innerHTML()
+  ).toContain('A1</td>')
 
   // change to a version 2 table
   await setPropInFirstBlock(page, block, 'logseq.table.version', '2')
 
   // find and confirm existence of first data cell in new format
-  await expect(await page.getByTestId('v2-table-container').innerHTML()).toContain('A1</div>')
+  await expect(
+    await page.getByTestId('v2-table-container').innerHTML()
+  ).toContain('A1</div>')
 })
 
-test('table can configure logseq.color::', async ({ page, block, graphDir: _graphDir }) => {
+test('table can configure logseq.color::', async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
-  // create a v1 table 
+  // create a v1 table
   await page.keyboard.type('logseq.table.version:: 2')
   await page.keyboard.press('Shift+Enter')
   await inputSimpleTable(page)
 
-  // check for default general config 
-  await expect(await page.getByTestId('v2-table-gradient-accent')).not.toBeVisible()
+  // check for default general config
+  await expect(
+    await page.getByTestId('v2-table-gradient-accent')
+  ).not.toBeVisible()
 
   await setPropInFirstBlock(page, block, 'logseq.color', 'red')
 
-  // check for gradient accent 
+  // check for gradient accent
   await expect(await page.getByTestId('v2-table-gradient-accent')).toBeVisible()
 })
 
-test('table can configure logseq.table.hover::', async ({ page, block, graphDir: _graphDir }) => {
+test('table can configure logseq.table.hover::', async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
-  // create a v1 table 
+  // create a v1 table
   await page.keyboard.type('logseq.table.version:: 2')
   await page.keyboard.press('Shift+Enter')
   await inputSimpleTable(page)
 
   await page.waitForTimeout(KEY_DELAY)
   await page.getByText('A1', { exact: true }).hover()
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-quaternary-background-color)]')
-  await expect(await page.getByText('B1', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('B2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-quaternary-background-color)]')
+  await expect(
+    await page.getByText('B1', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('B2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
 
   await setPropInFirstBlock(page, block, 'logseq.table.hover', 'row')
 
   await page.waitForTimeout(KEY_DELAY)
   await page.getByText('A1', { exact: true }).hover()
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-quaternary-background-color)]')
-  await expect(await page.getByText('B1', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('B2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-quaternary-background-color)]')
+  await expect(
+    await page.getByText('B1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('B2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
 
   await setPropInFirstBlock(page, block, 'logseq.table.hover', 'col')
 
   await page.waitForTimeout(KEY_DELAY)
   await page.getByText('A1', { exact: true }).hover()
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-quaternary-background-color)]')
-  await expect(await page.getByText('B1', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('B2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-quaternary-background-color)]')
+  await expect(
+    await page.getByText('B1', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('B2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
 
   await setPropInFirstBlock(page, block, 'logseq.table.hover', 'both')
 
   await page.waitForTimeout(KEY_DELAY)
   await page.getByText('A1', { exact: true }).hover()
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-quaternary-background-color)]')
-  await expect(await page.getByText('B1', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('B2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-quaternary-background-color)]')
+  await expect(
+    await page.getByText('B1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('B2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
 
   await setPropInFirstBlock(page, block, 'logseq.table.hover', 'none')
 
   await page.waitForTimeout(KEY_DELAY)
   await page.getByText('A1', { exact: true }).hover()
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-quaternary-background-color)]')
-  await expect(await page.getByText('B1', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
-  await expect(await page.getByText('B2', { exact: true }).getAttribute('class')).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-quaternary-background-color)]')
+  await expect(
+    await page.getByText('B1', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
+  await expect(
+    await page.getByText('B2', { exact: true }).getAttribute('class')
+  ).not.toContain('bg-[color:var(--ls-tertiary-background-color)]')
 })
 
-test('table can configure logseq.table.headers', async ({ page, block, graphDir: _graphDir }) => {
+test('table can configure logseq.table.headers', async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
   // create a table
@@ -161,30 +226,51 @@ test('table can configure logseq.table.headers', async ({ page, block, graphDir:
 
   // Check none (default)
   await expect(await page.getByText('Header A', { exact: true })).toBeVisible()
-  await expect(await page.getByText('Header A', { exact: true }).innerText()).toEqual("Header A")
+  await expect(
+    await page.getByText('Header A', { exact: true }).innerText()
+  ).toEqual('Header A')
 
   // Check none (explicit)
   await setPropInFirstBlock(page, block, 'logseq.table.headers', 'none')
-  await expect(await page.getByText('Header A', { exact: true }).innerText()).toEqual("Header A")
+  await expect(
+    await page.getByText('Header A', { exact: true }).innerText()
+  ).toEqual('Header A')
 
   // Check uppercase
   await setPropInFirstBlock(page, block, 'logseq.table.headers', 'uppercase')
-  await expect(await page.getByText('Header A', { exact: true }).innerText()).toEqual("HEADER A")
+  await expect(
+    await page.getByText('Header A', { exact: true }).innerText()
+  ).toEqual('HEADER A')
 
   // Check lowercase
   await setPropInFirstBlock(page, block, 'logseq.table.headers', 'lowercase')
-  await expect(await page.getByText('Header A', { exact: true }).innerText()).toEqual("header a")
+  await expect(
+    await page.getByText('Header A', { exact: true }).innerText()
+  ).toEqual('header a')
 
   // Check capitalize
   await setPropInFirstBlock(page, block, 'logseq.table.headers', 'capitalize')
-  await expect(await page.getByText('Header A', { exact: true }).innerText()).toEqual("Header A")
+  await expect(
+    await page.getByText('Header A', { exact: true }).innerText()
+  ).toEqual('Header A')
 
   // Check capitalize-first
-  await setPropInFirstBlock(page, block, 'logseq.table.headers', 'capitalize-first')
-  await expect(await page.getByText('Header A', { exact: true }).innerText()).toEqual("Header a")
+  await setPropInFirstBlock(
+    page,
+    block,
+    'logseq.table.headers',
+    'capitalize-first'
+  )
+  await expect(
+    await page.getByText('Header A', { exact: true }).innerText()
+  ).toEqual('Header a')
 })
 
-test('table can configure logseq.table.borders', async ({ page, block, graphDir: _graphDir }) => {
+test('table can configure logseq.table.borders', async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
   // create a table
@@ -193,18 +279,31 @@ test('table can configure logseq.table.borders', async ({ page, block, graphDir:
   await inputSimpleTable(page)
 
   // Check true (default)
-  await expect(await page.getByTestId('v2-table-container')).toHaveCSS("gap", /^[1-9].*/)
+  await expect(await page.getByTestId('v2-table-container')).toHaveCSS(
+    'gap',
+    /^[1-9].*/
+  )
 
   // Check true (explicit)
   await setPropInFirstBlock(page, block, 'logseq.table.borders', 'true')
-  await expect(await page.getByTestId('v2-table-container')).toHaveCSS("gap", /^[1-9].*/)
+  await expect(await page.getByTestId('v2-table-container')).toHaveCSS(
+    'gap',
+    /^[1-9].*/
+  )
 
   // Check false
   await setPropInFirstBlock(page, block, 'logseq.table.borders', 'false')
-  await expect(await page.getByTestId('v2-table-container')).not.toHaveCSS("gap", /^[1-9].*/)
+  await expect(await page.getByTestId('v2-table-container')).not.toHaveCSS(
+    'gap',
+    /^[1-9].*/
+  )
 })
 
-test('table can configure logseq.table.stripes', async ({ page, block, graphDir: _graphDir }) => {
+test('table can configure logseq.table.stripes', async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
   // create a table
@@ -214,21 +313,37 @@ test('table can configure logseq.table.stripes', async ({ page, block, graphDir:
   await page.waitForTimeout(KEY_DELAY)
 
   // Check false (default)
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).toContain("bg-[color:var(--ls-primary-background-color)]")
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).toContain("bg-[color:var(--ls-primary-background-color)]")
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-primary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-primary-background-color)]')
 
   // Check false (explicit)
   await setPropInFirstBlock(page, block, 'logseq.table.stripes', 'false')
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).toContain("bg-[color:var(--ls-primary-background-color)]")
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).toContain("bg-[color:var(--ls-primary-background-color)]")
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-primary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-primary-background-color)]')
 
   // Check false
   await setPropInFirstBlock(page, block, 'logseq.table.stripes', 'true')
-  await expect(await page.getByText('A1', { exact: true }).getAttribute('class')).toContain("bg-[color:var(--ls-primary-background-color)]")
-  await expect(await page.getByText('A2', { exact: true }).getAttribute('class')).toContain("bg-[color:var(--ls-secondary-background-color)]")
+  await expect(
+    await page.getByText('A1', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-primary-background-color)]')
+  await expect(
+    await page.getByText('A2', { exact: true }).getAttribute('class')
+  ).toContain('bg-[color:var(--ls-secondary-background-color)]')
 })
 
-test('table can configure logseq.table.compact', async ({ page, block, graphDir: _graphDir }) => {
+test('table can configure logseq.table.compact', async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
   // create a table
@@ -238,15 +353,21 @@ test('table can configure logseq.table.compact', async ({ page, block, graphDir:
   await page.waitForTimeout(KEY_DELAY)
 
   // Check false (default)
-  const defaultClasses = await page.getByText('A1', { exact: true }).getAttribute('class')
+  const defaultClasses = await page
+    .getByText('A1', { exact: true })
+    .getAttribute('class')
 
   // Check false (explicit)
   await setPropInFirstBlock(page, block, 'logseq.table.compact', 'false')
-  const falseClasses = await page.getByText('A1', { exact: true }).getAttribute('class')
+  const falseClasses = await page
+    .getByText('A1', { exact: true })
+    .getAttribute('class')
 
   // Check false
   await setPropInFirstBlock(page, block, 'logseq.table.compact', 'true')
-  const trueClasses = await page.getByText('A1', { exact: true }).getAttribute('class')
+  const trueClasses = await page
+    .getByText('A1', { exact: true })
+    .getAttribute('class')
 
   const getPX = (str) => {
     const match = str.match(/px-\[([0-9.]*)[a-z]*\]/)
@@ -257,19 +378,28 @@ test('table can configure logseq.table.compact', async ({ page, block, graphDir:
   await expect(getPX(defaultClasses)).toBeGreaterThan(getPX(trueClasses))
 })
 
-test('table can configure logseq.table.cols::', async ({ page, block, graphDir: _graphDir }) => {
+test('table can configure logseq.table.cols::', async ({
+  page,
+  block,
+  graphDir: _graphDir,
+}) => {
   await createRandomPage(page)
 
-  // create a v1 table 
+  // create a v1 table
   await page.keyboard.type('logseq.table.version:: 2')
   await page.keyboard.press('Shift+Enter')
   await inputSimpleTable(page)
 
-  // check for default general config 
+  // check for default general config
   await expect(await page.getByText('A1', { exact: true })).toBeVisible()
   await expect(await page.getByText('B1', { exact: true })).toBeVisible()
 
-  await setPropInFirstBlock(page, block, 'logseq.table.cols', 'Header A, Header B')
+  await setPropInFirstBlock(
+    page,
+    block,
+    'logseq.table.cols',
+    'Header A, Header B'
+  )
   await expect(await page.getByText('A1', { exact: true })).toBeVisible()
   await expect(await page.getByText('B1', { exact: true })).toBeVisible()
 

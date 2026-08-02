@@ -38,8 +38,8 @@ export interface LogseqContextValue {
       }
     }>
     KeyboardShortcut: React.FC<{
-      action?: string,
-      shortcut?: string,
+      action?: string
+      shortcut?: string
       opts?: any
     }>
   }

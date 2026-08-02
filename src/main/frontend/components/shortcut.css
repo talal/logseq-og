@@ -1,5 +1,5 @@
 .ui__modal {
-  &[label="keymap-manager"] {
+  &[label='keymap-manager'] {
     .panel-content {
       @apply m-[-16px];
     }

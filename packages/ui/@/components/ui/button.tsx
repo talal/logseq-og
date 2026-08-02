@@ -7,9 +7,9 @@ import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm gap-1 ' +
-  'font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 ' +
-  'focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none ' +
-  'disabled:opacity-50 select-none',
+    'font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 ' +
+    'focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none ' +
+    'disabled:opacity-50 select-none',
   {
     variants: {
       variant: {
@@ -25,8 +25,7 @@ const buttonVariants = cva(
           'bg-secondary/70 text-secondary-foreground hover:bg-secondary/100 active:opacity-80 as-secondary',
         ghost:
           'hover:bg-secondary/70 hover:text-secondary-foreground active:opacity-80 as-ghost',
-        link:
-          'text-primary underline-offset-4 hover:underline active:opacity-80 as-link',
+        link: 'text-primary underline-offset-4 hover:underline active:opacity-80 as-link',
       },
       size: {
         default: 'h-10 px-4 py-2',
@@ -45,7 +44,8 @@ const buttonVariants = cva(
 )
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
@@ -57,7 +57,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           'ui__button',
-          buttonVariants({ variant, size, className }))}
+          buttonVariants({ variant, size, className })
+        )}
         ref={ref}
         {...props}
       />

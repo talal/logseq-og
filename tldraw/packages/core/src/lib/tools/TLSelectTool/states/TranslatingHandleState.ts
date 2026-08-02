@@ -12,7 +12,7 @@ export class TranslatingHandleState<
   T extends S & TLLineShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLSelectTool<S, K, R>
+  P extends TLSelectTool<S, K, R>,
 > extends TLBaseLineBindingState<S, T, K, R, P> {
   static id = 'translatingHandle'
   cursor = TLCursor.Grabbing

@@ -37,7 +37,8 @@
     &-output-line {
       height: 23px;
       white-space: pre;
-      font-family: "Fira Code", Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
+      font-family:
+        'Fira Code', Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
     }
   }
 }
@@ -45,7 +46,7 @@
 .CodeMirror {
   height: auto;
   width: 100%;
-  font-family: "Fira Code", Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
+  font-family: 'Fira Code', Monaco, Menlo, Consolas, 'COURIER NEW', monospace;
   border-radius: 2px;
   line-height: 1.45em;
 

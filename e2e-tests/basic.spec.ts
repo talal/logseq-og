@@ -4,8 +4,11 @@ import path from 'path'
 import { test } from './fixtures'
 import { randomString, createRandomPage, modKey } from './utils'
 
-
-test('create page and blocks, save to disk', async ({ page, block, graphDir }) => {
+test('create page and blocks, save to disk', async ({
+  page,
+  block,
+  graphDir,
+}) => {
   const pageTitle = await createRandomPage(page)
 
   // do editing
@@ -48,15 +51,16 @@ test('create page and blocks, save to disk', async ({ page, block, graphDir }) =
     path.join(graphDir, `pages/${pageTitle}.md`),
     'utf8'
   )
-  expect(contentOnDisk.trim()).toEqual(`
+  expect(contentOnDisk.trim()).toEqual(
+    `
 - first bullet
 - second bullet
 	- third bullet
 	- continue editing
 	  second line
-- test ok`.trim())
+- test ok`.trim()
+  )
 })
-
 
 test('delete and backspace', async ({ page, block }) => {
   await createRandomPage(page)
@@ -81,9 +85,7 @@ test('delete and backspace', async ({ page, block }) => {
   expect(await page.inputValue('textarea >> nth=0')).toBe('te')
   await page.keyboard.press('Delete', { delay: 50 })
   expect(await page.inputValue('textarea >> nth=0')).toBe('te')
-
 })
-
 
 test('block selection', async ({ page, block }) => {
   await createRandomPage(page)
@@ -201,7 +203,6 @@ test('template', async ({ page, block }) => {
 
   await block.waitForBlocks(9)
 
-
   await block.clickNext()
   await block.mustType('/template')
 
@@ -255,7 +256,7 @@ test('auto completion and auto pair', async ({ page, block }) => {
 
   // {{
   await block.mustType('type {{', { toBe: 'type {{}}' })
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(100)
   // ((
   await block.clickNext()
 
@@ -288,7 +289,10 @@ test('invalid page props #3944', async ({ page, block }) => {
   await block.enterNext()
 })
 
-test('Scheduled date picker should point to the already specified Date #6985', async ({ page, block }) => {
+test('Scheduled date picker should point to the already specified Date #6985', async ({
+  page,
+  block,
+}) => {
   await createRandomPage(page)
 
   await block.mustFill('testTask \n SCHEDULED: <2000-05-06 Sat>')
@@ -307,15 +311,18 @@ test('Scheduled date picker should point to the already specified Date #6985', a
   await page.waitForTimeout(500)
 })
 
-test('Opening a second datepicker should close the first one #7341', async ({ page, block }) => {
+test('Opening a second datepicker should close the first one #7341', async ({
+  page,
+  block,
+}) => {
   await createRandomPage(page)
 
   await block.mustFill('testTask \n SCHEDULED: <2000-05-06 Sat>')
 
-  await block.enterNext();
+  await block.enterNext()
 
   await block.mustFill('testTask \n SCHEDULED: <2000-06-07 Wed>')
-  await block.enterNext();
+  await block.enterNext()
   await page.click('#main-content-container')
   // Open date picker
   await page.waitForTimeout(500)

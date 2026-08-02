@@ -13,7 +13,7 @@ export class TLBaseLineBindingState<
   T extends S & TLLineShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLTool<S, K, R>
+  P extends TLTool<S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'creating'
 

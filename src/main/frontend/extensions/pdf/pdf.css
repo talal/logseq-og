@@ -20,27 +20,27 @@ input::-webkit-inner-spin-button {
   &-container {
     display: flex;
 
-    *[data-color="yellow"] {
+    *[data-color='yellow'] {
       background-color: var(--ph-highlight-color-yellow);
       border-color: var(--ph-highlight-color-yellow);
     }
 
-    *[data-color="blue"] {
+    *[data-color='blue'] {
       background-color: var(--ph-highlight-color-blue);
       border-color: var(--ph-highlight-color-blue);
     }
 
-    *[data-color="green"] {
+    *[data-color='green'] {
       background-color: var(--ph-highlight-color-green);
       border-color: var(--ph-highlight-color-green);
     }
 
-    *[data-color="red"] {
+    *[data-color='red'] {
       background-color: var(--ph-highlight-color-red);
       border-color: var(--ph-highlight-color-red);
     }
 
-    *[data-color="purple"] {
+    *[data-color='purple'] {
       background-color: var(--ph-highlight-color-purple);
       border-color: var(--ph-highlight-color-purple);
     }
@@ -475,7 +475,7 @@ input::-webkit-inner-spin-button {
     margin: 0;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       inset: -50%;
       border: solid 1px #b2b2b2;
@@ -520,23 +520,23 @@ input::-webkit-inner-spin-button {
             transform: scale(1.1);
           }
 
-          &[data-color="yellow"] {
+          &[data-color='yellow'] {
             background-color: var(--color-yellow-500);
           }
 
-          &[data-color="blue"] {
+          &[data-color='blue'] {
             background-color: var(--color-blue-500);
           }
 
-          &[data-color="green"] {
+          &[data-color='green'] {
             background-color: var(--color-green-500);
           }
 
-          &[data-color="red"] {
+          &[data-color='red'] {
             background-color: var(--color-red-500);
           }
 
-          &[data-color="purple"] {
+          &[data-color='purple'] {
             background-color: var(--color-purple-500);
           }
         }
@@ -646,24 +646,24 @@ input::-webkit-inner-spin-button {
   transition: background 0.3s;
   background-color: rgb(252 219 97 / 70%);
 
-  &[data-color="yellow"] {
+  &[data-color='yellow'] {
     background-color: var(--ph-highlight-color-yellow);
     opacity: 0.5;
   }
 
-  &[data-color="blue"] {
+  &[data-color='blue'] {
     background-color: var(--ph-highlight-color-blue);
   }
 
-  &[data-color="green"] {
+  &[data-color='green'] {
     background-color: var(--ph-highlight-color-green);
   }
 
-  &[data-color="red"] {
+  &[data-color='red'] {
     background-color: var(--ph-highlight-color-red);
   }
 
-  &[data-color="purple"] {
+  &[data-color='purple'] {
     background-color: var(--ph-highlight-color-purple);
   }
 }
@@ -694,7 +694,7 @@ input::-webkit-inner-spin-button {
     box-shadow: 0 2px 4px 0 rgb(134 134 134 / 59%);
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       inset: -50%;
       border: solid 1px #b2b2b2;
@@ -715,12 +715,15 @@ input::-webkit-inner-spin-button {
     background-color: var(--ls-primary-background-color);
   }
 
-  &[data-theme="light"] {
+  &[data-theme='light'] {
     background-color: #fff;
   }
 
-  &[data-theme="dark"] {
-    background-color: var(--lx-pdf-container-dark-bg, var(--ls-primary-background-color, #042f3c));
+  &[data-theme='dark'] {
+    background-color: var(
+      --lx-pdf-container-dark-bg,
+      var(--ls-primary-background-color, #042f3c)
+    );
 
     .pdfViewer {
       background: transparent;
@@ -731,12 +734,19 @@ input::-webkit-inner-spin-button {
     }
 
     .textLayer {
-      background-color: var(--lx-pdf-container-dark-bg, var(--ls-primary-background-color, #042f3c));
+      background-color: var(
+        --lx-pdf-container-dark-bg,
+        var(--ls-primary-background-color, #042f3c)
+      );
       filter: invert(100%);
     }
 
     .extensions__pdf-toolbar {
-      background: linear-gradient(0deg, rgb(255 255 255 / 0%) 10%, rgb(15 31 37) 100%)
+      background: linear-gradient(
+        0deg,
+        rgb(255 255 255 / 0%) 10%,
+        rgb(15 31 37) 100%
+      );
     }
 
     .extensions__pdf-hls-area-region {
@@ -745,7 +755,7 @@ input::-webkit-inner-spin-button {
     }
   }
 
-  &[data-theme="warm"] {
+  &[data-theme='warm'] {
     background-color: #f6efdf;
 
     .textLayer {
@@ -763,13 +773,13 @@ input::-webkit-inner-spin-button {
 .asset-ref {
   &.is-pdf {
     &::before {
-      content: "[[📚";
+      content: '[[📚';
       opacity: 0.7;
       margin-right: 4px;
     }
 
     &::after {
-      content: "]]";
+      content: ']]';
       opacity: 0.7;
     }
   }
@@ -777,10 +787,10 @@ input::-webkit-inner-spin-button {
 
 .block-ref {
   &-wrap {
-    &[data-type="annotation"] {
+    &[data-type='annotation'] {
     }
 
-    &[data-hl-type="area"] {
+    &[data-hl-type='area'] {
       display: block;
 
       .block-ref {
@@ -796,7 +806,7 @@ input::-webkit-inner-spin-button {
 }
 
 .block-content {
-  &[data-type="annotation"] {
+  &[data-type='annotation'] {
     .prefix-link {
       display: inline-flex;
       align-items: center;
@@ -805,11 +815,11 @@ input::-webkit-inner-spin-button {
       color: var(--ls-link-ref-text-color);
 
       &::before {
-        content: "📌 ";
+        content: '📌 ';
       }
     }
 
-    [data-hl-type="area"] {
+    [data-hl-type='area'] {
       .prefix-link {
         padding-top: 5px;
         display: block;
@@ -852,42 +862,42 @@ input::-webkit-inner-spin-button {
 }
 
 .ls-hl-colored .block-content {
-  &[data-hl-color="green"] {
+  &[data-hl-color='green'] {
     .prefix-link {
       &::before {
-        content: "🟢 ";
+        content: '🟢 ';
       }
     }
   }
 
-  &[data-hl-color="purple"] {
+  &[data-hl-color='purple'] {
     .prefix-link {
       &::before {
-        content: "🟣 ";
+        content: '🟣 ';
       }
     }
   }
 
-  &[data-hl-color="blue"] {
+  &[data-hl-color='blue'] {
     .prefix-link {
       &::before {
-        content: "🔵 ";
+        content: '🔵 ';
       }
     }
   }
 
-  &[data-hl-color="yellow"] {
+  &[data-hl-color='yellow'] {
     .prefix-link {
       &::before {
-        content: "🟡 ";
+        content: '🟡 ';
       }
     }
   }
 
-  &[data-hl-color="red"] {
+  &[data-hl-color='red'] {
     .prefix-link {
       &::before {
-        content: "🔴 ";
+        content: '🔴 ';
       }
     }
   }

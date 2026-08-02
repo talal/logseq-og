@@ -15,15 +15,15 @@ export interface TLStateClass<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLRootState<S, K> = TLRootState<S, K>,
-  P extends R | TLState<S, K, R, any> = any
+  P extends R | TLState<S, K, R, any> = any,
 > {
   new (parent: P, root: R): TLState<S, K, R>
   id: string
 }
 
-export abstract class TLRootState<S extends TLShape, K extends TLEventMap>
-  implements Partial<TLEventHandlers<S, K>>
-{
+export abstract class TLRootState<S extends TLShape, K extends TLEventMap> implements Partial<
+  TLEventHandlers<S, K>
+> {
   constructor() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -159,7 +159,7 @@ export abstract class TLRootState<S extends TLShape, K extends TLEventMap>
 
   private forwardEvent = <
     E extends keyof TLStateEvents<S, K>,
-    A extends Parameters<TLStateEvents<S, K>[E]>
+    A extends Parameters<TLStateEvents<S, K>[E]>,
   >(
     eventName: keyof TLStateEvents<S, K>,
     ...args: A
@@ -385,7 +385,7 @@ export abstract class TLState<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLRootState<S, K>,
-  P extends R | TLState<S, K, R, any> = any
+  P extends R | TLState<S, K, R, any> = any,
 > extends TLRootState<S, K> {
   constructor(parent: P, root: R) {
     super()

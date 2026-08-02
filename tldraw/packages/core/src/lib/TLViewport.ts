@@ -51,17 +51,22 @@ export class TLViewport {
   }
 
   panToPointWhenNearBounds = (point: number[]) => {
-    const threshold =  Vec.div([TLViewport.panThreshold, TLViewport.panThreshold], this.camera.zoom)
+    const threshold = Vec.div([TLViewport.panThreshold, TLViewport.panThreshold], this.camera.zoom)
 
-    const deltaMax = Vec.sub([this.currentView.maxX, this.currentView.maxY], Vec.add(point, threshold))
-    const deltaMin = Vec.sub([this.currentView.minX, this.currentView.minY], Vec.sub(point, threshold))
+    const deltaMax = Vec.sub(
+      [this.currentView.maxX, this.currentView.maxY],
+      Vec.add(point, threshold)
+    )
+    const deltaMin = Vec.sub(
+      [this.currentView.minX, this.currentView.minY],
+      Vec.sub(point, threshold)
+    )
 
     const deltaX = deltaMax[0] < 0 ? deltaMax[0] : deltaMin[0] > 0 ? deltaMin[0] : 0
     const deltaY = deltaMax[1] < 0 ? deltaMax[1] : deltaMin[1] > 0 ? deltaMin[1] : 0
 
     this.panCamera(Vec.mul([deltaX, deltaY], -TLViewport.panMultiplier * this.camera.zoom))
-}
-
+  }
 
   @action update = ({ point, zoom }: Partial<{ point: number[]; zoom: number }>): this => {
     if (point !== undefined && !isNaN(point[0]) && !isNaN(point[1])) this.camera.point = point

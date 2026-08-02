@@ -9,7 +9,7 @@ export class PointingBoundsBackgroundState<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLSelectTool<S, K, R>
+  P extends TLSelectTool<S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'pointingBoundsBackground'
 

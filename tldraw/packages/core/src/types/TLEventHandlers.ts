@@ -6,7 +6,7 @@ import type { TLShape } from '../lib'
 export interface TLEventHandlers<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  E extends TLEventInfo<S> = TLEventInfo<S>
+  E extends TLEventInfo<S> = TLEventInfo<S>,
 > {
   onPointerDown: TLEvents<S, K, E>['pointer']
   onPointerUp: TLEvents<S, K, E>['pointer']

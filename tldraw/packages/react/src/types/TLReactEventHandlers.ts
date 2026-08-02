@@ -4,7 +4,7 @@ import type { TLReactEventMap } from './TLReactEventMap'
 
 export interface TLReactEventHandlers<
   S extends TLReactShape = TLReactShape,
-  E extends TLEventInfo<S> = TLEventInfo<S>
+  E extends TLEventInfo<S> = TLEventInfo<S>,
 > {
   onPointerDown: TLEvents<S, TLReactEventMap, E>['pointer']
   onPointerUp: TLEvents<S, TLReactEventMap, E>['pointer']

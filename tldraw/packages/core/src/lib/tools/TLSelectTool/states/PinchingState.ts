@@ -7,7 +7,7 @@ import type { TLSelectTool } from '../TLSelectTool'
 type GestureInfo<
   S extends TLShape,
   K extends TLEventMap,
-  E extends TLEventInfo<S> = TLEventInfo<S>
+  E extends TLEventInfo<S> = TLEventInfo<S>,
 > = {
   info: E & { delta: number[]; point: number[]; offset: number[] }
   event: K['pointer'] | K['touch'] | K['keyboard'] | K['gesture']
@@ -17,7 +17,7 @@ export class PinchingState<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLSelectTool<S, K, R>
+  P extends TLSelectTool<S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'pinching'
 

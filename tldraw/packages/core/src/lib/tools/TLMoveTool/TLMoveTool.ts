@@ -7,7 +7,7 @@ import { IdleHoldState, IdleState, PanningState, PinchingState } from './states'
 export class TLMoveTool<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > extends TLTool<S, K, R> {
   static id = 'move'
   static shortcut = 'whiteboard/pan'

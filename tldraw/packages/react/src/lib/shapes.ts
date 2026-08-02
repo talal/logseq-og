@@ -36,7 +36,7 @@ export abstract class TLReactDrawShape<P extends TLDrawShapeProps, M = any> exte
 
 export abstract class TLReactEllipseShape<
   P extends TLEllipseShapeProps,
-  M = any
+  M = any,
 > extends TLEllipseShape<P> {
   abstract ReactComponent: (props: TLComponentProps<M>) => JSX.Element | null
   abstract ReactIndicator: (props: TLIndicatorProps<M>) => JSX.Element | null
@@ -49,7 +49,7 @@ export abstract class TLReactLineShape<P extends TLLineShapeProps, M = any> exte
 
 export abstract class TLReactPolygonShape<
   P extends TLPolygonShapeProps,
-  M = any
+  M = any,
 > extends TLPolygonShape<P> {
   abstract ReactComponent: (props: TLComponentProps<M>) => JSX.Element | null
   abstract ReactIndicator: (props: TLIndicatorProps<M>) => JSX.Element | null
@@ -57,7 +57,7 @@ export abstract class TLReactPolygonShape<
 
 export abstract class TLReactPolylineShape<
   P extends TLPolylineShapeProps,
-  M = any
+  M = any,
 > extends TLPolylineShape<P> {
   abstract ReactComponent: (props: TLComponentProps<M>) => JSX.Element | null
   abstract ReactIndicator: (props: TLIndicatorProps<M>) => JSX.Element | null

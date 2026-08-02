@@ -4,7 +4,7 @@ import { Amplify } from 'aws-amplify'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 
-function setupConfigure () {
+function setupConfigure() {
   Amplify.configure({
     Auth: {
       // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
@@ -57,15 +57,21 @@ function setupConfigure () {
       //     redirectSignIn: 'http://localhost:3000/',
       //     redirectSignOut: 'http://localhost:3000/',
       //     responseType: 'code' // or 'token', note that REFRESH token will only be generated when the responseType is code
-    }
+    },
   })
 }
 
-export default function App () {
+export default function App() {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', height: '90vh', alignItems: 'center' }}>
-      <Authenticator signUpAttributes={['email']}
-                     socialProviders={['google']}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        height: '90vh',
+        alignItems: 'center',
+      }}
+    >
+      <Authenticator signUpAttributes={['email']} socialProviders={['google']}>
         {({ signOut, user }) => (
           <main>
             <h1>Hello {user.username}</h1>
@@ -73,14 +79,15 @@ export default function App () {
           </main>
         )}
       </Authenticator>
-    </div>)
+    </div>
+  )
 }
 
-function main () {
+function main() {
   setupConfigure()
 
   // mount
-  ReactDOM.render(<App/>, document.getElementById('app'))
+  ReactDOM.render(<App />, document.getElementById('app'))
 }
 
 // bootstrap

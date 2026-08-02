@@ -103,7 +103,7 @@ export class TLPage<S extends TLShape = TLShape, E extends TLEventMap = TLEventM
   }
 
   @action updateShapesIndex(shapesIndex: string[]) {
-    this.shapes.sort((a,b) => shapesIndex.indexOf(a.id) - shapesIndex.indexOf(b.id))
+    this.shapes.sort((a, b) => shapesIndex.indexOf(a.id) - shapesIndex.indexOf(b.id))
     return this
   }
 
@@ -265,7 +265,11 @@ export class TLPage<S extends TLShape = TLShape, E extends TLEventMap = TLEventM
           ...fromDelta,
         }
         shapeChanged = true
-        this.getShapeById(nextShape.id)?.update(nextShape, false, deepEqual(fromDelta?.handles, fromShape?.props.handles))
+        this.getShapeById(nextShape.id)?.update(
+          nextShape,
+          false,
+          deepEqual(fromDelta?.handles, fromShape?.props.handles)
+        )
       }
     })
 

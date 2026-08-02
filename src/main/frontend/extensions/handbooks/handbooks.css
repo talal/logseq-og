@@ -138,7 +138,7 @@
       border-left: 4px solid var(--ls-secondary-background-color1);
       background-color: var(--ls-secondary-background-color1);
 
-      &[data-total="0"] {
+      &[data-total='0'] {
         @apply hidden;
       }
 
@@ -279,7 +279,6 @@
 
     .chapters {
       &-wrap {
-
       }
 
       &-select {
@@ -343,10 +342,22 @@
   }
 
   &-popup {
-    --ls-primary-background-color1: var(--ls-primary-background-color, var(--lx-gray-01, var(--rx-gray-02)));
-    --ls-secondary-background-color1: var(--ls-secondary-background-color, var(--lx-gray-03, var(--rx-gray-03)));
-    --ls-tertiary-background-color1: var(--ls-tertiary-background-color, var(--lx-gray-05, var(--rx-gray-05)));
-    --ls-quaternary-background-color1: var(--ls-quaternary-background-color, var(--lx-gray-08, var(--rx-gray-08)));
+    --ls-primary-background-color1: var(
+      --ls-primary-background-color,
+      var(--lx-gray-01, var(--rx-gray-02))
+    );
+    --ls-secondary-background-color1: var(
+      --ls-secondary-background-color,
+      var(--lx-gray-03, var(--rx-gray-03))
+    );
+    --ls-tertiary-background-color1: var(
+      --ls-tertiary-background-color,
+      var(--lx-gray-05, var(--rx-gray-05))
+    );
+    --ls-quaternary-background-color1: var(
+      --ls-quaternary-background-color,
+      var(--lx-gray-08, var(--rx-gray-08))
+    );
 
     @apply fixed rounded-lg overflow-hidden border
       z-[19] shadow-lg flex justify-center flex-col;
@@ -362,7 +373,7 @@
   }
 }
 
-html[data-theme="light"] {
+html[data-theme='light'] {
   .cp__handbooks-popup {
     background-color: var(--ls-primary-background-color1);
 

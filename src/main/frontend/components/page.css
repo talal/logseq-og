@@ -94,14 +94,20 @@
 
   .actions {
     position: sticky;
-    background-color: var(--lx-gray-01, var(--ls-primary-background-color, var(--rx-gray-01)));
+    background-color: var(
+      --lx-gray-01,
+      var(--ls-primary-background-color, var(--rx-gray-01))
+    );
     white-space: nowrap;
     top: -18px;
     padding-bottom: 10px;
     z-index: 1;
 
     .dark & {
-      background-color: var(--lx-gray-02, var(--ls-primary-background-color, var(--rx-gray-02)));
+      background-color: var(
+        --lx-gray-02,
+        var(--ls-primary-background-color, var(--rx-gray-02))
+      );
     }
 
     @screen md {
@@ -285,9 +291,15 @@ html.is-native-iphone-without-notch {
 }
 
 /* Change to another cursor style if Shift key is active */
-[data-active-keystroke*="Shift" i] :is(.journal-title, .page-title,
-.block-ref, .page-ref, a.tag,
-.bullet-container.cursor) {
+[data-active-keystroke*='Shift' i]
+  :is(
+    .journal-title,
+    .page-title,
+    .block-ref,
+    .page-ref,
+    a.tag,
+    .bullet-container.cursor
+  ) {
   cursor: e-resize;
 }
 

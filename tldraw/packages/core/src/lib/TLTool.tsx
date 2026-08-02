@@ -7,7 +7,7 @@ import { TLState } from './TLState'
 export interface TLToolConstructor<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > {
   new (parent: R, app: R): TLTool<S, K, R>
   id: string
@@ -16,7 +16,7 @@ export interface TLToolConstructor<
 export abstract class TLTool<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > extends TLState<S, K, R, R> {
   // When locked, the shape will not return to the selection state when completing
   isLocked = false

@@ -5,10 +5,7 @@ export const getPdfjsLib = () => {
   return window.pdfjsLib
 }
 
-export const viewportToScaled = (
-  rect,
-  { width, height }
-) => {
+export const viewportToScaled = (rect, { width, height }) => {
   return {
     x1: rect.left,
     y1: rect.top,
@@ -68,7 +65,7 @@ export const scaledToViewport = (
 }
 
 export const getBoundingRect = (clientRects) => {
-  const rects = Array.from(clientRects).map(rect => {
+  const rects = Array.from(clientRects).map((rect) => {
     const { left, top, width, height } = rect
 
     const X0 = left
@@ -109,19 +106,21 @@ export const scrollToHighlight = (viewer, highlight) => {
   viewer.scrollPageIntoView({
     pageNumber: page,
     destArray: [
-      null, { name: 'XYZ' },
+      null,
+      { name: 'XYZ' },
       ...viewport.convertToPdfPoint(
         viewer.container.scrollLeft,
-        scaledToViewport(bounding, viewport).top - 200),
-      viewer.currentScale // scale
+        scaledToViewport(bounding, viewport).top - 200
+      ),
+      viewer.currentScale, // scale
     ],
-    ignoreDestinationZoom: true
+    ignoreDestinationZoom: true,
   })
 
   setTimeout(blinkHighlight, 200)
 
   // blink highlight
-  function blinkHighlight () {
+  function blinkHighlight() {
     const id = highlight?.id
     const el = document.getElementById(`hl_${id}`)
     if (!el) return
@@ -131,7 +130,7 @@ export const scrollToHighlight = (viewer, highlight) => {
 }
 
 export const optimizeClientRects = (clientRects) => {
-  const sort = rects =>
+  const sort = (rects) =>
     rects.sort((A, B) => {
       const top = A.top - B.top
 
@@ -166,8 +165,8 @@ export const optimizeClientRects = (clientRects) => {
   const rects = sort(clientRects)
   const toRemove = new Set()
 
-  const firstPass = rects.filter(rect => {
-    return rects.every(otherRect => {
+  const firstPass = rects.filter((rect) => {
+    return rects.every((otherRect) => {
       return !inside(rect, otherRect)
     })
   })
@@ -175,8 +174,8 @@ export const optimizeClientRects = (clientRects) => {
   let passCount = 0
 
   while (passCount <= 2) {
-    firstPass.forEach(A => {
-      firstPass.forEach(B => {
+    firstPass.forEach((A) => {
+      firstPass.forEach((B) => {
         if (A === B || toRemove.has(A) || toRemove.has(B)) {
           return
         }
@@ -202,7 +201,7 @@ export const optimizeClientRects = (clientRects) => {
     passCount += 1
   }
 
-  return firstPass.filter(rect => !toRemove.has(rect))
+  return firstPass.filter((rect) => !toRemove.has(rect))
 }
 
 /**
@@ -214,7 +213,7 @@ export const optimizeClientRects = (clientRects) => {
  * @returns {number} Index of the first array element to pass the test,
  * or |items.length| if no such element exists.
  */
-export function binarySearchFirstItem (items, condition, start = 0) {
+export function binarySearchFirstItem(items, condition, start = 0) {
   let minIndex = start
   let maxIndex = items.length - 1
 
@@ -248,26 +247,26 @@ export const CharacterType = {
   THAI_LETTER: 7,
 }
 
-function isAlphabeticalScript (charCode) {
+function isAlphabeticalScript(charCode) {
   return charCode < 0x2e80
 }
 
-function isAscii (charCode) {
+function isAscii(charCode) {
   return (charCode & 0xff80) === 0
 }
 
-function isAsciiAlpha (charCode) {
+function isAsciiAlpha(charCode) {
   return (
     (charCode >= /* a = */ 0x61 && charCode <= /* z = */ 0x7a) ||
     (charCode >= /* A = */ 0x41 && charCode <= /* Z = */ 0x5a)
   )
 }
 
-function isAsciiDigit (charCode) {
+function isAsciiDigit(charCode) {
   return charCode >= /* 0 = */ 0x30 && charCode <= /* 9 = */ 0x39
 }
 
-function isAsciiSpace (charCode) {
+function isAsciiSpace(charCode) {
   return (
     charCode === /* SPACE = */ 0x20 ||
     charCode === /* TAB = */ 0x09 ||
@@ -276,26 +275,26 @@ function isAsciiSpace (charCode) {
   )
 }
 
-function isHan (charCode) {
+function isHan(charCode) {
   return (
     (charCode >= 0x3400 && charCode <= 0x9fff) ||
     (charCode >= 0xf900 && charCode <= 0xfaff)
   )
 }
 
-function isKatakana (charCode) {
+function isKatakana(charCode) {
   return charCode >= 0x30a0 && charCode <= 0x30ff
 }
 
-function isHiragana (charCode) {
+function isHiragana(charCode) {
   return charCode >= 0x3040 && charCode <= 0x309f
 }
 
-function isHalfwidthKatakana (charCode) {
+function isHalfwidthKatakana(charCode) {
   return charCode >= 0xff60 && charCode <= 0xff9f
 }
 
-function isThai (charCode) {
+function isThai(charCode) {
   return (charCode & 0xff80) === 0x0e00
 }
 
@@ -303,7 +302,7 @@ function isThai (charCode) {
  * This function is based on the word-break detection implemented in:
  * https://hg.mozilla.org/mozilla-central/file/tip/intl/lwbrk/WordBreaker.cpp
  */
-export function getCharacterType (charCode) {
+export function getCharacterType(charCode) {
   if (isAlphabeticalScript(charCode)) {
     if (isAscii(charCode)) {
       if (isAsciiSpace(charCode)) {

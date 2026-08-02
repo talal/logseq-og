@@ -1,5 +1,5 @@
 html {
-  &[data-color=logseq] {
+  &[data-color='logseq'] {
     --lx-accent-01: var(--rx-logseq-01);
     --lx-accent-02: var(--rx-logseq-02);
     --lx-accent-03: var(--rx-logseq-03);
@@ -13,7 +13,7 @@ html {
     --lx-accent-11: var(--rx-logseq-11);
     --lx-accent-12: var(--rx-logseq-12);
 
-    &[data-theme=light] {
+    &[data-theme='light'] {
       --primary: 200 97% 37%;
       --primary-foreground: 255 92% 100%;
       --accent: 200 97% 37%;
@@ -34,7 +34,7 @@ html {
       --lx-gray-12: var(--rx-gray-12);
     }
 
-    &[data-theme=dark] {
+    &[data-theme='dark'] {
       --background: 192 100% 11%;
       --foreground: 0 0% 95%;
       --accent: 192 80% 10%;
@@ -53,12 +53,14 @@ html {
     }
   }
 
-  &[data-color=tomato] {
-    body, .dark-theme, .light-theme {
-      --accent: 10 78.0% 54.0%;
-      --primary: 10 78.0% 54.0%;
+  &[data-color='tomato'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 10 78% 54%;
+      --primary: 10 78% 54%;
       --primary-foreground: 190 43% 97%;
-      --ring: 10 71.6% 71.0%;
+      --ring: 10 71.6% 71%;
       --accent-foreground: 190 43% 97%;
 
       --lx-accent-01: var(--rx-tomato-01);
@@ -139,10 +141,12 @@ html {
     }
   }
 
-  &[data-color=red] {
-    body, .dark-theme, .light-theme {
-      --accent: 358 75.0% 59.0%;
-      --primary: 358 75.0% 59.0%;
+  &[data-color='red'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 358 75% 59%;
+      --primary: 358 75% 59%;
       --primary-foreground: 190 43% 97%;
       --ring: 359 69.5% 74.3%;
       --accent-foreground: 190 43% 97%;
@@ -225,10 +229,12 @@ html {
     }
   }
 
-  &[data-color=blue] {
-    body, .dark-theme, .light-theme {
-      --accent: 206 100% 50.0%;
-      --primary: 206 100% 50.0%;
+  &[data-color='blue'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 206 100% 50%;
+      --primary: 206 100% 50%;
       --ring: 206 81.9% 65.3%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -310,10 +316,12 @@ html {
     }
   }
 
-  &[data-color=crimson] {
-    body, .dark-theme, .light-theme {
-      --accent: 336 80.0% 57.8%;
-      --primary: 336 80.0% 57.8%;
+  &[data-color='crimson'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 336 80% 57.8%;
+      --primary: 336 80% 57.8%;
       --primary-foreground: 190 43% 97%;
       --ring: 336 62.3% 72.9%;
       --accent-foreground: 190 43% 97%;
@@ -396,10 +404,12 @@ html {
     }
   }
 
-  &[data-color=pink] {
-    body, .dark-theme, .light-theme {
-      --accent: 322 65.0% 54.5%;
-      --primary: 322 65.0% 54.5%;
+  &[data-color='pink'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 322 65% 54.5%;
+      --primary: 322 65% 54.5%;
       --ring: 323 60.3% 72.4%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -480,10 +490,12 @@ html {
     }
   }
 
-  &[data-color=plum] {
-    body, .dark-theme, .light-theme {
-      --accent: 292 45.0% 51.0%;
-      --primary: 292 45.0% 51.0%;
+  &[data-color='plum'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 292 45% 51%;
+      --primary: 292 45% 51%;
       --ring: 292 47.7% 70.8%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -564,11 +576,13 @@ html {
     }
   }
 
-  &[data-color=purple] {
-    body, .dark-theme, .light-theme {
-      --accent: 272 51.0% 54.0%;
-      --primary: 272 51.0% 54.0%;
-      --ring: 272 60.0% 73.5%;
+  &[data-color='purple'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 272 51% 54%;
+      --primary: 272 51% 54%;
+      --ring: 272 60% 73.5%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
 
@@ -648,10 +662,12 @@ html {
     }
   }
 
-  &[data-color=violet] {
-    body, .dark-theme, .light-theme {
-      --accent: 252 56.0% 57.5%;
-      --primary: 252 56.0% 57.5%;
+  &[data-color='violet'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 252 56% 57.5%;
+      --primary: 252 56% 57.5%;
       --ring: 252 68.6% 76.3%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -732,10 +748,12 @@ html {
     }
   }
 
-  &[data-color=indigo] {
-    body, .dark-theme, .light-theme {
-      --accent: 226 70.0% 55.5%;
-      --primary: 226 70.0% 55.5%;
+  &[data-color='indigo'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 226 70% 55.5%;
+      --primary: 226 70% 55.5%;
       --ring: 226 75.4% 74.5%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -816,10 +834,12 @@ html {
     }
   }
 
-  &[data-color=cyan] {
-    body, .dark-theme, .light-theme {
-      --accent: 190 95.0% 39.0%;
-      --primary: 190 95.0% 39.0%;
+  &[data-color='cyan'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 190 95% 39%;
+      --primary: 190 95% 39%;
       --ring: 189 60.3% 52.5%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -902,10 +922,12 @@ html {
     }
   }
 
-  &[data-color=teal] {
-    body, .dark-theme, .light-theme {
-      --accent: 173 80.0% 36.0%;
-      --primary: 173 80.0% 36.0%;
+  &[data-color='teal'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 173 80% 36%;
+      --primary: 173 80% 36%;
       --ring: 172 42.1% 52.5%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -986,10 +1008,12 @@ html {
     }
   }
 
-  &[data-color=green] {
-    body, .dark-theme, .light-theme {
-      --accent: 151 55.0% 41.5%;
-      --primary: 151 55.0% 41.5%;
+  &[data-color='green'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 151 55% 41.5%;
+      --primary: 151 55% 41.5%;
       --ring: 151 40.2% 54.1%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -1071,10 +1095,12 @@ html {
     }
   }
 
-  &[data-color=grass] {
-    body, .dark-theme, .light-theme {
-      --accent: 131 41.0% 46.5%;
-      --primary: 131 41.0% 46.5%;
+  &[data-color='grass'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 131 41% 46.5%;
+      --primary: 131 41% 46.5%;
       --ring: 131 38.1% 56.3%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -1155,10 +1181,12 @@ html {
     }
   }
 
-  &[data-color=orange] {
-    body, .dark-theme, .light-theme {
-      --accent: 24 94.0% 50.0%;
-      --primary: 24 94.0% 50.0%;
+  &[data-color='orange'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 24 94% 50%;
+      --primary: 24 94% 50%;
       --ring: 24 94.5% 64.3%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
@@ -1239,11 +1267,13 @@ html {
     }
   }
 
-  &[data-color=brown] {
-    body, .dark-theme, .light-theme {
-      --accent: 28 34.0% 51.0%;
-      --primary: 28 34.0% 51.0%;
-      --ring: 28 50.0% 63.1%;
+  &[data-color='brown'] {
+    body,
+    .dark-theme,
+    .light-theme {
+      --accent: 28 34% 51%;
+      --primary: 28 34% 51%;
+      --ring: 28 50% 63.1%;
       --accent-foreground: 190 43% 97%;
       --primary-foreground: 190 43% 97%;
 

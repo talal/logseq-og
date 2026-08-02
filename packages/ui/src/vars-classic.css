@@ -39,7 +39,7 @@ html[data-theme='light'] {
   --color-level-6: var(--rx-gray-07);
 }
 
-html[data-theme=light][data-color=logseq] {
+html[data-theme='light'][data-color='logseq'] {
   --ls-primary-background-color: #ffffff;
   --ls-secondary-background-color: #f7f7f7;
   --ls-tertiary-background-color: #eaeaea;
@@ -103,7 +103,7 @@ html[data-theme=light][data-color=logseq] {
   --ls-button-background: hsl(var(--ls-button-background-hsl));
 }
 
-html[data-theme=dark][data-color=logseq] {
+html[data-theme='dark'][data-color='logseq'] {
   --ls-primary-background-color: #002b36;
   --ls-secondary-background-color: #023643;
   --ls-tertiary-background-color: #08404f;

@@ -6,7 +6,7 @@ declare const window: Window & { tlapps?: Record<string, TLReactApp<any>> }
 
 export function useSetup<
   S extends TLReactShape = TLReactShape,
-  R extends TLReactApp<S> = TLReactApp<S>
+  R extends TLReactApp<S> = TLReactApp<S>,
 >(app: R, props: TLAppPropsWithApp<S, R> | TLAppPropsWithoutApp<S, R>) {
   const {
     onPersist,

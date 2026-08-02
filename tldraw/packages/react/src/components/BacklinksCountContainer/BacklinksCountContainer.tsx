@@ -13,7 +13,7 @@ export interface TLBacklinksCountContainerProps<S extends TLReactShape> {
 
 // backlinks
 export const BacklinksCountContainer = observer(function BacklinksCountContainer<
-  S extends TLReactShape
+  S extends TLReactShape,
 >({ bounds, shape }: TLBacklinksCountContainerProps<S>) {
   const {
     viewport: {

@@ -3,8 +3,7 @@ import { type TLCanvasProps, Canvas } from '../Canvas'
 import { RendererContext, TLRendererContextProps } from './RendererContext'
 
 export interface TLRendererProps<S extends TLReactShape>
-  extends TLRendererContextProps<S>,
-    Partial<TLCanvasProps<S>> {}
+  extends TLRendererContextProps<S>, Partial<TLCanvasProps<S>> {}
 
 export function Renderer<S extends TLReactShape>({
   viewport,

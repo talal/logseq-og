@@ -1,7 +1,11 @@
 import { CapacitorConfig } from '@capacitor/cli'
 import fs from 'fs'
 
-const version = fs.readFileSync('static/package.json', 'utf8').match(/"version": "(.*?)"/)?.at(1) ?? '0.0.0'
+const version =
+  fs
+    .readFileSync('static/package.json', 'utf8')
+    .match(/"version": "(.*?)"/)
+    ?.at(1) ?? '0.0.0'
 
 const config: CapacitorConfig = {
   appId: 'com.logseq.og',
@@ -19,34 +23,34 @@ const config: CapacitorConfig = {
       launchAutoHide: false,
       androidScaleType: 'CENTER_CROP',
       splashImmersive: false,
-      backgroundColor: '#002b36'
+      backgroundColor: '#002b36',
     },
 
     Keyboard: {
-      resize: 'none'
-    }
+      resize: 'none',
+    },
   },
   android: {
-    appendUserAgent: `Logseq OG/${version} (Android)`
+    appendUserAgent: `Logseq OG/${version} (Android)`,
   },
   ios: {
     scheme: 'Logseq',
-    appendUserAgent: `Logseq OG/${version} (iOS)`
+    appendUserAgent: `Logseq OG/${version} (iOS)`,
   },
   cordova: {
     staticPlugins: [
       '@logseq/capacitor-file-sync', // AgeEncryption requires static link
-    ]
-  }
+    ],
+  },
 }
 
 if (process.env.LOGSEQ_APP_SERVER_URL) {
   Object.assign(config, {
     server: {
       url: process.env.LOGSEQ_APP_SERVER_URL,
-      cleartext: true
-    }
+      cleartext: true,
+    },
   })
 }
 
-export = config;
+export = config

@@ -9,7 +9,7 @@ export interface TLEllipseShapeProps extends TLBoxShapeProps {
 
 export class TLEllipseShape<
   P extends TLEllipseShapeProps = TLEllipseShapeProps,
-  M = any
+  M = any,
 > extends TLBoxShape<P, M> {
   constructor(props = {} as Partial<P>) {
     super(props)

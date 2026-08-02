@@ -14,7 +14,7 @@ export const SelectionDetail = observer(function SelectionDetail<S extends TLRea
   rotation = 0,
 }: TLSelectionDetailProps<S>) {
   // This is the actual rotation of the bounding box, used to position the detail. Note that when rotating only one shape, the bounds rotation and the rotation shown in the detail will be the same; however, when rotating more than one shape, the bounding box will be axis-aligned, but the detail will show the angle that the bounds has been rotated by.
-  const selectionRotation = shapes.length === 1 ? rotation : scaledBounds.rotation ?? 0
+  const selectionRotation = shapes.length === 1 ? rotation : (scaledBounds.rotation ?? 0)
   const isFlipped = !(selectionRotation < TAU || selectionRotation > TAU * 3)
   const isLine = shapes.length === 1 && shapes[0].type === 'line'
 
@@ -38,8 +38,8 @@ export const SelectionDetail = observer(function SelectionDetail<S extends TLRea
               shapes[0].props.handles!.end.point
             ).toFixed()}`
           : detail === 'size'
-          ? `${scaledBounds.width.toFixed()} × ${scaledBounds.height.toFixed()}`
-          : `∠${GeomUtils.radiansToDegrees(GeomUtils.clampRadians(rotation)).toFixed()}°`}
+            ? `${scaledBounds.width.toFixed()} × ${scaledBounds.height.toFixed()}`
+            : `∠${GeomUtils.radiansToDegrees(GeomUtils.clampRadians(rotation)).toFixed()}°`}
       </div>
     </HTMLContainer>
   )

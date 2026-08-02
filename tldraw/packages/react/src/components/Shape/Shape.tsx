@@ -40,7 +40,8 @@ export const Shape = observer(function Shape({
   const events = useShapeEvents(shape)
   const parentGroup = app.getParentGroup(shape)
   const isParentGrpupSelected = app.selectedIds.has(parentGroup?.id)
-  const ignoreExport = !isSelected && !isParentGrpupSelected && app.selectedShapes.size !== 0 || null
+  const ignoreExport =
+    (!isSelected && !isParentGrpupSelected && app.selectedShapes.size !== 0) || null
 
   return (
     <Container

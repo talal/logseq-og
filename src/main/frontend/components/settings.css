@@ -5,7 +5,12 @@
     > header {
       padding: 10px;
       padding-top: 0;
-      border-bottom: 1px solid or(--ls-settings-header-border-color, --lx-gray-06, --ls-quaternary-background-color);
+      border-bottom: 1px solid
+        or(
+          --ls-settings-header-border-color,
+          --lx-gray-06,
+          --ls-quaternary-background-color
+        );
 
       h1 {
         font-size: 22px;
@@ -77,7 +82,7 @@
       @apply list-none p-0 my-1.5 rounded;
       @apply hover:bg-black/10;
 
-      &[data-id="keymap"] {
+      &[data-id='keymap'] {
         @apply hidden sm:block;
       }
     }
@@ -167,7 +172,7 @@
         }
       }
 
-      span[role="checkbox"] {
+      span[role='checkbox'] {
         &:hover {
           opacity: 0.8;
         }
@@ -206,7 +211,7 @@
           width: 80px;
           height: 57px;
           background-color: #a4b5b6;
-          background-image: url("../img/theme-modes.png");
+          background-image: url('../img/theme-modes.png');
           background-repeat: no-repeat;
           background-size: 355%;
           border-radius: 4px;
@@ -323,7 +328,7 @@
       margin: -8px;
     }
 
-    label[for="toggle_radix_theme"] {
+    label[for='toggle_radix_theme'] {
       @apply text-xl font-semibold opacity-90;
     }
   }
@@ -487,7 +492,7 @@ svg.cmd {
   margin-left: -1px;
 }
 
-body[data-settings-tab="keymap"] {
+body[data-settings-tab='keymap'] {
   .cp__settings-inner {
     > article {
       @apply p-0;
@@ -499,7 +504,7 @@ body[data-settings-tab="keymap"] {
   }
 }
 
-.ui__modal[label="accent-colors-picker"] {
+.ui__modal[label='accent-colors-picker'] {
   .panel-content {
     @apply sm:min-w-[520px];
   }

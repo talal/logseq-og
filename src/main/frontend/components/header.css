@@ -183,7 +183,10 @@
 
   &:hover {
     @screen md {
-      background: var(--lx-gray-04, var(--ls-tertiary-background-color, var(--rx-gray-04)));
+      background: var(
+        --lx-gray-04,
+        var(--ls-tertiary-background-color, var(--rx-gray-04))
+      );
     }
   }
 }
@@ -197,7 +200,9 @@
   margin: 0 6px;
 }
 
-.is-mac.is-electron :is(.cp__header, .cp__right-sidebar-topbar) :is(button, .button, a):not(.file-sync-item) {
+.is-mac.is-electron
+  :is(.cp__header, .cp__right-sidebar-topbar)
+  :is(button, .button, a):not(.file-sync-item) {
   cursor: default !important;
 }
 
@@ -224,7 +229,9 @@ html.is-native-ipad {
     padding-left: 22px;
     padding-right: 14px;
     padding-top: 0;
-    height: calc(100vh - var(--ls-headbar-inner-top-padding) - var(--ls-headbar-height));
+    height: calc(
+      100vh - var(--ls-headbar-inner-top-padding) - var(--ls-headbar-height)
+    );
 
     @screen sm {
       padding-left: 2rem;
@@ -308,7 +315,9 @@ html.is-native-iphone {
   }
 
   .ui__notifications {
-    top: calc(var(--ls-headbar-height) + var(--ls-headbar-inner-top-padding) - 0.3rem);
+    top: calc(
+      var(--ls-headbar-height) + var(--ls-headbar-inner-top-padding) - 0.3rem
+    );
   }
 
   @media (orientation: landscape) {

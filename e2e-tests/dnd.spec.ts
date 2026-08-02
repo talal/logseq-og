@@ -22,16 +22,15 @@ test('drop to left center', async ({ page }) => {
   await bullet.dragTo(where, {
     targetPosition: {
       x: 30,
-      y: (await where.boundingBox()).height * 0.5
-    }
+      y: (await where.boundingBox()).height * 0.5,
+    },
   })
 
   await page.keyboard.press('Escape')
 
   const pageElem = page.locator('.page-blocks-inner')
-  await expect(pageElem).toHaveText('block b\nblock a', {useInnerText: true})
+  await expect(pageElem).toHaveText('block b\nblock a', { useInnerText: true })
 })
-
 
 test('drop to upper left', async ({ page, block }) => {
   await createRandomPage(page)
@@ -47,14 +46,14 @@ test('drop to upper left', async ({ page, block }) => {
   await bullet.dragTo(where, {
     targetPosition: {
       x: 0,
-      y: 0
-    }
+      y: 0,
+    },
   })
 
   await page.keyboard.press('Escape')
 
   const pageElem = page.locator('.page-blocks-inner')
-  await expect(pageElem).toHaveText('block b\nblock a', {useInnerText: true})
+  await expect(pageElem).toHaveText('block b\nblock a', { useInnerText: true })
 })
 
 test('drop to bottom left', async ({ page }) => {
@@ -71,12 +70,12 @@ test('drop to bottom left', async ({ page }) => {
   await bullet.dragTo(where, {
     targetPosition: {
       x: 30,
-      y: (await where.boundingBox()).height * 0.75
-    }
+      y: (await where.boundingBox()).height * 0.75,
+    },
   })
 
   await page.keyboard.press('Escape')
 
   const pageElem = page.locator('.page-blocks-inner')
-  await expect(pageElem).toHaveText('block a\nblock b', {useInnerText: true})
+  await expect(pageElem).toHaveText('block a\nblock b', { useInnerText: true })
 })

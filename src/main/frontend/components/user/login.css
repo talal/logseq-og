@@ -1,31 +1,51 @@
 .cp__user-login {
   [data-amplify-authenticator] [data-amplify-router] {
-    --amplify-components-authenticator-router-background-color: var(--ls-primary-background-color);
+    --amplify-components-authenticator-router-background-color: var(
+      --ls-primary-background-color
+    );
     --amplify-components-field-label-color: var(--ls-primary-text-color);
-    --amplify-components-authenticator-router-border-color: var(--ls-border-color);
+    --amplify-components-authenticator-router-border-color: var(
+      --ls-border-color
+    );
     --amplify-components-tabs-item-color: var(--ls-primary-text-color);
     --amplify-components-tabs-item-active-color: var(--ls-primary-text-color);
     --amplify-components-tabs-item-hover-color: var(--ls-primary-text-color);
-    --amplify-components-tabs-item-active-border-color: var(--ls-tertiary-background-color);
+    --amplify-components-tabs-item-active-border-color: var(
+      --ls-tertiary-background-color
+    );
     --amplify-components-tabs-border-width: 0;
-    --amplify-components-authenticator-state-inactive-background-color: var(--ls-tertiary-background-color);
-    --amplify-components-tabs-item-active-background-color: var(--ls-primary-background-color);
+    --amplify-components-authenticator-state-inactive-background-color: var(
+      --ls-tertiary-background-color
+    );
+    --amplify-components-tabs-item-active-background-color: var(
+      --ls-primary-background-color
+    );
     --amplify-components-button-border-color: var(--ls-border-color);
     --amplify-components-textfield-border-color: var(--ls-border-color);
-    --amplify-components-button-primary-background-color: var(--color-indigo-600);
+    --amplify-components-button-primary-background-color: var(
+      --color-indigo-600
+    );
     --amplify-components-text-color: var(--ls-primary-text-color);
-    --amplify-components-button-hover-background-color: var(--ls-primary-background-color);
+    --amplify-components-button-hover-background-color: var(
+      --ls-primary-background-color
+    );
     --amplify-components-button-border-width: 0;
-    --amplify-internal-button-loading-background-color: var(--ls-header-button-background);
+    --amplify-internal-button-loading-background-color: var(
+      --ls-header-button-background
+    );
     --amplify-components-authenticator-router-border-width: 1px;
     --amplify-components-button-color: var(--ls-primary-text-color);
-    --amplify-components-divider-label-background-color: var(--ls-primary-background-color);
+    --amplify-components-divider-label-background-color: var(
+      --ls-primary-background-color
+    );
     --amplify-components-divider-label-color: var(--ls-primary-text-color);
     --amplify-components-heading-color: var(--ls-primary-text-color);
     --amplify-components-button-link-hover-background-color: transparent;
     --amplify-components-button-link-active-background-color: transparent;
     --amplify-components-textfield-color: var(--ls-primary-text-color);
-    --amplify-components-checkbox-icon-background-color: var(--color-indigo-600);
+    --amplify-components-checkbox-icon-background-color: var(
+      --color-indigo-600
+    );
 
     @apply overflow-hidden rounded-[6px] shadow-2xl;
   }
@@ -49,7 +69,7 @@
   }
 }
 
-.ui__modal[label="user-login"] {
+.ui__modal[label='user-login'] {
   @apply flex items-center top-0;
 
   .ui__modal-panel {
@@ -71,7 +91,7 @@
   opacity: 0.3;
 }
 
-[data-indicator-position="top"] > .amplify-tabs-item {
+[data-indicator-position='top'] > .amplify-tabs-item {
   margin-top: 0;
 }
 
@@ -123,11 +143,11 @@
 }
 
 html {
-  &.is-mobile .ui__modal[label="user-login"] .panel-content {
+  &.is-mobile .ui__modal[label='user-login'] .panel-content {
     @apply pt-0;
   }
 
-  &.has-mobile-keyboard .ui__modal[label="user-login"] {
+  &.has-mobile-keyboard .ui__modal[label='user-login'] {
     transform: translateY(calc(-50px - 6%));
   }
 }

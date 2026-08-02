@@ -5,7 +5,7 @@ import { TextAreaUtils } from './TextAreaUtils'
 
 const stopPropagation = (e: KeyboardEvent | React.SyntheticEvent<any, Event>) => e.stopPropagation()
 
-const placeholder = "Enter text"
+const placeholder = 'Enter text'
 export interface TextLabelProps {
   font: string
   text: string

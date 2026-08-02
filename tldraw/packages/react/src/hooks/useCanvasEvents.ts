@@ -103,7 +103,7 @@ export function useCanvasEvents() {
         if (tool === 'pencil' || tool === 'highlighter') {
           e.preventDefault()
         }
-      }
+      },
     }
   }, [callbacks])
 

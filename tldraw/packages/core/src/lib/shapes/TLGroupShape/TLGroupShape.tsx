@@ -11,7 +11,7 @@ export interface TLGroupShapeProps extends TLBoxShapeProps {
 
 export class TLGroupShape<
   P extends TLGroupShapeProps = TLGroupShapeProps,
-  M = any
+  M = any,
 > extends TLBoxShape<P, M> {
   constructor(props = {} as Partial<P>) {
     super(props)

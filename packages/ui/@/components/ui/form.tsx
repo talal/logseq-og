@@ -20,7 +20,7 @@ const Form = FormProvider
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TName
 }
@@ -31,7 +31,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
@@ -81,7 +81,11 @@ const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn('ui__form-item space-y-2', className)} {...props} />
+      <div
+        ref={ref}
+        className={cn('ui__form-item space-y-2', className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   )
 })
@@ -136,7 +140,10 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn('ui__form-description text-sm text-muted-foreground', className)}
+      className={cn(
+        'ui__form-description text-sm text-muted-foreground',
+        className
+      )}
       {...props}
     />
   )
@@ -158,7 +165,10 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn('ui__form-message text-sm font-medium text-destructive', className)}
+      className={cn(
+        'ui__form-message text-sm font-medium text-destructive',
+        className
+      )}
       {...props}
     >
       {body}

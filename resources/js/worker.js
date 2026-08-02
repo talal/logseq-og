@@ -1,9 +1,9 @@
 importScripts(
   // Batched optimization
-  "./lightning-fs.min.js",
+  './lightning-fs.min.js',
   // Fixed a bug
-  "./magic_portal.js"
-);
+  './magic_portal.js'
+)
 
 const detect = () => {
   if (typeof window !== 'undefined' && !self.skipWaiting) {
@@ -13,17 +13,17 @@ const detect = () => {
   } else if (typeof self !== 'undefined' && self.skipWaiting) {
     return 'ServiceWorker'
   }
-};
+}
 
-const fsName = 'logseq';
-const createFS = () => new LightningFS(fsName);
-let fs = createFS();
-let pfs = fs.promises;
+const fsName = 'logseq'
+const createFS = () => new LightningFS(fsName)
+let fs = createFS()
+let pfs = fs.promises
 
 if (detect() === 'Worker') {
-  const portal = new MagicPortal(self);
-  portal.set('fs', fs);
-  portal.set('pfs', pfs);
+  const portal = new MagicPortal(self)
+  portal.set('fs', fs)
+  portal.set('pfs', pfs)
 
   portal.set('workerThread', {
     rimraf: async function (path) {
@@ -38,7 +38,7 @@ if (detect() === 'Worker') {
       // }
       // Knowing path is a directory,
       // first, assume everything inside path is a file.
-      let files = await pfs.readdir(path);
+      let files = await pfs.readdir(path)
       for (let file of files) {
         let child = path + '/' + file
         try {
@@ -55,6 +55,6 @@ if (detect() === 'Worker') {
       }
       // Finally, delete the empty directory
       await pfs.rmdir(path)
-    }
-  });
+    },
+  })
 }

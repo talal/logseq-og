@@ -8,14 +8,17 @@ test.skip('enabled plugin system default', async ({ page }) => {
   const pluginEnabled = await callAPI('get_state_from_store', 'plugin/enabled')
   await expect(pluginEnabled).toBe(true)
 
-  expect(await page.evaluate(`typeof logseq.api.get_current_graph`))
-    .toBe('function')
+  expect(await page.evaluate(`typeof logseq.api.get_current_graph`)).toBe(
+    'function'
+  )
 
   const currentGraph = await callAPI('get_current_graph')
   expect(Object.keys(currentGraph)).toEqual(['url', 'name', 'path'])
 })
 
-test.skip('play a plugin<logseq-journals-calendar> from the Marketplace', async ({ page }) => {
+test.skip('play a plugin<logseq-journals-calendar> from the Marketplace', async ({
+  page,
+}) => {
   await page.keyboard.press('t+p')
   const searchInput = page.locator('.search-ctls .form-input')
   await searchInput.type('journals')
@@ -34,7 +37,11 @@ test.skip('play a plugin<logseq-journals-calendar> from the Marketplace', async 
   await page.locator('button').locator('text=Marketplace').click()
   await page.locator('text=Journals calendar')
 
-  await page.locator('.cp__plugins-item-card').first().locator('text=Install').click()
+  await page
+    .locator('.cp__plugins-item-card')
+    .first()
+    .locator('text=Install')
+    .click()
   // wait for the plugin installed
   await page.locator('.cp__plugins-item-card').first().locator('text=Installed')
   await page.locator('a.ui__modal-close').click()
@@ -52,11 +59,12 @@ test.skip('play a plugin<logseq-journals-calendar> from the Marketplace', async 
   await page.locator('text=goto-today').click()
   await page.locator('body').click()
 
-  const goToToday = page.locator('#logseq-journals-calendar--goto-today').locator('a.button')
+  const goToToday = page
+    .locator('#logseq-journals-calendar--goto-today')
+    .locator('a.button')
   await expect(goToToday).toBeVisible()
   await goToToday.click()
 
   // TODO: debug
   await expect(page.locator('body[data-page="page"]')).toBeVisible()
 })
-

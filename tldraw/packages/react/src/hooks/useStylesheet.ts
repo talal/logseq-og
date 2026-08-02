@@ -81,17 +81,20 @@ const tlcss = css`
   .tl-container {
     --tl-zoom: 1;
     --tl-scale: calc(1 / var(--tl-zoom));
-    --tl-padding: calc(64px / var(--tl-zoom));;
+    --tl-padding: calc(64px / var(--tl-zoom));
     --tl-shadow-color: 0deg 0% 0%;
     --tl-binding-distance: ${BINDING_DISTANCE}px;
-    --tl-shadow-elevation-low: 0px 0.4px 0.5px hsl(var(--tl-shadow-color) / 0.04),
+    --tl-shadow-elevation-low:
+      0px 0.4px 0.5px hsl(var(--tl-shadow-color) / 0.04),
       0px 0.6px 0.8px -0.7px hsl(var(--tl-shadow-color) / 0.06),
       0.1px 1.2px 1.5px -1.4px hsl(var(--tl-shadow-color) / 0.08);
-    --tl-shadow-elevation-medium: 0px 0.4px 0.5px hsl(var(--tl-shadow-color) / 0.04),
+    --tl-shadow-elevation-medium:
+      0px 0.4px 0.5px hsl(var(--tl-shadow-color) / 0.04),
       0.1px 1.3px 1.7px -0.5px hsl(var(--tl-shadow-color) / 0.06),
       0.1px 2.8px 3.6px -1px hsl(var(--tl-shadow-color) / 0.07),
       0.3px 6.1px 7.8px -1.4px hsl(var(--tl-shadow-color) / 0.09);
-    --tl-shadow-elevation-high: 0px 0.4px 0.5px hsl(var(--tl-shadow-color) / 0.04),
+    --tl-shadow-elevation-high:
+      0px 0.4px 0.5px hsl(var(--tl-shadow-color) / 0.04),
       0.1px 2.3px 3px -0.2px hsl(var(--tl-shadow-color) / 0.05),
       0.2px 4.1px 5.3px -0.5px hsl(var(--tl-shadow-color) / 0.06),
       0.4px 6.6px 8.5px -0.7px hsl(var(--tl-shadow-color) / 0.07),

@@ -14,14 +14,14 @@ module.exports = (env, argv) => {
           test: /\.tsx?$/,
           use: [
             {
-              loader: 'babel-loader'
+              loader: 'babel-loader',
             },
             {
-              loader: 'ts-loader'
-            }
+              loader: 'ts-loader',
+            },
           ],
           exclude: /node_modules/,
-        }
+        },
       ],
     },
     resolve: {
@@ -29,24 +29,22 @@ module.exports = (env, argv) => {
     },
     optimization: {
       minimize: isProd,
-      minimizer: [
-        new TerserPlugin()
-      ]
+      minimizer: [new TerserPlugin()],
     },
     plugins: [
       new webpack.ProvidePlugin({
         process: 'process/browser',
       }),
       new webpack.DefinePlugin({
-        LIB_VERSION: JSON.stringify(pkg.version)
-      })
+        LIB_VERSION: JSON.stringify(pkg.version),
+      }),
       // new BundleAnalyzerPlugin()
     ],
     output: {
       library: 'LSPluginEntry',
       libraryTarget: 'umd',
       filename: 'lsplugin.user.js',
-      path: path.resolve(__dirname, 'dist')
+      path: path.resolve(__dirname, 'dist'),
     },
   }
 }

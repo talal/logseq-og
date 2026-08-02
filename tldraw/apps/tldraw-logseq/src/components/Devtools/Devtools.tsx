@@ -48,9 +48,5 @@ export const DevTools = observer(() => {
       )
     : null
 
-  return (
-    <>
-      {rendererStatus}
-    </>
-  )
+  return <>{rendererStatus}</>
 })

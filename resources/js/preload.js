@@ -1,13 +1,25 @@
 const fs = require('fs')
 const path = require('path')
-const { ipcRenderer, contextBridge, shell, clipboard, webFrame } = require('electron')
+const {
+  ipcRenderer,
+  contextBridge,
+  shell,
+  clipboard,
+  webFrame,
+} = require('electron')
 
 const IS_MAC = process.platform === 'darwin'
 const IS_WIN32 = process.platform === 'win32'
 
-const ALLOWED_EXTERNAL_PROTOCOLS = ['https:', 'http:', 'mailto:', 'zotero:', 'file:']
+const ALLOWED_EXTERNAL_PROTOCOLS = [
+  'https:',
+  'http:',
+  'mailto:',
+  'zotero:',
+  'file:',
+]
 
-function getFilePathFromClipboard () {
+function getFilePathFromClipboard() {
   if (IS_WIN32) {
     const rawFilePath = clipboard.read('FileNameW')
     return rawFilePath.replace(new RegExp(String.fromCharCode(0), 'g'), '')
@@ -23,12 +35,11 @@ function getFilePathFromClipboard () {
  * @param  {string} format The custom format to read.
  * @returns Buffer containing the contents of the clipboard for the specified format, or null if not available.
  */
-function getClipboardData (format) {
-  if (clipboard.has(format, "clipboard")) {
+function getClipboardData(format) {
+  if (clipboard.has(format, 'clipboard')) {
     return clipboard.readBuffer(format)
-  }
-  else {
-    return null;
+  } else {
+    return null
   }
 }
 
@@ -66,7 +77,7 @@ contextBridge.exposeInMainWorld('apis', {
     await ipcRenderer.invoke('check-for-updates', ...args)
   },
 
-  setUpdatesCallback (cb) {
+  setUpdatesCallback(cb) {
     if (typeof cb !== 'function') return
 
     const channel = 'updates-callback'
@@ -74,11 +85,11 @@ contextBridge.exposeInMainWorld('apis', {
     ipcRenderer.on(channel, cb)
   },
 
-  installUpdatesAndQuitApp () {
+  installUpdatesAndQuitApp() {
     ipcRenderer.invoke('install-updates', true)
   },
 
-  async openExternal (url, options) {
+  async openExternal(url, options) {
     const protocol = new URL(url).protocol
     if (!ALLOWED_EXTERNAL_PROTOCOLS.includes(protocol)) {
       throw new Error('illegal protocol')
@@ -86,7 +97,7 @@ contextBridge.exposeInMainWorld('apis', {
     await shell.openExternal(url, options)
   },
 
-  async openPath (path) {
+  async openPath(path) {
     await shell.openPath(path)
   },
 
@@ -95,7 +106,14 @@ contextBridge.exposeInMainWorld('apis', {
    *
    * @param {string} html html file with embedded state
    */
-  exportPublishAssets (html, customCSSPath, exportCSSPath, repoPath, assetFilenames, outputDir) {
+  exportPublishAssets(
+    html,
+    customCSSPath,
+    exportCSSPath,
+    repoPath,
+    assetFilenames,
+    outputDir
+  ) {
     ipcRenderer.invoke(
       'export-publish-assets',
       html,
@@ -115,7 +133,7 @@ contextBridge.exposeInMainWorld('apis', {
    * @param from?
    * @returns {Promise<void>}
    */
-  async copyFileToAssets (repoPathRoot, to, from) {
+  async copyFileToAssets(repoPathRoot, to, from) {
     if (from && fs.statSync(from).isDirectory()) {
       throw new Error('not support copy directory')
     }
@@ -152,7 +170,7 @@ contextBridge.exposeInMainWorld('apis', {
     }
   },
 
-  toggleMaxOrMinActiveWindow (isToggleMin = false) {
+  toggleMaxOrMinActiveWindow(isToggleMin = false) {
     ipcRenderer.invoke('toggle-max-or-min-active-win', isToggleMin)
   },
 
@@ -162,7 +180,7 @@ contextBridge.exposeInMainWorld('apis', {
    * @param args
    * @private
    */
-  async _callApplication (type, ...args) {
+  async _callApplication(type, ...args) {
     return await ipcRenderer.invoke('call-application', type, ...args)
   },
 
@@ -172,7 +190,7 @@ contextBridge.exposeInMainWorld('apis', {
    * @param args
    * @private
    */
-  async _callMainWin (type, ...args) {
+  async _callMainWin(type, ...args) {
     return await ipcRenderer.invoke('call-main-win', type, ...args)
   },
 
@@ -180,13 +198,13 @@ contextBridge.exposeInMainWorld('apis', {
 
   getClipboardData,
 
-  setZoomFactor (factor) {
+  setZoomFactor(factor) {
     webFrame.setZoomFactor(factor)
   },
 
-  setZoomLevel (level) {
+  setZoomLevel(level) {
     webFrame.setZoomLevel(level)
   },
 
-  isAbsolutePath: path.isAbsolute.bind(path)
+  isAbsolutePath: path.isAbsolute.bind(path),
 })

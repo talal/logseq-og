@@ -15,7 +15,7 @@ export interface TLStarShapeProps extends TLPolygonShapeProps {
  */
 export class TLStarShape<
   P extends TLStarShapeProps = TLStarShapeProps,
-  M = any
+  M = any,
 > extends TLPolygonShape<P, M> {
   constructor(props = {} as Partial<P>) {
     super(props)

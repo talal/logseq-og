@@ -2,14 +2,14 @@ html * {
   border-color: hsl(var(--border));
 }
 
-html[data-theme=light] {
+html[data-theme='light'] {
   --accent: var(--rx-gray-12-hsl);
   --accent-foreground: var(--rx-gray-02-hsl);
   --input: var(--rx-gray-03-hsl);
   --secondary: 240 4.8% 95.9%;
 }
 
-html[data-theme=dark] {
+html[data-theme='dark'] {
   --accent: var(--rx-gray-12-hsl);
   --accent-foreground: var(--rx-gray-02-hsl);
   --primary-foreground: 0 0% 22%;
@@ -41,24 +41,27 @@ html {
     --accent-foreground: var(--rx-gray-12-hsl);
   }
 
-  &:not([data-color=logseq]) {
+  &:not([data-color='logseq']) {
     .ui__dropdown-menu-item,
-    div[data-radix-popper-content-wrapper] div[role=menuitem] {
-      &:focus, &:hover {
+    div[data-radix-popper-content-wrapper] div[role='menuitem'] {
+      &:focus,
+      &:hover {
         background-color: var(--lx-gray-04, hsl(var(--accent)));
       }
     }
 
-
-    div[data-radix-popper-content-wrapper] div[role=menu],
+    div[data-radix-popper-content-wrapper] div[role='menu'],
     .menu-links-wrapper,
     .menu-links-outer,
     .absolute-modal[data-modal-name] {
-      background-color: var(--lx-popover-bg, var(--lx-gray-01, hsl(var(--popover))));
+      background-color: var(
+        --lx-popover-bg,
+        var(--lx-gray-01, hsl(var(--popover)))
+      );
     }
   }
 
-  &[data-color=logseq] {
+  &[data-color='logseq'] {
     .references-blocks-item {
       --lx-bg-override: var(--rx-gray-03-alpha);
     }
@@ -68,7 +71,7 @@ html {
     }
   }
 
-  &[data-color=none] {
+  &[data-color='none'] {
     --ls-block-bullet-color: var(--rx-gray-08);
     --ls-block-bullet-active-color: var(--rx-gray-12);
 
@@ -108,8 +111,8 @@ html {
   }
 }
 
-html[data-theme=light] {
-  &[data-color=logseq] {
+html[data-theme='light'] {
+  &[data-color='logseq'] {
     .references-blocks-item {
       --lx-bg-override: var(--rx-gray-03-alpha);
     }
@@ -120,10 +123,10 @@ html[data-theme=light] {
   }
 }
 
-html[data-theme=dark] {
+html[data-theme='dark'] {
   background-color: #161616;
 
-  &[data-color=logseq] {
+  &[data-color='logseq'] {
     @apply bg-[#002b36];
 
     .ui__modal-panel {
@@ -140,12 +143,16 @@ html[data-theme=dark] {
 
     .cp__right-sidebar-inner {
       .references-blocks-item {
-        background-color: var(--lx-gray-04, var(--ls-tertiary-background-color));
+        background-color: var(
+          --lx-gray-04,
+          var(--ls-tertiary-background-color)
+        );
       }
     }
 
     .cp__themes-installed {
-      .it.is-active, .it:hover {
+      .it.is-active,
+      .it:hover {
         @apply bg-accent-01;
       }
     }
@@ -185,7 +192,7 @@ html[data-theme=dark] {
       .border-gray-06,
       .border-gray-07 {
         border-color: var(--ls-border-color, var(--lx-gray-06));
-        opacity: .6;
+        opacity: 0.6;
       }
 
       > .hints {
@@ -200,7 +207,8 @@ html[data-theme=dark] {
     }
 
     .cp__header {
-      > .r > div:not(.ui__dropdown-trigger) a.button, button.button {
+      > .r > div:not(.ui__dropdown-trigger) a.button,
+      button.button {
         @apply opacity-60 hover:opacity-90;
       }
     }

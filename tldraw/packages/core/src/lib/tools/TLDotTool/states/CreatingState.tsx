@@ -12,7 +12,7 @@ export class CreatingState<
   T extends S & TLShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLDotTool<T, S, K, R>
+  P extends TLDotTool<T, S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'creating'
 

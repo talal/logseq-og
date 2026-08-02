@@ -18,8 +18,8 @@ export default {
   title: 'JS/Button',
   component: Button,
   args: {
-    children: 'LS Button'
-  }
+    children: 'LS Button',
+  },
 } as Meta
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
@@ -37,14 +37,12 @@ export function DropdownMenuCheckboxes() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-        <DropdownMenuSeparator/>
+        <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
           checked={showStatusBar}
           onCheckedChange={setShowStatusBar}
         >
-          <b className={'text-red-500'}>
-            Status Bar
-          </b>
+          <b className={'text-red-500'}>Status Bar</b>
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={showActivityBar}
@@ -64,24 +62,27 @@ export function DropdownMenuCheckboxes() {
   )
 }
 
-export const Primary: StoryObj =
-  {
-    render: () => {
-      const { toast } = useToast()
+export const Primary: StoryObj = {
+  render: () => {
+    const { toast } = useToast()
 
-      return (
-        <div className={'p-20'}>
-          <DropdownMenuCheckboxes/>
-          <Button onClick={() => {
+    return (
+      <div className={'p-20'}>
+        <DropdownMenuCheckboxes />
+        <Button
+          onClick={() => {
             const p = toast({
               title: 'hello',
-              description: <Button onClick={() => p.dismiss()}>hello</Button>
+              description: <Button onClick={() => p.dismiss()}>hello</Button>,
             })
-          }}>toast</Button>
-          <hr/>
+          }}
+        >
+          toast
+        </Button>
+        <hr />
 
-          <Toaster/>
-        </div>
-      )
-    }
-  }
+        <Toaster />
+      </div>
+    )
+  },
+}

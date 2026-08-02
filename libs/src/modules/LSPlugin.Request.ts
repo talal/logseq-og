@@ -110,7 +110,7 @@ export class LSPluginRequest extends EventEmitter {
     T extends WithOptional<
       IRequestOptions<R>,
       keyof Omit<IRequestOptions, 'url'>
-    >
+    >,
   >(
     options: T
   ): Promise<

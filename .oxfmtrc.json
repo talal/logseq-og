@@ -9,7 +9,12 @@
   "useTabs": false,
   "endOfLine": "lf",
   "insertFinalNewline": true,
-  "ignorePatterns": ["resources/electron.html"],
+  "ignorePatterns": [
+    "resources/electron.html",
+    "**/*.md",
+    "src/resources/**/*",
+    "static/**/*"
+  ],
   "overrides": [
     {
       "files": ["tldraw/**/*"],

@@ -50,7 +50,7 @@ export const contextBarActionTypes = [
   'Links',
 ] as const
 
-type ContextBarActionType = typeof contextBarActionTypes[number]
+type ContextBarActionType = (typeof contextBarActionTypes)[number]
 const singleShapeActions: ContextBarActionType[] = [
   'YoutubeLink',
   'TwitterLink',
@@ -381,8 +381,8 @@ const StrokeTypeAction = observer(() => {
   const value = shapes.every(s => s.props.strokeType === 'dashed')
     ? 'dashed'
     : shapes.every(s => s.props.strokeType === 'line')
-    ? 'line'
-    : 'mixed'
+      ? 'line'
+      : 'mixed'
 
   return (
     <ToggleGroupInput

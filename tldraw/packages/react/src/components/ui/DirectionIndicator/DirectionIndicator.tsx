@@ -9,7 +9,7 @@ import type { TLReactShape } from '../../../lib'
 import type { TLDirectionIndicatorProps } from '../../../types'
 
 export const DirectionIndicator = observer(function DirectionIndicator<
-  S extends TLReactShape = TLReactShape
+  S extends TLReactShape = TLReactShape,
 >({ direction }: TLDirectionIndicatorProps<S>) {
   const {
     viewport: { bounds },

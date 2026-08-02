@@ -8,7 +8,7 @@ import { AppProvider } from './AppProvider'
 
 export interface TLCommonAppProps<
   S extends TLReactShape = TLReactShape,
-  R extends TLReactApp<S> = TLReactApp<S>
+  R extends TLReactApp<S> = TLReactApp<S>,
 > extends Partial<TLReactCallbacks<S, R>> {
   id?: string
   className?: string
@@ -20,7 +20,7 @@ export interface TLCommonAppProps<
 
 export interface TLAppPropsWithoutApp<
   S extends TLReactShape = TLReactShape,
-  R extends TLReactApp<S> = TLReactApp<S>
+  R extends TLReactApp<S> = TLReactApp<S>,
 > extends TLCommonAppProps<S, R> {
   model?: TLDocumentModel
   Shapes?: TLReactShapeConstructor<S>[]
@@ -31,7 +31,7 @@ export interface TLAppPropsWithoutApp<
 
 export interface TLAppPropsWithApp<
   S extends TLReactShape = TLReactShape,
-  R extends TLReactApp<S> = TLReactApp<S>
+  R extends TLReactApp<S> = TLReactApp<S>,
 > extends TLCommonAppProps<S, R> {
   app: R
   children?: React.ReactNode

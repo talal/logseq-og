@@ -34,7 +34,10 @@ export function findBindingPoint(
   }
 }
 
-/** Given source & target, calculate a new Line shape from the center of source and to the center of target */
+/**
+ * Given source & target, calculate a new Line shape from the center of source and to the center of
+ * target
+ */
 export function createNewLineBinding(
   source: TLShape,
   target: TLShape

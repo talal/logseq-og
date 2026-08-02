@@ -5,7 +5,7 @@ export type TLShortcut<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
   R extends TLRootState<S, K> = TLRootState<S, K>,
-  T extends R | TLState<S, K, R, any> = any
+  T extends R | TLState<S, K, R, any> = any,
 > = {
   keys: string | string[]
   fn: (api: R, state: T, event: KeyboardEvent) => void

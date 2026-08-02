@@ -8,7 +8,7 @@ export abstract class TLBoxTool<
   T extends TLBoxShape = TLBoxShape,
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > extends TLTool<S, K, R> {
   static id = 'box'
 

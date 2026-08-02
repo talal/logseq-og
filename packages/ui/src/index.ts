@@ -7,14 +7,15 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal, DropdownMenuRadioGroup,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Toaster } from '@/components/ui/toaster'
 import { genId, useToast } from '@/components/ui/use-toast'
@@ -27,8 +28,9 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage, useForm,
-  useFormField
+  FormMessage,
+  useForm,
+  useFormField,
 } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -39,7 +41,14 @@ import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   ContextMenu,
@@ -48,41 +57,65 @@ import {
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuLabel,
-  ContextMenuPortal, ContextMenuRadioGroup,
+  ContextMenuPortal,
+  ContextMenuRadioGroup,
   ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
-  ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger,
-  ContextMenuTrigger
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select'
 import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Dialog,
   DialogClose,
-  DialogContent, DialogDescription, DialogFooter,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogOverlay,
-  DialogPortal, DialogTitle,
-  DialogTrigger
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog'
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel,
-  AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
   AlertDialogOverlay,
-  AlertDialogPortal, AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { TooltipArrow } from '@radix-ui/react-tooltip'
 import { Link } from '@/components/ui/link'
 
@@ -92,7 +125,9 @@ declare global {
 }
 
 const shadui = {
-  Link, Button, Slider,
+  Link,
+  Button,
+  Slider,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -108,18 +143,39 @@ const shadui = {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  Toaster, useToast, Badge,
+  Toaster,
+  useToast,
+  Badge,
   genToastId: genId,
-  Alert, AlertTitle, Input, Textarea,
-  AlertDescription, Label,
-  Form, FormItem, FormLabel,
-  FormField, FormControl,
-  FormDescription, FormMessage,
-  useFormField, useForm,
-  useFormContext, yupResolver, yup,
-  Switch, Checkbox, RadioGroup, RadioGroupItem,
-  Card, CardHeader, CardTitle, CardDescription,
-  CardContent, CardFooter, Skeleton,
+  Alert,
+  AlertTitle,
+  Input,
+  Textarea,
+  AlertDescription,
+  Label,
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  useFormField,
+  useForm,
+  useFormContext,
+  yupResolver,
+  yup,
+  Switch,
+  Checkbox,
+  RadioGroup,
+  RadioGroupItem,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Skeleton,
   ContextMenu,
   ContextMenuTrigger,
   ContextMenuContent,
@@ -146,7 +202,8 @@ const shadui = {
   SelectScrollUpButton,
   SelectScrollDownButton,
   Calendar,
-  Popover, PopoverTrigger,
+  Popover,
+  PopoverTrigger,
   PopoverContent,
   Dialog,
   DialogPortal,
@@ -169,8 +226,11 @@ const shadui = {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
-  Tooltip, TooltipTrigger, TooltipArrow,
-  TooltipContent, TooltipProvider
+  Tooltip,
+  TooltipTrigger,
+  TooltipArrow,
+  TooltipContent,
+  TooltipProvider,
 }
 
 function setupGlobals() {
@@ -179,13 +239,11 @@ function setupGlobals() {
   window.LSUI = shadui
 
   window.LSUtils = {
-    isDev: process.env.NODE_ENV === 'development'
+    isDev: process.env.NODE_ENV === 'development',
   }
 }
 
 // setup
 setupGlobals()
 
-export {
-  setupGlobals
-}
+export { setupGlobals }

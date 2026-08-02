@@ -4,7 +4,9 @@ import { expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
 // TODO: more configuration is required for this test
-test.skip('should not have any automatically detectable accessibility issues', async ({ page }) => {
+test.skip('should not have any automatically detectable accessibility issues', async ({
+  page,
+}) => {
   try {
     await page.waitForSelector('.notification-clear', { timeout: 10 })
     page.click('.notification-clear')
@@ -20,5 +22,5 @@ test.skip('should not have any automatically detectable accessibility issues', a
     .setLegacyMode()
     .analyze()
 
-  expect(accessibilityScanResults.violations).toEqual([]);
+  expect(accessibilityScanResults.violations).toEqual([])
 })

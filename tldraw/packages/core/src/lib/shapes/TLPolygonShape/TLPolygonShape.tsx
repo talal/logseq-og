@@ -12,7 +12,7 @@ export interface TLPolygonShapeProps extends TLBoxShapeProps {
 
 export class TLPolygonShape<
   P extends TLPolygonShapeProps = TLPolygonShapeProps,
-  M = any
+  M = any,
 > extends TLBoxShape<P, M> {
   constructor(props = {} as Partial<P>) {
     super(props)

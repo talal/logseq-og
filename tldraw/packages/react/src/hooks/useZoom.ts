@@ -12,12 +12,11 @@ export function useZoom(ref: React.RefObject<HTMLDivElement>) {
     return autorun(() => {
       const debouncedZoom = debounce(() => {
         ref.current?.style.setProperty('--tl-zoom', viewport.camera.zoom.toString())
-      }, 200);
+      }, 200)
 
       if (app.inputs.state !== 'pinching' && viewport.camera.zoom != null) {
         debouncedZoom()
       }
     })
   }, [])
-
 }

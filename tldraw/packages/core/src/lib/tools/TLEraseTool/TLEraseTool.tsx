@@ -7,7 +7,7 @@ import { IdleState, PointingState, ErasingState } from './states'
 export abstract class TLEraseTool<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > extends TLTool<S, K, R> {
   static id = 'erase'
 

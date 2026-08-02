@@ -6,7 +6,7 @@ import type { TLShape } from '../lib'
 export interface TLEvents<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  E extends TLEventInfo<S> = TLEventInfo<S>
+  E extends TLEventInfo<S> = TLEventInfo<S>,
 > {
   pinch: (
     info: E & { delta: number[]; point: number[]; offset: number[] },

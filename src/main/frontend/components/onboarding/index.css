@@ -1,5 +1,5 @@
-body[data-page="repo-add"],
-body[data-page="import"] {
+body[data-page='repo-add'],
+body[data-page='import'] {
   .cp__header .add-graph-btn {
     display: none;
   }
@@ -52,7 +52,10 @@ body[data-page="import"] {
           flex: 1;
 
           &.a {
-            background-color: var(--ls-tertiary-background-color, var(--rx-gray-03));
+            background-color: var(
+              --ls-tertiary-background-color,
+              var(--rx-gray-03)
+            );
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -86,7 +89,7 @@ body[data-page="import"] {
               i {
                 width: 180px;
                 height: 120px;
-                background-image: url("../img/folder-logo.png");
+                background-image: url('../img/folder-logo.png');
                 background-size: contain;
               }
 
@@ -136,7 +139,7 @@ body[data-page="import"] {
 
                 > i {
                   width: 48px;
-                  background-image: url("../img/folder.png");
+                  background-image: url('../img/folder.png');
                   background-size: contain;
                   background-repeat: no-repeat;
                   background-position-y: 2px;
@@ -144,7 +147,7 @@ body[data-page="import"] {
                   right: -2px;
 
                   &.is-file {
-                    background-image: url("../img/file-edn.png");
+                    background-image: url('../img/file-edn.png');
                     background-size: 50%;
                     background-position-x: center;
                   }
@@ -334,7 +337,7 @@ body[data-page="import"] {
       border-radius: 8px;
       box-shadow: none;
 
-      &[data-shepherd-step-id="nav-journal-page"] {
+      &[data-shepherd-step-id='nav-journal-page'] {
         .shepherd-arrow {
           left: 30px !important;
         }
@@ -523,19 +526,19 @@ body[data-page="import"] {
 }
 
 .shepherd-element {
-  &[data-popper-placement^="right"] > .shepherd-arrow {
+  &[data-popper-placement^='right'] > .shepherd-arrow {
     left: -4px;
   }
 
-  &[data-popper-placement^="top"] > .shepherd-arrow {
+  &[data-popper-placement^='top'] > .shepherd-arrow {
     bottom: -4px !important;
   }
 
-  &[data-popper-placement^="left"] > .shepherd-arrow {
+  &[data-popper-placement^='left'] > .shepherd-arrow {
     right: -4px !important;
   }
 
-  &[data-popper-placement^="bottom"] > .shepherd-arrow {
+  &[data-popper-placement^='bottom'] > .shepherd-arrow {
     top: -4px !important;
   }
 }
@@ -546,7 +549,7 @@ body[data-page="import"] {
   height: 8px;
 }
 
-html[data-theme="light"] {
+html[data-theme='light'] {
   .cp__onboarding {
     &-quick-tour {
       &.shepherd-element,

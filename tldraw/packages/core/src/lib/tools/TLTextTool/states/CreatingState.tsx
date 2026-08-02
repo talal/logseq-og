@@ -14,7 +14,7 @@ export class CreatingState<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLTextTool<T, S, K, R>
+  P extends TLTextTool<T, S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'creating'
 
@@ -44,10 +44,13 @@ export class CreatingState<
     this.creatingShape.setScaleLevel(this.app.settings.scaleLevel)
     transaction(() => {
       this.app.currentPage.addShapes(shape as unknown as S)
-      const point = this.app.settings.snapToGrid ? Vec.snap([...originPoint], GRID_SIZE) : originPoint
+      const point = this.app.settings.snapToGrid
+        ? Vec.snap([...originPoint], GRID_SIZE)
+        : originPoint
       const { bounds } = shape
       shape.update({
-        point: Vec.sub(point, [bounds.width / 2, bounds.height / 2]) })
+        point: Vec.sub(point, [bounds.width / 2, bounds.height / 2]),
+      })
       this.app.transition('select')
       this.app.setSelectedShapes([shape as unknown as S])
       this.app.currentState.transition('editingShape', {

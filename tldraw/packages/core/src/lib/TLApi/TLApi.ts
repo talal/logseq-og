@@ -179,7 +179,6 @@ export class TLApi<S extends TLShape = TLShape, K extends TLEventMap = TLEventMa
     return this
   }
 
-
   togglePenMode = (): this => {
     const { settings } = this.app
     settings.update({ penMode: !settings.penMode })
@@ -235,23 +234,26 @@ export class TLApi<S extends TLShape = TLShape, K extends TLEventMap = TLEventMa
     if (
       this.app.readOnly ||
       this.app.selectedShapesArray.length !== 1 ||
-      !Object.values(Geometry).some((geometry: string) => geometry === this.app.selectedShapesArray[0].type)
-    ) return;
+      !Object.values(Geometry).some(
+        (geometry: string) => geometry === this.app.selectedShapesArray[0].type
+      )
+    )
+      return
 
     const shape = this.app.allSelectedShapesArray[0]
     const ShapeClass = this.app.getShapeClass(shape.type)
 
-    const {minX, minY, maxX, maxY, width, height} = shape.bounds
+    const { minX, minY, maxX, maxY, width, height } = shape.bounds
     const spacing = 100
     let point = [0, 0]
 
-    switch(direction) {
+    switch (direction) {
       case TLCloneDirection.Down: {
         point = [minX, maxY + spacing]
         break
       }
       case TLCloneDirection.Up: {
-        point = [minX, minY - spacing  - height]
+        point = [minX, minY - spacing - height]
         break
       }
       case TLCloneDirection.Left: {
@@ -277,10 +279,10 @@ export class TLApi<S extends TLShape = TLShape, K extends TLEventMap = TLEventMa
     this.app.currentPage.addShapes(clone)
     this.app.createNewLineBinding(shape, clone)
     this.app.history.resume()
-    this.app.persist();
-    setTimeout(() => this.editShape(clone)) 
+    this.app.persist()
+    setTimeout(() => this.editShape(clone))
   }
-  
+
   /** Clone shapes with given context */
   cloneShapes = ({
     shapes,

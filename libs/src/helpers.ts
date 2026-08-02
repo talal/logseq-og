@@ -226,8 +226,10 @@ export function invokeHostExportedApi(method: string, ...args: Array<any>) {
 
   const logseqHostExportedApi = Object.assign(
     // @ts-expect-error: logseq API is provided by the host runtime.
-    {}, window.logseq?.api,
-    nsTarget, callables
+    {},
+    window.logseq?.api,
+    nsTarget,
+    callables
   )
 
   const fn =
@@ -277,9 +279,9 @@ export function setupInjectedStyle(
   el.textContent = style
 
   attrs &&
-  Object.entries(attrs).forEach(([k, v]) => {
-    el.setAttribute(k, v)
-  })
+    Object.entries(attrs).forEach(([k, v]) => {
+      el.setAttribute(k, v)
+    })
 
   document.head.append(el)
 
@@ -353,22 +355,22 @@ export function setupInjectedUI(
 
     // update attributes
     attrs &&
-    Object.entries(attrs).forEach(([k, v]) => {
-      el.setAttribute(k, v)
-    })
+      Object.entries(attrs).forEach(([k, v]) => {
+        el.setAttribute(k, v)
+      })
 
     const positionDirty = el.dataset.dx != null
     ui.style &&
-    Object.entries(ui.style).forEach(([k, v]) => {
-      if (
-        positionDirty &&
-        ['left', 'top', 'bottom', 'right', 'width', 'height'].includes(k)
-      ) {
-        return
-      }
+      Object.entries(ui.style).forEach(([k, v]) => {
+        if (
+          positionDirty &&
+          ['left', 'top', 'bottom', 'right', 'width', 'height'].includes(k)
+        ) {
+          return
+        }
 
-      el.style[k] = v
-    })
+        el.style[k] = v
+      })
     return
   }
 
@@ -388,14 +390,14 @@ export function setupInjectedUI(
   content.innerHTML = ui.template
 
   attrs &&
-  Object.entries(attrs).forEach(([k, v]) => {
-    el.setAttribute(k, v)
-  })
+    Object.entries(attrs).forEach(([k, v]) => {
+      el.setAttribute(k, v)
+    })
 
   ui.style &&
-  Object.entries(ui.style).forEach(([k, v]) => {
-    el.style[k] = v
-  })
+    Object.entries(ui.style).forEach(([k, v]) => {
+      el.style[k] = v
+    })
 
   let disposeFloat: () => void
   const teardownUI = () => {
@@ -412,11 +414,11 @@ export function setupInjectedUI(
     el.classList.add('lsp-ui-float-container', 'visible')
     disposeFloat =
       (this._setupResizableContainer(el, key),
-        this._setupDraggableContainer(el, {
-          key,
-          close: () => teardownUI(),
-          title: attrs?.title,
-        }))
+      this._setupDraggableContainer(el, {
+        key,
+        close: () => teardownUI(),
+        title: attrs?.title,
+      }))
   }
 
   if (!!slot && ui.reset) {

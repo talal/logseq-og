@@ -1,15 +1,26 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures'
-import { createRandomPage, enterNextBlock, lastBlock, modKey, IsLinux, closeSearchBox } from './utils'
+import {
+  createRandomPage,
+  enterNextBlock,
+  lastBlock,
+  modKey,
+  IsLinux,
+  closeSearchBox,
+} from './utils'
 
 test('open search dialog', async ({ page }) => {
   await page.waitForTimeout(200)
   await closeSearchBox(page)
   await page.keyboard.press(modKey + '+k')
 
-  await page.waitForSelector('[placeholder="What are you looking for?"]', { state: 'visible' })
+  await page.waitForSelector('[placeholder="What are you looking for?"]', {
+    state: 'visible',
+  })
   await page.keyboard.press('Escape')
-  await page.waitForSelector('[placeholder="What are you looking for?"]', { state: 'hidden' })
+  await page.waitForSelector('[placeholder="What are you looking for?"]', {
+    state: 'hidden',
+  })
 })
 
 test('insert link #3278', async ({ page }) => {
@@ -33,14 +44,20 @@ test('insert link #3278', async ({ page }) => {
   await page.press('textarea >> nth=0', hotKey)
   expect(await page.inputValue('textarea >> nth=0')).toBe('[Logseq]()')
   await page.type('textarea >> nth=0', 'https://logseq.com/')
-  expect(await page.inputValue('textarea >> nth=0')).toBe('[Logseq](https://logseq.com/)')
+  expect(await page.inputValue('textarea >> nth=0')).toBe(
+    '[Logseq](https://logseq.com/)'
+  )
 
   // Case 3: link with URL
   await enterNextBlock(page)
   await page.type('textarea >> nth=0', 'https://logseq.com/')
   await page.press('textarea >> nth=0', selectAll)
   await page.press('textarea >> nth=0', hotKey)
-  expect(await page.inputValue('textarea >> nth=0')).toBe('[](https://logseq.com/)')
+  expect(await page.inputValue('textarea >> nth=0')).toBe(
+    '[](https://logseq.com/)'
+  )
   await page.type('textarea >> nth=0', 'Logseq')
-  expect(await page.inputValue('textarea >> nth=0')).toBe('[Logseq](https://logseq.com/)')
+  expect(await page.inputValue('textarea >> nth=0')).toBe(
+    '[Logseq](https://logseq.com/)'
+  )
 })

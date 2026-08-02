@@ -14,13 +14,20 @@ addons.register('my/toolbar', () => {
       const defaultTheme = window.localStorage.getItem('__ls-theme-color__')
       return (
         <div style={{ display: 'flex', alignItems: 'center', padding: 15 }}>
-          <select onChange={(e) => {
-            const value = e.target.value
-            window.localStorage.setItem('__ls-theme-color__', value)
-            addons.getChannel().emit(FORCE_RE_RENDER)
-          }} defaultValue={defaultTheme || 'default'}>
-            {['default', 'blue', 'orange', 'green'].map(it => {
-              return <option value={it} key={it}>{it}</option>
+          <select
+            onChange={(e) => {
+              const value = e.target.value
+              window.localStorage.setItem('__ls-theme-color__', value)
+              addons.getChannel().emit(FORCE_RE_RENDER)
+            }}
+            defaultValue={defaultTheme || 'default'}
+          >
+            {['default', 'blue', 'orange', 'green'].map((it) => {
+              return (
+                <option value={it} key={it}>
+                  {it}
+                </option>
+              )
             })}
           </select>
         </div>

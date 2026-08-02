@@ -45,15 +45,15 @@
     @apply bg-popover border overflow-x-hidden overflow-y-auto rounded-lg py-1;
   }
 
-  &[data-modal-name="commands"],
-  &[data-modal-name="select-code-block-mode"] {
+  &[data-modal-name='commands'],
+  &[data-modal-name='select-code-block-mode'] {
     @screen sm {
       width: 380px !important;
       max-width: 90vw !important;
     }
   }
 
-  &[data-modal-name="date-picker"] {
+  &[data-modal-name='date-picker'] {
     @apply py-0;
 
     .rc-datepicker {

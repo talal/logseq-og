@@ -18,7 +18,7 @@ export class ResizingState<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLSelectTool<S, K, R>
+  P extends TLSelectTool<S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'resizing'
 
@@ -62,8 +62,8 @@ export class ResizingState<
       info.handle === TLResizeEdge.Left || info.handle === TLResizeEdge.Right
         ? 'horizontal-edge'
         : info.handle === TLResizeEdge.Top || info.handle === TLResizeEdge.Bottom
-        ? 'vertical-edge'
-        : 'corner'
+          ? 'vertical-edge'
+          : 'corner'
     this.app.cursors.setCursor(
       ResizingState.CURSORS[info.handle],
       this.app.selectionBounds?.rotation
@@ -73,7 +73,7 @@ export class ResizingState<
       selectedShapesArray.map(shape => BoundsUtils.getBoundsCenter(shape.bounds))
     )
     this.isSingle = selectedShapesArray.length === 1
-    this.selectionRotation = this.isSingle ? selectedShapesArray[0].props.rotation ?? 0 : 0
+    this.selectionRotation = this.isSingle ? (selectedShapesArray[0].props.rotation ?? 0) : 0
     this.initialCommonBounds = { ...selectionBounds }
     // @ts-expect-error maybe later
     this.snapshots = Object.fromEntries(

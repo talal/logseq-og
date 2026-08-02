@@ -122,7 +122,9 @@ class LSPluginCaller extends EventEmitter {
           const actor = syncActors.get(_sync)
 
           if (actor) {
-            if (Object.prototype.hasOwnProperty.call(result, LSPMSG_ERROR_TAG)) {
+            if (
+              Object.prototype.hasOwnProperty.call(result, LSPMSG_ERROR_TAG)
+            ) {
               actor.reject(result[LSPMSG_ERROR_TAG])
             } else {
               actor.resolve(result)
@@ -175,15 +177,18 @@ class LSPluginCaller extends EventEmitter {
         }
 
         // actors GC
-        syncGCTimer = setInterval(() => {
-          if (syncActors.size > 100) {
-            for (const [k, v] of syncActors) {
-              if (v.settled) {
-                syncActors.delete(k)
+        syncGCTimer = setInterval(
+          () => {
+            if (syncActors.size > 100) {
+              for (const [k, v] of syncActors) {
+                if (v.settled) {
+                  syncActors.delete(k)
+                }
               }
             }
-          }
-        }, 1000 * 60 * 30)
+          },
+          1000 * 60 * 30
+        )
       })
       .finally(() => {
         this._status = undefined

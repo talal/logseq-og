@@ -1,7 +1,14 @@
 import { expect, Page } from '@playwright/test'
 import { test } from './fixtures'
 import { Block } from './types'
-import { modKey, createRandomPage, newInnerBlock, randomString, lastBlock, enterNextBlock } from './utils'
+import {
+  modKey,
+  createRandomPage,
+  newInnerBlock,
+  randomString,
+  lastBlock,
+  enterNextBlock,
+} from './utils'
 import { searchPage, closeSearchBox } from './util/search-modal'
 
 /***
@@ -19,13 +26,20 @@ test('Search page and blocks (diacritics)', async ({ page, block }) => {
   // diacritic opening test
   await createRandomPage(page)
 
-  await block.mustType('[[Einführung in die Allgemeine Sprachwissenschaft' + rand + ']] diacritic-block-1', { delay: 10 })
+  await block.mustType(
+    '[[Einführung in die Allgemeine Sprachwissenschaft' +
+      rand +
+      ']] diacritic-block-1',
+    { delay: 10 }
+  )
   await page.waitForTimeout(500)
   await page.keyboard.press(hotkeyOpenLink, { delay: 10 })
   await page.waitForTimeout(500)
 
   const pageTitle = page.locator('.page-title').first()
-  expect(await pageTitle.innerText()).toEqual('Einführung in die Allgemeine Sprachwissenschaft' + rand)
+  expect(await pageTitle.innerText()).toEqual(
+    'Einführung in die Allgemeine Sprachwissenschaft' + rand
+  )
 
   await page.waitForTimeout(500)
 
@@ -34,11 +48,19 @@ test('Search page and blocks (diacritics)', async ({ page, block }) => {
   await block.mustType('Diacritic title test content', { delay: 10 })
 
   await block.enterNext()
-  await block.mustType('[[Einführung in die Allgemeine Sprachwissenschaft' + rand + ']] diacritic-block-2', { delay: 10 })
+  await block.mustType(
+    '[[Einführung in die Allgemeine Sprachwissenschaft' +
+      rand +
+      ']] diacritic-block-2',
+    { delay: 10 }
+  )
   await page.keyboard.press(hotkeyBack)
 
   // check if diacritics are indexed
-  const results = await searchPage(page, 'Einführung in die Allgemeine Sprachwissenschaft' + rand)
+  const results = await searchPage(
+    page,
+    'Einführung in die Allgemeine Sprachwissenschaft' + rand
+  )
   // await expect(results.length).toEqual(6) // 1 page + 2 block + 2 page content + 1 current page
   await closeSearchBox(page)
 })
@@ -49,7 +71,9 @@ test('Search CJK', async ({ page, block }) => {
   // diacritic opening test
   await createRandomPage(page)
 
-  await block.mustType('[[今日daytime进度条' + rand + ']] diacritic-block-1', { delay: 10 })
+  await block.mustType('[[今日daytime进度条' + rand + ']] diacritic-block-1', {
+    delay: 10,
+  })
   await page.waitForTimeout(500)
   await page.keyboard.press(hotkeyOpenLink, { delay: 10 })
   await page.waitForTimeout(500)
@@ -65,7 +89,12 @@ test('Search CJK', async ({ page, block }) => {
   await closeSearchBox(page)
 })
 
-async function alias_test(block: Block, page: Page, page_name: string, search_kws: string[]) {
+async function alias_test(
+  block: Block,
+  page: Page,
+  page_name: string,
+  search_kws: string[]
+) {
   await createRandomPage(page)
 
   const rand = randomString(10)
@@ -154,7 +183,7 @@ async function alias_test(block: Block, page: Page, page_name: string, search_kw
     expect(await results[0].innerText()).toContain(alias_name.normalize('NFKC'))
 
     // test search entering (page)
-    page.keyboard.press("Enter")
+    page.keyboard.press('Enter')
     await page.waitForNavigation()
     await page.waitForSelector('.ls-block span.inline')
 
@@ -164,5 +193,5 @@ async function alias_test(block: Block, page: Page, page_name: string, search_kw
 }
 
 test.skip('page diacritic alias', async ({ block, page }) => {
-  await alias_test(block, page, "ü", ["ü", "ü", "Ü"])
+  await alias_test(block, page, 'ü', ['ü', 'ü', 'Ü'])
 })

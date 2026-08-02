@@ -39,13 +39,19 @@
 
       &.chosen,
       &.chosen p {
-        background-color: var(--lx-gray-03, var(--ls-a-chosen-bg, var(--rx-gray-03)));
+        background-color: var(
+          --lx-gray-03,
+          var(--ls-a-chosen-bg, var(--rx-gray-03))
+        );
         color: var(--ls-secondary-text-color);
       }
 
       .dark &.chosen,
       .dark &.chosen p {
-        background-color: var(--lx-gray-02, var(--ls-a-chosen-bg, var(--rx-gray-02)));
+        background-color: var(
+          --lx-gray-02,
+          var(--ls-a-chosen-bg, var(--rx-gray-02))
+        );
       }
 
       &:hover p {
@@ -57,7 +63,9 @@
     .item-results-wrap,
     .search-results-wrap > div:first-child {
       overflow: hidden auto;
-      max-height: calc(var(--palettle-container-height) - var(--palettle-input-height));
+      max-height: calc(
+        var(--palettle-container-height) - var(--palettle-input-height)
+      );
     }
 
     .input-wrap {
@@ -97,7 +105,7 @@
 
 html.is-ios {
   .ui__model {
-    &[label="ls-modal-search"] {
+    &[label='ls-modal-search'] {
       .panel-content {
         padding-bottom: 0;
         max-height: unset;

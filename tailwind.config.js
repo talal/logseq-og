@@ -2,9 +2,9 @@ const colors = require('tailwindcss/colors')
 const radix = require('@radix-ui/colors')
 
 const accent = {
-  'DEFAULT': 'hsl(var(--accent))',
-  'base': 'hsl(var(--accent))',
-  'foreground': 'hsl(var(--accent-foreground))',
+  DEFAULT: 'hsl(var(--accent))',
+  base: 'hsl(var(--accent))',
+  foreground: 'hsl(var(--accent-foreground))',
   '01': 'var(--lx-accent-01, --rx-gray-01)',
   '02': 'var(--lx-accent-02, hsl(var(--accent)/.1))',
   '03': 'var(--lx-accent-03, hsl(var(--accent)/.15))',
@@ -14,9 +14,9 @@ const accent = {
   '07': 'var(--lx-accent-07, hsl(var(--accent)/.5))',
   '08': 'var(--lx-accent-08, hsl(var(--accent)/.6))',
   '09': 'var(--lx-accent-09, hsl(var(--accent)/.7))',
-  '10': 'var(--lx-accent-10, hsl(var(--accent)/.8))',
-  '11': 'var(--lx-accent-11, hsl(var(--accent)/.9))',
-  '12': 'var(--lx-accent-12, --rx-gray-12)',
+  10: 'var(--lx-accent-10, hsl(var(--accent)/.8))',
+  11: 'var(--lx-accent-11, hsl(var(--accent)/.9))',
+  12: 'var(--lx-accent-12, --rx-gray-12)',
   '01-alpha': 'var(--lx-accent-01-alpha)',
   '02-alpha': 'var(--lx-accent-02-alpha)',
   '03-alpha': 'var(--lx-accent-03-alpha)',
@@ -42,9 +42,9 @@ const gray = {
   '07': 'var(--lx-gray-07, var(--rx-gray-07))',
   '08': 'var(--lx-gray-08, var(--rx-gray-08))',
   '09': 'var(--lx-gray-09, var(--rx-gray-09))',
-  '10': 'var(--lx-gray-10, var(--rx-gray-10))',
-  '11': 'var(--lx-gray-11, var(--rx-gray-11))',
-  '12': 'var(--lx-gray-12, var(--rx-gray-12))',
+  10: 'var(--lx-gray-10, var(--rx-gray-10))',
+  11: 'var(--lx-gray-11, var(--rx-gray-11))',
+  12: 'var(--lx-gray-12, var(--rx-gray-12))',
   '01-alpha': 'var(--lx-gray-01-alpha, var(--rx-gray-01-alpha))',
   '02-alpha': 'var(--lx-gray-02-alpha, var(--rx-gray-02-alpha))',
   '03-alpha': 'var(--lx-gray-03-alpha, var(--rx-gray-03-alpha))',
@@ -59,8 +59,8 @@ const gray = {
   '12-alpha': 'var(--lx-gray-12-alpha, var(--rx-gray-12-alpha))',
 }
 
-function exposeColorsToCssVars ({ addBase, theme }) {
-  function extractColorVars (colorObj, colorGroup = '') {
+function exposeColorsToCssVars({ addBase, theme }) {
+  function extractColorVars(colorObj, colorGroup = '') {
     return Object.keys(colorObj).reduce((vars, colorKey) => {
       const value = colorObj[colorKey]
 
@@ -78,7 +78,7 @@ function exposeColorsToCssVars ({ addBase, theme }) {
   })
 }
 
-function mapRadixColorToTailwind (color) {
+function mapRadixColorToTailwind(color) {
   const radixColor = radix[color]
   if (!radixColor) throw new Error(`[radix color] not exist for ${color}`)
   const twSteps = [10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
@@ -90,7 +90,7 @@ function mapRadixColorToTailwind (color) {
     // base color
     colors[twStep] = radixColor[`${color}${rxStep}`]
     // theme vars color
-    const rxStepName = `${(rxStep < 10) ? '0' : ''}${rxStep}`
+    const rxStepName = `${rxStep < 10 ? '0' : ''}${rxStep}`
     const rxVarName = `--rx-${color}-${rxStepName}`
     colors[`rx-${rxStepName}`] = `var(${rxVarName})`
     colors[`rx-${rxStepName}-alpha`] = `var(${rxVarName}-alpha)`
@@ -106,13 +106,23 @@ module.exports = {
     './src/**/*.cljs',
     './resources/**/*.html',
     './deps/shui/src/**/*.cljs',
-    './packages/ui/@/components/**/*.{ts,tsx}'
+    './packages/ui/@/components/**/*.{ts,tsx}',
   ],
   safelist: [
-    'bg-black', 'bg-white', 'capitalize-first',
-    { pattern: /bg-(gray|red|yellow|green|blue|orange|indigo|rose|purple|pink)-(100|200|300|400|500|600|700|800|900)/ },
-    { pattern: /text-(gray|red|yellow|green|blue|orange|indigo|rose|purple|pink)-(100|200|300|400|500|600|700|800|900)/ },
-    { pattern: /columns-([1-9]|1[0-2])|(auto|3xs|2xs|xs|sm|md|lg|xl)|([2-7]xl)/ },
+    'bg-black',
+    'bg-white',
+    'capitalize-first',
+    {
+      pattern:
+        /bg-(gray|red|yellow|green|blue|orange|indigo|rose|purple|pink)-(100|200|300|400|500|600|700|800|900)/,
+    },
+    {
+      pattern:
+        /text-(gray|red|yellow|green|blue|orange|indigo|rose|purple|pink)-(100|200|300|400|500|600|700|800|900)/,
+    },
+    {
+      pattern: /columns-([1-9]|1[0-2])|(auto|3xs|2xs|xs|sm|md|lg|xl)|([2-7]xl)/,
+    },
   ],
   plugins: [
     require('@tailwindcss/forms'),
@@ -120,17 +130,18 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('tailwind-capitalize-first-letter'),
     require('tailwindcss-animate'),
-    exposeColorsToCssVars
+    exposeColorsToCssVars,
   ],
   theme: {
     extend: {
       backgroundImage: {
         'gradient-conic': 'conic-gradient(var(--tw-gradient-stops))',
-        'gradient-conic-bounce': 'conic-gradient(var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to), var(--tw-gradient-via), var(--tw-gradient-from))',
+        'gradient-conic-bounce':
+          'conic-gradient(var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to), var(--tw-gradient-via), var(--tw-gradient-from))',
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
       fontSize: {
-        '2xs': ['0.625rem', '0.875rem']
+        '2xs': ['0.625rem', '0.875rem'],
       },
       animation: {
         'spin-reverse': 'spin 2s linear infinite reverse',
@@ -138,19 +149,19 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
       spacing: {
-        '128': '32rem',
-        '144': '36rem'
+        128: '32rem',
+        144: '36rem',
       },
       scale: {
-        '200': '2',
-        '250': '2.5',
-        '300': '3',
-        '400': '4',
+        200: '2',
+        250: '2.5',
+        300: '3',
+        400: '4',
       },
       width: {
-        'lsm': '600px',
-        'lmd': '728px',
-        'llg': '960px'
+        lsm: '600px',
+        lmd: '728px',
+        llg: '960px',
       },
       // backgroundColor: {
       //   ...lx('--lx-bg-override'),
@@ -249,9 +260,9 @@ module.exports = {
       teal: mapRadixColorToTailwind('teal'),
       tomato: mapRadixColorToTailwind('tomato'),
       violet: mapRadixColorToTailwind('violet'),
-    }
+    },
   },
   corePlugins: {
-    preflight: true
-  }
+    preflight: true,
+  },
 }

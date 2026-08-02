@@ -61,7 +61,7 @@ export type TLBrushComponent = (props: TLBrushProps) => JSX.Element | null
 
 export interface TLHandleComponentProps<
   S extends TLReactShape = TLReactShape,
-  H extends TLHandle = TLHandle
+  H extends TLHandle = TLHandle,
 > {
   shape: S
   handle: H
@@ -70,7 +70,7 @@ export interface TLHandleComponentProps<
 
 export type TLHandleComponent<
   S extends TLReactShape = TLReactShape,
-  H extends TLHandle = TLHandle
+  H extends TLHandle = TLHandle,
 > = (props: TLHandleComponentProps<S, H>) => JSX.Element | null
 
 export interface TLBacklinksCountComponentProps<S extends TLReactShape = TLReactShape> {

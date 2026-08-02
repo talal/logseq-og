@@ -1,10 +1,7 @@
 // Inspired by react-hot-toast library
 import * as React from 'react'
 
-import type {
-  ToastActionElement,
-  ToastProps,
-} from '@/components/ui/toast'
+import type { ToastActionElement, ToastProps } from '@/components/ui/toast'
 
 const TOAST_LIMIT = 16
 const TOAST_REMOVE_DELAY = 2 * 1000
@@ -27,7 +24,7 @@ const actionTypes = {
 
 let count = 0
 
-function genId () {
+function genId() {
   count = (count + 1) % Number.MAX_VALUE
   return count.toString()
 }
@@ -36,21 +33,21 @@ type ActionType = typeof actionTypes
 
 type Action =
   | {
-  type: ActionType['ADD_TOAST']
-  toast: ToasterToast
-}
+      type: ActionType['ADD_TOAST']
+      toast: ToasterToast
+    }
   | {
-  type: ActionType['UPDATE_TOAST']
-  toast: Partial<ToasterToast>
-}
+      type: ActionType['UPDATE_TOAST']
+      toast: Partial<ToasterToast>
+    }
   | {
-  type: ActionType['DISMISS_TOAST']
-  toastId?: ToasterToast['id']
-}
+      type: ActionType['DISMISS_TOAST']
+      toastId?: ToasterToast['id']
+    }
   | {
-  type: ActionType['REMOVE_TOAST']
-  toastId?: ToasterToast['id']
-}
+      type: ActionType['REMOVE_TOAST']
+      toastId?: ToasterToast['id']
+    }
 
 interface State {
   toasts: ToasterToast[]
@@ -96,7 +93,7 @@ export const reducer = (state: State, action: Action): State => {
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
       if (toastId) {
-        const toast = state.toasts.find(it => it.id == toastId)
+        const toast = state.toasts.find((it) => it.id == toastId)
         addToRemoveQueue(toastId)
         toast?.onDismiss?.(toastId)
       } else {
@@ -137,7 +134,7 @@ const listeners: Array<(state: State) => void> = []
 
 let memoryState: State = { toasts: [] }
 
-function dispatch (action: Action) {
+function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)
   listeners.forEach((listener) => {
     listener(memoryState)
@@ -146,7 +143,7 @@ function dispatch (action: Action) {
 
 type Toast = ToasterToast
 
-function toast ({ id, ...props }: Toast) {
+function toast({ id, ...props }: Toast) {
   id = id || genId()
 
   const update = (props: ToasterToast) =>
@@ -159,7 +156,7 @@ function toast ({ id, ...props }: Toast) {
     dispatch({ type: 'DISMISS_TOAST', toastId: id })
   }
 
-  const toastIdExist = memoryState.toasts?.some(it => it.id == id)
+  const toastIdExist = memoryState.toasts?.some((it) => it.id == id)
 
   dispatch({
     type: toastIdExist ? 'UPDATE_TOAST' : 'ADD_TOAST',
@@ -180,7 +177,7 @@ function toast ({ id, ...props }: Toast) {
   }
 }
 
-function useToast () {
+function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 
   React.useEffect(() => {
@@ -197,10 +194,11 @@ function useToast () {
     ...state,
     toast,
     dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
-    update: (toastId: string, props: Omit<ToasterToast, 'id'>) => dispatch({
-      type: 'UPDATE_TOAST',
-      toast: { ...props, id: toastId }
-    })
+    update: (toastId: string, props: Omit<ToasterToast, 'id'>) =>
+      dispatch({
+        type: 'UPDATE_TOAST',
+        toast: { ...props, id: toastId },
+      }),
   }
 }
 

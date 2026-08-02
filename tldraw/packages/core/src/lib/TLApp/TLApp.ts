@@ -39,7 +39,7 @@ export interface TLDocumentModel<S extends TLShape = TLShape, A extends TLAsset 
 
 export class TLApp<
   S extends TLShape = TLShape,
-  K extends TLEventMap = TLEventMap
+  K extends TLEventMap = TLEventMap,
 > extends TLRootState<S, K> {
   constructor(
     serializedApp?: TLDocumentModel<S>,
@@ -844,10 +844,12 @@ export class TLApp<
         'select.idle',
         'select.hoveringSelectionHandle',
         'select.pointingShape',
-        'select.pointingSelectedShape',
+        'select.pointingSelectedShape'
       ) &&
       selectedShapesArray.length === 1 &&
-      Object.values(Geometry).some((geometry: string) => geometry === this.selectedShapesArray[0].type) &&
+      Object.values(Geometry).some(
+        (geometry: string) => geometry === this.selectedShapesArray[0].type
+      ) &&
       !this.readOnly
     )
   }
@@ -976,7 +978,10 @@ export class TLApp<
 
   readonly onPointerMove: TLEvents<S, K>['pointer'] = (info, e) => {
     if ('clientX' in e) {
-      this.inputs.onPointerMove([...this.viewport.getPagePoint([e.clientX, e.clientY]), e.pressure], e)
+      this.inputs.onPointerMove(
+        [...this.viewport.getPagePoint([e.clientX, e.clientY]), e.pressure],
+        e
+      )
     }
   }
 

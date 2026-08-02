@@ -1,5 +1,5 @@
 .intro-docs {
-  max-width: var(--ls-main-content-max-width, 100%)
+  max-width: var(--ls-main-content-max-width, 100%);
 }
 
 .video-wrapper {

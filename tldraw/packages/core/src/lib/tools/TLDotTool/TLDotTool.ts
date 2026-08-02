@@ -8,7 +8,7 @@ export abstract class TLDotTool<
   T extends TLDotShape = TLDotShape,
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > extends TLTool<S, K, R> {
   static id = 'box'
 

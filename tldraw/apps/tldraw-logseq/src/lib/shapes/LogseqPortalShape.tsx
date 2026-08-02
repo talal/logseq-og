@@ -213,7 +213,7 @@ export class LogseqPortalShape extends TLBoxShape<LogseqPortalShapeProps> {
           }
         }
         return () => {}
-      }, 10);
+      }, 10)
     }, [ref, selector])
     return size
   }

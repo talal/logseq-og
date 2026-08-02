@@ -23,7 +23,10 @@
 
       &:hover,
       &.chosen {
-        background-color: var(--lx-gray-05, var(--ls-menu-hover-color, hsl(var(--secondary))));
+        background-color: var(
+          --lx-gray-05,
+          var(--ls-menu-hover-color, hsl(var(--secondary)))
+        );
 
         .has-help small {
           visibility: visible;
@@ -32,7 +35,10 @@
 
       &:not(.chosen):hover {
         background-color: unset !important;
-        color: var(--lx-gray-12, var(--ls-primary-text-color, hsl(var(--secondary))));
+        color: var(
+          --lx-gray-12,
+          var(--ls-primary-text-color, hsl(var(--secondary)))
+        );
       }
     }
   }
@@ -68,8 +74,18 @@
   .notification-area {
     @apply border;
 
-    background-color: or(--ls-notification-background, --lx-gray-03, --ls-tertiary-background-color, --rx-gray-03);
-    color: or(--ls-notification-text-color, --lx-gray-11, --ls-primary-text-color, --rx-gray-11);
+    background-color: or(
+      --ls-notification-background,
+      --lx-gray-03,
+      --ls-tertiary-background-color,
+      --rx-gray-03
+    );
+    color: or(
+      --ls-notification-text-color,
+      --lx-gray-11,
+      --ls-primary-text-color,
+      --rx-gray-11
+    );
   }
 }
 
@@ -104,8 +120,16 @@
   }
 
   &-overlay div {
-    --from: or(--ls-modal-overlay-gradient-start, --lx-gray-03, --ls-primary-background-color);
-    --to: or(--ls-modal-overlay-gradient-end, --lx-gray-06, --ls-quaternary-background-color);
+    --from: or(
+      --ls-modal-overlay-gradient-start,
+      --lx-gray-03,
+      --ls-primary-background-color
+    );
+    --to: or(
+      --ls-modal-overlay-gradient-end,
+      --lx-gray-06,
+      --ls-quaternary-background-color
+    );
 
     background-image: linear-gradient(to bottom, var(--from), var(--to));
   }
@@ -113,7 +137,10 @@
   &-panel {
     @apply relative rounded-md shadow-lg border border-gray-06 overflow-hidden;
 
-    background: var(--lx-gray-02, var(--ls-secondary-background-color, hsl(var(--popover))));
+    background: var(
+      --lx-gray-02,
+      var(--ls-secondary-background-color, hsl(var(--popover)))
+    );
 
     .panel-content {
       overflow: hidden auto;
@@ -159,7 +186,7 @@
     }
   }
 
-  &[label="ls-modal-align-center"],
+  &[label='ls-modal-align-center'],
   &.as-center {
     top: 0;
 
@@ -169,7 +196,7 @@
     }
   }
 
-  &[label="diff__cp"] {
+  &[label='diff__cp'] {
     .panel-content {
       padding: 2rem 1rem;
 
@@ -179,7 +206,7 @@
     }
   }
 
-  &[label="flashcards__cp"] {
+  &[label='flashcards__cp'] {
     .panel-content {
       padding: 2rem 0;
 
@@ -189,7 +216,7 @@
     }
   }
 
-  &[label="instruction__cp"] {
+  &[label='instruction__cp'] {
     .ui__modal-panel {
       height: 90%;
     }
@@ -223,7 +250,7 @@ html.is-native-iphone-without-notch {
   }
 
   .ui__modal {
-    &[label="flashcards__cp"] {
+    &[label='flashcards__cp'] {
       .panel-content {
         padding: 2rem 1rem 1rem;
         width: 90vw;
@@ -246,7 +273,7 @@ html.is-mobile {
   .ui__modal {
     @apply bottom-0 inset-x-0 top-20;
 
-    &[label="ls-modal-search"] {
+    &[label='ls-modal-search'] {
       .panel-content {
         padding-bottom: 0;
       }
@@ -256,7 +283,7 @@ html.is-mobile {
       }
     }
 
-    &[label="ls-modal-align-center"] {
+    &[label='ls-modal-align-center'] {
       .ui__modal-panel {
         top: 8vh;
         transform: translateY(-10%);
@@ -303,7 +330,10 @@ html.is-mobile {
   @apply block w-full pl-3 pr-10 py-2 text-base leading-6 rounded
     border-gray-300 focus:outline-none sm:text-sm sm:leading-5;
 
-  background-color: var(--lx-gray-03, var(--ls-primary-background-color, transparent));
+  background-color: var(
+    --lx-gray-03,
+    var(--ls-primary-background-color, transparent)
+  );
   background-repeat: no-repeat;
   border-width: 1px;
   border-color: var(--lx-gray-07, var(--ls-border-color));
@@ -334,7 +364,11 @@ html.is-mobile {
 }
 
 .bg-quaternary {
-  background-color: or(--ls-bg-quaternary, --lx-gray-06, --ls-quaternary-background-color);
+  background-color: or(
+    --ls-bg-quaternary,
+    --lx-gray-06,
+    --ls-quaternary-background-color
+  );
 }
 
 .ui__icon {
@@ -357,10 +391,10 @@ html.is-mobile {
   }
 
   &::before {
-    @apply block absolute inset-0 ;
+    @apply block absolute inset-0;
 
     background: var(--lx-gray-03, var(--ls-primary-background-color));
-    content: " ";
+    content: ' ';
   }
 }
 

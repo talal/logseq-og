@@ -9,7 +9,7 @@ export class IdleState<
   T extends TLTextShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLTextTool<T, S, K, R>
+  P extends TLTextTool<T, S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'idle'
 

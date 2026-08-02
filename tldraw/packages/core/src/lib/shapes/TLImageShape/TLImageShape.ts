@@ -17,7 +17,7 @@ export interface TLImageShapeProps extends TLBoxShapeProps {
 
 export class TLImageShape<
   P extends TLImageShapeProps = TLImageShapeProps,
-  M = any
+  M = any,
 > extends TLBoxShape<P, M> {
   constructor(props = {} as Partial<P>) {
     super(props)

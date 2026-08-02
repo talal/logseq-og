@@ -15,22 +15,16 @@ if (process.env.NODE_ENV !== 'production') {
   require('./cljs/shadow.cljs.devtools.client.browser')
 }
 
-function ThemeObserver(
-  { children }
-) {
+function ThemeObserver({ children }) {
   const theme = window.localStorage.getItem('__ls-theme-color__')
 
   useEffect(() => {
     const html = document.documentElement
     html.dataset.color = theme
-    return () => (delete html.dataset.theme)
+    return () => delete html.dataset.theme
   }, [theme])
 
-  return (
-    <div className={'p-4'}>
-      {children}
-    </div>
-  )
+  return <div className={'p-4'}>{children}</div>
 }
 
 /** @type { import('@storybook/react').Preview } */
@@ -48,10 +42,10 @@ const preview = {
     (Story) => {
       return (
         <ThemeObserver>
-          <Story/>
+          <Story />
         </ThemeObserver>
       )
-    }
+    },
   ],
   globalTypes: {
     theme: {

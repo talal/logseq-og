@@ -230,14 +230,14 @@ export type TLCallback<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
   R extends TLApp<S, K> = TLApp<S, K>,
-  E extends TLSubscriptionEventName = TLSubscriptionEventName
+  E extends TLSubscriptionEventName = TLSubscriptionEventName,
 > = (app: R, info: TLSubscriptionEventInfo<E>) => void
 
 export type TLSubscription<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
   R extends TLApp<S, K> = TLApp<S, K>,
-  E extends TLSubscriptionEventName = TLSubscriptionEventName
+  E extends TLSubscriptionEventName = TLSubscriptionEventName,
 > = {
   event: E
   callback: TLCallback<S, K, R, E>
@@ -246,7 +246,7 @@ export type TLSubscription<
 export type TLSubscribe<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > = {
   <E extends TLSubscriptionEventName>(subscription: TLSubscription<S, K, R, E>): () => void
   <E extends TLSubscriptionEventName>(event: E, callback: TLCallback<S, K, R, E>): () => void
@@ -255,7 +255,7 @@ export type TLSubscribe<
 export interface TLCallbacks<
   S extends TLShape = TLShape,
   K extends TLEventMap = TLEventMap,
-  R extends TLApp<S, K> = TLApp<S, K>
+  R extends TLApp<S, K> = TLApp<S, K>,
 > {
   onMount: TLCallback<S, K, R, 'mount'>
   onPersist: TLCallback<S, K, R, 'persist'>

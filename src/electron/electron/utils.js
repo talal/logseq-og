@@ -63,7 +63,7 @@ export async function getAllFiles(dir, exts) {
         accessTime: fileStats.atimeMs,
         modifiedTime: fileStats.mtimeMs,
         changeTime: fileStats.ctimeMs,
-        birthTime: fileStats.birthtimeMs
+        birthTime: fileStats.birthtimeMs,
       }
     })
   )
@@ -72,9 +72,7 @@ export async function getAllFiles(dir, exts) {
 
 export async function deepReadDir(dirPath, flat = true) {
   const ret = await Promise.all(
-    (
-      await fse.readdir(dirPath)
-    ).map(async (entity) => {
+    (await fse.readdir(dirPath)).map(async (entity) => {
       const root = path.join(dirPath, entity)
       return (await fse.lstat(root)).isDirectory()
         ? await deepReadDir(root)

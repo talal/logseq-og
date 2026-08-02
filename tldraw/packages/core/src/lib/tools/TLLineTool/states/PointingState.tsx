@@ -10,7 +10,7 @@ export class PointingState<
   T extends S & TLLineShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLLineTool<T, S, K, R>
+  P extends TLLineTool<T, S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'pointing'
 

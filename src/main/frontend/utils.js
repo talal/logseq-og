@@ -26,26 +26,26 @@ export const getOffsetRect = (elem) => {
     // (2)
     scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop,
     scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft,
-
     // (3)
     clientTop = docElem.clientTop || body.clientTop || 0,
     clientLeft = docElem.clientLeft || body.clientLeft || 0,
-
     // (4)
     top = box.top + scrollTop - clientTop,
-    left = box.left + scrollLeft - clientLeft;
+    left = box.left + scrollLeft - clientLeft
 
   return {
     top: Math.round(top),
-    left: Math.round(left)
+    left: Math.round(left),
   }
 }
 
 // jquery focus
 export const focus = (elem) => {
-  return elem === document.activeElement &&
+  return (
+    elem === document.activeElement &&
     document.hasFocus() &&
     !!(elem.type || elem.href || ~elem.tabIndex)
+  )
 }
 
 // copied from https://stackoverflow.com/a/32180863
@@ -53,7 +53,7 @@ export const timeConversion = (millisec) => {
   let seconds = (millisec / 1000).toFixed(0),
     minutes = (millisec / (1000 * 60)).toFixed(0),
     hours = (millisec / (1000 * 60 * 60)).toFixed(1),
-    days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
+    days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1)
 
   if (seconds < 60) {
     return seconds + 's'
@@ -75,7 +75,10 @@ export const getSelectionText = () => {
   // Firefox fix
   const activeElement = window.document.activeElement
   if (activeElement) {
-    if (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA') {
+    if (
+      activeElement.tagName === 'INPUT' ||
+      activeElement.tagName === 'TEXTAREA'
+    ) {
       const el = activeElement
       return el.value.slice(el.selectionStart || 0, el.selectionEnd || 0)
     }
@@ -86,7 +89,12 @@ export const getSelectionText = () => {
 
 // Modified from https://github.com/GoogleChromeLabs/browser-nativefs
 // because shadow-cljs doesn't handle this babel transform
-export const getFiles = async (dirHandle, recursive, cb, path = dirHandle.name) => {
+export const getFiles = async (
+  dirHandle,
+  recursive,
+  cb,
+  path = dirHandle.name
+) => {
   const dirs = []
   const files = []
   for await (const entry of dirHandle.values()) {
@@ -111,7 +119,9 @@ export const getFiles = async (dirHandle, recursive, cb, path = dirHandle.name) 
         })
       )
     } else if (entry.kind === 'directory' && recursive) {
-      if (cb) { cb(nestedPath, entry) }
+      if (cb) {
+        cb(nestedPath, entry)
+      }
       dirs.push(...(await getFiles(entry, recursive, cb, nestedPath)))
     }
   }
@@ -140,13 +150,13 @@ export const verifyPermission = async (handle, readWrite) => {
 //       browser-fs-access doesn't return directory handles
 //       Ref: https://github.com/GoogleChromeLabs/browser-fs-access/blob/3876499caefe8512bfcf7ce9e16c20fd10199c8b/src/fs-access/directory-open.mjs#L55-L69
 export const openDirectory = async (options = {}, cb) => {
-  options.recursive = options.recursive || false;
+  options.recursive = options.recursive || false
   const handle = await window.showDirectoryPicker({
-    mode: 'readwrite'
-  });
-  const _ask = await verifyPermission(handle, true);
-  return [handle, ...(await getFiles(handle, options.recursive, cb))];
-};
+    mode: 'readwrite',
+  })
+  const _ask = await verifyPermission(handle, true)
+  return [handle, ...(await getFiles(handle, options.recursive, cb))]
+}
 
 export const writeFile = async (fileHandle, contents) => {
   // Create a FileSystemWritableFileStream to write to.
@@ -178,13 +188,14 @@ const inputTypes = [
 ]
 
 export const triggerInputChange = (node, value = '', name = 'change') => {
-
   // only process the change on elements we know have a value setter in their constructor
   if (inputTypes.indexOf(node.__proto__.constructor) > -1) {
-
-    const setValue = Object.getOwnPropertyDescriptor(node.__proto__, 'value').set
+    const setValue = Object.getOwnPropertyDescriptor(
+      node.__proto__,
+      'value'
+    ).set
     const event = new Event(name, {
-      bubbles: true
+      bubbles: true,
     })
 
     setValue.call(node, value)
@@ -193,115 +204,130 @@ export const triggerInputChange = (node, value = '', name = 'change') => {
 }
 
 // Copied from https://github.com/google/diff-match-patch/issues/29#issuecomment-647627182
-export const reversePatch = patch => {
-  return patch.map(patchObj => ({
+export const reversePatch = (patch) => {
+  return patch.map((patchObj) => ({
     diffs: patchObj.diffs.map(([op, val]) => [
       op * -1, // The money maker
-      val
+      val,
     ]),
     start1: patchObj.start2,
     start2: patchObj.start1,
     length1: patchObj.length2,
-    length2: patchObj.length1
-  }));
-};
+    length2: patchObj.length1,
+  }))
+}
 
 // Copied from https://github.com/sindresorhus/path-is-absolute/blob/main/index.js
-export const win32 = path => {
+export const win32 = (path) => {
   // https://github.com/nodejs/node/blob/b3fcc245fb25539909ef1d5eaa01dbf92e168633/lib/path.js#L56
-  const splitDeviceRe = /^([a-zA-Z]:|[\\/]{2}[^\\/]+[\\/]+[^\\/]+)?([\\/])?([\s\S]*?)$/,
+  const splitDeviceRe =
+      /^([a-zA-Z]:|[\\/]{2}[^\\/]+[\\/]+[^\\/]+)?([\\/])?([\s\S]*?)$/,
     result = splitDeviceRe.exec(path),
     device = result[1] || '',
-    isUnc = Boolean(device && device.charAt(1) !== ':');
+    isUnc = Boolean(device && device.charAt(1) !== ':')
 
   // UNC paths are always absolute
-  return Boolean(result[2] || isUnc);
-};
+  return Boolean(result[2] || isUnc)
+}
 
 export const ios = () => {
-  return [
+  return (
+    [
       'iPad Simulator',
       'iPhone Simulator',
       'iPod Simulator',
       'iPad',
       'iPhone',
-      'iPod'
-    ].includes(navigator.platform)
+      'iPod',
+    ].includes(navigator.platform) ||
     // iPad on iOS 13 detection
-    ||
-    (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+  )
 }
 
 export const getClipText = (cb, errorHandler) => {
-  navigator.permissions.query({
-    name: "clipboard-read"
-  }).then((result) => {
-    if (result.state == "granted" || result.state == "prompt") {
-      navigator.clipboard.readText()
-        .then(text => {
-          cb(text);
-        })
-        .catch(err => {
-          errorHandler(err)
-        });
-    }
-  })
+  navigator.permissions
+    .query({
+      name: 'clipboard-read',
+    })
+    .then((result) => {
+      if (result.state == 'granted' || result.state == 'prompt') {
+        navigator.clipboard
+          .readText()
+          .then((text) => {
+            cb(text)
+          })
+          .catch((err) => {
+            errorHandler(err)
+          })
+      }
+    })
 }
 
-export const writeClipboard = ({text, html, blocks}, ownerWindow) => {
-    if (Capacitor.isNativePlatform()) {
-        CapacitorClipboard.write({ string: text });
+export const writeClipboard = ({ text, html, blocks }, ownerWindow) => {
+  if (Capacitor.isNativePlatform()) {
+    CapacitorClipboard.write({ string: text })
+    return
+  }
+
+  const navigator = (ownerWindow || window).navigator
+
+  navigator.permissions
+    .query({
+      name: 'clipboard-write',
+    })
+    .then((result) => {
+      if (result.state != 'granted' && result.state != 'prompt') {
+        console.debug('Copy without `clipboard-write` permission:', text)
         return
-    }
-
-    const navigator = (ownerWindow || window).navigator
-
-    navigator.permissions.query({
-        name: "clipboard-write"
-    }).then((result) => {
-        if (result.state != "granted" && result.state != "prompt"){
-            console.debug("Copy without `clipboard-write` permission:", text)
-            return
+      }
+      let promise_written = null
+      if (typeof ClipboardItem !== 'undefined') {
+        let blob = new Blob([text], {
+          type: ['text/plain'],
+        })
+        let data = [
+          new ClipboardItem({
+            ['text/plain']: blob,
+          }),
+        ]
+        if (html) {
+          let richBlob = new Blob([html], {
+            type: ['text/html'],
+          })
+          data = [
+            new ClipboardItem({
+              ['text/plain']: blob,
+              ['text/html']: richBlob,
+            }),
+          ]
         }
-        let promise_written = null
-        if (typeof ClipboardItem !== 'undefined') {
-            let blob = new Blob([text], {
-              type: ["text/plain"]
-            });
-            let data = [new ClipboardItem({
-                ["text/plain"]: blob
-            })];
-            if (html) {
-                let richBlob = new Blob([html], {
-                    type: ["text/html"]
-                })
-                data = [new ClipboardItem({
-                    ["text/plain"]: blob,
-                    ["text/html"]: richBlob
-                })];
-            }
-          if (blocks) {
-            let blocksBlob = new Blob([blocks], {
-              type: ["web application/logseq"]
-            })
-            let richBlob = new Blob([html], {
-              type: ["text/html"]
-            })
-            data = [new ClipboardItem({
-              ["text/plain"]: blob,
-              ["text/html"]: richBlob,
-              ["web application/logseq"]: blocksBlob
-            })];
-          }
-            promise_written = navigator.clipboard.write(data)
-        } else {
-            console.debug("Degraded copy without `ClipboardItem` support:", text)
-            promise_written = navigator.clipboard.writeText(text)
+        if (blocks) {
+          let blocksBlob = new Blob([blocks], {
+            type: ['web application/logseq'],
+          })
+          let richBlob = new Blob([html], {
+            type: ['text/html'],
+          })
+          data = [
+            new ClipboardItem({
+              ['text/plain']: blob,
+              ['text/html']: richBlob,
+              ['web application/logseq']: blocksBlob,
+            }),
+          ]
         }
-        promise_written.then(() => {
-            /* success */
-        }).catch(e => {
-            console.log(e, "fail")
+        promise_written = navigator.clipboard.write(data)
+      } else {
+        console.debug('Degraded copy without `ClipboardItem` support:', text)
+        promise_written = navigator.clipboard.writeText(text)
+      }
+      promise_written
+        .then(() => {
+          /* success */
+        })
+        .catch((e) => {
+          console.log(e, 'fail')
         })
     })
 }
@@ -320,47 +346,42 @@ export const saveToFile = (data, fileName, format) => {
 }
 
 export const canvasToImage = (canvas, title = 'Untitled', format = 'png') => {
-  canvas.toBlob(
-    (blob) => {
-      console.log(blob)
-      saveToFile(blob, title, format)
-    },
-    `image/.${format}`
-  )
+  canvas.toBlob((blob) => {
+    console.log(blob)
+    saveToFile(blob, title, format)
+  }, `image/.${format}`)
 }
 
 export const nodePath = Object.assign({}, path, {
-  basename (input) {
+  basename(input) {
     input = toPosixPath(input)
     return path.basename(input)
   },
 
-  name (input) {
+  name(input) {
     input = toPosixPath(input)
     return path.parse(input).name
   },
 
-  dirname (input) {
+  dirname(input) {
     input = toPosixPath(input)
     return path.dirname(input)
   },
 
-  extname (input) {
+  extname(input) {
     input = toPosixPath(input)
     return path.extname(input)
   },
 
-  join (input, ...paths) {
+  join(input, ...paths) {
     let orURI = null
-    const s = [
-      'file://', 'http://',
-      'https://', 'content://'
-    ]
+    const s = ['file://', 'http://', 'https://', 'content://']
 
-    if (s.some(p => input.startsWith(p))) {
+    if (s.some((p) => input.startsWith(p))) {
       try {
         orURI = new URL(input)
-        input = input.replace(orURI.protocol + '//', '')
+        input = input
+          .replace(orURI.protocol + '//', '')
           .replace(orURI.protocol, '')
           .replace(/^\/+/, '/')
       } catch {
@@ -370,26 +391,29 @@ export const nodePath = Object.assign({}, path, {
 
     input = path.join(input, ...paths)
 
-    return (orURI ? (orURI.protocol + '//') : '') + input
-  }
+    return (orURI ? orURI.protocol + '//' : '') + input
+  },
 })
 
 // https://stackoverflow.com/questions/376373/pretty-printing-xml-with-javascript
 export const prettifyXml = (sourceXml) => {
   const xmlDoc = new DOMParser().parseFromString(sourceXml, 'application/xml')
-  const xsltDoc = new DOMParser().parseFromString([
-    // describes how we want to modify the XML - indent everything
-    '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">',
-    '  <xsl:strip-space elements="*"/>',
-    '  <xsl:template match="para[content-style][not(text())]">', // change to just text() to strip space in text nodes
-    '    <xsl:value-of select="normalize-space(.)"/>',
-    '  </xsl:template>',
-    '  <xsl:template match="node()|@*">',
-    '    <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>',
-    '  </xsl:template>',
-    '  <xsl:output indent="yes"/>',
-    '</xsl:stylesheet>',
-  ].join('\n'), 'application/xml')
+  const xsltDoc = new DOMParser().parseFromString(
+    [
+      // describes how we want to modify the XML - indent everything
+      '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">',
+      '  <xsl:strip-space elements="*"/>',
+      '  <xsl:template match="para[content-style][not(text())]">', // change to just text() to strip space in text nodes
+      '    <xsl:value-of select="normalize-space(.)"/>',
+      '  </xsl:template>',
+      '  <xsl:template match="node()|@*">',
+      '    <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>',
+      '  </xsl:template>',
+      '  <xsl:output indent="yes"/>',
+      '</xsl:stylesheet>',
+    ].join('\n'),
+    'application/xml'
+  )
 
   const xsltProcessor = new XSLTProcessor()
   xsltProcessor.importStylesheet(xsltDoc)
@@ -404,14 +428,15 @@ export const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
   const { innerHeight, innerWidth } = window
   return partiallyVisible
     ? ((top > 0 && top < innerHeight) ||
-      (bottom > 0 && bottom < innerHeight)) &&
-    ((left > 0 && left < innerWidth) || (right > 0 && right < innerWidth))
+        (bottom > 0 && bottom < innerHeight)) &&
+        ((left > 0 && left < innerWidth) || (right > 0 && right < innerWidth))
     : top >= 0 && left >= 0 && bottom <= innerHeight && right <= innerWidth
 }
 
 export const convertToLetters = (num) => {
   if (!+num) return false
-  let s = '', t
+  let s = '',
+    t
 
   while (num > 0) {
     t = (num - 1) % 26
@@ -425,27 +450,61 @@ export const convertToLetters = (num) => {
 export const convertToRoman = (num) => {
   if (!+num) return false
   const digits = String(+num).split('')
-  const key = ['','C','CC','CCC','CD','D','DC','DCC','DCCC','CM',
-    '','X','XX','XXX','XL','L','LX','LXX','LXXX','XC',
-    '','I','II','III','IV','V','VI','VII','VIII','IX']
-  let roman = '', i = 3
+  const key = [
+    '',
+    'C',
+    'CC',
+    'CCC',
+    'CD',
+    'D',
+    'DC',
+    'DCC',
+    'DCCC',
+    'CM',
+    '',
+    'X',
+    'XX',
+    'XXX',
+    'XL',
+    'L',
+    'LX',
+    'LXX',
+    'LXXX',
+    'XC',
+    '',
+    'I',
+    'II',
+    'III',
+    'IV',
+    'V',
+    'VI',
+    'VII',
+    'VIII',
+    'IX',
+  ]
+  let roman = '',
+    i = 3
   while (i--) roman = (key[+digits.pop() + i * 10] || '') + roman
   return Array(+digits.join('') + 1).join('M') + roman
 }
 
 export function hsl2hex(h, s, l, alpha) {
   l /= 100
-  const a = s * Math.min(l, 1 - l) / 100
-  const f = n => {
+  const a = (s * Math.min(l, 1 - l)) / 100
+  const f = (n) => {
     const k = (n + h / 30) % 12
     const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
-    return Math.round(255 * color).toString(16).padStart(2, '0')
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, '0')
     // convert to Hex and prefix "0" if needed
   }
 
   //alpha conversion
   if (alpha) {
-    alpha = Math.round(alpha * 255).toString(16).padStart(2, '0')
+    alpha = Math.round(alpha * 255)
+      .toString(16)
+      .padStart(2, '0')
   } else {
     alpha = ''
   }

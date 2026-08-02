@@ -14,7 +14,7 @@ export interface TLLineShapeProps extends TLPolylineShapeProps {
 
 export class TLLineShape<
   P extends TLLineShapeProps = TLLineShapeProps,
-  M = any
+  M = any,
 > extends TLPolylineShape<P, M> {
   constructor(props = {} as Partial<P>) {
     super(props)

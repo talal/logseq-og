@@ -71,24 +71,24 @@ export const ActionBar = observer(function ActionBar(): JSX.Element {
 
       <div className={'tl-toolbar tl-grid-bar mr-2 mb-2'}>
         <ToggleInput
-            tooltip={t('whiteboard/toggle-grid')}
-            className="tl-button"
-            pressed={app.settings.showGrid}
-            id="tl-show-grid"
-            onPressedChange={toggleGrid}
-          >
+          tooltip={t('whiteboard/toggle-grid')}
+          className="tl-button"
+          pressed={app.settings.showGrid}
+          id="tl-show-grid"
+          onPressedChange={toggleGrid}
+        >
           <TablerIcon name="grid-dots" />
         </ToggleInput>
 
         {!app.readOnly && (
           <ToggleInput
-              tooltip={t('whiteboard/snap-to-grid')}
-              className="tl-button"
-              pressed={app.settings.snapToGrid}
-              id="tl-snap-to-grid"
-              onPressedChange={toggleSnapToGrid}
-            >
-            <TablerIcon name={app.settings.snapToGrid ? "magnet" : "magnet-off"} />
+            tooltip={t('whiteboard/snap-to-grid')}
+            className="tl-button"
+            pressed={app.settings.snapToGrid}
+            id="tl-snap-to-grid"
+            onPressedChange={toggleSnapToGrid}
+          >
+            <TablerIcon name={app.settings.snapToGrid ? 'magnet' : 'magnet-off'} />
           </ToggleInput>
         )}
       </div>
@@ -102,8 +102,8 @@ export const ActionBar = observer(function ActionBar(): JSX.Element {
             id="tl-toggle-pen-mode"
             onPressedChange={togglePenMode}
           >
-          <TablerIcon name={app.settings.penMode ? "pencil" : "pencil-off"} />
-        </ToggleInput>
+            <TablerIcon name={app.settings.penMode ? 'pencil' : 'pencil-off'} />
+          </ToggleInput>
         </div>
       )}
     </div>

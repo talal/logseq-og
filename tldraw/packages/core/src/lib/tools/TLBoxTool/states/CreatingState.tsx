@@ -13,7 +13,7 @@ export class CreatingState<
   S extends TLShape,
   K extends TLEventMap,
   R extends TLApp<S, K>,
-  P extends TLBoxTool<T, S, K, R>
+  P extends TLBoxTool<T, S, K, R>,
 > extends TLToolState<S, K, R, P> {
   static id = 'creating'
 
@@ -69,7 +69,8 @@ export class CreatingState<
     if (!this.creatingShape) throw Error('Expected a creating shape.')
     const { initialBounds } = this
     const { currentPoint, originPoint, shiftKey } = this.app.inputs
-    const isAspectRatioLocked = shiftKey ||
+    const isAspectRatioLocked =
+      shiftKey ||
       this.creatingShape.props.isAspectRatioLocked ||
       !this.creatingShape.canChangeAspectRatio
     let bounds = BoundsUtils.getTransformedBoundingBox(

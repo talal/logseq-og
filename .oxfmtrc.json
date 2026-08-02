@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "semi": false,
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "tabWidth": 2,
+  "useTabs": false,
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "ignorePatterns": ["resources/electron.html"],
+  "overrides": [
+    {
+      "files": ["tldraw/**/*"],
+      "options": {
+        "printWidth": 100,
+        "arrowParens": "avoid",
+        "jsxSingleQuote": false,
+        "bracketSameLine": false,
+        "jsdoc": true
+      }
+    }
+  ]
+}

@@ -44,14 +44,17 @@ test-all: test test-e2e
 # Lint all code.
 [group('Quality')]
 lint: check-version
+    bb fmt:check
     bb lint
+    yarn fmt:check
+    yarn lint
     yarn css:lint
 
 # Format all code.
 [group('Quality')]
 fmt:
     bb fmt
-    npx prettier --write .
+    yarn fmt
     nix fmt
 
 # Check that project versions match VERSION file.

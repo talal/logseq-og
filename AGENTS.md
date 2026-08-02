@@ -12,10 +12,11 @@ related commands are defined in `package.json`.
   - Prefer to run the targeted test spec because the full E2E test suite is slow
     to run.
 - **Linting (Clojure/ClojureScript)**: `bb lint`
-- **Linting (JS/CSS)**: `yarn css:lint`
+- **Linting (JavaScript/TypeScript)**: `yarn lint`
+- **Linting (CSS)**: `yarn css:lint`
 - **Formatting (Clojure/ClojureScript)**: `bb fmt`
 - **Clojure/ClojureScript Parenthesis Repair**: `bb clj-paren-repair <files>`
-- **Formatting (JS/CSS)**: `npx prettier --write .`
+- **Formatting (JavaScript/TypeScript/CSS)**: `yarn fmt`
 - **Formatting (other)**: `nix fmt`
 
 ## Repository structure

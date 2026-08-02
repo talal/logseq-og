@@ -28,7 +28,6 @@
     "build": "node scripts/build && yarn types:build",
     "types:dev": "tsc -w --p tsconfig.build.json",
     "types:build": "tsc -p tsconfig.build.json && tsconfig-replace-paths -p tsconfig.build.json",
-    "lint": "eslint src/ --ext .ts,.tsx",
     "clean": "rm -rf dist",
     "test": "jest",
     "test:ci": "jest --ci --runInBand --updateSnapshot",

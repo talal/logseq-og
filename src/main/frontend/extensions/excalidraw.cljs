@@ -1,22 +1,22 @@
 (ns frontend.extensions.excalidraw
-  (:require [clojure.string :as string]
-            ;; NOTE: Always use production build of excalidraw
+  (:require ;; NOTE: Always use production build of excalidraw
             ;; See-also: https://github.com/excalidraw/excalidraw/pull/3330
-            ["@excalidraw/excalidraw/dist/excalidraw.production.min" :refer [Excalidraw serializeAsJSON]]
-            [frontend.config :as config]
-            [frontend.db :as db]
-            [frontend.handler.editor :as editor-handler]
-            [frontend.handler.draw :as draw]
-            [frontend.handler.notification :as notification]
-            [frontend.handler.ui :as ui-handler]
-            [frontend.rum :as r]
-            [frontend.state :as state]
-            [frontend.ui :as ui]
-            [frontend.util :as util]
-            [goog.object :as gobj]
-            [goog.functions :refer [debounce]]
-            [rum.core :as rum]
-            [frontend.mobile.util :as mobile-util]))
+   ["@excalidraw/excalidraw/dist/excalidraw.production.min" :refer [Excalidraw serializeAsJSON]]
+   [clojure.string :as string]
+   [frontend.config :as config]
+   [frontend.db :as db]
+   [frontend.handler.draw :as draw]
+   [frontend.handler.editor :as editor-handler]
+   [frontend.handler.notification :as notification]
+   [frontend.handler.ui :as ui-handler]
+   [frontend.mobile.util :as mobile-util]
+   [frontend.rum :as r]
+   [frontend.state :as state]
+   [frontend.ui :as ui]
+   [frontend.util :as util]
+   [goog.functions :refer [debounce]]
+   [goog.object :as gobj]
+   [rum.core :as rum]))
 
 (def excalidraw (r/adapt-class Excalidraw))
 

@@ -1,9 +1,9 @@
 (ns frontend.search.plugin
   "Plugin service implementation of search protocol"
-  (:require [frontend.state :as state]
+  (:require [cljs-bean.core :as bean]
             [frontend.handler.plugin :as plugin-handler]
             [frontend.search.protocol :as protocol]
-            [cljs-bean.core :as bean]))
+            [frontend.state :as state]))
 
 (defn call-service!
   ([service event payload] (call-service! service event payload false))

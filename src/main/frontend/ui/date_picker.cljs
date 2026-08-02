@@ -167,7 +167,6 @@
                         (constantly true))]
     (merge attributes {:selectable-fn selectable-fn})))
 
-
 (rum/defc date-picker < rum/reactive
   {:init (fn [state]
            (reset! *internal-model (first (:rum/args state)))

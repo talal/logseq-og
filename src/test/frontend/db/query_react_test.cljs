@@ -1,14 +1,14 @@
 (ns frontend.db.query-react-test
-  (:require [cljs.test :refer [deftest is use-fixtures]]
-            [cljs-time.core :as t]
+  (:require [cljs-time.core :as t]
+            [cljs.test :refer [deftest is use-fixtures]]
             [clojure.string :as string]
-            [frontend.state :as state]
             [frontend.date :as date]
-            [logseq.graph-parser.util.db :as db-util]
-            [frontend.test.helper :as test-helper :refer [load-test-files]]
             [frontend.db.query-custom :as query-custom]
             [frontend.db.utils :as db-utils]
-            [goog.string :as gstring]))
+            [frontend.state :as state]
+            [frontend.test.helper :as test-helper :refer [load-test-files]]
+            [goog.string :as gstring]
+            [logseq.graph-parser.util.db :as db-util]))
 
 (use-fixtures :each {:before test-helper/start-test-db!
                      :after test-helper/destroy-test-db!})
@@ -50,18 +50,18 @@ adds rules that users often use"
                                      :query '[:find (pull ?b [*])
                                               :in $ ?page
                                               :where [?b :block/page ?e]
-                                                     [?e :block/name ?page]]}
+                                              [?e :block/name ?page]]}
                                     {:current-block-uuid (get (block-with-content block-content) :block/uuid)})))
 
 (defn- blocks-with-tag-on-specified-current-page [& {:keys [current-page tag]}]
   (map :block/content (custom-query {:title "Query title"
-                                     :inputs [:current-page tag] 
-                                     :query '[:find (pull ?b [*]) 
+                                     :inputs [:current-page tag]
+                                     :query '[:find (pull ?b [*])
                                               :in $ ?current-page ?tag-name
-                                              :where [?b :block/page ?bp] 
-                                                     [?bp :block/name ?current-page] 
-                                                     [?b :block/ref-pages ?t] 
-                                                     [?t :block/name ?tag-name]]}
+                                              :where [?b :block/page ?bp]
+                                              [?bp :block/name ?current-page]
+                                              [?b :block/ref-pages ?t]
+                                              [?t :block/name ?tag-name]]}
                                     {:current-page-fn (constantly current-page)})))
 
 (deftest resolve-input-for-page-and-block-inputs
@@ -78,7 +78,7 @@ adds rules that users often use"
                                :query '[:find (pull ?b [*])
                                         :in $ ?current-page
                                         :where [?b :block/page ?bp]
-                                               [?bp :block/name ?current-page]]}))))
+                                        [?bp :block/name ?current-page]]}))))
       ":current-page input resolves to current page name")
 
   (is (= []
@@ -247,7 +247,6 @@ created-at:: %s"
 
   (is (= [] (blocks-created-between-inputs :-0d-abcd :+1d-23.45))
       ":-XT-HHMM and :+XT-HHMM will not reoslve with invalid time formats but will fail gracefully"))
-
 
 (deftest resolve-input-for-relative-date-queries
   (load-test-files [{:file/content "- -1y" :file/path "journals/2022_01_01.md"}

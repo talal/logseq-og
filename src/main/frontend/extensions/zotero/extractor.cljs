@@ -123,17 +123,17 @@
         links   (zotero-links item)
         date    (date->journal item)
         data    (-> item :data
-                         (select-keys fields)
-                         (skip-newline-properties)
-                         (wrap-in-doublequotes)
-                         (assoc :links links
-                                :authors authors
-                                :tags tags
-                                :date date
-                                :item-type (page-ref/->page-ref type))
-                         (dissoc :creators :abstract-note)
-                         (rename-keys {:title :original-title})
-                         (assoc :title (page-name item)))]
+                    (select-keys fields)
+                    (skip-newline-properties)
+                    (wrap-in-doublequotes)
+                    (assoc :links links
+                           :authors authors
+                           :tags tags
+                           :date date
+                           :item-type (page-ref/->page-ref type))
+                    (dissoc :creators :abstract-note)
+                    (rename-keys {:title :original-title})
+                    (assoc :title (page-name item)))]
     (->> data
          (remove (comp (fn [v] (or (string/blank? v) (empty? v))) second))
          (into {}))))

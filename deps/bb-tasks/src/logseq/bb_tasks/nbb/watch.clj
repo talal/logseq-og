@@ -1,10 +1,10 @@
 (ns logseq.bb-tasks.nbb.watch
   "To use tasks in this ns, first install nbb-logseq:
 `npm install -g @logseq/nbb-logseq`"
-  (:require [pod.babashka.fswatcher :as fw]
+  (:require [babashka.classpath :as classpath]
             [babashka.tasks :refer [shell]]
-            [babashka.classpath :as classpath]
             [clojure.edn :as edn]
+            [pod.babashka.fswatcher :as fw]
             [portal.api :as p])
   (:import (java.time Instant)))
 

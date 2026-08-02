@@ -3,8 +3,8 @@
   {:clj-kondo/config {:linters {:private-call {:level :off}}}}
   (:require [cljs.test :refer [deftest are]]
             [clojure.string :as string]
-            [frontend.util :as util]
-            [frontend.handler.page :as page-handler]))
+            [frontend.handler.page :as page-handler]
+            [frontend.util :as util]))
 
 (defn- replace-page-ref!
   [content old-name new-name]
@@ -48,7 +48,7 @@
 
     ["bla [[file:./foo.org][foo]] bla" "foo" "bar"]
     "bla [[file:./bar.org][bar]] bla"
-    
+
     ["bla [[file:./logseq.foo.org][logseq/foo]] bla" "logseq/foo" "logseq/bar"]
     "bla [[file:./logseq.bar.org][logseq/bar]] bla"
 
@@ -113,10 +113,10 @@
   (are [x y] (= (let [[content old-name new-name] x]
                   (replace-old-page! content old-name new-name))
                 y)
-       ["#foo bla [[foo]] bla #foo" "foo" "bar"]
-       "#bar bla [[bar]] bla #bar"
+    ["#foo bla [[foo]] bla #foo" "foo" "bar"]
+    "#bar bla [[bar]] bla #bar"
 
-       ["#logseq/foo bla [[logseq/foo]] bla [[file:./pages/logseq.foo.org][logseq/foo]] bla #logseq/foo" "logseq/foo" "logseq/bar"]
-       "#logseq/bar bla [[logseq/bar]] bla [[file:./pages/logseq.bar.org][logseq/bar]] bla #logseq/bar"))
+    ["#logseq/foo bla [[logseq/foo]] bla [[file:./pages/logseq.foo.org][logseq/foo]] bla #logseq/foo" "logseq/foo" "logseq/bar"]
+    "#logseq/bar bla [[logseq/bar]] bla [[file:./pages/logseq.bar.org][logseq/bar]] bla #logseq/bar"))
 
 #_(cljs.test/test-ns 'frontend.handler.page-test)

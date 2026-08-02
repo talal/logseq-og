@@ -1,10 +1,10 @@
 (ns logseq.graph-parser.property
   "Core vars and util fns for properties"
-  (:require [logseq.graph-parser.util :as gp-util]
+  (:require [clojure.set :as set]
             [clojure.string :as string]
-            [clojure.set :as set]
             [goog.string :as gstring]
-            [goog.string.format]))
+            [goog.string.format]
+            [logseq.graph-parser.util :as gp-util]))
 
 (def colons "Property delimiter for markdown mode" "::")
 (defn colons-org
@@ -119,7 +119,6 @@
                   editable-linkable-built-in-properties
                   ;; All these should be parsed by gp-text/parse-non-string-property-value
                   (set (keys built-in-property-types))))
-
 
 (defonce properties-start ":PROPERTIES:")
 (defonce properties-end ":END:")

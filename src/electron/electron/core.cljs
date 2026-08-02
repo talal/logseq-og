@@ -1,27 +1,27 @@
 (ns electron.core
-  (:require [electron.handler :as handler]
+  (:require ["/electron/utils" :as js-utils]
+            ["electron" :refer [BrowserWindow Menu app protocol ipcMain dialog shell] :as electron]
+            ["electron-deeplink" :refer [Deeplink]]
+            ["path" :as node-path]
+            [cljs-bean.core :as bean]
+            [clojure.string :as string]
+            [electron.configs :as cfgs]
+            [electron.exceptions :as exceptions]
+            [electron.fs-watcher :as fs-watcher]
+            [electron.git :as git]
+            [electron.handler :as handler]
+            [electron.logger :as logger]
             [electron.search :as search]
+            [electron.server :as server]
+            [electron.state :as state]
             [electron.updater :refer [init-updater] :as updater]
+            [electron.url :refer [logseq-url-handler]]
             [electron.utils :refer [*win mac? linux? dev? get-win-from-sender
                                     decode-protected-assets-schema-path get-graph-name send-to-renderer]
              :as utils]
-            [electron.url :refer [logseq-url-handler]]
-            [electron.logger :as logger]
-            [electron.server :as server]
-            [clojure.string :as string]
-            [promesa.core :as p]
-            [cljs-bean.core :as bean]
-            [electron.configs :as cfgs]
-            [electron.fs-watcher :as fs-watcher]
-            ["path" :as node-path]
-            ["electron" :refer [BrowserWindow Menu app protocol ipcMain dialog shell] :as electron]
-            ["electron-deeplink" :refer [Deeplink]]
-            [electron.state :as state]
-            [electron.git :as git]
             [electron.window :as win]
-            [electron.exceptions :as exceptions]
-            ["/electron/utils" :as js-utils]
-            [logseq.publishing.export :as publish-export]))
+            [logseq.publishing.export :as publish-export]
+            [promesa.core :as p]))
 
 ;; Keep same as main/frontend.util.url
 (defonce LSP_SCHEME "logseq-og")
@@ -106,15 +106,15 @@
   (p/let [app-path (. app getAppPath)
           asset-filenames (->> (js->clj asset-filenames) (remove nil?))
           root-dir (or output-path (handler/open-dir-dialog))]
-         (when root-dir
-           (publish-export/create-export
-            html
-            app-path
-            repo-path
-            root-dir
-            {:asset-filenames asset-filenames
-             :log-error-fn logger/error
-             :notification-fn #(send-to-renderer :notification %)}))))
+    (when root-dir
+      (publish-export/create-export
+       html
+       app-path
+       repo-path
+       root-dir
+       {:asset-filenames asset-filenames
+        :log-error-fn logger/error
+        :notification-fn #(send-to-renderer :notification %)}))))
 
 (defn setup-app-manager!
   [^js win]

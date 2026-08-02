@@ -9,8 +9,8 @@
    * goog.date.UtcDateTime"
 
   (:require
-   [goog.date.DateTime]
-   [cljs-time.format :refer [unparse formatters]]))
+   [cljs-time.format :refer [unparse formatters]]
+   [goog.date.DateTime]))
 
 (extend-protocol IPrintWithWriter
   goog.date.UtcDateTime

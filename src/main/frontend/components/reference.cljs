@@ -6,16 +6,16 @@
             [frontend.context.i18n :refer [t]]
             [frontend.db :as db]
             [frontend.db-mixins :as db-mixins]
-            [frontend.db.utils :as db-utils]
             [frontend.db.model :as model-db]
+            [frontend.db.utils :as db-utils]
             [frontend.handler.block :as block-handler]
             [frontend.handler.page :as page-handler]
+            [frontend.modules.outliner.tree :as tree]
             [frontend.search :as search]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [rum.core :as rum]
-            [frontend.modules.outliner.tree :as tree]))
+            [rum.core :as rum]))
 
 (defn- frequencies-sort
   [references]
@@ -28,17 +28,17 @@
      (when ref-name
        (let [lc-reference (string/lower-case ref-name)]
          (ui/button
-           [:span
-            ref-name
-            (when ref-count [:sup " " ref-count])]
-           :on-click (fn [e]
-                       (swap! filters-atom #(if (nil? (get filters lc-reference))
-                                              (assoc % lc-reference (not (.-shiftKey e)))
-                                              (dissoc % lc-reference)))
-                       (page-handler/save-filter! page-name @filters-atom))
-           :small? true
-           :variant :outline
-           :key ref-name))))])
+          [:span
+           ref-name
+           (when ref-count [:sup " " ref-count])]
+          :on-click (fn [e]
+                      (swap! filters-atom #(if (nil? (get filters lc-reference))
+                                             (assoc % lc-reference (not (.-shiftKey e)))
+                                             (dissoc % lc-reference)))
+                      (page-handler/save-filter! page-name @filters-atom))
+          :small? true
+          :variant :outline
+          :key ref-name))))])
 
 (rum/defcs filter-dialog-inner < rum/reactive (rum/local "" ::filterSearch)
   [state filters-atom *references page-name]
@@ -181,10 +181,10 @@
 (rum/defc sub-page-properties-changed < rum/static
   [page-name v filters-atom]
   (rum/use-effect!
-    (fn []
-      (reset! filters-atom
-              (page-handler/get-filters (util/page-name-sanity-lc page-name))))
-    [page-name v filters-atom])
+   (fn []
+     (reset! filters-atom
+             (page-handler/get-filters (util/page-name-sanity-lc page-name))))
+   [page-name v filters-atom])
   [:<>])
 
 (rum/defcs references* < rum/reactive db-mixins/query

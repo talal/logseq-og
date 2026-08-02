@@ -53,8 +53,7 @@
         active-windows-pairs (filter #(.isFocused (first %)) windows)
         active-window-pair (first active-windows-pairs)
         path (second active-window-pair)]
-    path)
-  )
+    path))
 
 (defn close-window!
   [window]

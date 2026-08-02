@@ -16,12 +16,12 @@
             [frontend.util :as util]
             [goog.object :as gobj]
             [goog.string :as gstring]
+            [logseq.common.path :as path]
             [logseq.graph-parser.config :as gp-config]
             [logseq.graph-parser.util :as gp-util]
             [promesa.core :as p]
             [reitit.frontend.easy :as rfe]
-            [rum.core :as rum]
-            [logseq.common.path :as path]))
+            [rum.core :as rum]))
 
 (defn- get-path
   [state]
@@ -70,8 +70,7 @@
   [:div.flex-1.overflow-hidden
    [:h1.title
     (t :all-files)]
-   (files-all)
-   ])
+   (files-all)])
 
 ;; FIXME: misuse of rpath and fpath
 (rum/defcs file-inner < rum/reactive

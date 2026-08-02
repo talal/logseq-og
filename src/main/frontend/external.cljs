@@ -1,7 +1,7 @@
 (ns frontend.external
   "Handles importing from external services"
-  (:require [frontend.external.roam :refer [->Roam]]
-            [frontend.external.protocol :as protocol]))
+  (:require [frontend.external.protocol :as protocol]
+            [frontend.external.roam :refer [->Roam]]))
 
 (defonce roam-record (->Roam))
 

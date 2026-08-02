@@ -13,7 +13,6 @@
             [goog.dom :as gdom]
             [rum.core :as rum]))
 
-
 (defn- blur-if-compositing
   "Call blur on the textarea if it is in composition mode, let the IME commit the composing text"
   []

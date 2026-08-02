@@ -10,8 +10,8 @@
             [frontend.util :as util]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
-            [promesa.core :as p]
-            [logseq.common.path :as path]))
+            [logseq.common.path :as path]
+            [promesa.core :as p]))
 
 (defn- contents-matched?
   [disk-content db-content]

@@ -1,7 +1,6 @@
 (ns logseq.tasks.file-sync-actions
   (:require [clojure.test.check.generators :as gen]))
 
-
 (defmulti gen-action* (fn [& args] (first args)))
 
 (defmethod gen-action* :create-file
@@ -14,8 +13,8 @@
 (defmethod gen-action* :move-file
   [_ origin-page-index & [moved?]]
   (let [page-name (if moved?
-                      (format "pages/test.page-move-%d.md" origin-page-index)
-                      (format "pages/test.page-%d.md" origin-page-index))]
+                    (format "pages/test.page-move-%d.md" origin-page-index)
+                    (format "pages/test.page-%d.md" origin-page-index))]
     (gen/return
      {:action :move-file
       :args {:file page-name
@@ -39,7 +38,6 @@
     (gen/return
      {:action :delete-file
       :args {:file page-name}})))
-
 
 (defmacro gen-actions-plan
   "state monad
@@ -73,8 +71,8 @@
 (defn- assign-page-index-op
   [state]
   (let [max-index (apply max (all-indexes state))
-          next-index (inc max-index)]
-      [next-index (add-index state next-index false)]))
+        next-index (inc max-index)]
+    [next-index (add-index state next-index false)]))
 
 (defn- get-rand-available-index-op
   [state]
@@ -115,7 +113,6 @@
     (println x)
     [nil state]))
 
-
 (defn rand-action-op
   []
   (let [action (gen/generate
@@ -142,12 +139,11 @@
       :delete-file
       (gen-actions-plan
        [id+moved? get-rand-available-index-op
-        _ (when-op id+moved? (apply action-op action id+moved? ))]
+        _ (when-op id+moved? (apply action-op action id+moved?))]
        nil))))
 
 (def empty-actions-plan {:page-index #{}
                          :generated-action []})
-
 
 (defmacro generate-rand-actions
   [max-n & {:keys [pre-create-files-n] :or {pre-create-files-n 2}}]

@@ -6,11 +6,11 @@
             [frontend.handler.export.common :as common :refer
              [*state* indent newline* raw-text simple-ast-malli-schema
               simple-asts->string space]]
-            [logseq.graph-parser.schema.mldoc :as mldoc-schema]
             [frontend.state :as state]
             [frontend.util :as util :refer [concatv mapcatv removev]]
             [goog.dom :as gdom]
             [logseq.graph-parser.mldoc :as gp-mldoc]
+            [logseq.graph-parser.schema.mldoc :as mldoc-schema]
             [malli.core :as m]
             [promesa.core :as p]))
 
@@ -501,7 +501,6 @@
             simple-asts (mapcatv block-ast->simple-ast ast***)]
         (simple-asts->string simple-asts)))))
 
-
 (defn export-blocks-as-markdown
   "options:
   :indent-style \"dashes\" | \"spaces\" | \"no-indent\"
@@ -511,15 +510,15 @@
   {:pre [(or (coll? root-block-uuids-or-page-name)
              (string? root-block-uuids-or-page-name))]}
   (util/profile
-      :export-blocks-as-markdown
-      (let [content
-            (if (string? root-block-uuids-or-page-name)
+   :export-blocks-as-markdown
+   (let [content
+         (if (string? root-block-uuids-or-page-name)
               ;; page
-              (common/get-page-content root-block-uuids-or-page-name)
-              (common/root-block-uuids->content repo root-block-uuids-or-page-name))
-            first-block (db/entity [:block/uuid (first root-block-uuids-or-page-name)])
-            format (or (:block/format first-block) (state/get-preferred-format))]
-        (export-helper content format options))))
+           (common/get-page-content root-block-uuids-or-page-name)
+           (common/root-block-uuids->content repo root-block-uuids-or-page-name))
+         first-block (db/entity [:block/uuid (first root-block-uuids-or-page-name)])
+         format (or (:block/format first-block) (state/get-preferred-format))]
+     (export-helper content format options))))
 
 (defn export-files-as-markdown
   "options see also `export-blocks-as-markdown`"

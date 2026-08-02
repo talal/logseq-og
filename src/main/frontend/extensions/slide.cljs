@@ -1,16 +1,16 @@
 (ns frontend.extensions.slide
-  (:require [rum.core :as rum]
-            [cljs-bean.core :as bean]
-            [frontend.loader :as loader]
-            [frontend.ui :as ui]
-            [frontend.context.i18n :refer [t]]
-            [frontend.config :as config]
-            [frontend.components.block :as block]
+  (:require [cljs-bean.core :as bean]
             [clojure.string :as string]
-            [frontend.db-mixins :as db-mixins]
+            [frontend.components.block :as block]
+            [frontend.config :as config]
+            [frontend.context.i18n :refer [t]]
             [frontend.db :as db]
+            [frontend.db-mixins :as db-mixins]
+            [frontend.loader :as loader]
             [frontend.modules.outliner.tree :as outliner-tree]
-            [frontend.state :as state]))
+            [frontend.state :as state]
+            [frontend.ui :as ui]
+            [rum.core :as rum]))
 
 (defn loaded? []
   js/window.Reveal)

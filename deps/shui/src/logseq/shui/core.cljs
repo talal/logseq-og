@@ -1,10 +1,10 @@
 (ns logseq.shui.core
   (:require
-    [logseq.shui.context :as shui.context]
-    [logseq.shui.icon.v2 :as shui.icon.v2]
-    [logseq.shui.list-item.v1 :as shui.list-item.v1]
-    [logseq.shui.table.v2 :as shui.table.v2]
-    [logseq.shui.shortcut.v1 :as shui.shortcut.v1]))
+   [logseq.shui.context :as shui.context]
+   [logseq.shui.icon.v2 :as shui.icon.v2]
+   [logseq.shui.list-item.v1 :as shui.list-item.v1]
+   [logseq.shui.shortcut.v1 :as shui.shortcut.v1]
+   [logseq.shui.table.v2 :as shui.table.v2]))
 
 ;; table component
 (def table shui.table.v2/root)

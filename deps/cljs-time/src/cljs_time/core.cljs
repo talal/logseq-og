@@ -80,8 +80,8 @@ true
    [cljs-time.internal.core :as internal :refer [leap-year? format
                                                  get-week-year]]
    [clojure.string :as string]
-   goog.date.Interval
-   goog.date)
+   goog.date
+   goog.date.Interval)
   (:import
    goog.date.Date
    goog.date.DateTime
@@ -213,7 +213,7 @@ expected."}
   (week-number-of-year [this]
     (goog.date/getWeekNumber
      (.getYear this) (.getMonth this) (.getDate this)))
-  (week-year [this] 
+  (week-year [this]
     (get-week-year (.getYear this) (.getMonth this) (.getDate this)))
 
   goog.date.DateTime
@@ -239,7 +239,7 @@ expected."}
   (week-number-of-year [this]
     (goog.date/getWeekNumber
      (.getYear this) (.getMonth this) (.getDate this)))
-  (week-year [this] 
+  (week-year [this]
     (get-week-year (.getYear this) (.getMonth this) (.getDate this)))
 
   goog.date.Date
@@ -265,7 +265,7 @@ expected."}
   (week-number-of-year [this]
     (goog.date/getWeekNumber
      (.getYear this) (.getMonth this) (.getDate this)))
-  (week-year [this] 
+  (week-year [this]
     (get-week-year (.getYear this) (.getMonth this) (.getDate this))))
 
 (def utc #js {:id "UTC" :std_offset 0 :names ["UTC"] :transitions []})
@@ -387,20 +387,20 @@ Specify the year, month, and day."
   "Returns a timezone map for the given offset, specified either in hours or
   hours and minutes."
   ([hours]
-     (time-zone-for-offset hours nil))
+   (time-zone-for-offset hours nil))
   ([hours minutes]
-     (let [sign (if (neg? hours) :- :+)
-           fmt (str "UTC%s%02d" (when minutes ":%02d"))
-           hours (if (neg? hours) (* -1 hours) hours)
-           tz-name (if minutes
-                     (format fmt (name sign) hours minutes)
-                     (format fmt (name sign) hours))]
-       (with-meta
-         {:id tz-name
-          :offset [sign hours (or minutes 0) 0]
-          :rules "-"
-          :names [tz-name]}
-         {:type ::time-zone}))))
+   (let [sign (if (neg? hours) :- :+)
+         fmt (str "UTC%s%02d" (when minutes ":%02d"))
+         hours (if (neg? hours) (* -1 hours) hours)
+         tz-name (if minutes
+                   (format fmt (name sign) hours minutes)
+                   (format fmt (name sign) hours))]
+     (with-meta
+       {:id tz-name
+        :offset [sign hours (or minutes 0) 0]
+        :rules "-"
+        :names [tz-name]}
+       {:type ::time-zone}))))
 
 (defn default-time-zone
   "Returns the default timezone map for the current environment."
@@ -552,16 +552,16 @@ Specify the year, month, and day."
 (defn earliest
   "Returns the earliest of the supplied DateTimes"
   ([dt1 dt2]
-     (if (before? dt1 dt2) dt1 dt2))
+   (if (before? dt1 dt2) dt1 dt2))
   ([dts]
-     (reduce earliest dts)))
+   (reduce earliest dts)))
 
 (defn latest
   "Returns the latest of the supplied DateTimes"
   ([dt1 dt2]
-     (if (after? dt1 dt2) dt1 dt2))
+   (if (after? dt1 dt2) dt1 dt2))
   ([dts]
-     (reduce latest dts)))
+   (reduce latest dts)))
 
 (defn start
   "Returns the start DateTime of an Interval."
@@ -687,12 +687,12 @@ Specify the year, month, and day."
   With 4 arguments: Returns true if the range specified by start-a and end-a
   overlaps with the range specified by start-b and end-b."
   ([{start-a :start end-a :end} {start-b :start end-b :end}]
-     (and (not (or (= start-a end-b) (= end-a start-b)))
-          (overlaps? start-a end-a start-b end-b)))
+   (and (not (or (= start-a end-b) (= end-a start-b)))
+        (overlaps? start-a end-a start-b end-b)))
   ([start-a end-a start-b end-b]
-     (or (and (before? start-b end-a) (after? end-b start-a))
-         (and (after? end-b start-a) (before? start-b end-a))
-         (or (= start-a end-b) (= start-b end-a)))))
+   (or (and (before? start-b end-a) (after? end-b start-a))
+       (and (after? end-b start-a) (before? start-b end-a))
+       (or (= start-a end-b) (= start-b end-a)))))
 
 (defn overlap
   "Returns an Interval representing the overlap of the specified Intervals.
@@ -716,13 +716,13 @@ Specify the year, month, and day."
   (or (= start-a end-b) (= end-a start-b)))
 
 (defn date? [x]
- (satisfies? DateTimeProtocol x))
+  (satisfies? DateTimeProtocol x))
 
 (defn interval? [x]
- (instance? Interval x))
+  (instance? Interval x))
 
 (defn period? [x]
- (instance? Period x))
+  (instance? Period x))
 
 (defn period-type? [type x]
   (and (period? x) (contains? x type)))
@@ -783,7 +783,6 @@ Specify the year, month, and day."
    (first-day-of-the-month- dt))
   ([year month]
    (first-day-of-the-month- (date-time year month))))
-
 
 (defprotocol IToPeriod
   (->period [obj]))

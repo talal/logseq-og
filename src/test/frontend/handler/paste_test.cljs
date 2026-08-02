@@ -1,16 +1,16 @@
 (ns frontend.handler.paste-test
-  (:require [cljs.test :refer [deftest are is testing]]
-            [frontend.test.helper :as test-helper :include-macros true :refer [deftest-async]]
-            [goog.object :as gobj]
-            ["/frontend/utils" :as utils]
-            [frontend.state :as state]
+  (:require ["/frontend/utils" :as utils]
+            [cljs.test :refer [deftest are is testing]]
             [frontend.commands :as commands]
-            [frontend.util :as util]
-            [frontend.util.cursor :as cursor]
-            [promesa.core :as p]
             [frontend.extensions.html-parser :as html-parser]
             [frontend.handler.editor :as editor-handler]
-            [frontend.handler.paste :as paste-handler]))
+            [frontend.handler.paste :as paste-handler]
+            [frontend.state :as state]
+            [frontend.test.helper :as test-helper :include-macros true :refer [deftest-async]]
+            [frontend.util :as util]
+            [frontend.util.cursor :as cursor]
+            [goog.object :as gobj]
+            [promesa.core :as p]))
 
 (deftest try-parse-as-json-result-parse-test
   (are [x y] (let [result (#'paste-handler/try-parse-as-json x)
@@ -89,8 +89,8 @@
          commands/delete-selection! (constantly nil)
          editor-handler/insert (fn [text _] (p/resolved text))]
         (p/let [result (paste-handler/editor-on-paste-raw!)]
-               (is (= expected-paste result))
-               (reset))))))
+          (is (= expected-paste result))
+          (reset))))))
 
 (deftest-async editor-on-paste-raw-with-multi-line
   (let [clipboard "a\n\na"
@@ -102,8 +102,8 @@
        commands/delete-selection! (constantly nil)
        editor-handler/insert (fn [text _] (p/resolved text))]
       (p/let [result (paste-handler/editor-on-paste-raw!)]
-             (is (= expected-paste result))
-             (reset)))))
+        (is (= expected-paste result))
+        (reset)))))
 
 (deftest-async editor-on-paste-with-link
   (testing "Formatted paste for special link should paste macro wrapped link"
@@ -228,8 +228,8 @@
        html-parser/convert (constantly nil)]
       (p/let [result ((paste-handler/editor-on-paste! nil)
                       #js {:clipboardData #js {:getData (constantly clipboard)}})]
-             (is (= expected-paste result))
-             (reset)))))
+        (is (= expected-paste result))
+        (reset)))))
 
 (deftest-async editor-on-paste-with-file-pasting
   (let [clipboard "<meta charset='utf-8'><img src=\"https://user-images.githubusercontent.com/38045018/228234385-cbbcc6b2-1168-40da-ab3e-1e506edd5fce.png\"/>"
@@ -244,7 +244,7 @@
        util/stop (constantly nil)
        state/get-edit-block (constantly {})]
       (p/let [_ ((paste-handler/editor-on-paste! :fake-id)
-                      #js {:clipboardData #js {:getData (constantly clipboard)
-                                               :files files}})]
-             (is (= files (js->clj @pasted-file)))
-             (reset)))))
+                 #js {:clipboardData #js {:getData (constantly clipboard)
+                                          :files files}})]
+        (is (= files (js->clj @pasted-file)))
+        (reset)))))

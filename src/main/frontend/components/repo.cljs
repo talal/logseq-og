@@ -1,22 +1,22 @@
 (ns frontend.components.repo
-  (:require [frontend.components.widgets :as widgets]
+  (:require [cljs.core.async :as async :refer [go <!]]
+            [electron.ipc :as ipc]
+            [frontend.components.widgets :as widgets]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.db :as db]
+            [frontend.handler.file-sync :as file-sync]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.web.nfs :as nfs-handler]
+            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [rum.core :as rum]
-            [frontend.mobile.util :as mobile-util]
             [frontend.util.text :as text-util]
-            [promesa.core :as p]
-            [electron.ipc :as ipc]
             [goog.object :as gobj]
-            [cljs.core.async :as async :refer [go <!]]
-            [frontend.handler.file-sync :as file-sync]
-            [reitit.frontend.easy :as rfe]))
+            [promesa.core :as p]
+            [reitit.frontend.easy :as rfe]
+            [rum.core :as rum]))
 
 (rum/defc normalized-graph-label
   [{:keys [url remote? GraphName GraphUUID] :as graph} on-click]
@@ -106,8 +106,8 @@
                     (mobile-util/native-platform?))
             [:div.mr-8
              (ui/button
-               (t :open-a-directory)
-               :on-click #(state/pub-event! [:graph/setup-a-repo]))])]]
+              (t :open-a-directory)
+              :on-click #(state/pub-event! [:graph/setup-a-repo]))])]]
 
         (when (and (file-sync/enable-sync?) login?)
           [:div

@@ -1,9 +1,9 @@
 (ns frontend.handler.common.developer
   "Common fns for developer related functionality"
-  (:require [frontend.db :as db]
-            [cljs.pprint :as pprint]
-            [frontend.state :as state]
+  (:require [cljs.pprint :as pprint]
+            [frontend.db :as db]
             [frontend.handler.notification :as notification]
+            [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util.page :as page-util]
             [logseq.graph-parser.mldoc :as gp-mldoc]))

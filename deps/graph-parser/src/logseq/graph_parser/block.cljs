@@ -71,8 +71,8 @@
                     (= "Macro" (first block)))
                (let [{:keys [name arguments]} (second block)
                      argument (string/join ", " arguments)]
-                   (when (= name "embed")
-                     (text/page-ref-un-brackets! argument)))
+                 (when (= name "embed")
+                   (text/page-ref-un-brackets! argument)))
 
                (and (vector? block)
                     (= "Tag" (first block)))
@@ -222,7 +222,7 @@
                                            v' (text/parse-property k v mldoc-ast user-config)]
                                        [k' v' mldoc-ast v])
                                      (do (swap! *invalid-properties conj k)
-                                       nil)))))
+                                         nil)))))
                           (remove #(nil? (second %))))
           page-refs (get-page-ref-names-from-properties properties user-config)
           block-refs (extract-block-refs properties)
@@ -276,10 +276,10 @@
   (when original-page-name
     (let [page-name (gp-util/page-name-sanity-lc original-page-name)
           day (date-time-util/journal-title->int page-name (date-time-util/safe-journal-title-formatters date-formatter))]
-     (if day
-       (let [original-page-name (date-time-util/int->journal-title day date-formatter)]
-         [original-page-name (gp-util/page-name-sanity-lc original-page-name) day])
-       [original-page-name page-name day]))))
+      (if day
+        (let [original-page-name (date-time-util/int->journal-title day date-formatter)]
+          [original-page-name (gp-util/page-name-sanity-lc original-page-name) day])
+        [original-page-name page-name day]))))
 
 (def convert-page-if-journal (memoize convert-page-if-journal-impl))
 
@@ -616,13 +616,13 @@
       (update :block/properties-text-values dissoc :id)
       (update :block/properties-order #(vec (remove #{:id} %)))
       (update :block/content (fn [c]
-                         (let [replace-str (re-pattern
-                                            (str
-                                             "\n*\\s*"
-                                             (if (= :markdown (:block/format block))
-                                               (str "id" gp-property/colons " " (:block/uuid block))
-                                               (str (gp-property/colons-org "id") " " (:block/uuid block)))))]
-                           (string/replace-first c replace-str ""))))))
+                               (let [replace-str (re-pattern
+                                                  (str
+                                                   "\n*\\s*"
+                                                   (if (= :markdown (:block/format block))
+                                                     (str "id" gp-property/colons " " (:block/uuid block))
+                                                     (str (gp-property/colons-org "id") " " (:block/uuid block)))))]
+                                 (string/replace-first c replace-str ""))))))
 
 (defn block-exists-in-another-page?
   "For sanity check only.
@@ -723,9 +723,9 @@
                            (> level-spaces parent-spaces)         ; child
                            (let [parent (if uuid [:block/uuid uuid] (:page/id last-parent))
                                  block (cond->
-                                         (assoc block
-                                                :block/parent parent
-                                                :block/left parent)
+                                        (assoc block
+                                               :block/parent parent
+                                               :block/left parent)
                                          ;; fix block levels with wrong order
                                          ;; For example:
                                          ;;   - a
@@ -755,11 +755,11 @@
                                                [:block/uuid block-id]
                                                page-id)
                                    block (cond->
-                                           (assoc block
-                                                  :block/parent parent-id
-                                                  :block/left [:block/uuid (:block/uuid left)]
-                                                  :block/level (:block/level left)
-                                                  :block/level-spaces (:block/level-spaces left)))
+                                          (assoc block
+                                                 :block/parent parent-id
+                                                 :block/left [:block/uuid (:block/uuid left)]
+                                                 :block/level (:block/level left)
+                                                 :block/level-spaces (:block/level-spaces left)))
 
                                    parents' (->> (concat f [block]) vec)
                                    result' (conj result block)]

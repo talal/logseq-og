@@ -22,11 +22,11 @@
        (if (or extension? font? (not jsTablerIcons))
          [:span.ui__icon (merge {:class
                                  (gstring/format
-                                   (str "%s-" name
-                                     (when (:class opts)
-                                       (str " " (string/trim (:class opts)))))
-                                   (if extension? "tie tie" "ti ti"))}
-                           (dissoc opts :class :extension? :font?))]
+                                  (str "%s-" name
+                                       (when (:class opts)
+                                         (str " " (string/trim (:class opts)))))
+                                  (if extension? "tie tie" "ti ti"))}
+                                (dissoc opts :class :extension? :font?))]
 
          ;; tabler svg react
          (when-let [klass (gobj/get js/tablerIcons (str "Icon" (csk/->PascalCase name)))]

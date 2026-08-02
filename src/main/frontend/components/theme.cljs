@@ -1,32 +1,32 @@
 (ns frontend.components.theme
   (:require [electron.ipc :as ipc]
-            [frontend.extensions.pdf.core :as pdf]
+            [frontend.components.settings :as settings]
             [frontend.config :as config]
+            [frontend.context.i18n :refer [t]]
+            [frontend.extensions.pdf.core :as pdf]
             [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.plugin-config :as plugin-config-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
+            [frontend.rum :refer [use-mounted]]
+            [frontend.state :as state]
+            [frontend.storage :as storage]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [frontend.state :as state]
-            [frontend.components.settings :as settings]
-            [frontend.rum :refer [use-mounted]]
-            [frontend.storage :as storage]
-            [rum.core :as rum]
-            [frontend.context.i18n :refer [t]]))
+            [rum.core :as rum]))
 
 (rum/defc scrollbar-measure
   []
   (let [*el (rum/use-ref nil)]
     (rum/use-effect!
-      (fn []
-        (when-let [el (rum/deref *el)]
-          (let [w (- (.-offsetWidth el) (.-clientWidth el))
-                c "custom-scrollbar"
-                l (.-classList js/document.documentElement)]
-            (if (or (not util/mac?) (> w 2))
-              (.add l c) (.remove l c)))))
-      [])
+     (fn []
+       (when-let [el (rum/deref *el)]
+         (let [w (- (.-offsetWidth el) (.-clientWidth el))
+               c "custom-scrollbar"
+               l (.-classList js/document.documentElement)]
+           (if (or (not util/mac?) (> w 2))
+             (.add l c) (.remove l c)))))
+     [])
     [:div.fixed.w-16.h-16.overflow-scroll.opacity-0
      {:ref   *el
       :class "top-1/2 -left-1/2 z-[-999]"}]))
@@ -52,10 +52,10 @@
 
     ;; theme color
     (rum/use-effect!
-      #(some-> js/document.documentElement
-         (.setAttribute "data-color"
-           (or accent-color "logseq")))
-      [accent-color])
+     #(some-> js/document.documentElement
+              (.setAttribute "data-color"
+                             (or accent-color "logseq")))
+     [accent-color])
 
     (rum/use-effect!
      #(let [doc js/document.documentElement]

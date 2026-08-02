@@ -48,8 +48,7 @@
                     (str content "\n"))
 
                   :else
-                  (let [
-                        ;; first block is a heading, Markdown users prefer to remove the `-` before the content
+                  (let [                        ;; first block is a heading, Markdown users prefer to remove the `-` before the content
                         markdown-top-heading? (and markdown?
                                                    (= parent page left)
                                                    (number? heading))
@@ -89,7 +88,6 @@
                   content)]
     content))
 
-
 (defn- tree->file-content-aux
   [tree {:keys [init-level] :as opts}]
   (let [block-contents (transient [])]
@@ -100,15 +98,14 @@
               content (if page? nil (transform-content f level opts))
               new-content
               (if-let [children (seq (:block/children f))]
-                     (cons content (tree->file-content-aux children {:init-level (inc level)}))
-                     [content])]
+                (cons content (tree->file-content-aux children {:init-level (inc level)}))
+                [content])]
           (conj! block-contents new-content)
           (recur r level))))))
 
 (defn tree->file-content
   [tree opts]
   (->> (tree->file-content-aux tree opts) (string/join "\n")))
-
 
 (def init-level 1)
 

@@ -1,7 +1,7 @@
 (ns electron.context-menu
-  (:require [electron.utils :as utils]
-            ["electron" :refer [Menu MenuItem shell nativeImage clipboard] :as electron]
-            ["electron-dl" :refer [download]]))
+  (:require ["electron" :refer [Menu MenuItem shell nativeImage clipboard] :as electron]
+            ["electron-dl" :refer [download]]
+            [electron.utils :as utils]))
 
 ;; context menu is registered in window/setup-window-listeners!
 (defn setup-context-menu!

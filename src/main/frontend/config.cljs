@@ -5,12 +5,12 @@
             [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
+            [goog.crypt :as crypt]
+            [goog.crypt.Md5]
             [logseq.common.path :as path]
             [logseq.graph-parser.config :as gp-config]
             [logseq.graph-parser.util :as gp-util]
-            [shadow.resource :as rc]
-            [goog.crypt.Md5]
-            [goog.crypt :as crypt]))
+            [shadow.resource :as rc]))
 
 (goog-define DEV-RELEASE false)
 (defonce dev-release? DEV-RELEASE)
@@ -45,8 +45,7 @@
       (def USER-POOL-ID "us-east-1_dtagLnju8")
       (def IDENTITY-POOL-ID "us-east-1:d6d3b034-1631-402b-b838-b44513e93ee0")
       (def OAUTH-DOMAIN "logseq-prod.auth.us-east-1.amazoncognito.com")
-      (def CONNECTIVITY-TESTING-S3-URL "https://logseq-connectivity-testing-prod.s3.us-east-1.amazonaws.com/logseq-connectivity-testing")
-      )
+      (def CONNECTIVITY-TESTING-S3-URL "https://logseq-connectivity-testing-prod.s3.us-east-1.amazonaws.com/logseq-connectivity-testing"))
 
   (do (def FILE-SYNC-PROD? false)
       (def LOGIN-URL
@@ -73,9 +72,9 @@
 
 ;; User level configuration for whether plugins are enabled
 (defonce lsp-enabled?
-         (and (util/electron?)
-              (not (false? feature-plugin-system-on?))
-              (state/lsp-enabled?-or-theme)))
+  (and (util/electron?)
+       (not (false? feature-plugin-system-on?))
+       (state/lsp-enabled?-or-theme)))
 
 (defn plugin-config-enabled?
   []
@@ -141,17 +140,17 @@
                      (util/safe-lower-case)
                      (keyword))]
      (boolean
-       (some
-         (fn [s]
-           (contains? s input))
-         formats)))))
+      (some
+       (fn [s]
+         (contains? s input))
+       formats)))))
 
 (defn ext-of-video?
   ([s] (ext-of-video? s true))
   ([s html5?]
    (when-let [s (and (string? s) (util/get-file-ext s))]
      (let [video-formats (cond-> video-formats
-                                 html5? (disj :mkv))]
+                           html5? (disj :mkv))]
        (extname-of-supported? s [video-formats])))))
 
 (defn ext-of-audio?
@@ -159,7 +158,7 @@
   ([s html5?]
    (when-let [s (and (string? s) (util/get-file-ext s))]
      (let [audio-formats (cond-> audio-formats
-                                 html5? (disj :wma :ogg))]
+                           html5? (disj :wma :ogg))]
        (extname-of-supported? s [audio-formats])))))
 
 (defn ext-of-image?
@@ -472,8 +471,8 @@
                                  protocol (if (string/starts-with? graph-root "file:") "" protocol)
                                  full-path (path/path-join protocol graph-root "assets")]
                              (str (cond-> full-path
-                                          (mobile-util/native-platform?)
-                                          (mobile-util/convert-file-src))
+                                    (mobile-util/native-platform?)
+                                    (mobile-util/convert-file-src))
                                   "/")))]
       (string/replace source #"\.\./assets/" assets-link-fn))))
 

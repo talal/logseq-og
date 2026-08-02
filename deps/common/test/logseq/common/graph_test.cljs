@@ -1,8 +1,8 @@
 (ns logseq.common.graph-test
-  (:require [logseq.common.graph :as common-graph]
+  (:require ["fs" :as fs]
+            ["path" :as node-path]
             [cljs.test :refer [deftest is use-fixtures async]]
-            ["fs" :as fs]
-            ["path" :as node-path]))
+            [logseq.common.graph :as common-graph]))
 
 (use-fixtures
   :each

@@ -1,14 +1,14 @@
 (ns cljs-time.predicates-test
   (:refer-clojure :exclude [extend second])
   (:require
-    [cljs.test :refer-macros [deftest is]]
-    [cljs-time.core :refer [date-time]]
-    [cljs-time.predicates :refer
-     [monday? tuesday? wednesday? thursday? friday? saturday? sunday? weekend?
-      weekday? january? february? march? april? may? june? july? august?
-      september? october? november? december?
-      last-day-of-month? first-day-of-month?
-      same-date?]]))
+   [cljs-time.core :refer [date-time]]
+   [cljs-time.predicates :refer
+    [monday? tuesday? wednesday? thursday? friday? saturday? sunday? weekend?
+     weekday? january? february? march? april? may? june? july? august?
+     september? october? november? december?
+     last-day-of-month? first-day-of-month?
+     same-date?]]
+   [cljs.test :refer-macros [deftest is]]))
 
 (deftest test-days-of-the-week
   (is (= true (monday? (date-time 2012 9 10))))

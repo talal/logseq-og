@@ -1,8 +1,8 @@
 (ns frontend.loader
   "Provides fns related to loading js assets"
-  (:require [goog.net.jsloader :as jsloader]
+  (:require [cljs-bean.core :as bean]
             [goog.html.legacyconversions :as conv]
-            [cljs-bean.core :as bean]))
+            [goog.net.jsloader :as jsloader]))
 
 (defn load
   ([url ok-handler] (load url ok-handler nil))

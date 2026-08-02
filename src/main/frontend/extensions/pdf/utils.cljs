@@ -1,11 +1,11 @@
 (ns frontend.extensions.pdf.utils
-  (:require [promesa.core :as p]
+  (:require ["/frontend/extensions/pdf/utils" :as js-utils]
             [cljs-bean.core :as bean]
-            [frontend.util :as util]
-            ["/frontend/extensions/pdf/utils" :as js-utils]
+            [clojure.string :as string]
             [datascript.core :as d]
+            [frontend.util :as util]
             [logseq.publishing.db :as publish-db]
-            [clojure.string :as string]))
+            [promesa.core :as p]))
 
 (defonce MAX-SCALE 5.0)
 (defonce MIN-SCALE 0.25)

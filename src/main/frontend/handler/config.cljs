@@ -1,10 +1,10 @@
 (ns frontend.handler.config
   "Fns for setting repo config"
-  (:require [frontend.state :as state]
+  (:require [borkdude.rewrite-edn :as rewrite]
+            [frontend.db :as db]
             [frontend.handler.file :as file-handler]
             [frontend.handler.repo-config :as repo-config-handler]
-            [frontend.db :as db]
-            [borkdude.rewrite-edn :as rewrite]))
+            [frontend.state :as state]))
 
 (defn parse-repo-config
   "Parse repo configuration file content"
@@ -19,8 +19,8 @@
       (let [result (parse-repo-config content)
             ks (if (vector? k) k [k])
             v (cond->> v
-                       (map? v)
-                       (reduce-kv (fn [a k v] (rewrite/assoc a k v)) (rewrite/parse-string "{}")))
+                (map? v)
+                (reduce-kv (fn [a k v] (rewrite/assoc a k v)) (rewrite/parse-string "{}")))
             new-result (rewrite/assoc-in result ks v)
             new-content (str new-result)]
         (file-handler/set-file-content! repo path new-content) nil))))

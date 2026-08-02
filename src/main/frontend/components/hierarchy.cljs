@@ -4,11 +4,11 @@
             [frontend.db :as db]
             [frontend.db.model :as db-model]
             [frontend.state :as state]
-            [logseq.graph-parser.text :as text]
             [frontend.ui :as ui]
+            [frontend.util :as util]
+            [logseq.graph-parser.text :as text]
             [medley.core :as medley]
-            [rum.core :as rum]
-            [frontend.util :as util]))
+            [rum.core :as rum]))
 
 (defn- get-relation
   "Get all parent pages along the namespace hierarchy path.

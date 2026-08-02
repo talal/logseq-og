@@ -1,9 +1,9 @@
 (ns frontend.handler.query.builder
   "DSL query builder handler"
   (:require [clojure.walk :as walk]
-            [logseq.graph-parser.util.page-ref :as page-ref]
+            [frontend.db.query-dsl :as query-dsl]
             [lambdaisland.glogi :as log]
-            [frontend.db.query-dsl :as query-dsl]))
+            [logseq.graph-parser.util.page-ref :as page-ref]))
 
 ;; TODO: make it extensible for Datalog/SPARQL etc.
 

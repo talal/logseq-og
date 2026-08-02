@@ -3,9 +3,9 @@
   localStorage values are edn"
   (:refer-clojure :exclude [get set remove])
   (:require [cljs.reader :as reader]
+            [cljs.spec.alpha :as s]
             [datascript.transit :as dt]
             [frontend.spec.storage :as storage-spec]
-            [cljs.spec.alpha :as s]
             [frontend.util :as util]))
 
 ;; TODO: refactor: separate side effects

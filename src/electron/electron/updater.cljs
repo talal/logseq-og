@@ -1,16 +1,16 @@
 (ns electron.updater
-  (:require [electron.utils :refer [mac? win32? prod? open fetch *win]]
-            [electron.logger :as logger]
-            [frontend.version :refer [version]]
-            [clojure.string :as string]
-            [promesa.core :as p]
-            [cljs-bean.core :as bean]
-            [electron.configs :as cfgs]
-            ["semver" :as semver]
-            ["os" :as os]
+  (:require ["electron" :refer [ipcMain app autoUpdater]]
             ["fs" :as fs]
+            ["os" :as os]
             ["path" :as node-path]
-            ["electron" :refer [ipcMain app autoUpdater]]))
+            ["semver" :as semver]
+            [cljs-bean.core :as bean]
+            [clojure.string :as string]
+            [electron.configs :as cfgs]
+            [electron.logger :as logger]
+            [electron.utils :refer [mac? win32? prod? open fetch *win]]
+            [frontend.version :refer [version]]
+            [promesa.core :as p]))
 
 (def *update-ready-to-install (atom nil))
 (def *update-pending (atom nil))

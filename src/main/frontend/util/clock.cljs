@@ -1,12 +1,12 @@
 (ns frontend.util.clock
   "Provides clock related functionality used by tasks"
-  (:require [frontend.state :as state]
-            [frontend.util.drawer :as drawer]
-            [frontend.util :as util]
-            [cljs-time.core :as t]
+  (:require [cljs-time.core :as t]
             [cljs-time.format :as tf]
+            [clojure.string :as string]
             [frontend.date :as date]
-            [clojure.string :as string]))
+            [frontend.state :as state]
+            [frontend.util :as util]
+            [frontend.util.drawer :as drawer]))
 
 (defn minutes->hours:minutes
   [minutes]

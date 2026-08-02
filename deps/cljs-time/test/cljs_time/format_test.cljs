@@ -1,17 +1,17 @@
 (ns cljs-time.format-test
   (:require
-    [cljs.test :refer-macros [deftest is are]]
-    [cljs-time.coerce :refer [from-date to-date]]
-    [cljs-time.core :as time
-     :refer [date-time interval utc within?
-             local-date local-date-time period]]
-    [cljs-time.extend]
-    [cljs-time.format :as format
-     :refer [formatter formatters instant->map parse unparse
-             formatter-local
-             parse-local parse-local-date
-             unparse-local unparse-local-date
-             with-default-year]]))
+   [cljs-time.coerce :refer [from-date to-date]]
+   [cljs-time.core :as time
+    :refer [date-time interval utc within?
+            local-date local-date-time period]]
+   [cljs-time.extend]
+   [cljs-time.format :as format
+    :refer [formatter formatters instant->map parse unparse
+            formatter-local
+            parse-local parse-local-date
+            unparse-local unparse-local-date
+            with-default-year]]
+   [cljs.test :refer-macros [deftest is are]]))
 
 (defn utc-int-vec [d]
   [(time/year d) (time/month d) (time/day d)
@@ -164,37 +164,36 @@
 (deftest within?-test
 
   (is (within?
-        (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
-                  (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
-        (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)))
+       (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
+                 (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
+       (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)))
 
   (is (within?
-        (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
-                  (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
-        (goog.date.UtcDateTime. 2013 0 11 0 0 0 0)))
+       (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
+                 (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
+       (goog.date.UtcDateTime. 2013 0 11 0 0 0 0)))
 
   (is (within?
-        (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
-                  (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
-        (time/minus (goog.date.UtcDateTime. 2013 1 1 0 0 0 0)
-                    (time/millis 1))))
+       (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
+                 (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
+       (time/minus (goog.date.UtcDateTime. 2013 1 1 0 0 0 0)
+                   (time/millis 1))))
 
   (is (not
-        (within?
-          (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
-                    (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
-          (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))))
+       (within?
+        (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
+                  (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))
+        (goog.date.UtcDateTime. 2013 1 1 0 0 0 0))))
 
   (is (not (within?
-             (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
-                       (goog.date.UtcDateTime. 2013 2 1 0 0 0 0))
-             (goog.date.UtcDateTime. 2013 2 1 0 0 0 1))))
+            (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
+                      (goog.date.UtcDateTime. 2013 2 1 0 0 0 0))
+            (goog.date.UtcDateTime. 2013 2 1 0 0 0 1))))
 
   (is (not (within?
-             (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
-                       (goog.date.UtcDateTime. 2013 2 1 0 0 0 0))
-             (goog.date.UtcDateTime. 2012 11 31 23 59 59 999)))))
-
+            (interval (goog.date.UtcDateTime. 2013 0 1 0 0 0 0)
+                      (goog.date.UtcDateTime. 2013 2 1 0 0 0 0))
+            (goog.date.UtcDateTime. 2012 11 31 23 59 59 999)))))
 
 (deftest test-formatter
   (let [fmt (formatter "yyyyMMdd")]

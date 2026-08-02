@@ -2,9 +2,9 @@
   (:require [cljs.test :refer [deftest is testing]]
             [clojure.string :as string]
             [frontend.colors :as colors]
-            [frontend.util :as util]
             [frontend.config :as config]
-            [frontend.modules.shortcut.data-helper :as shortcut-data-helper]))
+            [frontend.modules.shortcut.data-helper :as shortcut-data-helper]
+            [frontend.util :as util]))
 
 (deftest test-pp-str
   (testing "pretty-printing returns the same readable representation"

@@ -1,6 +1,6 @@
 (ns logseq.shui.stories.badge-story
-  (:require [logseq.shui.ui :as ui]
-            [cljs-bean.core :as bean]
+  (:require [cljs-bean.core :as bean]
+            [logseq.shui.ui :as ui]
             [rum.core :as rum])
   (:require-macros [logseq.shui.storybook :refer [defmeta defstory]]))
 

@@ -1,11 +1,11 @@
 (ns frontend.components.shell
-  (:require [rum.core :as rum]
+  (:require [clojure.string :as string]
+            [frontend.handler.shell :as shell-handler]
+            [frontend.mixins :as mixins]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [frontend.handler.shell :as shell-handler]
-            [clojure.string :as string]
-            [frontend.mixins :as mixins]
-            [promesa.core :as p]))
+            [promesa.core :as p]
+            [rum.core :as rum]))
 
 (defonce *command (atom ""))
 (defonce *loading? (atom nil))

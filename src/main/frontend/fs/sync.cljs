@@ -1952,7 +1952,7 @@
             (>! ch (->FileChangeEvent "add" repo-dir (:new-path rename-event*)
                                       {:mtime (tc/to-long (t/now))
                                        :size 1 ; add a fake size
-                                       }"fake-checksum"))
+                                       } "fake-checksum"))
             (recur))
           local-change
           (cond

@@ -9,11 +9,11 @@
             [frontend.db.model :as model]
             [frontend.handler.page :as page-handler]
             [frontend.state :as state]
-            [logseq.graph-parser.util :as gp-util]
             [frontend.ui :as ui]
             [frontend.util :as util]
             [frontend.util.text :as text-util]
             [goog.object :as gobj]
+            [logseq.graph-parser.util :as gp-util]
             [reitit.frontend.easy :as rfe]
             [rum.core :as rum]))
 

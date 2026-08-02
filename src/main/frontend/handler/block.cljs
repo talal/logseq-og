@@ -76,8 +76,8 @@
 (defn indent-outdent-block!
   [block direction]
   (outliner-tx/transact!
-    {:outliner-op :move-blocks}
-    (outliner-core/indent-outdent-blocks! [block] (= direction :right))))
+   {:outliner-op :move-blocks}
+   (outliner-core/indent-outdent-blocks! [block] (= direction :right))))
 
 (defn select-block!
   [block-uuid]
@@ -290,12 +290,12 @@
     (letfn [(page-fn? [b] (some-> b :block/name some?))
             (order-sibling-list [b]
               (lazy-seq
-                (when (and (not (page-fn? b)) (order-block-fn? b))
-                  (cons b (order-sibling-list (prev-block-fn b))))))
+               (when (and (not (page-fn? b)) (order-block-fn? b))
+                 (cons b (order-sibling-list (prev-block-fn b))))))
             (order-parent-list [b]
               (lazy-seq
-                (when (and (not (page-fn? b)) (order-block-fn? b))
-                  (cons b (order-parent-list (db-model/get-block-parent (:block/uuid b)))))))]
+               (when (and (not (page-fn? b)) (order-block-fn? b))
+                 (cons b (order-parent-list (db-model/get-block-parent (:block/uuid b)))))))]
       (let [idx           (if prev-block
                             (count (order-sibling-list block)) 1)
             order-parents-count (dec (count (order-parent-list block)))
@@ -314,5 +314,5 @@
   (let [own-order-list-type  (some-> block :block/properties :logseq.order-list-type str string/lower-case)
         own-order-list-index (some->> own-order-list-type (get-idx-of-order-list-block block))]
     (assoc config :own-order-list-type own-order-list-type
-                  :own-order-list-index own-order-list-index
-                  :own-order-number-list? (= own-order-list-type "number"))))
+           :own-order-list-index own-order-list-index
+           :own-order-number-list? (= own-order-list-type "number"))))

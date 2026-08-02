@@ -1,23 +1,23 @@
-(ns frontend.format.block-test 
+(ns frontend.format.block-test
   (:require [cljs.test :refer [deftest testing are]]
-            [frontend.format.block :as block]
             [frontend.date :as date]
+            [frontend.format.block :as block]
             [frontend.util :as util]))
 
 (deftest test-normalize-date
   (testing "normalize date values"
     (are [x y] (= (block/normalize-block x true) y)
-         "Aug 12th, 2022"
-         "2022-08-12T00:00:00Z"
+      "Aug 12th, 2022"
+      "2022-08-12T00:00:00Z"
 
-         "2022-08-12T00:00:00Z"
-         "2022-08-12T00:00:00Z"
+      "2022-08-12T00:00:00Z"
+      "2022-08-12T00:00:00Z"
 
-         #{"Aug 12th, 2022"}
-         "2022-08-12T00:00:00Z"
+      #{"Aug 12th, 2022"}
+      "2022-08-12T00:00:00Z"
 
-         #{"2022-08-12T00:00:00Z"}
-         "2022-08-12T00:00:00Z")))
+      #{"2022-08-12T00:00:00Z"}
+      "2022-08-12T00:00:00Z")))
 
 (deftest monitor-normalize-date-time
   (testing "monitor time consumption of normalize date values"
@@ -42,35 +42,35 @@
 (deftest test-normalize-percentage
   (testing "normalize percentages"
     (are [x y] (= (block/normalize-block x false) y)
-         "50%"
-         0.5
+      "50%"
+      0.5
 
-         "0%"
-         0
+      "0%"
+      0
 
-         "-5%"
-         -0.05
+      "-5%"
+      -0.05
 
-         #{"50%"}
-         0.5)))
+      #{"50%"}
+      0.5)))
 
 (deftest test-normalize-random-values
   (testing "random values should not be processed"
     (are [x y] (= (block/normalize-block x false) y)
-         "anreanre"
-         "anreanre"
+      "anreanre"
+      "anreanre"
 
-         ""
-         ""
+      ""
+      ""
 
-         "a.0%"
-         "a.0%"
+      "a.0%"
+      "a.0%"
 
-         "%"
-         "%"
+      "%"
+      "%"
 
-         "-%"
-         "-%")))
+      "-%"
+      "-%")))
 
 (deftest monitor-normalize-randome-values-time
   (testing "monitor time consumption of random values should not be processed"

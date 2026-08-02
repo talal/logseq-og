@@ -1,14 +1,14 @@
 (ns frontend.components.onboarding.quick-tour
-  (:require [promesa.core :as p]
-            [cljs-bean.core :as bean]
-            [frontend.state :as state]
+  (:require [cljs-bean.core :as bean]
+            [dommy.core :as d]
             [frontend.context.i18n :refer [t]]
             [frontend.date :as date]
-            [frontend.util :as util]
-            [frontend.handler.route :as route-handler]
             [frontend.handler.command-palette :as command-palette]
+            [frontend.handler.route :as route-handler]
+            [frontend.state :as state]
+            [frontend.util :as util]
             [hiccups.runtime :as h]
-            [dommy.core :as d]))
+            [promesa.core :as p]))
 
 (defn- load-base-assets$
   []
@@ -40,8 +40,7 @@
     [:ul (for [i (range total)] [:li {:class (when (= current (inc i)) "active")} i])]]))
 
 (defn- create-steps! [^js jsTour]
-  [
-   ;; step 1
+  [   ;; step 1
    {:id                "nav-help"
     :text              (h/render-html [:section [:h2 (t :on-boarding/quick-tour-help-title)]
                                        [:p (t :on-boarding/quick-tour-help-desc)]])
@@ -102,12 +101,10 @@
                           (p/resolved true))
     :attachTo          {:element ".nav-content-item.favorites" :on "right"}
     :buttons           [{:text (t :on-boarding/quick-tour-btn-back) :classes "back" :action (.-back jsTour)}
-                        {:text (t :on-boarding/quick-tour-btn-finish) :action (.-complete jsTour)}]}
-   ])
+                        {:text (t :on-boarding/quick-tour-btn-finish) :action (.-complete jsTour)}]}])
 
 (defn- create-steps-file-sync! [^js jsTour]
-  [
-   ;; initiate graph
+  [   ;; initiate graph
    {:id             "sync-initiate"
     :text           (h/render-html [:section [:h2 "🚀 Initiate synchronization of your current graph"]
                                     [:p "Clicking here will start the process of uploading your local files to an encrypted remote graph."]])

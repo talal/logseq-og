@@ -1,5 +1,7 @@
 (ns frontend.modules.outliner.file
-  (:require [clojure.core.async :as async]
+  (:require [cljs-time.coerce :as tc]
+            [cljs-time.core :as t]
+            [clojure.core.async :as async]
             [clojure.string :as string]
             [frontend.config :as config]
             [frontend.db :as db]
@@ -7,12 +9,10 @@
             [frontend.handler.notification :as notification]
             [frontend.modules.file.core :as file]
             [frontend.modules.outliner.tree :as tree]
+            [frontend.state :as state]
             [frontend.util :as util]
             [goog.object :as gobj]
-            [lambdaisland.glogi :as log]
-            [frontend.state :as state]
-            [cljs-time.core :as t]
-            [cljs-time.coerce :as tc]))
+            [lambdaisland.glogi :as log]))
 
 (def batch-write-interval 1000)
 
@@ -41,7 +41,6 @@
             :block/page
             :block/parent) ;; these are auto-generated for whiteboard shapes
     (dissoc block :db/id :block/page)))
-
 
 (defn do-write-file!
   [repo page-db-id outliner-op]

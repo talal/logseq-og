@@ -14,9 +14,9 @@
             [frontend.handler.notification :as notification]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.route :as route-handler]
+            [frontend.handler.search :as search-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.user :as user]
-            [frontend.handler.search :as search-handler]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [logseq.common.path :as path]
@@ -38,24 +38,22 @@
                              :on-success #(ipc/ipc "persistent-dbs-saved")
                              :on-error   #(ipc/ipc "persistent-dbs-error")}))
 
-
 (defn listen-persistent-dbs!
   []
   (safe-api-call "persistent-dbs" (fn [_data] (persist-dbs!))))
-
 
 (defn listen-to-electron!
   []
   ;; TODO: move "file-watcher" to electron.ipc.channels
   (safe-api-call "file-watcher"
-                     (fn [data]
-                       (let [{:keys [type payload]} (bean/->clj data)
-                             path (gp-util/path-normalize (:path payload))
-                             dir (:dir payload)
-                             payload (assoc payload :path (path/relative-path dir path))]
-                         (watcher-handler/handle-changed! type payload)
-                         (when (file-sync-handler/enable-sync?)
-                           (sync/file-watch-handler type payload)))))
+                 (fn [data]
+                   (let [{:keys [type payload]} (bean/->clj data)
+                         path (gp-util/path-normalize (:path payload))
+                         dir (:dir payload)
+                         payload (assoc payload :path (path/relative-path dir path))]
+                     (watcher-handler/handle-changed! type payload)
+                     (when (file-sync-handler/enable-sync?)
+                       (sync/file-watch-handler type payload)))))
 
   (safe-api-call "file-sync-progress"
                  (fn [data]
@@ -114,8 +112,8 @@
                        block-id
                        (if-let [block (db-model/get-block-by-uuid block-id)]
                          (if (gp-whiteboard/shape-block? block)
-                          (route-handler/redirect-to-whiteboard! (get-in block [:block/page :block/name]) {:block-id block-id})
-                          (route-handler/redirect-to-page! block-id))
+                           (route-handler/redirect-to-whiteboard! (get-in block [:block/page :block/name]) {:block-id block-id})
+                           (route-handler/redirect-to-page! block-id))
                          (notification/show! (str "Open link failed. Block-id `" block-id "` doesn't exist in the graph.") :error false))
 
                        file
@@ -189,7 +187,6 @@
   (safe-api-call "syncAPIServerState"
                  (fn [^js data]
                    (state/set-state! :electron/server (bean/->clj data))))
-
 
   (safe-api-call "handbook"
                  (fn [^js data]

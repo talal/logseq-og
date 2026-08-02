@@ -1,25 +1,25 @@
 (ns cljs-time.core-test
   (:refer-clojure :exclude [extend second])
   (:require-macros
-    [cljs-time.macros :refer [do-at]]
-    [cljs-time.core-test :refer [try= when-available when-not-available]])
+   [cljs-time.core-test :refer [try= when-available when-not-available]]
+   [cljs-time.macros :refer [do-at]])
   (:require
-    [cljs.test :refer-macros [deftest is are testing]]
-    [cljs-time.coerce :refer [from-long to-long]]
-    [cljs-time.core :as time :refer
-     [date-time epoch year month day date-midnight today-at-midnight hour
-      minute second milli abuts? interval overlaps? last-day-of-the-month
-      number-of-days-in-the-month first-day-of-the-month today-at now within?
-      in-years in-months in-weeks in-days in-hours in-minutes in-seconds
-      in-millis minus plus earliest latest
-      local-date local-date-time today
-      day-of-week equal? after? before? ago from-now
-      years months weeks days hours minutes seconds millis
-      years? months? weeks? days? hours? minutes? seconds?
-      extend start end mins-ago default-time-zone
-      to-default-time-zone from-default-time-zone
-      overlap week-number-of-year week-year floor]]
-    [cljs-time.extend]))
+   [cljs-time.coerce :refer [from-long to-long]]
+   [cljs-time.core :as time :refer
+    [date-time epoch year month day date-midnight today-at-midnight hour
+     minute second milli abuts? interval overlaps? last-day-of-the-month
+     number-of-days-in-the-month first-day-of-the-month today-at now within?
+     in-years in-months in-weeks in-days in-hours in-minutes in-seconds
+     in-millis minus plus earliest latest
+     local-date local-date-time today
+     day-of-week equal? after? before? ago from-now
+     years months weeks days hours minutes seconds millis
+     years? months? weeks? days? hours? minutes? seconds?
+     extend start end mins-ago default-time-zone
+     to-default-time-zone from-default-time-zone
+     overlap week-number-of-year week-year floor]]
+   [cljs-time.extend]
+   [cljs.test :refer-macros [deftest is are testing]]))
 
 (defn cest?
   "Is this date in Central European Summer Time?"
@@ -36,11 +36,11 @@
                 (now)))))
 
 #_(deftest test-now-skew
-  (set! now (fn []
-              (plus (goog.date.UtcDateTime.)
-                    (minutes 5)
-                    (seconds 6))))
-  (prn "test-now-skew-2" (pr-str (now))))
+    (set! now (fn []
+                (plus (goog.date.UtcDateTime.)
+                      (minutes 5)
+                      (seconds 6))))
+    (prn "test-now-skew-2" (pr-str (now))))
 
 (deftest test-today-at-midnight
   (is (= (date-midnight 2010 1 1)
@@ -239,7 +239,7 @@
 
 (def local-date-x (local-date 2017 3 29))
 (def local-date-x-with-later-time (doto (goog.date.Date.)
-                                             (.setTime (+ 1 (.getTime local-date-x)))))
+                                    (.setTime (+ 1 (.getTime local-date-x)))))
 
 (deftest test-equal?
   (is (equal? (date-time 2013 01 01 01) (date-time 2013 01 01 01)))
@@ -263,13 +263,13 @@
 (deftest test-periods
   (is (= (date-time 1986 10 14 4 3 2 1)
          (plus (date-time 1984)
-           (years 2)
-           (months 9)
-           (days 13)
-           (hours 4)
-           (minutes 3)
-           (seconds 2)
-           (millis 1))))
+               (years 2)
+               (months 9)
+               (days 13)
+               (hours 4)
+               (minutes 3)
+               (seconds 2)
+               (millis 1))))
   (is (= (date-time 1986 1 8)
          (plus (date-time 1986 1 1) (weeks 1)))))
 
@@ -314,13 +314,13 @@
 (deftest test-periods-local
   (is (= (local-date-time 1986 10 14 4 3 2 1)
          (plus (local-date-time 1984)
-           (years 2)
-           (months 9)
-           (days 13)
-           (hours 4)
-           (minutes 3)
-           (seconds 2)
-           (millis 1))))
+               (years 2)
+               (months 9)
+               (days 13)
+               (hours 4)
+               (minutes 3)
+               (seconds 2)
+               (millis 1))))
   (is (= (local-date-time 1986 1 8)
          (plus (local-date-time 1986 1 1) (weeks 1)))))
 
@@ -390,7 +390,7 @@
 
 (deftest test-extend
   (is (i= (interval (date-time 1986) (date-time 1988))
-         (extend (interval (date-time 1986) (date-time 1987)) (years 1)))))
+          (extend (interval (date-time 1986) (date-time 1987)) (years 1)))))
 
 (deftest leap-year-interval-in
   (is (= 1 (in-years (interval (date-time 2012 2 29 12 5 4)
@@ -643,7 +643,6 @@
   (is (= 28 (number-of-days-in-the-month 2013 2)))
   (is (= 29 (number-of-days-in-the-month 2016 2))))
 
-
 (deftest test-first-day-of-the-month
   (let [d1 (date-time 2012 1 1)
         d2 (date-time 2012 2 1)
@@ -680,7 +679,7 @@
     (is (= d1 (today-at 13 0 0)))
     (is (= (date-midnight 2010 1 1)
            (do-at (date-midnight 2010 1 1)
-            (today-at 0 0))))))
+                  (today-at 0 0))))))
 
 (deftest group-by-equiv-test
   (is (= {(date-midnight 2015 6 1) '[(a 1433152980000) (b 1433196180000)]
@@ -695,7 +694,6 @@
                (fn [[_ t]]
                  (let [d (from-long t)]
                    (date-midnight (year d) (month d) (day d)))))))))
-
 
 (deftest long-interval-test
   (are [n x y] (= n (in-months (interval x y)))

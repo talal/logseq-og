@@ -7,11 +7,9 @@
             [goog.object :as gobj]
             [promesa.core :as p]))
 
-
 ;; offline db
 
 ;; To maintain backward compatibility
-
 
 (defonce store (atom nil))
 

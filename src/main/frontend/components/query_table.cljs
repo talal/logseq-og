@@ -11,10 +11,10 @@
             [frontend.util :as util]
             [frontend.util.clock :as clock]
             [frontend.util.property :as property]
+            [logseq.graph-parser.text :as text]
             [logseq.shui.core :as shui]
             [medley.core :as medley]
-            [rum.core :as rum]
-            [logseq.graph-parser.text :as text]))
+            [rum.core :as rum]))
 
 ;; Util fns
 ;; ========
@@ -69,9 +69,9 @@
         ;; Starting with #6105, we started putting properties under namespaces.
         nlp-date? (get-in current-block [:block/properties :logseq.query/nlp-date])
         sort-by-column (or (some-> p-sort-by keyword)
-                         (if (query-dsl/query-contains-filter? (:block/content current-block) "sort-by")
-                           nil
-                           :updated-at))]
+                           (if (query-dsl/query-contains-filter? (:block/content current-block) "sort-by")
+                             nil
+                             :updated-at))]
     {:sort-desc? desc?
      :sort-by-column sort-by-column
      :sort-nlp-date? nlp-date?}))
@@ -156,9 +156,9 @@
                (get-in row [:block/content]))
     :block (or (get-in row [:block/original-name])
                (get-in row [:block/content]))
-           (or (get-in row [:block/properties column])
-               (get-in row [:block/properties-text-values column])
-               (get-in row [(keyword :block column)]))))
+    (or (get-in row [:block/properties column])
+        (get-in row [:block/properties-text-values column])
+        (get-in row [(keyword :block column)]))))
 
 (rum/defcs result-table < rum/reactive
   (rum/local false ::select?)

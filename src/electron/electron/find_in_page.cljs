@@ -1,6 +1,6 @@
 (ns electron.find-in-page
-  (:require [electron.utils :as utils]
-            [cljs-bean.core :as bean]))
+  (:require [cljs-bean.core :as bean]
+            [electron.utils :as utils]))
 
 (defn find!
   [^js window search option]

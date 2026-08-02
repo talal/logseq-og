@@ -1,9 +1,9 @@
 (ns frontend.search.agency
   "Agent entry for search engine impls"
-  (:require [frontend.search.protocol :as protocol]
-            [frontend.search.browser :as search-browser]
+  (:require [frontend.search.browser :as search-browser]
             [frontend.search.node :as search-node]
             [frontend.search.plugin :as search-plugin]
+            [frontend.search.protocol :as protocol]
             [frontend.state :as state]
             [frontend.util :as util]))
 

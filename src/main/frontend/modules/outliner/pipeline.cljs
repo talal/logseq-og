@@ -1,13 +1,13 @@
 (ns frontend.modules.outliner.pipeline
-  (:require [frontend.modules.datascript-report.core :as ds-report]
-            [frontend.modules.outliner.file :as file]
-            [frontend.state :as state]
-            [frontend.util :as util]
+  (:require [clojure.set :as set]
+            [datascript.core :as d]
+            [frontend.db :as db]
             [frontend.db.model :as db-model]
             [frontend.db.react :as react]
-            [frontend.db :as db]
-            [clojure.set :as set]
-            [datascript.core :as d]))
+            [frontend.modules.datascript-report.core :as ds-report]
+            [frontend.modules.outliner.file :as file]
+            [frontend.state :as state]
+            [frontend.util :as util]))
 
 (defn updated-page-hook
   [tx-report page]

@@ -1,12 +1,12 @@
 (ns frontend.components.git
-  (:require [rum.core :as rum]
-            [frontend.ui :as ui]
-            [promesa.core :as p]
-            [frontend.util :as util]
-            [clojure.string :as string]
-            [frontend.handler.shell :as shell]
+  (:require [clojure.string :as string]
             [frontend.handler.file :as file]
-            [frontend.state :as state]))
+            [frontend.handler.shell :as shell]
+            [frontend.state :as state]
+            [frontend.ui :as ui]
+            [frontend.util :as util]
+            [promesa.core :as p]
+            [rum.core :as rum]))
 
 (rum/defcs set-git-username-and-email <
   (rum/local "" ::username)

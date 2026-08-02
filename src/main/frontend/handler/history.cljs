@@ -1,10 +1,10 @@
 (ns ^:no-doc frontend.handler.history
   (:require [frontend.db :as db]
             [frontend.handler.editor :as editor]
+            [frontend.handler.route :as route-handler]
             [frontend.modules.editor.undo-redo :as undo-redo]
             [frontend.state :as state]
             [frontend.util :as util]
-            [frontend.handler.route :as route-handler]
             [goog.dom :as gdom]))
 
 (defn restore-cursor!
@@ -27,14 +27,14 @@
 (defn restore-app-state!
   [state]
   (when-not (:history/page-only-mode? @state/state)
-   (let [route-match (:route-match state)
-         current-route (:route-match @state/state)
-         prev-route-data (get-route-data route-match)
-         current-route-data (get-route-data current-route)]
-     (when (and (not= prev-route-data current-route-data)
-                prev-route-data)
-       (route-handler/redirect! prev-route-data))
-     (swap! state/state merge state))))
+    (let [route-match (:route-match state)
+          current-route (:route-match @state/state)
+          prev-route-data (get-route-data route-match)
+          current-route-data (get-route-data current-route)]
+      (when (and (not= prev-route-data current-route-data)
+                 prev-route-data)
+        (route-handler/redirect! prev-route-data))
+      (swap! state/state merge state))))
 
 (defn undo!
   [e]

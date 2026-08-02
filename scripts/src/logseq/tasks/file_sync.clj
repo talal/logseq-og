@@ -5,14 +5,14 @@
 * Set up file-sync-auth.json file per #'read-config
 * Run `bb file-sync:integration-tests`
 * Wait for test results. Each action takes 10-20s and prints results as it goes"
-  (:require [clojure.string :as str]
-            [cheshire.core :as json]
-            [clojure.pprint :as pp]
+  (:require [babashka.curl :as curl]
             [babashka.fs :as fs]
-            [babashka.curl :as curl]
-            [clojure.data :as data]
-            [clojure.test :as t :refer [deftest is]]
+            [cheshire.core :as json]
             [clj-commons.digest :as digest]
+            [clojure.data :as data]
+            [clojure.pprint :as pp]
+            [clojure.string :as str]
+            [clojure.test :as t :refer [deftest is]]
             [logseq.tasks.file-sync-actions :as file-sync-actions])
   (:import (java.net URLDecoder)))
 
@@ -63,7 +63,6 @@
   (let [files (map fs/file (fs/list-dir (fs/file dir subdir)))
         f (juxt fs/file-name digest/md5)]
     (map f files)))
-
 
 (defn- api-post-get-graphs
   []

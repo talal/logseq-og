@@ -1,7 +1,7 @@
 (ns frontend.context.i18n-test
-  (:require [frontend.context.i18n :as i18n]
-            [frontend.state :as state]
-            [cljs.test :refer [deftest is testing use-fixtures]]))
+  (:require [cljs.test :refer [deftest is testing use-fixtures]]
+            [frontend.context.i18n :as i18n]
+            [frontend.state :as state]))
 
 (use-fixtures :once (fn [f]
                       (f)

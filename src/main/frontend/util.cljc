@@ -103,7 +103,6 @@
        [s]
        (sanitizeFilename (str s)))))
 
-
 #?(:cljs
    (do
      (defn- ios*?
@@ -225,8 +224,7 @@
                        (string/replace #"\)$" "")
                        (string/split #","))
                rgb (take 3 rgb)]
-           (rgb2hex rgb)))))
-)
+           (rgb2hex rgb))))))
 
 #?(:cljs
    (defn set-android-theme
@@ -243,15 +241,15 @@
    (defn set-theme-light
      []
      (p/do!
-       (.setStyle StatusBar (clj->js {:style (.-Light Style)}))
-       (set-android-theme))))
+      (.setStyle StatusBar (clj->js {:style (.-Light Style)}))
+      (set-android-theme))))
 
 #?(:cljs
    (defn set-theme-dark
      []
      (p/do!
-       (.setStyle StatusBar (clj->js {:style (.-Dark Style)}))
-       (set-android-theme))))
+      (.setStyle StatusBar (clj->js {:style (.-Dark Style)}))
+      (set-android-theme))))
 
 (defn find-first
   [pred coll]
@@ -317,7 +315,6 @@
      (if (string? x)
        (parse-double x)
        x)))
-
 
 #?(:cljs
    (defn debounce
@@ -578,7 +575,6 @@
   [s substr]
   (string/starts-with? s substr))
 
-
 #?(:cljs
    (defn distinct-by
      [f col]
@@ -686,7 +682,7 @@
      [input current-pos]
      (if-let [len (and (string? input) (.-length input))]
        (if-let [input (and (>= len 2) (<= current-pos len)
-                             (.substring input (max (- current-pos 20) 0) current-pos))]
+                           (.substring input (max (- current-pos 20) 0) current-pos))]
          (try
            (let [^js splitter (GraphemeSplitter.)
                  ^js input (.splitGraphemes splitter input)]
@@ -703,7 +699,7 @@
      [input current-pos]
      (if-let [len (and (string? input) (.-length input))]
        (if-let [input (and (>= len 2) (<= current-pos len)
-                             (.substr input current-pos 20))]
+                           (.substr input current-pos 20))]
          (try
            (let [^js splitter (GraphemeSplitter.)
                  ^js input (.splitGraphemes splitter input)]
@@ -1202,7 +1198,6 @@
              (async/close! ch))))
        ch)))
 
-
 #?(:cljs
    (defn trace!
      []
@@ -1402,8 +1397,8 @@
           (let [event-composing? (some-> (.getBrowserEvent e) (.-isComposing))]
             (if include-process?
               (or event-composing?
-                (= (gobj/get e "keyCode") 229)
-                (= (gobj/get e "key") "Process"))
+                  (= (gobj/get e "keyCode") 229)
+                  (= (gobj/get e "key") "Process"))
               event-composing?)))))))
 
 #?(:cljs
@@ -1503,7 +1498,6 @@
                                (js/navigator.clipboard.write (clj->js [(js/ClipboardItem. (clj->js {(.-type blob) blob}))]))))
                       (.catch js/console.error)))))))
 
-
 (defn memoize-last
   "Different from core.memoize, it only cache the last result.
    Returns a memoized version of a referentially transparent function. The
@@ -1538,7 +1532,6 @@ Arg *stop: atom, reset to true to stop the loop"
                (vreset! *last-activated-at now-epoch)
                (async/<! (async/timeout 5000))
                (recur))))))))
-
 
 (defmacro concatv
   "Vector version of concat. non-lazy"

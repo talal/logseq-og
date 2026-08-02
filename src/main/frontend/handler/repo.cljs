@@ -1,36 +1,36 @@
 (ns frontend.handler.repo
   "System-component-like ns that manages user's repos/graphs"
-  (:require [clojure.string :as string]
+  (:require [cljs-bean.core :as bean]
+            [clojure.core.async :as async]
+            [clojure.string :as string]
+            [electron.ipc :as ipc]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.date :as date]
             [frontend.db :as db]
+            [frontend.db.persist :as db-persist]
             [frontend.fs :as fs]
             [frontend.fs.nfs :as nfs]
-            [frontend.handler.file :as file-handler]
-            [frontend.handler.repo-config :as repo-config-handler]
             [frontend.handler.common.file :as file-common-handler]
+            [frontend.handler.file :as file-handler]
+            [frontend.handler.global-config :as global-config-handler]
+            [frontend.handler.repo-config :as repo-config-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
-            [frontend.handler.global-config :as global-config-handler]
             [frontend.idb :as idb]
+            [frontend.mobile.util :as mobile-util]
             [frontend.search :as search]
             [frontend.spec :as spec]
             [frontend.state :as state]
             [frontend.util :as util]
             [frontend.util.fs :as util-fs]
-            [promesa.core :as p]
-            [shadow.resource :as rc]
-            [frontend.db.persist :as db-persist]
+            [logseq.common.config :as common-config]
+            [logseq.common.path :as path]
             [logseq.graph-parser :as graph-parser]
             [logseq.graph-parser.config :as gp-config]
-            [electron.ipc :as ipc]
-            [cljs-bean.core :as bean]
-            [clojure.core.async :as async]
-            [frontend.mobile.util :as mobile-util]
             [medley.core :as medley]
-            [logseq.common.path :as path]
-            [logseq.common.config :as common-config]))
+            [promesa.core :as p]
+            [shadow.resource :as rc]))
 
 ;; Project settings should be checked in two situations:
 ;; 1. User changes the config.edn directly in logseq.com (fn: alter-file)
@@ -99,7 +99,7 @@
                     :else
                     default-content)
           file-rpath (path/path-join (config/get-journals-directory) (str file-name "."
-                                                                              (config/get-file-extension format)))
+                                                                          (config/get-file-extension format)))
           page-exists? (db/entity repo-url [:block/name (util/page-name-sanity-lc title)])
           empty-blocks? (db/page-empty? repo-url (util/page-name-sanity-lc title))]
       (when (or empty-blocks? (not page-exists?))
@@ -255,8 +255,6 @@
                    :or {re-render? true}}]
   (parse-files-and-create-default-files! repo-url files delete-files delete-blocks re-render? re-render-opts opts))
 
-
-
 (defn load-new-repo-to-db!
   "load graph files to db."
   [repo-url {:keys [file-objs new-graph? empty-graph?]}]
@@ -278,8 +276,6 @@
     (parse-files-and-load-to-db! repo-url file-objs {:new-graph? new-graph?
                                                      :empty-graph? empty-graph?})
     (state/set-parsing-state! {:graph-loading? false})))
-
-
 
 (defn load-repo-to-db!
   [repo-url {:keys [diffs file-objs refresh? new-graph? empty-graph?]}]
@@ -425,14 +421,14 @@
     (state/reset-parsing-state!)
     (let [dir (config/get-repo-dir repo)]
       (when-not (state/unlinked-dir? dir)
-       (route-handler/redirect-to-home!)
-       (let [local? (config/local-db? repo)]
-         (if local?
-           (nfs-rebuild-index! repo ok-handler)
-           (rebuild-index! repo))
-         (js/setTimeout
-          (route-handler/redirect-to-home!)
-          500))))))
+        (route-handler/redirect-to-home!)
+        (let [local? (config/local-db? repo)]
+          (if local?
+            (nfs-rebuild-index! repo ok-handler)
+            (rebuild-index! repo))
+          (js/setTimeout
+           (route-handler/redirect-to-home!)
+           500))))))
 
 (defn persist-db!
   ([]
@@ -496,7 +492,7 @@
   [local-repos remote-repos]
   (when-let [repos' (seq (concat (map #(if-let [sync-meta (seq (:sync-meta %))]
                                          (assoc % :GraphUUID (second sync-meta)) %)
-                                   local-repos)
+                                      local-repos)
                                  (some->> remote-repos
                                           (map #(assoc % :remote? true)))))]
     (let [repos' (group-by :GraphUUID repos')
@@ -512,8 +508,8 @@
 (defn get-detail-graph-info
   [url]
   (when-let [graphs (seq (and url (combine-local-&-remote-graphs
-                                    (state/get-repos)
-                                    (state/get-remote-graphs))))]
+                                   (state/get-repos)
+                                   (state/get-remote-graphs))))]
     (first (filter #(when-let [url' (:url %)]
                       (= url url')) graphs))))
 

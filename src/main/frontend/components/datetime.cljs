@@ -6,12 +6,12 @@
             [frontend.date :as date]
             [frontend.handler.editor :as editor-handler]
             [frontend.handler.repeated :as repeated]
+            [frontend.mixins :as mixins]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [frontend.mixins :as mixins]
-            [rum.core :as rum]
-            [logseq.graph-parser.util.page-ref :as page-ref]))
+            [logseq.graph-parser.util.page-ref :as page-ref]
+            [rum.core :as rum]))
 
 (defonce default-timestamp-value {:time ""
                                   :repeater {}})

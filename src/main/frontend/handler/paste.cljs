@@ -1,23 +1,23 @@
 (ns ^:no-doc frontend.handler.paste
-  (:require [frontend.state :as state]
-            [frontend.db :as db]
-            [frontend.format.block :as block]
-            [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.mldoc :as gp-mldoc]
-            [logseq.graph-parser.block :as gp-block]
-            [logseq.graph-parser.util.block-ref :as block-ref]
+  (:require ["/frontend/utils" :as utils]
             [clojure.string :as string]
-            [frontend.util :as util]
-            [frontend.handler.editor :as editor-handler]
-            [frontend.extensions.html-parser :as html-parser]
-            [goog.object :as gobj]
-            [frontend.mobile.util :as mobile-util]
-            [frontend.util.thingatpt :as thingatpt]
-            ["/frontend/utils" :as utils]
             [frontend.commands :as commands]
-            [frontend.util.text :as text-util]
+            [frontend.db :as db]
+            [frontend.extensions.html-parser :as html-parser]
+            [frontend.format.block :as block]
             [frontend.format.mldoc :as mldoc]
+            [frontend.handler.editor :as editor-handler]
+            [frontend.mobile.util :as mobile-util]
+            [frontend.state :as state]
+            [frontend.util :as util]
+            [frontend.util.text :as text-util]
+            [frontend.util.thingatpt :as thingatpt]
+            [goog.object :as gobj]
             [lambdaisland.glogi :as log]
+            [logseq.graph-parser.block :as gp-block]
+            [logseq.graph-parser.mldoc :as gp-mldoc]
+            [logseq.graph-parser.util :as gp-util]
+            [logseq.graph-parser.util.block-ref :as block-ref]
             [promesa.core :as p]))
 
 (defn- paste-text-parseable
@@ -95,8 +95,8 @@
                                 (.getType ^js (first clipboard-items)
                                           "web application/logseq"))))
           blocks-str (when blocks-blob (.text blocks-blob))]
-         (when blocks-str
-           (gp-util/safe-read-string blocks-str))))
+    (when blocks-str
+      (gp-util/safe-read-string blocks-str))))
 
 (defn- markdown-blocks?
   [text]

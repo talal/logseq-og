@@ -55,8 +55,7 @@
    :year-month "2015-08"
    :year-month-day "2016-09-12"
    :rfc822 "Mon, 01 May 2015 08:08:08 Z"
-   :mysql "2016-04-08 12:34:56"
-   })
+   :mysql "2016-04-08 12:34:56"})
 
 (dotimes [_ 100]
   (doseq [[date-key date-str] dates

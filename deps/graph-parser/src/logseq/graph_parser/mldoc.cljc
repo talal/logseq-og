@@ -8,13 +8,13 @@
                :default ["mldoc" :refer [Mldoc]])
             #?(:org.babashka/nbb [logseq.graph-parser.log :as log]
                :default [lambdaisland.glogi :as log])
-            [goog.object :as gobj]
             [cljs-bean.core :as bean]
-            [logseq.graph-parser.utf8 :as utf8]
             [clojure.string :as string]
-            [logseq.graph-parser.util :as gp-util]
+            [goog.object :as gobj]
             [logseq.graph-parser.config :as gp-config]
-            [logseq.graph-parser.schema.mldoc :as mldoc-schema]))
+            [logseq.graph-parser.schema.mldoc :as mldoc-schema]
+            [logseq.graph-parser.utf8 :as utf8]
+            [logseq.graph-parser.util :as gp-util]))
 
 (defonce parseJson (gobj/get Mldoc "parseJson"))
 (defonce parseInlineJson (gobj/get Mldoc "parseInlineJson"))
@@ -95,7 +95,7 @@
                       (gp-util/safe-subs line level)
                       ;; Otherwise, trim these invalid spaces
                       (string/triml line)))
-               (if remove-first-line? lines r))
+                  (if remove-first-line? lines r))
         content (if remove-first-line? body (cons f body))]
     (string/join "\n" content)))
 
@@ -103,16 +103,16 @@
   [ast content]
   (let [content (utf8/encode content)]
     (map (fn [[block pos-meta]]
-          (if (and (vector? block)
-                   (= "Src" (first block)))
-            (let [{:keys [start_pos end_pos]} pos-meta
-                  content (utf8/substring content start_pos end_pos)
-                  spaces (re-find #"^[\t ]+" (first (string/split-lines content)))
-                  content (if spaces (remove-indentation-spaces content (count spaces) true)
-                              content)
-                  block ["Src" (assoc (second block) :full_content content)]]
-              [block pos-meta])
-            [block pos-meta])) ast)))
+           (if (and (vector? block)
+                    (= "Src" (first block)))
+             (let [{:keys [start_pos end_pos]} pos-meta
+                   content (utf8/substring content start_pos end_pos)
+                   spaces (re-find #"^[\t ]+" (first (string/split-lines content)))
+                   content (if spaces (remove-indentation-spaces content (count spaces) true)
+                               content)
+                   block ["Src" (assoc (second block) :full_content content)]]
+               [block pos-meta])
+             [block pos-meta])) ast)))
 
 (defn collect-page-properties
   [ast config]

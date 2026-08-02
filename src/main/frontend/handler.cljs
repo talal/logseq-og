@@ -30,6 +30,7 @@
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.user :as user-handler]
             [frontend.idb :as idb]
+            [frontend.mobile.core :as mobile]
             [frontend.mobile.util :as mobile-util]
             [frontend.modules.instrumentation.core :as instrument]
             [frontend.modules.outliner.datascript :as outliner-db]
@@ -41,8 +42,7 @@
             [frontend.util.persist-var :as persist-var]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
-            [promesa.core :as p]
-            [frontend.mobile.core :as mobile]))
+            [promesa.core :as p]))
 
 (defn- set-global-error-notification!
   []
@@ -56,7 +56,6 @@
             ;;  :error
             ;;  ;; Don't auto-hide
             ;;  false)
-
 
 (defn- watch-for-date!
   []

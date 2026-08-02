@@ -1,6 +1,7 @@
 (ns frontend.routes
   "Defines routes for use with reitit router"
-  (:require [frontend.components.file :as file]
+  (:require [frontend.components.bug-report :as bug-report]
+            [frontend.components.file :as file]
             [frontend.components.home :as home]
             [frontend.components.journal :as journal]
             [frontend.components.onboarding.setups :as setups]
@@ -8,12 +9,10 @@
             [frontend.components.plugins :as plugins]
             [frontend.components.repo :as repo]
             [frontend.components.settings :as settings]
+            [frontend.components.user.login :as login]
             [frontend.components.whiteboard :as whiteboard]
             [frontend.extensions.zotero :as zotero]
-            [frontend.components.bug-report :as bug-report]
-            [frontend.components.user.login :as login]
-            [logseq.shui.demo :as shui]
-            ))
+            [logseq.shui.demo :as shui]))
 
 ;; http://localhost:3000/#?anchor=fn.1
 (def routes
@@ -77,9 +76,9 @@
     {:name :bug-report
      :view bug-report/bug-report}]
 
-    ["/bug-report-tool/:tool"
-     {:name :bug-report-tools
-      :view bug-report/bug-report-tool-route}]
+   ["/bug-report-tool/:tool"
+    {:name :bug-report-tools
+     :view bug-report/bug-report-tool-route}]
 
    ["/all-journals"
     {:name :all-journals
@@ -95,5 +94,4 @@
 
    ["/ui"
     {:name :ui
-     :view shui/page}]
-   ])
+     :view shui/page}]])

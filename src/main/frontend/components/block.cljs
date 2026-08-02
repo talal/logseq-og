@@ -8,26 +8,29 @@
             [clojure.string :as string]
             [clojure.walk :as walk]
             [datascript.core :as d]
+            [datascript.impl.entity :as e]
             [dommy.core :as dom]
+            [electron.ipc :as ipc]
             [frontend.commands :as commands]
             [frontend.components.block.macros :as block-macros]
             [frontend.components.datetime :as datetime-comp]
             [frontend.components.lazy-editor :as lazy-editor]
             [frontend.components.macro :as macro]
             [frontend.components.plugins :as plugins]
+            [frontend.components.query :as query]
             [frontend.components.query.builder :as query-builder-component]
             [frontend.components.svg :as svg]
-            [frontend.components.query :as query]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.date :as date]
             [frontend.db :as db]
-            [frontend.db.model :as model]
             [frontend.db-mixins :as db-mixins]
+            [frontend.db.model :as model]
             [frontend.extensions.highlight :as highlight]
             [frontend.extensions.latex :as latex]
             [frontend.extensions.lightbox :as lightbox]
             [frontend.extensions.pdf.assets :as pdf-assets]
+            [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.extensions.sci :as sci]
             [frontend.extensions.video.youtube :as youtube]
             [frontend.extensions.zotero :as zotero]
@@ -38,6 +41,7 @@
             [frontend.handler.block :as block-handler]
             [frontend.handler.dnd :as dnd]
             [frontend.handler.editor :as editor-handler]
+            [frontend.handler.export.common :as export-common-handler]
             [frontend.handler.file-sync :as file-sync]
             [frontend.handler.notification :as notification]
             [frontend.handler.plugin :as plugin-handler]
@@ -45,9 +49,8 @@
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.whiteboard :as whiteboard-handler]
-            [frontend.handler.export.common :as export-common-handler]
-            [frontend.mobile.util :as mobile-util]
             [frontend.mobile.intent :as mobile-intent]
+            [frontend.mobile.util :as mobile-util]
             [frontend.modules.outliner.tree :as tree]
             [frontend.security :as security]
             [frontend.shui :refer [get-shui-component-version make-shui-context]]
@@ -55,7 +58,6 @@
             [frontend.template :as template]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.util.clock :as clock]
             [frontend.util.drawer :as drawer]
             [frontend.util.property :as property]
@@ -63,6 +65,7 @@
             [goog.dom :as gdom]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
+            [logseq.common.path :as path]
             [logseq.graph-parser.block :as gp-block]
             [logseq.graph-parser.config :as gp-config]
             [logseq.graph-parser.mldoc :as gp-mldoc]
@@ -76,12 +79,7 @@
             [promesa.core :as p]
             [reitit.frontend.easy :as rfe]
             [rum.core :as rum]
-            [shadow.loader :as loader]
-            [datascript.impl.entity :as e]
-            [logseq.common.path :as path]
-            [electron.ipc :as ipc]))
-
-
+            [shadow.loader :as loader]))
 
 ;; local state
 (defonce *dragging?
@@ -239,7 +237,7 @@
                 (and exist? (not loading?)))
           (content-fn)
           [:p.text-error.text-xs [:small.opacity-80
-                                    (util/format "%s not found!" (string/capitalize type))]])))))
+                                  (util/format "%s not found!" (string/capitalize type))]])))))
 
 (defn open-lightbox
   [e]
@@ -292,8 +290,8 @@
                          (js/setTimeout #(reset! *resizing-image? false) 200)))
           :onClick (fn [e]
                      (when @*resizing-image? (util/stop e)))}
-         (and (:width metadata) (not (util/mobile?)))
-         (assoc :style {:width (:width metadata)}))
+          (and (:width metadata) (not (util/mobile?)))
+          (assoc :style {:width (:width metadata)}))
         {})
       [:div.asset-container {:key "resize-asset-container"}
        [:img.rounded-sm.relative
@@ -330,19 +328,19 @@
                   (fn [e]
                     (when-let [block-id (:block/uuid config)]
                       (let [confirm-fn (ui/make-confirm-modal
-                                         {:title         (t :asset/confirm-delete (.toLocaleLowerCase (t :text/image)))
-                                          :sub-title     (if local? :asset/physical-delete "")
-                                          :sub-checkbox? local?
-                                          :on-confirm    (fn [_e {:keys [close-fn sub-selected]}]
-                                                           (close-fn)
-                                                           (editor-handler/delete-asset-of-block!
-                                                             {:block-id      block-id
-                                                              :local?        local?
-                                                              :delete-local? (and sub-selected (first sub-selected))
-                                                              :repo          (state/get-current-repo)
-                                                              :href          src
-                                                              :title         title
-                                                              :full-text     full-text}))})]
+                                        {:title         (t :asset/confirm-delete (.toLocaleLowerCase (t :text/image)))
+                                         :sub-title     (if local? :asset/physical-delete "")
+                                         :sub-checkbox? local?
+                                         :on-confirm    (fn [_e {:keys [close-fn sub-selected]}]
+                                                          (close-fn)
+                                                          (editor-handler/delete-asset-of-block!
+                                                           {:block-id      block-id
+                                                            :local?        local?
+                                                            :delete-local? (and sub-selected (first sub-selected))
+                                                            :repo          (state/get-current-repo)
+                                                            :href          src
+                                                            :title         title
+                                                            :full-text     full-text}))})]
                         (util/stop e)
                         (state/set-modal! confirm-fn))))}
                  (ui/icon "trash")])
@@ -457,7 +455,6 @@
                       (assets-handler/normalize-asset-resource-url href)
                       (get-file-absolute-path config href)))]
          (resizable-image config title href metadata full_text false))))))
-
 
 (def timestamp-to-string export-common-handler/timestamp-to-string)
 
@@ -942,7 +939,7 @@
         [:span.warning.mr-1 {:title "Block ref invalid"}
          (block-ref/->block-ref id)]))
     [:span.warning.mr-1 {:title "Block ref invalid"}
-      (block-ref/->block-ref id)]))
+     (block-ref/->block-ref id)]))
 
 (defn inline-text
   ([format v]
@@ -1125,8 +1122,8 @@
         {:href      (path/path-join "file://" path)
          :data-href path
          :target    "_blank"}
-        title
-        (assoc :title title))
+         title
+         (assoc :title title))
        (map-inline config label)))
 
     :else
@@ -1219,8 +1216,8 @@
            (cond->
             {:href (ar-url->http-url href)
              :target "_blank"}
-            title
-            (assoc :title title))
+             title
+             (assoc :title title))
            (map-inline config label))
 
           :else
@@ -1229,8 +1226,8 @@
            (cond->
             {:href href
              :target "_blank"}
-            title
-            (assoc :title title))
+             title
+             (assoc :title title))
            (map-inline config label)))))))
 
 (declare ->hiccup inline)
@@ -1564,109 +1561,109 @@
                     [:div.warning {:title "Invalid hiccup"}
                      s])]
     (-> result'
-       (hiccups.core/html)
-       (security/sanitize-html))))
+        (hiccups.core/html)
+        (security/sanitize-html))))
 
 (defn inline
   [{:keys [html-export?] :as config} item]
   (match item
-         [(:or "Plain" "Spaces") s]
-         s
+    [(:or "Plain" "Spaces") s]
+    s
 
-         ["Superscript" l]
-         (->elem :sup (map-inline config l))
-         ["Subscript" l]
-         (->elem :sub (map-inline config l))
+    ["Superscript" l]
+    (->elem :sup (map-inline config l))
+    ["Subscript" l]
+    (->elem :sub (map-inline config l))
 
-         ["Tag" _]
-         (when-let [s (gp-block/get-tag item)]
-           (let [s (text/page-ref-un-brackets! s)]
-             (page-cp (assoc config :tag? true) {:block/name s})))
+    ["Tag" _]
+    (when-let [s (gp-block/get-tag item)]
+      (let [s (text/page-ref-un-brackets! s)]
+        (page-cp (assoc config :tag? true) {:block/name s})))
 
-         ["Emphasis" [[kind] data]]
-         (emphasis-cp config kind data)
+    ["Emphasis" [[kind] data]]
+    (emphasis-cp config kind data)
 
-         ["Entity" e]
-         [:span {:dangerouslySetInnerHTML
-                 {:__html (security/sanitize-html (:html e))}}]
+    ["Entity" e]
+    [:span {:dangerouslySetInnerHTML
+            {:__html (security/sanitize-html (:html e))}}]
 
-         ["Latex_Fragment" [display s]] ;display can be "Displayed" or "Inline"
-         (if html-export?
-           (latex/html-export s false true)
-           (latex/latex (str (d/squuid)) s false (not= display "Inline")))
+    ["Latex_Fragment" [display s]] ;display can be "Displayed" or "Inline"
+    (if html-export?
+      (latex/html-export s false true)
+      (latex/latex (str (d/squuid)) s false (not= display "Inline")))
 
-         [(:or "Target" "Radio_Target") s]
-         [:a {:id s} s]
+    [(:or "Target" "Radio_Target") s]
+    [:a {:id s} s]
 
-         ["Email" address]
-         (let [{:keys [local_part domain]} address
-               address (str local_part "@" domain)]
-           [:a {:href (str "mailto:" address)} address])
+    ["Email" address]
+    (let [{:keys [local_part domain]} address
+          address (str local_part "@" domain)]
+      [:a {:href (str "mailto:" address)} address])
 
-         ["Nested_link" link]
-         (nested-link config html-export? link)
+    ["Nested_link" link]
+    (nested-link config html-export? link)
 
-         ["Link" link]
-         (link-cp config html-export? link)
+    ["Link" link]
+    (link-cp config html-export? link)
 
-         [(:or "Verbatim" "Code") s]
-         [:code s]
+    [(:or "Verbatim" "Code") s]
+    [:code s]
 
-         ["Inline_Source_Block" x]
-         [:code (:code x)]
+    ["Inline_Source_Block" x]
+    [:code (:code x)]
 
-         ["Export_Snippet" "html" s]
-         (when (not html-export?)
-           [:span {:dangerouslySetInnerHTML
-                   {:__html (security/sanitize-html s)}}])
+    ["Export_Snippet" "html" s]
+    (when (not html-export?)
+      [:span {:dangerouslySetInnerHTML
+              {:__html (security/sanitize-html s)}}])
 
-         ["Inline_Hiccup" s] ;; String to hiccup
-         (ui/catch-error
-          [:div.warning {:title "Invalid hiccup"} s]
-          [:span {:dangerouslySetInnerHTML
-                  {:__html (hiccup->html s)}}])
+    ["Inline_Hiccup" s] ;; String to hiccup
+    (ui/catch-error
+     [:div.warning {:title "Invalid hiccup"} s]
+     [:span {:dangerouslySetInnerHTML
+             {:__html (hiccup->html s)}}])
 
-         ["Inline_Html" s]
-         (when (not html-export?)
+    ["Inline_Html" s]
+    (when (not html-export?)
            ;; TODO: how to remove span and only export the content of `s`?
-           [:span {:dangerouslySetInnerHTML {:__html (security/sanitize-html s)}}])
+      [:span {:dangerouslySetInnerHTML {:__html (security/sanitize-html s)}}])
 
-         [(:or "Break_Line" "Hard_Break_Line")]
-         [:br]
+    [(:or "Break_Line" "Hard_Break_Line")]
+    [:br]
 
-         ["Timestamp" [(:or "Scheduled" "Deadline") _timestamp]]
-         nil
-         ["Timestamp" ["Date" t]]
-         (timestamp t "Date")
-         ["Timestamp" ["Closed" t]]
-         (timestamp t "Closed")
-         ["Timestamp" ["Range" t]]
-         (range t false)
-         ["Timestamp" ["Clock" ["Stopped" t]]]
-         (range t true)
-         ["Timestamp" ["Clock" ["Started" t]]]
-         (timestamp t "Started")
+    ["Timestamp" [(:or "Scheduled" "Deadline") _timestamp]]
+    nil
+    ["Timestamp" ["Date" t]]
+    (timestamp t "Date")
+    ["Timestamp" ["Closed" t]]
+    (timestamp t "Closed")
+    ["Timestamp" ["Range" t]]
+    (range t false)
+    ["Timestamp" ["Clock" ["Stopped" t]]]
+    (range t true)
+    ["Timestamp" ["Clock" ["Started" t]]]
+    (timestamp t "Started")
 
-         ["Cookie" ["Percent" n]]
-         [:span {:class "cookie-percent"}
-          (util/format "[%d%%]" n)]
-         ["Cookie" ["Absolute" current total]]
-         [:span {:class "cookie-absolute"}
-          (util/format "[%d/%d]" current total)]
+    ["Cookie" ["Percent" n]]
+    [:span {:class "cookie-percent"}
+     (util/format "[%d%%]" n)]
+    ["Cookie" ["Absolute" current total]]
+    [:span {:class "cookie-absolute"}
+     (util/format "[%d/%d]" current total)]
 
-         ["Footnote_Reference" options]
-         (let [{:keys [name]} options
-               encode-name (util/url-encode name)]
-           [:sup.fn
-            [:a {:id (str "fnr." encode-name)
-                 :class "footref"
-                 :on-click #(route-handler/jump-to-anchor! (str "fn." encode-name))}
-             name]])
+    ["Footnote_Reference" options]
+    (let [{:keys [name]} options
+          encode-name (util/url-encode name)]
+      [:sup.fn
+       [:a {:id (str "fnr." encode-name)
+            :class "footref"
+            :on-click #(route-handler/jump-to-anchor! (str "fn." encode-name))}
+        name]])
 
-         ["Macro" options]
-         (macro-cp config options)
+    ["Macro" options]
+    (macro-cp config options)
 
-         :else ""))
+    :else ""))
 
 (rum/defc block-child
   [block]
@@ -1727,9 +1724,9 @@
           (when (map? child)
             (let [child  (dissoc child :block/meta)
                   config (cond->
-                           (-> config
-                               (assoc :block/uuid (:block/uuid child))
-                               (dissoc :breadcrumb-show? :embed-parent))
+                          (-> config
+                              (assoc :block/uuid (:block/uuid child))
+                              (dissoc :breadcrumb-show? :embed-parent))
                            (or ref? query?)
                            (assoc :ref-query-child? true))]
               (rum/with-key (block-container config child)
@@ -1793,7 +1790,7 @@
                                  (when order-list? " as-order-list typed-list"))}
 
                     [:span.bullet (cond->
-                                    {:blockid (str uuid)}
+                                   {:blockid (str uuid)}
                                     selected?
                                     (assoc :class "selected"))
                      (when order-list?
@@ -2241,7 +2238,7 @@
              (and (not block-content?)
                   (seq (:block/children block))
                   (= move-to :nested)))
-         (dnd-separator move-to block-content?))))))
+          (dnd-separator move-to block-content?))))))
 
 (defn clock-summary-cp
   [block body]
@@ -2314,12 +2311,12 @@
                 :data-type (name block-type)
                 :style {:width "100%" :pointer-events (when stop-events? "none")}}
 
-               (not (string/blank? (:hl-color properties)))
-               (assoc :data-hl-color (:hl-color properties))
+                (not (string/blank? (:hl-color properties)))
+                (assoc :data-hl-color (:hl-color properties))
 
-               (not block-ref?)
-               (assoc mouse-down-key (fn [e]
-                                       (block-content-on-mouse-down e block block-id content edit-input-id))))]
+                (not block-ref?)
+                (assoc mouse-down-key (fn [e]
+                                        (block-content-on-mouse-down e block block-id content edit-input-id))))]
     [:div.block-content.inline
      (cond-> {:id (str "block-content-" uuid)
               :class (when selected? "select-none")
@@ -2878,20 +2875,20 @@
        :blockid (str uuid)
        :haschild (str (boolean has-child?))}
 
-      level
-      (assoc :level level)
+       level
+       (assoc :level level)
 
-      (not slide?)
-      (merge attrs)
+       (not slide?)
+       (merge attrs)
 
-      (or reference? (and embed? (not page-embed?)))
-      (assoc :data-transclude true)
+       (or reference? (and embed? (not page-embed?)))
+       (assoc :data-transclude true)
 
-      embed?
-      (assoc :data-embed true)
+       embed?
+       (assoc :data-embed true)
 
-      custom-query?
-      (assoc :data-query true))
+       custom-query?
+       (assoc :data-query true))
 
      (when (and ref? breadcrumb-show?)
        (breadcrumb config repo uuid {:show-page? false
@@ -2939,7 +2936,7 @@
   [cp-state]
   (let [args (:rum/args cp-state)]
     (assoc cp-state
-      :rum/args (assoc (vec args) 0 (block-handler/attach-order-list-state (first args) (second args))))))
+           :rum/args (assoc (vec args) 0 (block-handler/attach-order-list-state (first args) (second args))))))
 
 (rum/defcs block-container < rum/reactive
   (rum/local false ::show-block-left-menu?)
@@ -2958,8 +2955,8 @@
                :else
                nil)
              (-> (assoc state
-                   ::control-show? (atom false)
-                   ::navigating-block (atom (:block/uuid block)))
+                        ::control-show? (atom false)
+                        ::navigating-block (atom (:block/uuid block)))
                  (attach-order-list-state!))))
 
    :will-remount (fn [_old-state new-state]
@@ -2973,10 +2970,10 @@
                           b1                  (second (:rum/args old-state))
                           b2                  (second (:rum/args new-state))
                           result              (or
-                                                (not= (select-keys b1 compare-keys)
-                                                      (select-keys b2 compare-keys))
-                                                (not= (select-keys (first (:rum/args old-state)) config-compare-keys)
-                                                      (select-keys (first (:rum/args new-state)) config-compare-keys)))]
+                                               (not= (select-keys b1 compare-keys)
+                                                     (select-keys b2 compare-keys))
+                                               (not= (select-keys (first (:rum/args old-state)) config-compare-keys)
+                                                     (select-keys (first (:rum/args new-state)) config-compare-keys)))]
                       result))
    :will-unmount (fn [state]
                    ;; restore root block's collapsed state
@@ -3059,8 +3056,8 @@
          :li
          (cond->
           {:checked checked?}
-          number
-          (assoc :value number))
+           number
+           (assoc :value number))
          (vec-cat
           [(->elem
             :p

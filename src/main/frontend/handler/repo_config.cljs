@@ -7,11 +7,11 @@
             [frontend.config :as config]
             [frontend.db :as db]
             [frontend.fs :as fs]
-            [logseq.common.path :as path]
             [frontend.handler.common.file :as file-common-handler]
             [frontend.handler.notification :as notification]
             [frontend.spec :as spec]
             [frontend.state :as state]
+            [logseq.common.path :as path]
             [promesa.core :as p]))
 
 (defn- get-repo-config-content

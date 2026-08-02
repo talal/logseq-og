@@ -1,13 +1,13 @@
 (ns frontend.extensions.video.youtube
-  (:require [rum.core :as rum]
-            [cljs.core.async :refer [<! chan go] :as a]
+  (:require [cljs.core.async :refer [<! chan go] :as a]
+            [clojure.string :as str]
             [frontend.components.svg :as svg]
+            [frontend.handler.notification :as notification]
+            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
             [goog.object :as gobj]
-            [clojure.string :as str]
-            [frontend.mobile.util :as mobile-util]
-            [frontend.handler.notification :as notification]))
+            [rum.core :as rum]))
 
 (defn- load-yt-script []
   (js/console.log "load yt script")

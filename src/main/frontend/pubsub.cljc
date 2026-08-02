@@ -7,9 +7,9 @@
   #?(:cljs (:require-macros [frontend.pubsub :refer [def-mult-or-pub chan-of]]))
   (:require [clojure.core.async :as a :refer [chan mult pub]]
             [clojure.core.async.impl.protocols :as ap]
+            [clojure.pprint :as pp]
             [malli.core :as m]
-            [malli.dev.pretty :as mdp]
-            [clojure.pprint :as pp]))
+            [malli.dev.pretty :as mdp]))
 
 ;;; helper macro
 (defmacro chan-of [malli-schema malli-schema-validator & chan-args]
@@ -17,13 +17,13 @@
      (reify
        ap/ReadPort
        (~'take! [~'_ fn1-handler#]
-        (ap/take! ch# fn1-handler#))
+         (ap/take! ch# fn1-handler#))
        ap/WritePort
        (~'put! [~'_ val# fn1-handler#]
-        (if (~malli-schema-validator val#)
-          (ap/put! ch# val# fn1-handler#)
-          (do (mdp/explain ~malli-schema val#)
-              (throw (ex-info "validate chan value failed" {:val val#}))))))))
+         (if (~malli-schema-validator val#)
+           (ap/put! ch# val# fn1-handler#)
+           (do (mdp/explain ~malli-schema val#)
+               (throw (ex-info "validate chan value failed" {:val val#}))))))))
 
 (defmacro def-mult-or-pub
   "define following vars:

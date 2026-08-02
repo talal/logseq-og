@@ -1,14 +1,14 @@
 (ns frontend.extensions.zotero.handler
   (:require [cljs.core.async :refer [<! go]]
             [clojure.string :as str]
+            [frontend.db :as db]
             [frontend.extensions.zotero.api :as zotero-api]
             [frontend.extensions.zotero.extractor :as extractor]
             [frontend.extensions.zotero.setting :as setting]
-            [frontend.handler.notification :as notification]
-            [frontend.state :as state]
             [frontend.handler.editor :as editor-handler]
+            [frontend.handler.notification :as notification]
             [frontend.handler.page :as page-handler]
-            [frontend.db :as db]
+            [frontend.state :as state]
             [logseq.graph-parser.util.page-ref :as page-ref]))
 
 (defn add [page-name type item]

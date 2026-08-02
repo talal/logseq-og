@@ -2,21 +2,21 @@
   "Main entry ns for db related fns"
   (:require [clojure.core.async :as async]
             [datascript.core :as d]
-            [logseq.db.schema :as db-schema]
+            [electron.ipc :as ipc]
             [frontend.db.conn :as conn]
-            [logseq.db.default :as default-db]
+            [frontend.db.migrate :as db-migrate]
             [frontend.db.model]
+            [frontend.db.persist :as db-persist]
             [frontend.db.query-custom]
             [frontend.db.query-react]
             [frontend.db.react :as react]
             [frontend.db.utils]
-            [frontend.db.persist :as db-persist]
-            [frontend.db.migrate :as db-migrate]
             [frontend.namespaces :refer [import-vars]]
             [frontend.state :as state]
             [frontend.util :as util]
-            [promesa.core :as p]
-            [electron.ipc :as ipc]))
+            [logseq.db.default :as default-db]
+            [logseq.db.schema :as db-schema]
+            [promesa.core :as p]))
 
 (import-vars
  [frontend.db.conn

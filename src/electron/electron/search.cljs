@@ -1,13 +1,13 @@
 (ns electron.search
   "Provides both page level and block level index"
-  (:require ["path" :as node-path]
-            ["fs-extra" :as fs]
-            ["better-sqlite3" :as sqlite3]
-            [clojure.string :as string]
+  (:require ["better-sqlite3" :as sqlite3]
             ["electron" :refer [app]]
+            ["fs-extra" :as fs]
+            ["path" :as node-path]
+            [clojure.string :as string]
             [electron.logger :as logger]
-            [medley.core :as medley]
-            [electron.utils :as utils]))
+            [electron.utils :as utils]
+            [medley.core :as medley]))
 
 (defonce databases (atom nil))
 

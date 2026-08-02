@@ -1,7 +1,7 @@
 (ns ^:no-doc frontend.db.debug
-  (:require [frontend.db.utils :as db-utils]
+  (:require [datascript.core :as d]
             [frontend.db :as db]
-            [datascript.core :as d]
+            [frontend.db.utils :as db-utils]
             [frontend.util :as util]))
 
 ;; shortcut for query a block with string ref

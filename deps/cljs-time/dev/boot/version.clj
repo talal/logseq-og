@@ -1,7 +1,7 @@
 (ns boot.version)
 
 (defn read-version []
-  (let [[version qualifier] (-> (slurp "VERSION") (string/split #"-")) 
+  (let [[version qualifier] (-> (slurp "VERSION") (string/split #"-"))
         [major minor patch] (string/split version #"\.")
         snapshot? (re-find #"SNAPSHOT" qualifier)
         numerics (mapv #(Integer. %) [major minor patch])]

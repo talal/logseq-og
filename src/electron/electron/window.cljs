@@ -1,16 +1,16 @@
 (ns electron.window
-  (:require ["electron-window-state" :as windowStateKeeper]
-            [electron.utils :refer [mac? win32? linux? dev? open] :as utils]
+  (:require ["electron" :refer [BrowserWindow app session shell] :as electron]
+            ["electron-window-state" :as windowStateKeeper]
+            ["path" :as node-path]
+            ["url" :as URL]
+            [cljs-bean.core :as bean]
+            [clojure.core.async :as async]
+            [clojure.string :as string]
             [electron.configs :as cfgs]
             [electron.context-menu :as context-menu]
             [electron.logger :as logger]
-            ["electron" :refer [BrowserWindow app session shell] :as electron]
-            ["path" :as node-path]
-            ["url" :as URL]
             [electron.state :as state]
-            [cljs-bean.core :as bean]
-            [clojure.core.async :as async]
-            [clojure.string :as string]))
+            [electron.utils :refer [mac? win32? linux? dev? open] :as utils]))
 
 (defonce *quitting? (atom false))
 

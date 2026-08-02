@@ -1,10 +1,9 @@
 (ns frontend.extensions.code
-  (:require [clojure.string :as string]
-            ["codemirror" :as CodeMirror]
+  (:require ["codemirror" :as CodeMirror]
             ["codemirror/addon/edit/closebrackets"]
             ["codemirror/addon/edit/matchbrackets"]
-            ["codemirror/addon/selection/active-line"]
             ["codemirror/addon/hint/show-hint"]
+            ["codemirror/addon/selection/active-line"]
             ["codemirror/mode/apl/apl"]
             ["codemirror/mode/asciiarmor/asciiarmor"]
             ["codemirror/mode/asn.1/asn.1"]
@@ -127,19 +126,20 @@
             ["codemirror/mode/yaml-frontmatter/yaml-frontmatter"]
             ["codemirror/mode/yaml/yaml"]
             ["codemirror/mode/z80/z80"]
+            [clojure.string :as string]
             [frontend.commands :as commands]
+            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.extensions.calc :as calc]
-            [frontend.handler.editor :as editor-handler]
             [frontend.handler.code :as code-handler]
+            [frontend.handler.editor :as editor-handler]
+            [frontend.schema.handler.common-config :refer [Config-edn]]
             [frontend.state :as state]
             [frontend.util :as util]
-            [frontend.config :as config]
             [goog.dom :as gdom]
             [goog.object :as gobj]
-            [frontend.schema.handler.common-config :refer [Config-edn]]
-            [malli.util :as mu]
             [malli.core :as m]
+            [malli.util :as mu]
             [rum.core :as rum]))
 
 ;; codemirror
@@ -153,7 +153,6 @@
 ;; export CodeMirror to global scope
 (set! js/window -CodeMirror CodeMirror)
 
-
 (defn- all-tokens-by-cursur
   "All tokens from the beginning of the document to the cursur(inclusive)."
   [cm]
@@ -162,7 +161,6 @@
         pos (.-ch cur)]
     (concat (mapcat #(.getLineTokens cm %) (range line))
             (filter #(<= (.-end %) pos) (.getLineTokens cm line)))))
-
 
 (defn- tokens->doc-state
   "Parse tokens into document state of the last token."
@@ -388,7 +386,7 @@
         config-edit? (and (:file? config) (string/ends-with? (:file-path config) "config.edn"))
         textarea (gdom/getElement id)
         radix-color (state/sub :ui/radix-color)
-        default-cm-options {:theme (if radix-color 
+        default-cm-options {:theme (if radix-color
                                      (str "lsradix " theme)
                                      (str "solarized " theme))
                             :autoCloseBrackets true
@@ -493,7 +491,7 @@
                  (let [next-theme (get-theme!)
                        last-theme @(:last-theme state)
                        editor (some-> state :editor-atom deref)]
-                   (when (and editor (not= next-theme last-theme)) 
+                   (when (and editor (not= next-theme last-theme))
                      (reset! (:last-theme state) next-theme)
                      (.setOption editor "theme" next-theme)))
                  (reset! (:code-options state) (last (:rum/args state)))

@@ -1,12 +1,12 @@
 (ns ^:no-doc frontend.diff
-  (:require [clojure.string :as string]
-            ["diff" :as jsdiff]
+  (:require ["diff" :as jsdiff]
+            [cljs-bean.core :as bean]
+            [clojure.string :as string]
+            [frontend.util :as util]
+            [frontend.util.text :as text-util]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
-            [cljs-bean.core :as bean]
-            [frontend.util :as util]
-            [logseq.graph-parser.util :as gp-util]
-            [frontend.util.text :as text-util]))
+            [logseq.graph-parser.util :as gp-util]))
 
 (defn diff
   [s1 s2]

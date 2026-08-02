@@ -1,10 +1,10 @@
 (ns frontend.db.utils
   "Some utils are required by other namespace in frontend.db package."
   (:require [datascript.core :as d]
-            [frontend.state :as state]
             [datascript.transit :as dt]
-            [frontend.db.conn :as conn]
             [frontend.config :as config]
+            [frontend.db.conn :as conn]
+            [frontend.state :as state]
             [logseq.graph-parser.util :as gp-util]))
 
 ;; transit serialization

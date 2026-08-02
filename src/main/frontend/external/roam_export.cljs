@@ -35,13 +35,13 @@
 (defn update-content [content uuid->uid-map]
   (when content                         ; page block doesn't have content
     (let [uuids (keys uuid->uid-map)]
-     (reduce
-      (fn [acc uuid]
-        (if (str/includes? acc (str uuid))
-          (str/replace acc (str uuid) (get uuid->uid-map uuid))
-          acc))
-      content
-      uuids))))
+      (reduce
+       (fn [acc uuid]
+         (if (str/includes? acc (str uuid))
+           (str/replace acc (str uuid) (get uuid->uid-map uuid))
+           acc))
+       content
+       uuids))))
 
 (defn update-uid [{:block/keys [uuid content] :as b}
                   uuid->uid-map]

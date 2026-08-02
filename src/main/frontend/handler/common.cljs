@@ -1,13 +1,13 @@
 (ns frontend.handler.common
   "Common fns for handlers"
-  (:require [cljs-bean.core :as bean]
+  (:require ["ignore" :as Ignore]
+            [cljs-bean.core :as bean]
             [cljs.reader :as reader]
             [frontend.date :as date]
             [frontend.state :as state]
             [frontend.util :as util]
             [frontend.util.property :as property]
-            [goog.object :as gobj]
-            ["ignore" :as Ignore]))
+            [goog.object :as gobj]))
 
 (defn copy-to-clipboard-without-id-property!
   [format raw-text html blocks]
@@ -48,7 +48,7 @@
   [pages]
   (map (fn [{:block/keys [created-at updated-at journal-day] :as p}]
          (cond->
-           p
+          p
 
            (nil? created-at)
            (assoc :block/created-at
@@ -62,7 +62,7 @@
                   (if journal-day
                     (date/journal-day->ts journal-day)
                     (util/time-ms)))))
-    pages))
+       pages))
 
 (defn show-custom-context-menu! [e context-menu-content]
   (util/stop e)

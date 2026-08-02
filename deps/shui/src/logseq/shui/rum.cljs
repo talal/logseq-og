@@ -1,8 +1,8 @@
 (ns logseq.shui.rum
-  (:require [clojure.string :as str]
+  (:require [cljsjs.react]
+            [clojure.string :as str]
             [daiquiri.normalize :as normalize]
             [daiquiri.util :as util]
-            [cljsjs.react]
             [goog.object :as gobj]))
 
 (defn ^js/React.Element create-element
@@ -37,17 +37,17 @@
   "Eagerly interpret the seq `x` as HTML elements."
   [x]
   (reduce
-    (fn [ret x]
-      (conj ret (interpret x)))
-    [] x))
+   (fn [ret x]
+     (conj ret (interpret x)))
+   [] x))
 
 (defn element
   "Render an element vector as a HTML element."
   [element]
   (let [[type attrs content] (normalize/element element)]
     (create-element type
-      (element-attributes attrs)
-      (interpret-seq content))))
+                    (element-attributes attrs)
+                    (interpret-seq content))))
 
 (defn fragment [[_ attrs & children]]
   (let [[attrs children] (if (map? attrs)

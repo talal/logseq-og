@@ -12,11 +12,11 @@
   [hiccup]
   (walk/postwalk (fn [f]
                    (if (map? f)
-                      (apply dissoc f (conj (filter (fn [key]
-                                                      (string/starts-with? (str key) ":data-"))
-                                                    (keys f))
-                                            :style
-                                            :class))
+                     (apply dissoc f (conj (filter (fn [key]
+                                                     (string/starts-with? (str key) ":data-"))
+                                                   (keys f))
+                                           :style
+                                           :class))
                      f)) hiccup))
 
 (defn- export-hiccup
@@ -229,14 +229,14 @@
                              :markdown (let [columns (count (last (first children)))]
                                          (str
                                           (map-join children)
-                                         "| " (string/join " | "
+                                          "| " (string/join " | "
                                                             (repeat columns "----"))
-                                         " |"))
+                                          " |"))
                              :org (let [columns (count (last (first children)))]
                                     (str
                                      (map-join children)
                                      "|" (string/join "+"
-                                                        (repeat columns "----"))
+                                                      (repeat columns "----"))
                                      "|"))
                              nil)
                            :tr

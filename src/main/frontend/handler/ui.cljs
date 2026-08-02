@@ -1,21 +1,21 @@
 (ns ^:no-doc frontend.handler.ui
   (:require [cljs-time.core :refer [plus days weeks]]
+            [clojure.string :as string]
             [dommy.core :as dom]
-            [frontend.util :as util]
+            [electron.ipc :as ipc]
+            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.db.model :as db-model]
-            [frontend.config :as config]
-            [frontend.state :as state]
-            [frontend.storage :as storage]
             [frontend.fs :as fs]
             [frontend.loader :refer [load]]
+            [frontend.state :as state]
+            [frontend.storage :as storage]
+            [frontend.util :as util]
             [goog.dom :as gdom]
             [goog.object :as gobj]
-            [clojure.string :as string]
-            [rum.core :as rum]
-            [electron.ipc :as ipc]
+            [logseq.common.path :as path]
             [promesa.core :as p]
-            [logseq.common.path :as path]))
+            [rum.core :as rum]))
 
 ;; sidebars
 (def *right-sidebar-resized-at (atom (js/Date.now)))
@@ -62,9 +62,9 @@
   []
   (let [current-repo (state/get-current-repo)
         id "contents"]
-      (if (state/sidebar-block-exists? id)
-        (state/sidebar-remove-block! id)
-        (state/sidebar-add-block! current-repo id :contents))))
+    (if (state/sidebar-block-exists? id)
+      (state/sidebar-remove-block! id)
+      (state/sidebar-add-block! current-repo id :contents))))
 
 (defn toggle-help!
   []
@@ -76,7 +76,6 @@
     (state/toggle-settings!)))
 
 ;; FIXME: re-render all embedded blocks since they will not be re-rendered automatically
-
 
 (defn re-render-root!
   ([]

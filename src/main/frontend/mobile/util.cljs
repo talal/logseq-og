@@ -3,8 +3,8 @@
             ["@capacitor/splash-screen" :refer [SplashScreen]]
             ["@logseq/capacitor-file-sync" :refer [FileSync]]
             [clojure.string :as string]
-            [promesa.core :as p]
-            [goog.object :as gobj]))
+            [goog.object :as gobj]
+            [promesa.core :as p]))
 
 (defn platform []
   (.getPlatform Capacitor))

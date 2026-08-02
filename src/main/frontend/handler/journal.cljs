@@ -1,10 +1,10 @@
 (ns ^:no-doc frontend.handler.journal
-  (:require [frontend.date :as date]
+  (:require [cljs-time.coerce :as tc]
+            [cljs-time.core :as t]
+            [frontend.date :as date]
             [frontend.handler.route :as route-handler]
             [frontend.state :as state]
-            [frontend.util :as util]
-            [cljs-time.coerce :as tc]
-            [cljs-time.core :as t]))
+            [frontend.util :as util]))
 
 (defn- redirect-to-journal!
   [page]

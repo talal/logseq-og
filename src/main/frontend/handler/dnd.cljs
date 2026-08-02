@@ -3,10 +3,10 @@
   (:require [frontend.handler.editor :as editor-handler]
             [frontend.handler.editor.property :as editor-property]
             [frontend.modules.outliner.core :as outliner-core]
-            [frontend.modules.outliner.tree :as tree]
             [frontend.modules.outliner.transaction :as outliner-tx]
-            [logseq.graph-parser.util.block-ref :as block-ref]
-            [frontend.state :as state]))
+            [frontend.modules.outliner.tree :as tree]
+            [frontend.state :as state]
+            [logseq.graph-parser.util.block-ref :as block-ref]))
 
 (defn move-blocks
   [^js event blocks target-block move-to]
@@ -22,8 +22,8 @@
       (and alt-key? (= (count blocks) 1))
       (do
         (editor-property/set-block-property! (:block/uuid first-block)
-                                            :id
-                                            (str (:block/uuid first-block)))
+                                             :id
+                                             (str (:block/uuid first-block)))
         (editor-handler/api-insert-new-block!
          (block-ref/->block-ref (:block/uuid first-block))
          {:block-uuid (:block/uuid target-block)
@@ -37,22 +37,21 @@
                           :status :warning
                           :clear? true}])
 
-
       (every? map? (conj blocks target-block))
       (let [target-node (outliner-core/block target-block)]
         (outliner-tx/transact!
-          {:outliner-op :move-blocks}
-          (editor-handler/save-current-block!)
-          (if top?
-            (let [first-child?
-                  (= (tree/-get-parent-id target-node)
-                     (tree/-get-left-id target-node))]
-              (if first-child?
-                (let [parent (tree/-get-parent target-node)]
-                  (outliner-core/move-blocks! blocks (:data parent) false))
-                (let [before-node (tree/-get-left target-node)]
-                  (outliner-core/move-blocks! blocks (:data before-node) true))))
-            (outliner-core/move-blocks! blocks target-block (not nested?)))))
+         {:outliner-op :move-blocks}
+         (editor-handler/save-current-block!)
+         (if top?
+           (let [first-child?
+                 (= (tree/-get-parent-id target-node)
+                    (tree/-get-left-id target-node))]
+             (if first-child?
+               (let [parent (tree/-get-parent target-node)]
+                 (outliner-core/move-blocks! blocks (:data parent) false))
+               (let [before-node (tree/-get-left target-node)]
+                 (outliner-core/move-blocks! blocks (:data before-node) true))))
+           (outliner-core/move-blocks! blocks target-block (not nested?)))))
 
       :else
       nil)))

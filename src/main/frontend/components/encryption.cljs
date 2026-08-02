@@ -1,13 +1,13 @@
 (ns frontend.components.encryption
-  (:require [clojure.string :as string]
+  (:require [cljs.core.async :as async]
+            [clojure.string :as string]
+            [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
-            [frontend.handler.notification :as notification]
             [frontend.fs.sync :as sync]
+            [frontend.handler.notification :as notification]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
-            [frontend.config :as config]
-            [cljs.core.async :as async]
             [rum.core :as rum]))
 
 (rum/defc show-password-cp
@@ -152,10 +152,9 @@
                     [:span "Password fields are not matching!"]
                     [:span "Password fields are matching!"])
                   [:span "Enter your chosen password again!"]))
-              [:span "Choose a strong and hard to guess password!"])
-            ]
+              [:span "Choose a strong and hard to guess password!"])]
 
-           ;; password strength checker
+;; password strength checker
            (when-not (string/blank? @*password)
              [:<>
               [:div.input-hints.text-sm.py-2.px-3.rounded.mb-2.-mt-1.5.flex.items-center.sm:space-x-3.strength-wrap
@@ -166,8 +165,7 @@
                     {:key i
                      :class (when included? "included")}
                     (ui/icon (if included? "check" "x") {:class "mr-1"})
-                    [:span.capitalize i]
-                    ]))]
+                    [:span.capitalize i]]))]
 
               [:div.input-pw-strength
                [:div.indicator.flex

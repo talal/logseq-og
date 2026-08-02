@@ -1,11 +1,11 @@
 (ns ^:node-only logseq.graph-parser.cli-test
-  (:require [cljs.test :refer [deftest is testing async use-fixtures]]
-            [logseq.graph-parser.cli :as gp-cli]
-            [logseq.graph-parser.test.docs-graph-helper :as docs-graph-helper]
-            [clojure.string :as string]
-            ["fs" :as fs]
+  (:require ["fs" :as fs]
+            ["path" :as path]
             ["process" :as process]
-            ["path" :as path]))
+            [cljs.test :refer [deftest is testing async use-fixtures]]
+            [clojure.string :as string]
+            [logseq.graph-parser.cli :as gp-cli]
+            [logseq.graph-parser.test.docs-graph-helper :as docs-graph-helper]))
 
 (use-fixtures
   :each

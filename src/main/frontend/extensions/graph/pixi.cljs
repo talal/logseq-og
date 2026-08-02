@@ -1,12 +1,12 @@
 (ns frontend.extensions.graph.pixi
-  (:require [cljs-bean.core :as bean]
-            ["d3-force"
+  (:require ["d3-force"
              :refer [forceCenter forceCollide forceLink forceManyBody forceSimulation forceX forceY]
              :as force]
-            [goog.object :as gobj]
-            [frontend.colors :as colors]
             ["graphology" :as graphology]
-            ["pixi-graph-fork" :as Pixi-Graph]))
+            ["pixi-graph-fork" :as Pixi-Graph]
+            [cljs-bean.core :as bean]
+            [frontend.colors :as colors]
+            [goog.object :as gobj]))
 
 (defonce *graph-instance (atom nil))
 (defonce *simulation (atom nil))
@@ -217,22 +217,22 @@
           simulation                                                                (layout! nodes-js links-js link-dist charge-strength charge-range)]
       (doseq [node nodes-js]
         (try (.addNode graph (.-id node) node)
-          (catch :default e
-            (js/console.error e))))
+             (catch :default e
+               (js/console.error e))))
       (doseq [link links-js]
         (let [source (.-id (.-source link))
               target (.-id (.-target link))]
           (try (.addEdge graph source target link)
-            (catch :default e
-              (js/console.error e)))))
+               (catch :default e
+                 (js/console.error e)))))
       (when-let [container-ref (:ref state)]
         (let [pixi-graph (new (.-PixiGraph Pixi-Graph)
-                           (bean/->js
-                            {:container  @container-ref
-                             :graph      graph
-                             :style      style
-                             :hoverStyle hover-style
-                             :height     height}))]
+                              (bean/->js
+                               {:container  @container-ref
+                                :graph      graph
+                                :style      style
+                                :hoverStyle hover-style
+                                :height     height}))]
           (reset! *graph-instance
                   {:graph graph
                    :pixi  pixi-graph})

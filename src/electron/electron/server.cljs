@@ -1,17 +1,17 @@
 (ns electron.server
-  (:require ["fastify" :as Fastify]
-            ["@fastify/cors" :as FastifyCORS]
+  (:require ["@fastify/cors" :as FastifyCORS]
             ["electron" :refer [ipcMain]]
+            ["fastify" :as Fastify]
             ["fs-extra" :as fs-extra]
             ["path" :as node-path]
-            [clojure.string :as string]
-            [promesa.core :as p]
-            [cljs-bean.core :as bean]
-            [electron.utils :as utils]
             [camel-snake-kebab.core :as csk]
-            [electron.logger :as logger]
+            [cljs-bean.core :as bean]
+            [clojure.string :as string]
             [electron.configs :as cfgs]
-            [electron.window :as window]))
+            [electron.logger :as logger]
+            [electron.utils :as utils]
+            [electron.window :as window]
+            [promesa.core :as p]))
 
 (defonce ^:private *win (atom nil))
 (defonce ^:private *server (atom nil))
@@ -148,7 +148,7 @@
                                                  (string/replace-first "${HOST}" HOST)
                                                  (string/replace-first "${PORT}" PORT))]
                                     (doto rep (.type "text/html")
-                                              (.send html))))))
+                                          (.send html))))))
               ;; listen port
               _     (.listen s (bean/->js (select-keys @*state [:host :port])))]
         (reset! *server s)

@@ -4,7 +4,7 @@
 
 (def sanitization-options (clj->js {:ADD_TAGS ["iframe"]
                                     :ADD_ATTR ["is"]
-                                    :ALLOW_UNKNOWN_PROTOCOLS true }))
+                                    :ALLOW_UNKNOWN_PROTOCOLS true}))
 
 (defn sanitize-html
   [html]

@@ -10,8 +10,8 @@
 ```clojure
 (january? (clj-time.core/date-time 2011 1 1))
 ```"
-  (:require [cljs-time.core :as time]
-            [cljs-time.coerce :as coerce]))
+  (:require [cljs-time.coerce :as coerce]
+            [cljs-time.core :as time]))
 
 ;; days of the week
 (defn monday? [date-time]

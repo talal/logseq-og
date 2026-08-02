@@ -84,7 +84,7 @@
                      :block/pre-block? true}
               page-properties-tx [(assoc page-id :block/properties {key value})]]
           (outliner-tx/transact!
-            {:outliner-op :insert-blocks
-             :additional-tx page-properties-tx}
-            (outliner-core/insert-blocks! block page {:sibling? false}))))
+           {:outliner-op :insert-blocks
+            :additional-tx page-properties-tx}
+           (outliner-core/insert-blocks! block page {:sibling? false}))))
       (outliner-file/sync-to-file page-id))))

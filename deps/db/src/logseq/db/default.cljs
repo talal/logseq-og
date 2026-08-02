@@ -1,7 +1,7 @@
 (ns logseq.db.default
   "Provides fns for seeding default data in a logseq db"
-  (:require [clojure.string :as string]
-            [clojure.set :as set]))
+  (:require [clojure.set :as set]
+            [clojure.string :as string]))
 
 (defonce built-in-markers
   ["NOW" "LATER" "DOING" "DONE" "CANCELED" "CANCELLED" "IN-PROGRESS" "TODO" "WAIT" "WAITING"])

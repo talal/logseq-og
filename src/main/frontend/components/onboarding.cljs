@@ -1,9 +1,9 @@
 (ns frontend.components.onboarding
-  (:require [frontend.context.i18n :refer [t]]
-            [rum.core :as rum]
-            [frontend.ui :as ui]
+  (:require [frontend.components.onboarding.setups :as setups]
+            [frontend.context.i18n :refer [t]]
             [frontend.state :as state]
-            [frontend.components.onboarding.setups :as setups]))
+            [frontend.ui :as ui]
+            [rum.core :as rum]))
 
 (rum/defc intro
   [onboarding-and-home?]
@@ -44,8 +44,6 @@
            :children [[(t :help/privacy) "https://blog.logseq.com/privacy-policy/"]
                       [(t :help/terms) "https://blog.logseq.com/terms/"]]}]]
 
-
-
      (map (fn [sublist]
             [[:p.mt-4.mb-1 [:b (:title sublist)]]
              [:ul
@@ -54,5 +52,5 @@
                       (if href
                         [:a {:href href :target "_blank"} title]
                         title)])
-                (:children sublist))]])
-       list))])
+                   (:children sublist))]])
+          list))])

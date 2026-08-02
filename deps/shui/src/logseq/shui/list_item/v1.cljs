@@ -1,11 +1,11 @@
 (ns logseq.shui.list-item.v1
   (:require
-    ["remove-accents" :as remove-accents]
-    [rum.core :as rum]
-    [clojure.string :as string]
-    [goog.string :as gstring]
-    [logseq.shui.icon.v2 :as icon]
-    [logseq.shui.shortcut.v1 :as shortcut]))
+   ["remove-accents" :as remove-accents]
+   [clojure.string :as string]
+   [goog.string :as gstring]
+   [logseq.shui.icon.v2 :as icon]
+   [logseq.shui.shortcut.v1 :as shortcut]
+   [rum.core :as rum]))
 
 (def to-string shortcut/to-string)
 
@@ -92,7 +92,7 @@
        [:div {:class "text-sm font-medium text-gray-12"}
         (if (and (= icon "page") (not= text source-page)) ;; alias
           [:div.flex.flex-row.items-center.gap-2
-            (highlight-query text)
+           (highlight-query text)
            (if-not hls-page?
              [:<> [:div.opacity-50.font-normal "alias of"] source-page]
              [:div.opacity-50.font-normal.text-xs " — Highlights page"])]

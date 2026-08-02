@@ -170,7 +170,6 @@
            (map string/capitalize)
            (string/join " ")))
 
-
 (defn distinct-by
   "Copy from medley"
   [f coll]

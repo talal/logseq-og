@@ -103,8 +103,7 @@
    })
 
 (def retract-attributes
-  #{
-    :block/refs
+  #{:block/refs
     :block/tags
     :block/alias
     :block/marker
@@ -121,10 +120,7 @@
     :block/invalid-properties
     :block/created-at
     :block/updated-at
-    :block/warning
-    }
-  )
-
+    :block/warning})
 
 ;;; use `(map [:db.fn/retractAttribute <id> <attr>] retract-page-attributes)`
 ;;; to remove attrs to make the page as it's just created and no file attached to it

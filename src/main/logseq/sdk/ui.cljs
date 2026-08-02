@@ -1,10 +1,10 @@
 (ns logseq.sdk.ui
-  (:require [frontend.handler.notification :as notification]
-            [cljs-bean.core :as bean]
-            [goog.dom :as gdom]
-            [sci.core :as sci]
+  (:require [cljs-bean.core :as bean]
+            [clojure.string :as string]
+            [frontend.handler.notification :as notification]
             [frontend.util :as util]
-            [clojure.string :as string]))
+            [goog.dom :as gdom]
+            [sci.core :as sci]))
 
 (defn- parse-hiccup-ui
   [input]

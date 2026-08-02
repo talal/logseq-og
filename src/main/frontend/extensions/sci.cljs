@@ -4,11 +4,11 @@
 - For :result-transform evaluation
 - For cljs evaluation in Src blocks
 - For evaluating {{function }} under query tables"
-  (:require [sci.core :as sci]
-            [frontend.util :as util]
+  (:require [frontend.util :as util]
             [goog.dom]
             [goog.object]
-            [goog.string]))
+            [goog.string]
+            [sci.core :as sci]))
 
 ;; Helper fns for eval-string
 ;; ==========================

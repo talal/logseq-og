@@ -5,10 +5,10 @@
             [frontend.date :as date]
             [frontend.db :as db]
             [frontend.db.utils :as db-utils]
+            [frontend.extensions.video.youtube :as youtube]
             [frontend.handler.draw :as draw]
             [frontend.handler.notification :as notification]
             [frontend.handler.plugin :as plugin-handler]
-            [frontend.extensions.video.youtube :as youtube]
             [frontend.search :as search]
             [frontend.state :as state]
             [frontend.util :as util]
@@ -16,13 +16,13 @@
             [frontend.util.marker :as marker]
             [frontend.util.priority :as priority]
             [frontend.util.property :as property]
-            [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.config :as gp-config]
-            [logseq.graph-parser.property :as gp-property]
-            [logseq.graph-parser.util.page-ref :as page-ref]
-            [logseq.graph-parser.util.block-ref :as block-ref]
             [goog.dom :as gdom]
             [goog.object :as gobj]
+            [logseq.graph-parser.config :as gp-config]
+            [logseq.graph-parser.property :as gp-property]
+            [logseq.graph-parser.util :as gp-util]
+            [logseq.graph-parser.util.block-ref :as block-ref]
+            [logseq.graph-parser.util.page-ref :as page-ref]
             [promesa.core :as p]))
 
 ;; TODO: move to frontend.handler.editor.commands
@@ -241,7 +241,6 @@
 
        ;; ["Upload an image" [[:editor/click-hidden-file-input :id]]]
 
-
     (headings)
 
     ;; time & date
@@ -388,9 +387,9 @@
                    :else
                    (util/replace-last last-pattern orig-prefix value space?))
           postfix (cond-> postfix
-                          (and only-breakline? postfix
-                               (= (get postfix 0) "\n"))
-                          (string/replace-first "\n" ""))
+                    (and only-breakline? postfix
+                         (= (get postfix 0) "\n"))
+                    (string/replace-first "\n" ""))
           new-value (cond
                       (string/blank? postfix)
                       prefix
@@ -705,11 +704,11 @@
 (defmethod handle-step :editor/select-code-block-mode [[_]]
   (-> (p/delay 50)
       (p/then
-        (fn []
-          (when-let [input (state/get-input)]
+       (fn []
+         (when-let [input (state/get-input)]
             ;; update action cursor position
-            (state/set-editor-action-data! {:pos (cursor/get-caret-pos input)})
-            (state/set-editor-action! :select-code-block-mode))))))
+           (state/set-editor-action-data! {:pos (cursor/get-caret-pos input)})
+           (state/set-editor-action! :select-code-block-mode))))))
 
 (defmethod handle-step :editor/click-hidden-file-input [[_ _input-id]]
   (when-let [input-file (gdom/getElement "upload-file")]

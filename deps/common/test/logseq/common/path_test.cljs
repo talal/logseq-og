@@ -26,7 +26,6 @@
     (is (not (path/safe-filename? "foo<bar")))
     (is (not (path/safe-filename? "foo>bar")))))
 
-
 (deftest path-join
   (testing "path-join"
     (is (= "foo/bar" (path/path-join "foo" "bar")))

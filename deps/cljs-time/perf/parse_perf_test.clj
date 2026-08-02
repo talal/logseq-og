@@ -3,8 +3,8 @@
   (:require
    [cljs.build.api :as api]
    [cljs.closure :as closure]
-   [clojure.java.shell :as sh]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [clojure.java.shell :as sh]))
 
 (def repo ".")
 (def checkout-dir (str "/tmp/cljs-time-perf-test" (.getTime (java.util.Date.))))
@@ -85,9 +85,9 @@
 (defn run
   ([] (run old-version new-version))
   ([v1 v2]
-    (println
-      "Average runs:"
-      (pr-str (compare v1 v2)))))
+   (println
+    "Average runs:"
+    (pr-str (compare v1 v2)))))
 
 (comment
 

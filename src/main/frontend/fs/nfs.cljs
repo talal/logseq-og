@@ -5,20 +5,20 @@
    - nfs-file-handles-cache stores all file & directory handle
    - idb stores top-level directory handle
    - readdir/get-files is called by re-index and initial watcher to init all handles"
-  (:require [frontend.fs.protocol :as protocol]
-            [frontend.util :as util]
+  (:require ["/frontend/utils" :as utils]
             [clojure.string :as string]
-            [frontend.idb :as idb]
-            [promesa.core :as p]
-            [lambdaisland.glogi :as log]
-            [goog.object :as gobj]
-            [frontend.db :as db]
             [frontend.config :as config]
-            [frontend.state :as state]
+            [frontend.db :as db]
+            [frontend.fs.protocol :as protocol]
             [frontend.handler.notification :as notification]
-            ["/frontend/utils" :as utils]
+            [frontend.idb :as idb]
+            [frontend.state :as state]
+            [frontend.util :as util]
+            [goog.object :as gobj]
+            [lambdaisland.glogi :as log]
+            [logseq.common.path :as path]
             [logseq.graph-parser.util :as gp-util]
-            [logseq.common.path :as path]))
+            [promesa.core :as p]))
 
 ;; Cache the file handles in the memory so that
 ;; the browser will not keep asking permissions.
@@ -126,7 +126,6 @@
          (map (fn [file]
                 (-> (.-webkitRelativePath file)
                     gp-util/path-normalize))))))
-
 
 (defn- get-files-and-reload-all-handles
   "Return list of file objects"

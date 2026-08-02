@@ -1,7 +1,7 @@
 (ns frontend.components.block.macros-test
-  (:require [frontend.components.block.macros :as block-macros]
-            [frontend.db.utils :as db-utils]
-            [clojure.test :refer [deftest are testing is]]))
+  (:require [clojure.test :refer [deftest are testing is]]
+            [frontend.components.block.macros :as block-macros]
+            [frontend.db.utils :as db-utils]))
 
 (deftest macro-function
   (testing "Default functions as an argument"
@@ -22,7 +22,7 @@
             (mapv #(hash-map :block/properties %)
                   [{:total 10 :qty 3} {:total 20 :qty 5}])
             ["(sum (map (fn [x] (* (:total x) (:qty x))) result))"]))))
-  
+
   (testing "When query results are in page view"
     (is (= 60
            (block-macros/function-macro

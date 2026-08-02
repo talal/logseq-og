@@ -1,7 +1,7 @@
 (ns frontend.modules.layout.core
   (:require [cljs-bean.core :as bean]
-            [goog.object :as gobj]
-            [frontend.util :as util]))
+            [frontend.util :as util]
+            [goog.object :as gobj]))
 
 (defonce *movable-containers (atom {}))
 

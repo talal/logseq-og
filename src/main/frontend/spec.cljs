@@ -1,9 +1,9 @@
 (ns frontend.spec
   "Clojure spec related setup and helpers"
   (:require [cljs.spec.alpha :as s]
+            [expound.alpha :as expound]
             [frontend.config :as config]
-            [lambdaisland.glogi :as log]
-            [expound.alpha :as expound]))
+            [lambdaisland.glogi :as log]))
 
 ;; Enabled for all environments. We want asserts to run in production e.g.
 ;; frontend.storage one is preventing data corruption. If we introduce asserts
@@ -17,11 +17,11 @@
   [spec value]
   (when config/dev?
     (if (s/explain-data spec value)
-     (let [error-message (expound/expound-str spec value)
-           ex (ex-info "Error in validate" {:value value})]
-       (log/error :exception ex :spec/validate-failed error-message)
-       false)
-     true)))
+      (let [error-message (expound/expound-str spec value)
+            ex (ex-info "Error in validate" {:value value})]
+        (log/error :exception ex :spec/validate-failed error-message)
+        false)
+      true)))
 
 ;; repo
 

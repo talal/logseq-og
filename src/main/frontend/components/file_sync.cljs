@@ -1,7 +1,8 @@
 (ns frontend.components.file-sync
-  (:require [cljs.core.async :as async]
+  (:require [cljs-time.coerce :as tc]
+            [cljs-time.core :as t]
+            [cljs.core.async :as async]
             [cljs.core.async.interop :refer [p->c]]
-            [frontend.util.persist-var :as persist-var]
             [clojure.string :as string]
             [electron.ipc :as ipc]
             [frontend.components.lazy-editor :as lazy-editor]
@@ -14,23 +15,22 @@
             [frontend.fs.sync :as fs-sync]
             [frontend.handler.file-sync :refer [*beta-unavailable?] :as file-sync-handler]
             [frontend.handler.notification :as notification]
+            [frontend.handler.page :as page-handler]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.user :as user-handler]
-            [frontend.handler.page :as page-handler]
             [frontend.handler.web.nfs :as web-nfs]
             [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
+            [frontend.storage :as storage]
             [frontend.ui :as ui]
             [frontend.util :as util]
             [frontend.util.fs :as fs-util]
-            [frontend.storage :as storage]
+            [frontend.util.persist-var :as persist-var]
+            [goog.functions :refer [debounce]]
+            [logseq.graph-parser.util :as gp-util]
             [promesa.core :as p]
             [reitit.frontend.easy :as rfe]
-            [rum.core :as rum]
-            [cljs-time.core :as t]
-            [cljs-time.coerce :as tc]
-            [goog.functions :refer [debounce]]
-            [logseq.graph-parser.util :as gp-util]))
+            [rum.core :as rum]))
 
 (declare maybe-onboarding-show)
 (declare open-icloud-graph-clone-picker)
@@ -526,42 +526,42 @@
     (util/format "Sync graph \"%s\" to local" (:GraphName graph))]
 
    (ui/button
-     "Open a local directory"
-     :class "block w-full mt-4"
-     :size :lg
-     :on-click #(do
-                  (state/close-modal!)
-                  (fs-sync/<sync-stop)
-                  (->
-                    (page-handler/ls-dir-files!
-                      (fn [{:keys [url]}]
-                        (file-sync-handler/init-remote-graph url graph)
-                        (js/setTimeout (fn [] (repo-handler/refresh-repos!)) 200))
+    "Open a local directory"
+    :class "block w-full mt-4"
+    :size :lg
+    :on-click #(do
+                 (state/close-modal!)
+                 (fs-sync/<sync-stop)
+                 (->
+                  (page-handler/ls-dir-files!
+                   (fn [{:keys [url]}]
+                     (file-sync-handler/init-remote-graph url graph)
+                     (js/setTimeout (fn [] (repo-handler/refresh-repos!)) 200))
 
-                      {:on-open-dir
-                       (fn [result]
-                         (prn ::on-open-dir result)
-                         (let [empty-dir? (not (seq (:files result)))
-                               root (:path result)]
-                           (cond
-                             (string/blank? root)
-                             (p/rejected (js/Error. nil))   ;; cancel pick a directory
+                   {:on-open-dir
+                    (fn [result]
+                      (prn ::on-open-dir result)
+                      (let [empty-dir? (not (seq (:files result)))
+                            root (:path result)]
+                        (cond
+                          (string/blank? root)
+                          (p/rejected (js/Error. nil))   ;; cancel pick a directory
 
-                             empty-dir?
-                             (p/resolved nil)
+                          empty-dir?
+                          (p/resolved nil)
 
-                             :else                          ; dir is not empty
-                             (-> (if (util/electron?)
-                                   (ipc/ipc :readGraphTxIdInfo root)
-                                   (fs-util/read-graphs-txid-info root))
-                               (p/then (fn [^js info]
-                                         (when (or (nil? info)
-                                                 (nil? (second info))
-                                                 (not= (second info) (:GraphUUID graph)))
-                                           (if (js/confirm "This directory is not empty, are you sure to sync the remote graph to it? Make sure to back up the directory first.")
-                                             (p/resolved nil)
-                                             (p/rejected (js/Error. nil))))))))))}) ;; cancel pick a non-empty directory
-                    (p/catch (fn [])))))
+                          :else                          ; dir is not empty
+                          (-> (if (util/electron?)
+                                (ipc/ipc :readGraphTxIdInfo root)
+                                (fs-util/read-graphs-txid-info root))
+                              (p/then (fn [^js info]
+                                        (when (or (nil? info)
+                                                  (nil? (second info))
+                                                  (not= (second info) (:GraphUUID graph)))
+                                          (if (js/confirm "This directory is not empty, are you sure to sync the remote graph to it? Make sure to back up the directory first.")
+                                            (p/resolved nil)
+                                            (p/rejected (js/Error. nil))))))))))}) ;; cancel pick a non-empty directory
+                  (p/catch (fn [])))))
 
    [:div.text-xs.opacity-50.px-1.flex-row.flex.items-center.p-2
     (ui/icon "alert-circle")
@@ -805,7 +805,6 @@
     ;;  [:li.it
     ;;   [:h1.dark:text-white "50G"]
     ;;   [:h2 "Total Storage"]]]
-    
 
    [:div.pt-6.flex.justify-end.space-x-2
     (ui/button "Done" :on-click close-fn)]])

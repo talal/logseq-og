@@ -1,11 +1,11 @@
 (ns logseq.graph-parser.text
   "Miscellaneous text util fns for the parser"
   (:require ["path" :as path]
-            [goog.string :as gstring]
-            [clojure.string :as string]
             [clojure.set :as set]
-            [logseq.graph-parser.property :as gp-property]
+            [clojure.string :as string]
+            [goog.string :as gstring]
             [logseq.graph-parser.mldoc :as gp-mldoc]
+            [logseq.graph-parser.property :as gp-property]
             [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.util.page-ref :as page-ref]))
 

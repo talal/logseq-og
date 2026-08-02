@@ -1,13 +1,13 @@
 (ns logseq.shui.util
   (:require
-   [clojure.string :as s]
-   [rum.core :refer [use-state use-effect!] :as rum]
-   [logseq.shui.rum :as shui-rum]
-   [goog.object :refer [getValueByKeys] :as gobj]
-   [clojure.set :refer [rename-keys]]
-   [clojure.walk :as w]
    [cljs-bean.core :as bean]
-   [goog.dom :as gdom]))
+   [clojure.set :refer [rename-keys]]
+   [clojure.string :as s]
+   [clojure.walk :as w]
+   [goog.dom :as gdom]
+   [goog.object :refer [getValueByKeys] :as gobj]
+   [logseq.shui.rum :as shui-rum]
+   [rum.core :refer [use-state use-effect!] :as rum]))
 
 (goog-define NODETEST false)
 
@@ -43,24 +43,24 @@
 
 (defn clj-rect-observer [update!]
   (js/ResizeObserver.
-    (fn [entries]
-      (when (.-contentRect (first (js->clj entries)))
-        (update!)))))
+   (fn [entries]
+     (when (.-contentRect (first (js->clj entries)))
+       (update!)))))
 
 (defn use-dom-bounding-client-rect
   ([el] (use-dom-bounding-client-rect el nil))
   ([el tick]
    (let [[rect set-rect] (rum/use-state nil)]
      (rum/use-effect!
-       (if el
-         (fn []
-           (let [update! #(set-rect (el->clj-rect el))
-                 observer (clj-rect-observer update!)]
-             (update!)
-             (.observe observer el)
-             #(.disconnect observer)))
-         #())
-       [el tick])
+      (if el
+        (fn []
+          (let [update! #(set-rect (el->clj-rect el))
+                observer (clj-rect-observer update!)]
+            (update!)
+            (.observe observer el)
+            #(.disconnect observer)))
+        #())
+      [el tick])
      rect)))
 
 (defn use-ref-bounding-client-rect
@@ -73,24 +73,24 @@
 
 (defn rem->px [rem]
   (-> js/document.documentElement
-    js/getComputedStyle
-    (.-fontSize)
-    (js/parseFloat)
-    (* rem)))
+      js/getComputedStyle
+      (.-fontSize)
+      (js/parseFloat)
+      (* rem)))
 
 (defn px->rem [px]
   (->> js/document.documentElement
-    js/getComputedStyle
-    (.-fontSize)
-    (js/parseFloat)
-    (/ px)))
+       js/getComputedStyle
+       (.-fontSize)
+       (js/parseFloat)
+       (/ px)))
 
 (defn kebab-case->camel-case
   "Converts from kebab case to camel case, eg: on-click to onClick"
   [input]
   (let [words (s/split input #"-")
         capitalize (->> (rest words)
-                     (map #(apply str (s/upper-case (first %)) (rest %))))]
+                        (map #(apply str (s/upper-case (first %)) (rest %))))]
     (apply str (first words) capitalize)))
 
 (defn map-keys->camel-case
@@ -110,7 +110,7 @@
                                     x)]
                       (into {} (map convert-to-camel new-map)))
                     x))
-      data)))
+                data)))
 
 (def dev? (some-> (aget js/window "LSUtils") (aget "isDev")))
 
@@ -139,22 +139,22 @@
         react-class (if dev? (react-class) react-class)]
     (apply js/React.createElement react-class
       ;; sablono html-to-dom-attrs does not work for nested hash-maps
-      (bean/->js (map-keys->camel-case new-options :html-props true))
-      new-children)))
+           (bean/->js (map-keys->camel-case new-options :html-props true))
+           new-children)))
 
 (defn use-atom-fn
   [a getter-fn setter-fn]
   (let [[val set-val] (use-state (getter-fn @a))]
     (use-effect!
-      (fn []
-        (let [id (str (random-uuid))]
-          (add-watch a id (fn [_ _ prev-state next-state]
-                            (let [prev-value (getter-fn prev-state)
-                                  next-value (getter-fn next-state)]
-                              (when-not (= prev-value next-value)
-                                (set-val next-value)))))
-          #(remove-watch a id)))
-      [])
+     (fn []
+       (let [id (str (random-uuid))]
+         (add-watch a id (fn [_ _ prev-state next-state]
+                           (let [prev-value (getter-fn prev-state)
+                                 next-value (getter-fn next-state)]
+                             (when-not (= prev-value next-value)
+                               (set-val next-value)))))
+         #(remove-watch a id)))
+     [])
     [val #(swap! a setter-fn %)]))
 
 (defn use-atom
@@ -166,10 +166,10 @@
   []
   (let [*mounted (rum/use-ref false)]
     (use-effect!
-      (fn []
-        (rum/set-ref! *mounted true)
-        #(rum/set-ref! *mounted false))
-      [])
+     (fn []
+       (rum/set-ref! *mounted true)
+       #(rum/set-ref! *mounted false))
+     [])
     #(rum/deref *mounted)))
 
 (defn react->rum [c static?]

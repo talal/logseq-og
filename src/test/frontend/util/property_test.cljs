@@ -73,18 +73,18 @@
 (deftest test-get-property-keys
   (testing "org mode"
     (are [x y] (= x y)
-        (property/get-property-keys :org "hello\n:PROPERTIES:\n:x1: y1\n:x2: y2\n:END:\n")
-        ["X1" "X2"]
+      (property/get-property-keys :org "hello\n:PROPERTIES:\n:x1: y1\n:x2: y2\n:END:\n")
+      ["X1" "X2"]
 
-        (property/get-property-keys :org "hello\n:PROPERTIES:\n:END:\n")
-        nil))
+      (property/get-property-keys :org "hello\n:PROPERTIES:\n:END:\n")
+      nil))
   (testing "markdown mode"
     (are [x y] (= x y)
-        (property/get-property-keys :markdown "hello\nx1:: y1\nx2:: y2\n")
-        ["X1" "X2"]
+      (property/get-property-keys :markdown "hello\nx1:: y1\nx2:: y2\n")
+      ["X1" "X2"]
 
-        (property/get-property-keys :markdown "hello\n")
-        nil)))
+      (property/get-property-keys :markdown "hello\n")
+      nil)))
 
 (deftest test-insert-property
   (are [x y] (= x y)
@@ -105,7 +105,7 @@
   #+END_QUOTE" "c" "d")
     ":PROPERTIES:\n:c: d\n:END:\n#+BEGIN_QUOTE\n hello world\n  #+END_QUOTE"
 
-     (property/insert-property :org "hello
+    (property/insert-property :org "hello
 DEADLINE: <2021-10-25 Mon>
 SCHEDULED: <2021-10-25 Mon>" "a" "b")
     "hello\nSCHEDULED: <2021-10-25 Mon>\nDEADLINE: <2021-10-25 Mon>\n:PROPERTIES:\n:a: b\n:END:"
@@ -186,17 +186,17 @@ SCHEDULED: <2021-10-25 Mon>\n:PROPERTIES:\n:a: b\n:END:\nworld\n" "c" "d")
   (let [content "#+BEGIN_QUERY\n{:title      \"cool NEXT\"\n    :query      [:find (pull ?h [*])\n                 :in $ ?start ?next\n                 :where\n                 [?h :block/marker ?marker]\n                 [(contains? #{\"NOW\" \"LATER\" \"TODO\"} ?marker)]\n                 [?h :block/ref-pages ?p]\n                 [?p :block/journal? true]\n                 [?p :block/journal-day ?d]\n                 [(> ?d ?start)]\n                 [(< ?d ?next)]]\n    :inputs     [:today :7d-after]\n    :collapsed? false}\n#+END_QUERY"]
     (let [md-property "query-table:: true"]
       (are [x y] (= (property/with-built-in-properties {:query-table true} x :markdown) y)
-       content
-       (str md-property "\n" content)
+        content
+        (str md-property "\n" content)
 
-       "title"
-       (str "title\n" md-property)
+        "title"
+        (str "title\n" md-property)
 
-       "title\nbody"
-       (str "title\n" md-property "\nbody")
+        "title\nbody"
+        (str "title\n" md-property "\nbody")
 
-       "1. list"
-       (str md-property "\n1. list")))
+        "1. list"
+        (str md-property "\n1. list")))
 
     (let [org-property ":PROPERTIES:\n:query-table: true\n:END:"]
       (are [x y] (= (property/with-built-in-properties {:query-table true} x :org) y)

@@ -3,9 +3,9 @@
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [frontend.db :as db]
-            [logseq.db.default :as default-db]
             [frontend.state :as state]
-            [frontend.util :as util]))
+            [frontend.util :as util]
+            [logseq.db.default :as default-db]))
 
 (defn- build-links
   [links]
@@ -35,13 +35,13 @@
                            color)
                    n (get page-links p 1)
                    size (int (* 8 (max 1.0 (js/Math.cbrt n))))]
-                (cond->
-                  {:id p
-                   :label p
-                   :size size
-                   :color color}
-                  (contains? parents p)
-                  (assoc :parent true))))))))
+               (cond->
+                {:id p
+                 :label p
+                 :size size
+                 :color color}
+                 (contains? parents p)
+                 (assoc :parent true))))))))
 
                   ;; slow
 (defn- uuid-or-asset?
@@ -64,12 +64,12 @@
   [{:keys [nodes links page-name->original-name]}]
   (let [links (->>
                (map
-                 (fn [{:keys [source target]}]
-                   (let [source (get page-name->original-name source)
-                         target (get page-name->original-name target)]
-                     (when (and source target)
-                       {:source source :target target})))
-                 links)
+                (fn [{:keys [source target]}]
+                  (let [source (get page-name->original-name source)
+                        target (get page-name->original-name target)]
+                    (when (and source target)
+                      {:source source :target target})))
+                links)
                (remove nil?))
         nodes (->> (remove-uuids-and-files! nodes)
                    (util/distinct-by (fn [node] (:id node)))
@@ -210,15 +210,15 @@
   (let [search-nodes (fn [forward?]
                        (let [links (group-by (if forward? :source :target) links)]
                          (loop [nodes nodes
-                               level level]
-                          (if (zero? level)
-                            nodes
-                            (recur (distinct (apply concat nodes
-                                               (map
-                                                 (fn [id]
-                                                   (->> (get links id) (map (if forward? :target :source))))
-                                                 nodes)))
-                                   (dec level))))))
+                                level level]
+                           (if (zero? level)
+                             nodes
+                             (recur (distinct (apply concat nodes
+                                                     (map
+                                                      (fn [id]
+                                                        (->> (get links id) (map (if forward? :target :source))))
+                                                      nodes)))
+                                    (dec level))))))
         nodes (concat (search-nodes true) (search-nodes false))
         nodes (set nodes)]
     (update graph :nodes

@@ -1,16 +1,16 @@
 (ns frontend.handler.search
   "Provides util handler fns for search"
   (:require [clojure.string :as string]
+            [dommy.core :as dom]
+            [electron.ipc :as ipc]
             [frontend.config :as config]
             [frontend.db :as db]
             [frontend.handler.notification :as notification]
             [frontend.search :as search]
             [frontend.state :as state]
             [frontend.util :as util]
-            [promesa.core :as p]
             [logseq.graph-parser.text :as text]
-            [electron.ipc :as ipc]
-            [dommy.core :as dom]))
+            [promesa.core :as p]))
 
 (defn sanity-search-content
   "Convert a block to the display contents for searching"

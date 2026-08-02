@@ -3,17 +3,17 @@
   (:require ["@capacitor/filesystem" :refer [Encoding Filesystem]]
             [cljs-bean.core :as bean]
             [clojure.string :as string]
-            [goog.string :as gstring]
             [frontend.config :as config]
             [frontend.db :as db]
             [frontend.fs.protocol :as protocol]
             [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
+            [goog.string :as gstring]
             [lambdaisland.glogi :as log]
+            [logseq.common.path :as path]
             [promesa.core :as p]
-            [rum.core :as rum]
-            [logseq.common.path :as path]))
+            [rum.core :as rum]))
 
 (when (mobile-util/native-ios?)
   (defn ios-ensure-documents!

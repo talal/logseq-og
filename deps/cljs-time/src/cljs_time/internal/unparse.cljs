@@ -98,11 +98,11 @@
   ([min] (unparse-weekyear min min))
   ([min max]
    (fn [s d]
-     (let [year (.getYear d) 
-           month (.getMonth d) 
+     (let [year (.getYear d)
+           month (.getMonth d)
            day (.getDate d)]
-       (unparse-period s d 
-                       (i/get-week-year year month day) 
+       (unparse-period s d
+                       (i/get-week-year year month day)
                        min max)))))
 
 (defn unparse-weekyear-week

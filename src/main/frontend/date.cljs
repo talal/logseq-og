@@ -7,10 +7,10 @@
             [cljs-time.format :as tf]
             [cljs-time.local :as tl]
             [frontend.state :as state]
-            [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.date-time-util :as date-time-util]
             [goog.object :as gobj]
-            [lambdaisland.glogi :as log]))
+            [lambdaisland.glogi :as log]
+            [logseq.graph-parser.date-time-util :as date-time-util]
+            [logseq.graph-parser.util :as gp-util]))
 
 (defn nld-parse
   [s]
@@ -66,7 +66,7 @@
   [input]
   (try
     (->> (cond->> input
-          (string? input) (tf/parse (tf/formatters :date-time-no-ms)))
+           (string? input) (tf/parse (tf/formatters :date-time-no-ms)))
          (t/to-default-time-zone)
          (tf/unparse (tf/formatter "MMM do, yyyy")))
     (catch :default _e
@@ -90,12 +90,12 @@
   ([date]
    (let [formatter (state/get-date-formatter)]
      (try
-      (date-time-util/format date formatter)
-      (catch :default e
-        (log/error :parse-journal-date {:message  "Failed to parse date to journal name."
-                                        :date date
-                                        :format formatter})
-        (throw e))))))
+       (date-time-util/format date formatter)
+       (catch :default e
+         (log/error :parse-journal-date {:message  "Failed to parse date to journal name."
+                                         :date date
+                                         :format formatter})
+         (throw e))))))
 
 (defn journal-name-s [s]
   (try

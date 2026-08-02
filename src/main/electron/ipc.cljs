@@ -1,8 +1,8 @@
 (ns electron.ipc
   "Provides fns to send ipc messages to electron's main process"
   (:require [cljs-bean.core :as bean]
-            [promesa.core :as p]
-            [frontend.util :as util]))
+            [frontend.util :as util]
+            [promesa.core :as p]))
 
 ;; TODO: handle errors
 (defn ipc

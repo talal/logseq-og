@@ -1,9 +1,9 @@
 (ns logseq.bb-tasks.nbb.test
   "Tests to run on nbb-logseq projects. Requires @logseq/nbb-logseq to be
   declared as a dev dependency."
-  (:require [pod.borkdude.clj-kondo :as clj-kondo]
+  (:require [babashka.process :refer [shell]]
             [clojure.string :as str]
-            [babashka.process :refer [shell]]))
+            [pod.borkdude.clj-kondo :as clj-kondo]))
 
 (defn- validate-namespaces
   [namespaces classpath dir]

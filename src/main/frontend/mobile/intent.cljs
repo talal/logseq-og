@@ -1,7 +1,7 @@
 (ns frontend.mobile.intent
-  (:require ["@capacitor/filesystem" :refer [Filesystem]]
+  (:require ["@capacitor/action-sheet" :refer [ActionSheet]]
+            ["@capacitor/filesystem" :refer [Filesystem]]
             ["@capacitor/share" :refer [^js Share]]
-            ["@capacitor/action-sheet" :refer [ActionSheet]]
             ["path" :as node-path]
             ["send-intent" :refer [^js SendIntent]]
             [clojure.pprint :as pprint]
@@ -82,7 +82,6 @@
   ;; :content is added if there's highlighted text
   (let [args (transform-args args)]
     (state/pub-event! [:editor/quick-capture args])))
-
 
 (defn- embed-asset-file [url format]
   (p/let [basename (node-path/basename url)
@@ -264,7 +263,6 @@
                                                                            :edit-block? true
                                                                            :replace-empty-target? true})
                            100)))))))
-
 
 (defn handle-result
   "Mobile share intent handler v1, legacy. Only for Android"

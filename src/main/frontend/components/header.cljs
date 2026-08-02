@@ -1,16 +1,17 @@
 (ns frontend.components.header
   (:require [cljs-bean.core :as bean]
+            [clojure.string :as string]
             [frontend.components.export :as export]
+            [frontend.components.file-sync :as fs-sync]
             [frontend.components.page-menu :as page-menu]
             [frontend.components.plugins :as plugins]
-            [frontend.components.server :as server]
             [frontend.components.right-sidebar :as sidebar]
+            [frontend.components.server :as server]
             [frontend.components.svg :as svg]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.handler :as handler]
             [frontend.handler.file-sync :as file-sync-handler]
-            [frontend.components.file-sync :as fs-sync]
             [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.user :as user-handler]
@@ -21,8 +22,7 @@
             [frontend.util :as util]
             [frontend.version :refer [version]]
             [reitit.frontend.easy :as rfe]
-            [rum.core :as rum]
-            [clojure.string :as string]))
+            [rum.core :as rum]))
 
 (rum/defc home-button
   < {:key-fn #(identity "home-button")}
@@ -146,9 +146,9 @@
                   {:class "right-1 top-3" :title (t :logout)}
                   (ui/icon "logout")]]
           :options {:on-click #(user-handler/logout)}})]
-       (concat page-menu-and-hr)
-       (remove nil?))
-      {})))
+      (concat page-menu-and-hr)
+      (remove nil?))
+     {})))
 
 (rum/defc back-and-forward
   < {:key-fn #(identity "nav-history-buttons")}

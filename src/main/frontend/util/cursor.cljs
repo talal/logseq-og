@@ -46,7 +46,6 @@
             :left js/Number.MAX_SAFE_INTEGER
             :top js/Number.MAX_SAFE_INTEGER}))))))
 
-
 (defn pos [input]
   (when input
     (util/get-selection-start input)))
@@ -113,8 +112,8 @@
   (let [[content pos] (get-input-content&pos input)]
     (when content
       (or (zero? pos)
-         (let [pre-char (subs content (dec pos) pos)]
-           (= pre-char \newline))))))
+          (let [pre-char (subs content (dec pos) pos)]
+            (= pre-char \newline))))))
 
 (defn move-cursor-to-line-end
   [input]
@@ -184,7 +183,6 @@
 
 (defn textarea-cursor-first-row? [input]
   (textarea-cursor-rect-first-row? (get-caret-pos input)))
-
 
 (defn textarea-cursor-rect-last-row? [cursor]
   (let [elms   (-> (gdom/getElement "mock-text")

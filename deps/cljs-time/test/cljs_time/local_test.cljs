@@ -1,15 +1,15 @@
 (ns cljs-time.local-test
   (:refer-clojure :exclude [extend second])
   (:require-macros
-   [cljs-time.macros :refer [do-at]]
-   [cljs-time.core-test :refer [when-available when-not-available]])
+   [cljs-time.core-test :refer [when-available when-not-available]]
+   [cljs-time.macros :refer [do-at]])
   (:require
-   [cljs.test :refer-macros [deftest is]]
    [cljs-time.core :as time]
    [cljs-time.extend]
    [cljs-time.format :as fmt]
    [cljs-time.local
-    :refer [*local-formatters* format-local-time local-now to-local-date-time]]))
+    :refer [*local-formatters* format-local-time local-now to-local-date-time]]
+   [cljs.test :refer-macros [deftest is]]))
 
 ;; (deftest test-now
 ;;   (is (= (time/from-time-zone (time/date-time 2010 1 1) (time/default-time-zone))
@@ -49,9 +49,7 @@
   ;;        (format-local-time (Timestamp. 893462400000) :basic-date-time)))
   ;; (is (= (fmt/unparse (ISODateTimeFormat/basicDateTime) (time/from-time-zone (time/date-time 1998 4 25) (time/default-time-zone)))
   ;;        (format-local-time "1998-04-25T00:00:00.000" :basic-date-time)))
-  
   )
-
 (deftest test-local-formatters
   (letfn [(time-zone-fn []  (time/time-zone-for-offset -7))
           (asserts []

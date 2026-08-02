@@ -1,7 +1,11 @@
 (ns frontend.handler.whiteboard
   "Whiteboard related handlers"
-  (:require [datascript.core :as d]
+  (:require [cljs-bean.core :as bean]
+            [clojure.set :as set]
+            [clojure.string :as string]
+            [datascript.core :as d]
             [dommy.core :as dom]
+            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.db.model :as model]
             [frontend.db.utils :as db-utils]
@@ -11,16 +15,12 @@
             [frontend.modules.outliner.core :as outliner]
             [frontend.modules.outliner.file :as outliner-file]
             [frontend.state :as state]
-            [frontend.config :as config]
             [frontend.storage :as storage]
             [frontend.util :as util]
+            [goog.object :as gobj]
             [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.whiteboard :as gp-whiteboard]
-            [promesa.core :as p]
-            [goog.object :as gobj]
-            [clojure.set :as set]
-            [clojure.string :as string]
-            [cljs-bean.core :as bean]))
+            [promesa.core :as p]))
 
 (defn js->clj-keywordize
   [obj]
@@ -139,11 +139,11 @@
         prev-shapes-index (get-in page-block [:block/properties :logseq.tldraw.page :shapes-index])
         shape-id->prev-index (zipmap prev-shapes-index (range (count prev-shapes-index)))
         new-id-nonces (set (map-indexed (fn [idx shape]
-                                  (let [id (.-id shape)]
-                                    {:id id
-                                     :nonce (if (= idx (get shape-id->prev-index id))
-                                              (.-nonce shape)
-                                              (js/Date.now))})) shapes))
+                                          (let [id (.-id shape)]
+                                            {:id id
+                                             :nonce (if (= idx (get shape-id->prev-index id))
+                                                      (.-nonce shape)
+                                                      (js/Date.now))})) shapes))
         repo (state/get-current-repo)
         db-id-nonces (or
                       (get-in @*last-shapes-nonce [repo page-name])

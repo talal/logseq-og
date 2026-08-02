@@ -1,14 +1,14 @@
 (ns logseq.tasks.malli
   "Malli related tasks"
-  (:require [malli.core :as m]
-            [malli.error :as me]
-            [frontend.schema.handler.plugin-config :as plugin-config-schema]
+  (:require [babashka.fs :as fs]
+            [clojure.edn :as edn]
+            [clojure.pprint :as pprint]
             [frontend.schema.handler.global-config :as global-config-schema]
+            [frontend.schema.handler.plugin-config :as plugin-config-schema]
             [frontend.schema.handler.repo-config :as repo-config-schema]
             [logseq.graph-parser.schema.mldoc :as mldoc-schema]
-            [babashka.fs :as fs]
-            [clojure.pprint :as pprint]
-            [clojure.edn :as edn]))
+            [malli.core :as m]
+            [malli.error :as me]))
 
 (defn validate-plugins-edn
   "Validate a plugins.edn file"

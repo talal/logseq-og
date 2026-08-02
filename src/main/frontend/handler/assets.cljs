@@ -1,13 +1,13 @@
 (ns ^:no-doc frontend.handler.assets
-  (:require [frontend.state :as state]
-            [medley.core :as medley]
-            [frontend.util :as util]
+  (:require [clojure.string :as string]
             [frontend.config :as config]
             [frontend.mobile.util :as mobile-util]
-            [logseq.graph-parser.config :as gp-config]
-            [clojure.string :as string]
+            [frontend.state :as state]
+            [frontend.util :as util]
             [logseq.common.path :as path]
-            [logseq.graph-parser.util :as gp-util]))
+            [logseq.graph-parser.config :as gp-config]
+            [logseq.graph-parser.util :as gp-util]
+            [medley.core :as medley]))
 
 (defn alias-enabled?
   []
@@ -97,7 +97,6 @@
         (path/path-join "file://" (gp-util/safe-decode-uri-component path))
         (path/path-join "file://" path))
 
-
       :else ;; relative path or alias path
       (resolve-asset-real-path-url (state/get-current-repo) path))))
 
@@ -128,7 +127,7 @@
       nil)))
 
 (comment
- (normalize-asset-resource-url "https://x.com/a.pdf")
- (normalize-asset-resource-url "./a/b.pdf")
- (normalize-asset-resource-url "assets/a/b.pdf")
- (normalize-asset-resource-url "@图书/a/b.pdf"))
+  (normalize-asset-resource-url "https://x.com/a.pdf")
+  (normalize-asset-resource-url "./a/b.pdf")
+  (normalize-asset-resource-url "assets/a/b.pdf")
+  (normalize-asset-resource-url "@图书/a/b.pdf"))

@@ -1,9 +1,9 @@
 (ns ^:no-doc frontend.util.drawer
   (:require [clojure.string :as string]
+            [frontend.format.mldoc :as mldoc]
             [frontend.util :as util]
             [logseq.graph-parser.mldoc :as gp-mldoc]
-            [logseq.graph-parser.property :as gp-property]
-            [frontend.format.mldoc :as mldoc]))
+            [logseq.graph-parser.property :as gp-property]))
 
 (defn drawer-start
   [typ]
@@ -119,8 +119,8 @@
 (defn get-logbook
   [body]
   (-> (filter (fn [v] (and (vector? v)
-                          (= (first v) "Drawer")
-                          (= (second v) "logbook"))) body)
+                           (= (first v) "Drawer")
+                           (= (second v) "logbook"))) body)
       first))
 
 (defn with-logbook

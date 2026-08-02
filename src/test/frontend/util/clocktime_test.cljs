@@ -2,7 +2,6 @@
   (:require [cljs.test :refer [deftest is]]
             [frontend.util.clock :as clock]))
 
-
 (deftest test-seconds->days:hours:minutes:seconds
   (let [inputs [0, 1, 10, 60, 123 ,5432, 63953, 484882, 2394503]
         want  [[0, 0, 0, 0],

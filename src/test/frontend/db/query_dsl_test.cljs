@@ -1,11 +1,11 @@
 (ns frontend.db.query-dsl-test
   (:require [cljs.test :refer [are deftest testing use-fixtures is]]
             [clojure.string :as str]
-            [logseq.graph-parser.util.page-ref :as page-ref]
             [frontend.db :as db]
-            [frontend.util :as util]
             [frontend.db.query-dsl :as query-dsl]
-            [frontend.test.helper :as test-helper :include-macros true :refer [load-test-files]]))
+            [frontend.test.helper :as test-helper :include-macros true :refer [load-test-files]]
+            [frontend.util :as util]
+            [logseq.graph-parser.util.page-ref :as page-ref]))
 
 ;; TODO: quickcheck
 ;; 1. generate query filters
@@ -24,12 +24,12 @@
   (if (some? js/process.env.EXAMPLE)
     (fn dsl-query-star [& args]
       (let [old-build-query query-dsl/build-query]
-       (with-redefs [query-dsl/build-query
-                     (fn [& args']
-                       (let [res (apply old-build-query args')]
-                         (println "EXAMPLE:" (pr-str (:query res)))
-                         res))]
-         (apply query-dsl/query args))))
+        (with-redefs [query-dsl/build-query
+                      (fn [& args']
+                        (let [res (apply old-build-query args')]
+                          (println "EXAMPLE:" (pr-str (:query res)))
+                          res))]
+          (apply query-dsl/query args))))
     query-dsl/query))
 
 (defn- dsl-query
@@ -50,26 +50,26 @@
 (deftest pre-transform-test
   (testing "page references should be quoted and tags should be handled"
     (are [x y] (= (query-dsl/pre-transform x) y)
-     "#foo"
-     "#tag foo"
+      "#foo"
+      "#tag foo"
 
-     "(and #foo)"
-     "(and #tag foo)"
+      "(and #foo)"
+      "(and #tag foo)"
 
-     "[[test #foo]]"
-     "\"[[test #foo]]\""
+      "[[test #foo]]"
+      "\"[[test #foo]]\""
 
-     "(and [[test #foo]] (or #foo))"
-     "(and \"[[test #foo]]\" (or #tag foo))"
+      "(and [[test #foo]] (or #foo))"
+      "(and \"[[test #foo]]\" (or #tag foo))"
 
-     "\"for #clojure\""
-     "\"for #clojure\""
+      "\"for #clojure\""
+      "\"for #clojure\""
 
-     "(and \"for #clojure\")"
-     "(and \"for #clojure\")"
+      "(and \"for #clojure\")"
+      "(and \"for #clojure\")"
 
-     "(and \"for #clojure\" #foo)"
-     "(and \"for #clojure\" #tag foo)")))
+      "(and \"for #clojure\" #foo)"
+      "(and \"for #clojure\" #tag foo)")))
 
 (defn- block-property-queries-test
   []
@@ -367,23 +367,23 @@ tags: [[other]]
 
   (are [x y] (= (set y) (set (map :block/name (dsl-query x))))
 
-       "(page-tags [[page-tag-1]])"
-       ["page1"]
+    "(page-tags [[page-tag-1]])"
+    ["page1"]
 
-       "(page-tags page-tag-2)"
-       ["page1" "page2"]
+    "(page-tags page-tag-2)"
+    ["page1" "page2"]
 
-       "(page-tags page-tag-1 page-tag-2)"
-       ["page1" "page2"]
+    "(page-tags page-tag-1 page-tag-2)"
+    ["page1" "page2"]
 
-       "(page-tags page-TAG-1 page-tag-2)"
-       ["page1" "page2"]
+    "(page-tags page-TAG-1 page-tag-2)"
+    ["page1" "page2"]
 
-       "(page-tags [page-tag-1 page-tag-2])"
-       ["page1" "page2"]
+    "(page-tags [page-tag-1 page-tag-2])"
+    ["page1" "page2"]
 
-       "(all-page-tags)"
-       ["page-tag-1" "page-tag-2" "page-tag-3" "other"]))
+    "(all-page-tags)"
+    ["page-tag-1" "page-tag-2" "page-tag-3" "other"]))
 
 (deftest block-content-query
   (load-test-files [{:file/path "pages/page1.md"
@@ -429,10 +429,10 @@ tags: [[other]]
 (deftest empty-queries
   (testing "nil or blank strings should be ignored"
     (are [x] (nil? (dsl-query x))
-         nil
-         ""
-         " "
-         "\"\"")))
+      nil
+      ""
+      " "
+      "\"\"")))
 
 (deftest page-ref-and-boolean-queries
   (load-test-files [{:file/path "pages/page1.md"
@@ -504,17 +504,17 @@ created-at:: 1608968448116
 "}])
 
   (are [x y] (= (count (dsl-query x)) y)
-       "(and (task now later done) (between [[Dec 26th, 2020]] tomorrow))"
-       3
+    "(and (task now later done) (between [[Dec 26th, 2020]] tomorrow))"
+    3
 
        ;; between with journal pages
-       "(and (task now later done) (between [[Dec 26th, 2020]] [[Dec 27th, 2020]]))"
-       3
+    "(and (task now later done) (between [[Dec 26th, 2020]] [[Dec 27th, 2020]]))"
+    3
 
        ;; ;; between with created-at
        ;; "(and (task now later done) (between created-at [[Dec 26th, 2020]] tomorrow))"
        ;; 3
-       ))
+    ))
 
 (deftest custom-query-test
   (load-test-files [{:file/path "pages/page1.md"
@@ -606,27 +606,27 @@ created-at:: 1608968448116
     '(not [[foo]])))
 
 (comment
- (require '[clojure.pprint :as pprint])
- (test-helper/start-test-db!)
+  (require '[clojure.pprint :as pprint])
+  (test-helper/start-test-db!)
 
- (query-dsl/query test-db "(task done)")
+  (query-dsl/query test-db "(task done)")
 
  ;; Useful for debugging
- (prn
-  (datascript.core/q
-   '[:find (pull ?b [*])
-     :where
-     [?b :block/name]]
-   (frontend.db/get-db test-db)))
+  (prn
+   (datascript.core/q
+    '[:find (pull ?b [*])
+      :where
+      [?b :block/name]]
+    (frontend.db/get-db test-db)))
 
  ;; (or (priority a) (not (priority a)))
  ;; FIXME: Error: Insufficient bindings: #{?priority} not bound in [(contains? #{"A"} ?priority)]
- (pprint/pprint
-  (d/q
-   '[:find (pull ?b [*])
-     :where
-     [?b :block/uuid]
-     (or (and [?b :block/priority ?priority] [(contains? #{"A"} ?priority)])
-         (not [?b :block/priority #{"A"}]
-              [(contains? #{"A"} ?priority)]))]
-   (frontend.db/get-db test-db))))
+  (pprint/pprint
+   (d/q
+    '[:find (pull ?b [*])
+      :where
+      [?b :block/uuid]
+      (or (and [?b :block/priority ?priority] [(contains? #{"A"} ?priority)])
+          (not [?b :block/priority #{"A"}]
+               [(contains? #{"A"} ?priority)]))]
+    (frontend.db/get-db test-db))))

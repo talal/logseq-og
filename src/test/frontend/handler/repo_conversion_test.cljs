@@ -2,16 +2,16 @@
   "Repo tests of directory conversion"
   (:require [cljs.test :refer [deftest use-fixtures is testing]]
             [clojure.string :as string]
-            [logseq.graph-parser.cli :as gp-cli]
-            [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.test.docs-graph-helper :as docs-graph-helper]
-            [logseq.graph-parser.config :as gp-config]
-            [frontend.test.helper :as test-helper]
-            [frontend.handler.page :as page-handler]
-            [frontend.handler.conversion :as conversion-handler]
-            [frontend.handler.repo :as repo-handler]
+            [datascript.core :as d]
             [frontend.db.conn :as conn]
-            [datascript.core :as d]))
+            [frontend.handler.conversion :as conversion-handler]
+            [frontend.handler.page :as page-handler]
+            [frontend.handler.repo :as repo-handler]
+            [frontend.test.helper :as test-helper]
+            [logseq.graph-parser.cli :as gp-cli]
+            [logseq.graph-parser.config :as gp-config]
+            [logseq.graph-parser.test.docs-graph-helper :as docs-graph-helper]
+            [logseq.graph-parser.util :as gp-util]))
 
 (use-fixtures :each {:before test-helper/start-test-db!
                      :after test-helper/destroy-test-db!})

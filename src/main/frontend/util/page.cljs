@@ -1,8 +1,8 @@
 (ns frontend.util.page
   "Provides util fns for page blocks"
-  (:require [frontend.state :as state]
-            [frontend.util :as util]
-            [frontend.db :as db]))
+  (:require [frontend.db :as db]
+            [frontend.state :as state]
+            [frontend.util :as util]))
 
 (defn get-current-page-name
   "Fetch the current page's original name with same approach as get-current-page-id"

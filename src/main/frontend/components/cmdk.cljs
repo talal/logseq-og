@@ -1,37 +1,37 @@
 (ns frontend.components.cmdk
   (:require
    [clojure.string :as string]
+   [electron.ipc :as ipc]
    [frontend.components.block :as block]
-   [frontend.extensions.pdf.utils :as pdf-utils]
+   [frontend.config :as config]
    [frontend.context.i18n :refer [t]]
    [frontend.db :as db]
    [frontend.db.model :as model]
+   [frontend.extensions.pdf.utils :as pdf-utils]
    [frontend.handler.command-palette :as cp-handler]
    [frontend.handler.editor :as editor-handler]
    [frontend.handler.page :as page-handler]
    [frontend.handler.route :as route-handler]
    [frontend.handler.whiteboard :as whiteboard-handler]
+   [frontend.mixins :as mixins]
    [frontend.modules.shortcut.core :as shortcut]
+   [frontend.modules.shortcut.utils :as shortcut-utils]
    [frontend.search :as search]
    [frontend.state :as state]
    [frontend.ui :as ui]
    [frontend.util :as util]
    [frontend.util.page :as page-util]
+   [frontend.util.text :as text-util]
    [goog.functions :as gfun]
    [goog.object :as gobj]
+   [goog.userAgent]
+   [logseq.common.path :as path]
+   [logseq.graph-parser.util :as gp-util]
+   [logseq.graph-parser.util.block-ref :as block-ref]
    [logseq.shui.core :as shui]
    [logseq.shui.ui :as shui-ui]
    [promesa.core :as p]
-   [rum.core :as rum]
-   [frontend.mixins :as mixins]
-   [logseq.graph-parser.util.block-ref :as block-ref]
-   [logseq.graph-parser.util :as gp-util]
-   [frontend.modules.shortcut.utils :as shortcut-utils]
-   [frontend.config :as config]
-   [logseq.common.path :as path]
-   [electron.ipc :as ipc]
-   [frontend.util.text :as text-util]
-   [goog.userAgent]))
+   [rum.core :as rum]))
 
 (defn translate [t {:keys [id desc]}]
   (when id
@@ -230,8 +230,8 @@
                                       :icon-theme :gray
                                       :text page
                                       :source-page (if source-page
-                                              (:block/original-name source-page)
-                                              page))))))]
+                                                     (:block/original-name source-page)
+                                                     page))))))]
       (swap! !results update group        merge {:status :success :items items}))))
 
 (defmethod load-results :whiteboards [group state]
@@ -805,31 +805,31 @@
 (rum/defc hint-button
   [text shortcut opts]
   (shui-ui/button
-    (merge {:class "hint-button [&>span:first-child]:hover:opacity-100 opacity-40 hover:opacity-80"
-            :variant :ghost
-            :size  :sm}
-      opts)
-    [[:span.opacity-60 text]
+   (merge {:class "hint-button [&>span:first-child]:hover:opacity-100 opacity-40 hover:opacity-80"
+           :variant :ghost
+           :size  :sm}
+          opts)
+   [[:span.opacity-60 text]
      ;; shortcut
-     (when (not-empty shortcut)
-       (for [key shortcut]
-         [:div.ui__button-shortcut-key
-          (case key
-            "cmd" [:div (if goog.userAgent/MAC "⌘" "Ctrl")]
-            "shift" [:div "⇧"]
-            "return" [:div "⏎"]
-            "esc" [:div.tracking-tightest {:style {:transform   "scaleX(0.8) scaleY(1.2) "
-                                                   :font-size   "0.5rem"
-                                                   :font-weight "500"}} "ESC"]
-            (cond-> key (string? key) .toUpperCase))]))]))
+    (when (not-empty shortcut)
+      (for [key shortcut]
+        [:div.ui__button-shortcut-key
+         (case key
+           "cmd" [:div (if goog.userAgent/MAC "⌘" "Ctrl")]
+           "shift" [:div "⇧"]
+           "return" [:div "⏎"]
+           "esc" [:div.tracking-tightest {:style {:transform   "scaleX(0.8) scaleY(1.2) "
+                                                  :font-size   "0.5rem"
+                                                  :font-weight "500"}} "ESC"]
+           (cond-> key (string? key) .toUpperCase))]))]))
 
 (rum/defc hints
   [state]
   (let [action (state->action state)
         button-fn (fn [text shortcut & {:as opts}]
                     (hint-button text shortcut
-                      {:on-click #(handle-action action (assoc state :opts opts) %)
-                       :muted    true}))]
+                                 {:on-click #(handle-action action (assoc state :opts opts) %)
+                                  :muted    true}))]
     (when action
       [:div.hints
        [:div.text-sm.leading-6
@@ -869,12 +869,12 @@
    [:div "Search only:"]
    [:div group-name]
    (shui-ui/button
-     {:variant  :ghost
-      :size     :icon
-      :class    "p-1 scale-75"
-      :on-click (fn []
-                  (reset! (::filter state) nil))}
-     (shui-ui/tabler-icon "x"))])
+    {:variant  :ghost
+     :size     :icon
+     :class    "p-1 scale-75"
+     :on-click (fn []
+                 (reset! (::filter state) nil))}
+    (shui-ui/tabler-icon "x"))])
 
 (rum/defcs cmdk < rum/static
   rum/reactive

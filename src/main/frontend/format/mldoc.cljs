@@ -1,14 +1,14 @@
 (ns frontend.format.mldoc
   "Contains any mldoc code needed by app but not graph-parser. Implements format
   protocol for org and and markdown formats"
-  (:require [clojure.string :as string]
+  (:require ["mldoc" :as mldoc :refer [Mldoc]]
+            [clojure.string :as string]
+            [clojure.walk :as walk]
             [frontend.format.protocol :as protocol]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
-            ["mldoc" :as mldoc :refer [Mldoc]]
             [logseq.graph-parser.mldoc :as gp-mldoc]
-            [logseq.graph-parser.util :as gp-util]
-            [clojure.walk :as walk]))
+            [logseq.graph-parser.util :as gp-util]))
 
 (defonce anchorLink (gobj/get Mldoc "anchorLink"))
 (defonce parseOPML (gobj/get Mldoc "parseOPML"))

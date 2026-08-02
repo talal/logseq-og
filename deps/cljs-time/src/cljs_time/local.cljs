@@ -25,8 +25,8 @@
   passed in.
   "
   (:require
-   [cljs-time.core :as time]
    [cljs-time.coerce :as coerce]
+   [cljs-time.core :as time]
    [cljs-time.format :as fmt]
    [goog.date.DateTime]))
 

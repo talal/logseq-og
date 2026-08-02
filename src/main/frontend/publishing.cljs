@@ -1,27 +1,27 @@
 (ns frontend.publishing
   "Entry ns for publishing build. Provides frontend for publishing single page
   application"
-  (:require [frontend.state :as state]
-            [datascript.core :as d]
-            [frontend.db :as db]
-            [logseq.db.schema :as db-schema]
-            [rum.core :as rum]
-            [frontend.handler.route :as route-handler]
-            [frontend.page :as page]
+  (:require [cljs.reader :as reader]
             [clojure.string :as string]
-            [frontend.routes :as routes]
-            [frontend.context.i18n :as i18n]
-            [reitit.frontend :as rf]
-            [reitit.frontend.easy :as rfe]
-            [cljs.reader :as reader]
+            [datascript.core :as d]
             [frontend.components.block :as block]
             [frontend.components.editor :as editor]
             [frontend.components.page :as page-component]
             [frontend.components.reference :as reference]
             [frontend.components.whiteboard :as whiteboard]
-            [frontend.modules.shortcut.core :as shortcut]
+            [frontend.context.i18n :as i18n]
+            [frontend.db :as db]
+            [frontend.handler.command-palette :as command-palette]
             [frontend.handler.events :as events]
-            [frontend.handler.command-palette :as command-palette]))
+            [frontend.handler.route :as route-handler]
+            [frontend.modules.shortcut.core :as shortcut]
+            [frontend.page :as page]
+            [frontend.routes :as routes]
+            [frontend.state :as state]
+            [logseq.db.schema :as db-schema]
+            [reitit.frontend :as rf]
+            [reitit.frontend.easy :as rfe]
+            [rum.core :as rum]))
 
 ;; The publishing site should be as thin as possible.
 ;; Both files and git libraries can be removed.

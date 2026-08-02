@@ -1,10 +1,10 @@
 (ns frontend.encrypt
   "Encryption related fns for use with encryption feature and file sync"
-  (:require [logseq.graph-parser.utf8 :as utf8]
+  (:require [electron.ipc :as ipc]
+            [frontend.mobile.util :as mobile-util]
             [frontend.util :as util]
-            [promesa.core :as p]
-            [electron.ipc :as ipc]
-            [frontend.mobile.util :as mobile-util]))
+            [logseq.graph-parser.utf8 :as utf8]
+            [promesa.core :as p]))
 
 (defn encrypt-with-passphrase
   [passphrase content]

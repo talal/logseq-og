@@ -2,18 +2,18 @@
   "Provides fns used for routing throughout the app"
   (:require [clojure.string :as string]
             [frontend.config :as config]
+            [frontend.context.i18n :refer [t]]
             [frontend.date :as date]
             [frontend.db :as db]
             [frontend.db.model :as model]
+            [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.handler.recent :as recent-handler]
             [frontend.handler.search :as search-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.state :as state]
             [frontend.util :as util]
-            [frontend.extensions.pdf.utils :as pdf-utils]
             [logseq.graph-parser.text :as text]
-            [reitit.frontend.easy :as rfe]
-            [frontend.context.i18n :refer [t]]))
+            [reitit.frontend.easy :as rfe]))
 
 (defn redirect!
   "If `push` is truthy, previous page will be left in history."
@@ -77,13 +77,13 @@
      (recent-handler/add-page-to-recent! (state/get-current-repo) page-name
                                          click-from-recent?)
      (let [m (cond->
-               (default-page-route page-name)
+              (default-page-route page-name)
 
                anchor
                (assoc :query-params {:anchor anchor})
 
-              (boolean? push)
-              (assoc :push push))]
+               (boolean? push)
+               (assoc :push push))]
        (redirect! m)))))
 
 (defn redirect-to-whiteboard!

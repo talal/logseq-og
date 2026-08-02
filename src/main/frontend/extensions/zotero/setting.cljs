@@ -1,9 +1,9 @@
 (ns frontend.extensions.zotero.setting
   (:require [clojure.string :as str]
-            [promesa.core :as p]
             [frontend.handler.config :as config-handler]
             [frontend.state :as state]
-            [frontend.storage :as storage]))
+            [frontend.storage :as storage]
+            [promesa.core :as p]))
 
 (def default-settings
   {:type                                    :user

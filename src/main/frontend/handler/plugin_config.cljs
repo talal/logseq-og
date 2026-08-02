@@ -3,22 +3,22 @@
   global-config component. This component is only enabled? if both the
   global-config and plugin components are enabled. plugin.edn is automatically updated
 when a plugin is installed, updated or removed"
-  (:require [frontend.handler.global-config :as global-config-handler]
-            [logseq.common.path :as path]
-            [promesa.core :as p]
-            [borkdude.rewrite-edn :as rewrite]
-            [frontend.fs :as fs]
-            [frontend.state :as state]
-            [frontend.handler.notification :as notification]
-            [frontend.handler.common.plugin :as plugin-common-handler]
+  (:require [borkdude.rewrite-edn :as rewrite]
+            [cljs-bean.core :as bean]
             [clojure.edn :as edn]
-            [clojure.set :as set]
             [clojure.pprint :as pprint]
+            [clojure.set :as set]
+            [frontend.fs :as fs]
+            [frontend.handler.common.plugin :as plugin-common-handler]
+            [frontend.handler.global-config :as global-config-handler]
+            [frontend.handler.notification :as notification]
+            [frontend.schema.handler.plugin-config :as plugin-config-schema]
+            [frontend.state :as state]
+            [lambdaisland.glogi :as log]
+            [logseq.common.path :as path]
             [malli.core :as m]
             [malli.error :as me]
-            [frontend.schema.handler.plugin-config :as plugin-config-schema]
-            [cljs-bean.core :as bean]
-            [lambdaisland.glogi :as log]))
+            [promesa.core :as p]))
 
 (defn plugin-config-path
   "Full path to plugins.edn"

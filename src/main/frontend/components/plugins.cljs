@@ -1,25 +1,25 @@
 (ns frontend.components.plugins
-  (:require [rum.core :as rum]
-            [frontend.state :as state]
-            [cljs-bean.core :as bean]
-            [frontend.context.i18n :refer [t]]
-            [frontend.ui :as ui]
-            [frontend.handler.ui :as ui-handler]
-            [frontend.handler.editor :as editor-handler]
-            [frontend.handler.plugin-config :as plugin-config-handler]
-            [frontend.handler.common.plugin :as plugin-common-handler]
-            [frontend.search :as search]
-            [frontend.util :as util]
-            [frontend.mixins :as mixins]
+  (:require [cljs-bean.core :as bean]
+            [clojure.string :as string]
             [electron.ipc :as ipc]
-            [promesa.core :as p]
-            [frontend.components.svg :as svg]
             [frontend.components.plugins-settings :as plugins-settings]
+            [frontend.components.svg :as svg]
+            [frontend.context.i18n :refer [t]]
+            [frontend.handler.common.plugin :as plugin-common-handler]
+            [frontend.handler.editor :as editor-handler]
             [frontend.handler.notification :as notification]
             [frontend.handler.plugin :as plugin-handler]
-            [frontend.storage :as storage]
+            [frontend.handler.plugin-config :as plugin-config-handler]
+            [frontend.handler.ui :as ui-handler]
+            [frontend.mixins :as mixins]
             [frontend.rum :as rum-utils]
-            [clojure.string :as string]))
+            [frontend.search :as search]
+            [frontend.state :as state]
+            [frontend.storage :as storage]
+            [frontend.ui :as ui]
+            [frontend.util :as util]
+            [promesa.core :as p]
+            [rum.core :as rum]))
 
 (declare open-waiting-updates-modal!)
 (defonce PER-PAGE-SIZE 15)
@@ -91,52 +91,52 @@
      {:tab-index -1}
      [:h1.mb-4.text-2xl.p-1 (t :themes)]
      (map-indexed
-       (fn [idx opt]
-         (let [current-selected? (:selected opt)
-               group-first?      (:group-first opt)
-               plg               (get (:plugin/installed-plugins @state/state) (keyword (:pid opt)))]
-           [:div
-            {:key (str idx (:name opt))}
-            (when (and group-first? (not= idx 0)) [:hr.my-2])
-            [:div.it.flex.px-3.py-1.5.rounded-sm.justify-between
-             {:title    (:description opt)
-              :class    (util/classnames
-                          [{:is-selected current-selected?
-                            :is-active   (= idx @*cursor)}])
-              :on-click #(do (js/LSPluginCore.selectTheme (bean/->js (plugin-handler/assets-theme-to-file opt)))
-                           (state/close-modal!))}
-             [:div.flex.items-center.text-xs
-              [:div.opacity-60 (str (or (:name plg) "Logseq") " •")]
-              [:div.name.ml-1 (:name opt)]]
-             (when (or group-first? current-selected?)
-               [:div.flex.items-center
-                (when group-first? [:small.opacity-60 (:group-desc opt)])
-                (when current-selected? [:small.inline-flex.ml-1.opacity-60 (ui/icon "check")])])]]))
-       @*themes)]))
+      (fn [idx opt]
+        (let [current-selected? (:selected opt)
+              group-first?      (:group-first opt)
+              plg               (get (:plugin/installed-plugins @state/state) (keyword (:pid opt)))]
+          [:div
+           {:key (str idx (:name opt))}
+           (when (and group-first? (not= idx 0)) [:hr.my-2])
+           [:div.it.flex.px-3.py-1.5.rounded-sm.justify-between
+            {:title    (:description opt)
+             :class    (util/classnames
+                        [{:is-selected current-selected?
+                          :is-active   (= idx @*cursor)}])
+             :on-click #(do (js/LSPluginCore.selectTheme (bean/->js (plugin-handler/assets-theme-to-file opt)))
+                            (state/close-modal!))}
+            [:div.flex.items-center.text-xs
+             [:div.opacity-60 (str (or (:name plg) "Logseq") " •")]
+             [:div.name.ml-1 (:name opt)]]
+            (when (or group-first? current-selected?)
+              [:div.flex.items-center
+               (when group-first? [:small.opacity-60 (:group-desc opt)])
+               (when current-selected? [:small.inline-flex.ml-1.opacity-60 (ui/icon "check")])])]]))
+      @*themes)]))
 
 (rum/defc unpacked-plugin-loader
   [unpacked-pkg-path]
   (rum/use-effect!
-    (fn []
-      (let [err-handle
-            (fn [^js e]
-              (case (keyword (aget e "name"))
-                :IllegalPluginPackageError
-                (notification/show! "Illegal Logseq plugin package." :error)
-                :ExistedImportedPluginPackageError
-                (notification/show! (str "Existed plugin package (" (.-message e) ").") :error)
-                :default)
-              (plugin-handler/reset-unpacked-state))
-            reg-handle #(plugin-handler/reset-unpacked-state)]
-        (when unpacked-pkg-path
-          (doto js/LSPluginCore
-            (.once "error" err-handle)
-            (.once "registered" reg-handle)
-            (.register (bean/->js {:url unpacked-pkg-path}))))
-        #(doto js/LSPluginCore
-           (.off "error" err-handle)
-           (.off "registered" reg-handle))))
-    [unpacked-pkg-path])
+   (fn []
+     (let [err-handle
+           (fn [^js e]
+             (case (keyword (aget e "name"))
+               :IllegalPluginPackageError
+               (notification/show! "Illegal Logseq plugin package." :error)
+               :ExistedImportedPluginPackageError
+               (notification/show! (str "Existed plugin package (" (.-message e) ").") :error)
+               :default)
+             (plugin-handler/reset-unpacked-state))
+           reg-handle #(plugin-handler/reset-unpacked-state)]
+       (when unpacked-pkg-path
+         (doto js/LSPluginCore
+           (.once "error" err-handle)
+           (.once "registered" reg-handle)
+           (.register (bean/->js {:url unpacked-pkg-path}))))
+       #(doto js/LSPluginCore
+          (.off "error" err-handle)
+          (.off "registered" reg-handle))))
+   [unpacked-pkg-path])
 
   (when unpacked-pkg-path
     [:strong.inline-flex.px-3 "Loading ..."]))
@@ -146,19 +146,19 @@
 
   [:div.secondary-tabs.categories.flex
    (ui/button
-     [:span.flex.items-center
-      (ui/icon "puzzle")
-      (t :plugins) (when (vector? total-nums) (str " (" (first total-nums) ")"))]
-     :intent "link"
-     :on-click #(on-action :plugins)
-     :class (if (= category :plugins) "active" ""))
+    [:span.flex.items-center
+     (ui/icon "puzzle")
+     (t :plugins) (when (vector? total-nums) (str " (" (first total-nums) ")"))]
+    :intent "link"
+    :on-click #(on-action :plugins)
+    :class (if (= category :plugins) "active" ""))
    (ui/button
-     [:span.flex.items-center
-      (ui/icon "palette")
-      (t :themes) (when (vector? total-nums) (str " (" (last total-nums) ")"))]
-     :intent "link"
-     :on-click #(on-action :themes)
-     :class (if (= category :themes) "active" ""))])
+    [:span.flex.items-center
+     (ui/icon "palette")
+     (t :themes) (when (vector? total-nums) (str " (" (last total-nums) ")"))]
+    :intent "link"
+    :on-click #(on-action :themes)
+    :class (if (= category :themes) "active" ""))])
 
 (rum/defc local-markdown-display
   < rum/reactive
@@ -190,9 +190,9 @@
 (defn security-warning
   []
   (ui/admonition
-    :warning
-    [:p.text-md
-     (t :plugin/security-warning)]))
+   :warning
+   [:p.text-md
+    (t :plugin/security-warning)]))
 
 (rum/defc card-ctls-of-market < rum/static
   [item stat installed? installing-or-updating?]
@@ -235,11 +235,11 @@
       [:li {:on-click
             #(let [confirm-fn
                    (ui/make-confirm-modal
-                     {:title      (t :plugin/delete-alert name)
-                      :on-confirm (fn [_ {:keys [close-fn]}]
-                                    (close-fn)
-                                    (plugin-common-handler/unregister-plugin id)
-                                    (plugin-config-handler/remove-plugin id))})]
+                    {:title      (t :plugin/delete-alert name)
+                     :on-confirm (fn [_ {:keys [close-fn]}]
+                                   (close-fn)
+                                   (plugin-common-handler/unregister-plugin id)
+                                   (plugin-config-handler/remove-plugin id))})]
                (state/set-sub-modal! confirm-fn {:center? true}))}
        (t :plugin/uninstall)]]]
 
@@ -250,8 +250,7 @@
         (for [link sponsors]
           [:li {:key link}
            [:a {:href link :target "_blank"}
-            [:span.flex.items-center link (ui/icon "external-link")]]])
-        ]])]
+            [:span.flex.items-center link (ui/icon "external-link")]]])]])]
 
    [:div.r.flex.items-center
     (when (and unpacked? (not disabled?))
@@ -265,8 +264,8 @@
         {:class    (util/classnames [{:disabled installing-or-updating?}])
          :on-click #(when-not has-other-pending?
                       (plugin-handler/check-or-update-marketplace-plugin!
-                        (assoc item :only-check (not new-version))
-                        (fn [^js e] (notification/show! (.toString e) :error))))}
+                       (assoc item :only-check (not new-version))
+                       (fn [^js e] (notification/show! (.toString e) :error))))}
 
         (if installing-or-updating?
           (t :plugin/updating)
@@ -284,7 +283,7 @@
 (defn get-open-plugin-readme-handler
   [url item repo]
   #(plugin-handler/open-readme!
-     url item (if repo remote-readme-display local-markdown-display)))
+    url item (if repo remote-readme-display local-markdown-display)))
 
 (rum/defc plugin-item-card < rum/static
   [t {:keys [id name title version url description author icon iir repo sponsors] :as item}
@@ -297,10 +296,10 @@
     [:div.cp__plugins-item-card
      {:key   (str "lsp-card-" id)
       :class (util/classnames
-               [{:market          market?
-                 :installed       installed?
-                 :updating        installing-or-updating?
-                 :has-new-version new-version}])}
+              [{:market          market?
+                :installed       installed?
+                :updating        installing-or-updating?
+                :has-new-version new-version}])}
 
      [:div.l.link-block.cursor-pointer
       {:on-click (get-open-plugin-readme-handler url item repo)}
@@ -348,8 +347,8 @@
 
         ;; installed ctls
         (card-ctls-of-installed
-          id name url sponsors unpacked? disabled?
-          installing-or-updating? has-other-pending? new-version item))]]))
+         id name url sponsors unpacked? disabled?
+         installing-or-updating? has-other-pending? new-version item))]]))
 
 (rum/defc panel-tab-search < rum/static
   [search-key *search-key *search-ref]
@@ -379,11 +378,11 @@
 (rum/defc panel-tab-developer
   []
   (ui/button
-    (t :plugin/contribute)
-    :href "https://github.com/logseq/marketplace"
-    :class "contribute"
-    :intent "link"
-    :target "_blank"))
+   (t :plugin/contribute)
+   :href "https://github.com/logseq/marketplace"
+   :class "contribute"
+   :intent "link"
+   :target "_blank"))
 
 (rum/defc user-proxy-settings-panel
   [{:keys [protocol type] :as agent-opts}]
@@ -400,8 +399,8 @@
                        {:label "Direct" :value "direct" :selected (= type "direct")}
                        {:label "HTTP" :value "http" :selected (= type "http")}
                        {:label "SOCKS5" :value "socks5" :selected (= type "socks5")}]
-             (fn [_e value]
-               (set-opts! (assoc opts :type value :protocol value))))]]
+                      (fn [_e value]
+                        (set-opts! (assoc opts :type value :protocol value))))]]
       [:p.flex
        [:label.pr-4
         {:class (if disabled? "opacity-50" nil)}
@@ -410,7 +409,7 @@
          {:value     (:host opts)
           :disabled  disabled?
           :on-change #(set-opts!
-                        (assoc opts :host (util/trim-safe (util/evalue %))))}]]
+                       (assoc opts :host (util/trim-safe (util/evalue %))))}]]
 
        [:label
         {:class (if disabled? "opacity-50" nil)}
@@ -419,7 +418,7 @@
          {:value     (:port opts) :type "number" :min 1 :max 65535
           :disabled  disabled?
           :on-change #(set-opts!
-                        (assoc opts :port (util/trim-safe (util/evalue %))))}]]]
+                       (assoc opts :port (util/trim-safe (util/evalue %))))}]]]
 
       [:hr]
       [:p.flex.items-center.space-x-2
@@ -430,7 +429,7 @@
           :type        "url"
           :placeholder "https://"
           :on-change   #(set-opts!
-                          (assoc opts :test (util/trim-safe (util/evalue %))))
+                         (assoc opts :test (util/trim-safe (util/evalue %))))
           :value       (:test opts)}]
         [:datalist#proxy-test-url-datalist
          [:option "https://api.logseq.com/logseq/version"]
@@ -471,8 +470,8 @@
                     (set-enabled! t)
                     (plugin-handler/set-enabled-auto-check-for-updates t)
                     (notification/show!
-                      [:span text [:strong.pl-1 (if t "ON" "OFF")] "!"]
-                      (if t :success :info))))}
+                     [:span text [:strong.pl-1 (if t "ON" "OFF")] "!"]
+                     (if t :success :info))))}
      [:span.pr-3.opacity-80 text]
      (ui/toggle enabled #() true)]))
 
@@ -627,10 +626,10 @@
        (when-let [^js el-list (.querySelector el ".cp__plugins-item-lists")]
          (when-let [^js cls (.-classList (.querySelector el ".control-tabs"))]
            (.addEventListener
-             el-list "scroll"
-             #(if (> (.-scrollTop el-list) 1)
-                (.add cls "scrolled")
-                (.remove cls "scrolled"))))))
+            el-list "scroll"
+            #(if (> (.-scrollTop el-list) 1)
+               (.add cls "scrolled")
+               (.remove cls "scrolled"))))))
      s)})
 
 (rum/defc lazy-items-loader
@@ -639,36 +638,36 @@
         in-view?        (.-inView inViewState)]
 
     (rum/use-effect!
-      (fn []
-        (load-more!))
-      [in-view?])
+     (fn []
+       (load-more!))
+     [in-view?])
 
     [:div {:ref (.-ref inViewState)}
      [:p.py-1.text-center.opacity-0 (when (.-inView inViewState) "·")]]))
 
 (rum/defcs marketplace-plugins
   < rum/static rum/reactive
-    plugin-items-list-mixins
-    (rum/local false ::fetching)
-    (rum/local "" ::search-key)
-    (rum/local :plugins ::category)
-    (rum/local :downloads ::sort-by)                        ;; downloads / stars / letters / updates
-    (rum/local :default ::filter-by)
-    (rum/local nil ::error)
-    (rum/local nil ::cached-query-flag)
-    (rum/local 1 ::current-page)
-    {:did-mount
-     (fn [s]
-       (let [reload-fn (fn [force-refresh?]
-                         (when-not @(::fetching s)
-                           (reset! (::fetching s) true)
-                           (reset! (::error s) nil)
-                           (-> (plugin-handler/load-marketplace-plugins force-refresh?)
-                               (p/then #(plugin-handler/load-marketplace-stats false))
-                               (p/catch #(do (js/console.error %) (reset! (::error s) %)))
-                               (p/finally #(reset! (::fetching s) false)))))]
-         (reload-fn false)
-         (assoc s ::reload (partial reload-fn true))))}
+  plugin-items-list-mixins
+  (rum/local false ::fetching)
+  (rum/local "" ::search-key)
+  (rum/local :plugins ::category)
+  (rum/local :downloads ::sort-by)                        ;; downloads / stars / letters / updates
+  (rum/local :default ::filter-by)
+  (rum/local nil ::error)
+  (rum/local nil ::cached-query-flag)
+  (rum/local 1 ::current-page)
+  {:did-mount
+   (fn [s]
+     (let [reload-fn (fn [force-refresh?]
+                       (when-not @(::fetching s)
+                         (reset! (::fetching s) true)
+                         (reset! (::error s) nil)
+                         (-> (plugin-handler/load-marketplace-plugins force-refresh?)
+                             (p/then #(plugin-handler/load-marketplace-stats false))
+                             (p/catch #(do (js/console.error %) (reset! (::error s) %)))
+                             (p/finally #(reset! (::fetching s) false)))))]
+       (reload-fn false)
+       (assoc s ::reload (partial reload-fn true))))}
   [state]
   (let [*list-node-ref     (rum/create-ref)
         pkgs               (state/sub :plugin/marketplace-pkgs)
@@ -693,8 +692,8 @@
         total-nums         [(count normal-plugins) (count theme-plugins)]
         filtered-pkgs      (if (and (seq filtered-pkgs) (not= :default @*filter-by))
                              (filter #(apply
-                                        (if (= :installed @*filter-by) identity not)
-                                        [(contains? installed-plugins (keyword (:id %)))])
+                                       (if (= :installed @*filter-by) identity not)
+                                       [(contains? installed-plugins (keyword (:id %)))])
                                      filtered-pkgs)
                              filtered-pkgs)
         filtered-pkgs      (if-not (string/blank? @*search-key)
@@ -702,23 +701,23 @@
                                                   (subs @*search-key 1))]
                                (filter #(= author (:author %)) filtered-pkgs)
                                (search/fuzzy-search
-                                 filtered-pkgs @*search-key
-                                 :limit 30
-                                 :extract-fn :title))
+                                filtered-pkgs @*search-key
+                                :limit 30
+                                :extract-fn :title))
                              filtered-pkgs)
         filtered-pkgs      (map #(if-let [stat (get stats (keyword (:id %)))]
                                    (let [downloads (:total_downloads stat)
                                          stars     (:stargazers_count stat)]
                                      (assoc % :stat stat
-                                              :stars stars
-                                              :downloads downloads))
+                                            :stars stars
+                                            :downloads downloads))
                                    %) filtered-pkgs)
         sorted-plugins     (apply sort-by
                                   (conj
-                                    (case @*sort-by
-                                      :letters [#(util/safe-lower-case (or (:title %) (:name %)))]
-                                      [@*sort-by #(compare %2 %1)])
-                                    filtered-pkgs))
+                                   (case @*sort-by
+                                     :letters [#(util/safe-lower-case (or (:title %) (:name %)))]
+                                     [@*sort-by #(compare %2 %1)])
+                                   filtered-pkgs))
 
         fn-query-flag      (fn [] (string/join "_" (map #(str @%) [*filter-by *sort-by *search-key *category])))
         str-query-flag     (fn-query-flag)
@@ -738,11 +737,11 @@
     [:div.cp__plugins-marketplace
 
      (panel-control-tabs
-       @*search-key *search-key
-       @*category *category
-       @*sort-by *sort-by @*filter-by *filter-by
-       total-nums nil true develop-mode? (::reload state)
-       agent-opts)
+      @*search-key *search-key
+      @*category *category
+      @*sort-by *sort-by @*filter-by *filter-by
+      total-nums nil true develop-mode? (::reload state)
+      agent-opts)
 
      (cond
        (not online?)
@@ -777,13 +776,13 @@
 
 (rum/defcs installed-plugins
   < rum/static rum/reactive
-    plugin-items-list-mixins
-    (rum/local "" ::search-key)
-    (rum/local :default ::filter-by)                        ;; default / enabled / disabled / unpacked / update-available
-    (rum/local :default ::sort-by)
-    (rum/local :plugins ::category)
-    (rum/local nil ::cached-query-flag)
-    (rum/local 1 ::current-page)
+  plugin-items-list-mixins
+  (rum/local "" ::search-key)
+  (rum/local :default ::filter-by)                        ;; default / enabled / disabled / unpacked / update-available
+  (rum/local :default ::sort-by)
+  (rum/local :plugins ::category)
+  (rum/local nil ::cached-query-flag)
+  (rum/local 1 ::current-page)
   [state]
   (let [*list-node-ref        (rum/create-ref)
         installed-plugins     (state/sub [:plugin/installed-plugins])
@@ -820,9 +819,9 @@
                                                      (subs @*search-key 1))]
                                   (filter #(= author (:author %)) filtered-plugins)
                                   (search/fuzzy-search
-                                    filtered-plugins @*search-key
-                                    :limit 30
-                                    :extract-fn :name))
+                                   filtered-plugins @*search-key
+                                   :limit 30
+                                   :extract-fn :name))
                                 filtered-plugins)
         sorted-plugins        (if default-filter-by?
                                 (->> filtered-plugins
@@ -853,13 +852,13 @@
 
     [:div.cp__plugins-installed
      (panel-control-tabs
-       @*search-key *search-key
-       @*category *category
-       @*sort-by *sort-by
-       @*filter-by *filter-by
-       total-nums selected-unpacked-pkg
-       false develop-mode? nil
-       agent-opts)
+      @*search-key *search-key
+      @*category *category
+      @*sort-by *sort-by
+      @*filter-by *filter-by
+      total-nums selected-unpacked-pkg
+      false develop-mode? nil
+      agent-opts)
 
      [:div.cp__plugins-item-lists.pb-6
       {:ref *list-node-ref}
@@ -878,7 +877,7 @@
 
 (rum/defcs waiting-coming-updates
   < rum/reactive
-    {:will-mount (fn [s] (state/reset-unchecked-update) s)}
+  {:will-mount (fn [s] (state/reset-unchecked-update) s)}
   [_s]
   (let [_            (state/sub :plugin/updates-coming)
         downloading? (state/sub :plugin/updates-downloading?)
@@ -913,8 +912,8 @@
            [:div.px-4
             (when-not (string/blank? notes)
               (ui/tippy
-                {:html [:p notes]}
-                [:span.opacity-30.hover:opacity-80 (ui/icon "info-circle")]))]])]
+               {:html [:p notes]}
+               [:span.opacity-30.hover:opacity-80 (ui/icon "info-circle")]))]])]
 
        ;; all done
        [:div.py-4 [:strong.text-4xl (str "\uD83C\uDF89 " (t :plugin/all-updated))]])
@@ -923,23 +922,23 @@
      (when (seq updates)
        [:div.pt-5.flex.justify-end
         (ui/button
-          (if downloading?
-            [:span (ui/loading (t :plugin/updates-downloading))]
-            [:span.flex.items-center (ui/icon "download") (t :plugin/update-all-selected)])
+         (if downloading?
+           [:span (ui/loading (t :plugin/updates-downloading))]
+           [:span.flex.items-center (ui/icon "download") (t :plugin/update-all-selected)])
 
-          :on-click
-          #(when-not downloading?
-             (plugin-handler/open-updates-downloading)
-             (if-let [n (state/get-next-selected-coming-update)]
-               (plugin-handler/check-or-update-marketplace-plugin!
-                 (assoc n :only-check false)
-                 (fn [^js e] (notification/show! (.toString e) :error)))
-               (plugin-handler/close-updates-downloading)))
+         :on-click
+         #(when-not downloading?
+            (plugin-handler/open-updates-downloading)
+            (if-let [n (state/get-next-selected-coming-update)]
+              (plugin-handler/check-or-update-marketplace-plugin!
+               (assoc n :only-check false)
+               (fn [^js e] (notification/show! (.toString e) :error)))
+              (plugin-handler/close-updates-downloading)))
 
-          :disabled
-          (or downloading?
-              (and (seq unchecked)
-                   (= (count unchecked) (count updates)))))])]))
+         :disabled
+         (or downloading?
+             (and (seq unchecked)
+                  (= (count unchecked) (count updates)))))])]))
 
 (rum/defc plugins-from-file
   < rum/reactive
@@ -980,19 +979,19 @@
          *el-ref (rum/use-ref nil)]
 
      (rum/use-effect!
-       (fn []
-         (let [timer (js/setTimeout #(callback {:type type :slot id :payload payload}) 50)]
-           #(js/clearTimeout timer)))
-       [id])
+      (fn []
+        (let [timer (js/setTimeout #(callback {:type type :slot id :payload payload}) 50)]
+          #(js/clearTimeout timer)))
+      [id])
 
      (rum/use-effect!
-       (fn []
-         (let [el (rum/deref *el-ref)]
-           #(when-let [uis (seq (.querySelectorAll el "[data-injected-ui]"))]
-              (doseq [^js el uis]
-                (when-let [id (.-injectedUi (.-dataset el))]
-                  (js/LSPluginCore._forceCleanInjectedUI id))))))
-       [])
+      (fn []
+        (let [el (rum/deref *el-ref)]
+          #(when-let [uis (seq (.querySelectorAll el "[data-injected-ui]"))]
+             (doseq [^js el uis]
+               (when-let [id (.-injectedUi (.-dataset el))]
+                 (js/LSPluginCore._forceCleanInjectedUI id))))))
+      [])
 
      [:div.lsp-hook-ui-slot
       (merge opts {:id            id
@@ -1010,11 +1009,11 @@
         ^js pl (js/LSPluginCore.registeredPlugins.get (name pid))]
 
     (rum/use-effect!
-      (fn []
-        (when-let [^js el (rum/deref *el)]
-          (js/LSPlugin.pluginHelpers.setupInjectedUI.call
-            pl #js {:slot (.-id el) :key key :template template} #js {})))
-      [template])
+     (fn []
+       (when-let [^js el (rum/deref *el)]
+         (js/LSPlugin.pluginHelpers.setupInjectedUI.call
+          pl #js {:slot (.-id el) :key key :template template} #js {})))
+     [template])
 
     (if-not (nil? pl)
       [:div
@@ -1029,52 +1028,52 @@
   (let [badge-updates? (and (not (plugin-handler/get-auto-checking?))
                             (seq (state/all-available-coming-updates updates-coming)))]
     (ui/dropdown-with-links
-      (fn [{:keys [toggle-fn]}]
-        [:div.toolbar-plugins-manager
-         {:on-click toggle-fn}
-         [:a.button.relative
-          (ui/icon "puzzle" {:size 20})
-          (when badge-updates?
-            (ui/point "bg-red-600.top-1.right-1.absolute" 4 {:style {:margin-right 2 :margin-top 2}}))]])
+     (fn [{:keys [toggle-fn]}]
+       [:div.toolbar-plugins-manager
+        {:on-click toggle-fn}
+        [:a.button.relative
+         (ui/icon "puzzle" {:size 20})
+         (when badge-updates?
+           (ui/point "bg-red-600.top-1.right-1.absolute" 4 {:style {:margin-right 2 :margin-top 2}}))]])
 
       ;; items
-      (concat
-        (for [[_ {:keys [key pinned?] :as opts} pid] items
-              :let [pkey (str (name pid) ":" key)]]
-          {:title   key
-           :item    [:div.flex.items-center.item-wrap
-                     (ui-item-renderer pid :toolbar (assoc opts :prefix "pl-" :key (str "pl-" key)))
-                     [:span {:style {:padding-left "2px"}} key]
-                     [:span.pin.flex.items-center.opacity-60
-                      {:class (util/classnames [{:pinned pinned?}])}
-                      (ui/icon (if pinned? "pinned" "pin"))]]
-           :options {:on-click (fn [^js e]
-                                 (let [^js target (.-target e)
-                                       user-btn?  (boolean (.closest target "div[data-injected-ui]"))]
-                                   (when-not user-btn?
-                                     (plugin-handler/op-pinned-toolbar-item! pkey (if pinned? :remove :add))))
-                                 false)}})
-        [{:hr true}
-         {:title   (t :plugins)
-          :options {:on-click #(plugin-handler/goto-plugins-dashboard!)
-                    :class    "extra-item mt-2"}
-          :icon    (ui/icon "apps")}
-         {:title   (t :settings)
-          :options {:on-click #(plugin-handler/goto-plugins-settings!)
+     (concat
+      (for [[_ {:keys [key pinned?] :as opts} pid] items
+            :let [pkey (str (name pid) ":" key)]]
+        {:title   key
+         :item    [:div.flex.items-center.item-wrap
+                   (ui-item-renderer pid :toolbar (assoc opts :prefix "pl-" :key (str "pl-" key)))
+                   [:span {:style {:padding-left "2px"}} key]
+                   [:span.pin.flex.items-center.opacity-60
+                    {:class (util/classnames [{:pinned pinned?}])}
+                    (ui/icon (if pinned? "pinned" "pin"))]]
+         :options {:on-click (fn [^js e]
+                               (let [^js target (.-target e)
+                                     user-btn?  (boolean (.closest target "div[data-injected-ui]"))]
+                                 (when-not user-btn?
+                                   (plugin-handler/op-pinned-toolbar-item! pkey (if pinned? :remove :add))))
+                               false)}})
+      [{:hr true}
+       {:title   (t :plugins)
+        :options {:on-click #(plugin-handler/goto-plugins-dashboard!)
+                  :class    "extra-item mt-2"}
+        :icon    (ui/icon "apps")}
+       {:title   (t :settings)
+        :options {:on-click #(plugin-handler/goto-plugins-settings!)
+                  :class    "extra-item"}
+        :icon    (ui/icon "adjustments")}
+
+       (when badge-updates?
+         {:title   [:div.flex.items-center.space-x-5.leading-none
+                    [:span (t :plugin/found-updates)] (ui/point "bg-red-700" 5 {:style {:margin-top 2}})]
+          :options {:on-click #(open-waiting-updates-modal!)
                     :class    "extra-item"}
-          :icon    (ui/icon "adjustments")}
+          :icon    (ui/icon "download")})]
 
-         (when badge-updates?
-           {:title   [:div.flex.items-center.space-x-5.leading-none
-                      [:span (t :plugin/found-updates)] (ui/point "bg-red-700" 5 {:style {:margin-top 2}})]
-            :options {:on-click #(open-waiting-updates-modal!)
-                      :class    "extra-item"}
-            :icon    (ui/icon "download")})]
-
-        [{:hr true :key "dropdown-more"}
-         {:title (auto-check-for-updates-control)
-          :options {:no-padding? true}}])
-      {:trigger-class "toolbar-plugins-manager-trigger"})))
+      [{:hr true :key "dropdown-more"}
+       {:title (auto-check-for-updates-control)
+        :options {:no-padding? true}}])
+     {:trigger-class "toolbar-plugins-manager-trigger"})))
 
 (rum/defc header-ui-items-list-wrap
   [children]
@@ -1082,34 +1081,34 @@
         [right-sidebar-resized] (rum-utils/use-atom ui-handler/*right-sidebar-resized-at)]
 
     (rum/use-effect!
-      (fn []
-        (when-let [^js wrap-el (rum/deref *wrap-el)]
-          (when-let [^js header-el (.closest wrap-el ".cp__header")]
-            (let [^js header-l        (.querySelector header-el "* > .l")
-                  ^js header-r        (.querySelector header-el "* > .r")
-                  set-max-width!      #(when (number? %) (set! (.-maxWidth (.-style wrap-el)) (str % "px")))
-                  calc-wrap-max-width #(let [width-l  (.-offsetWidth header-l)
-                                             width-t  (-> (js/document.querySelector "#main-content-container") (.-offsetWidth))
-                                             children (to-array (.-children header-r))
-                                             width-c' (reduce (fn [acc ^js e]
-                                                                (when (some-> e (.-classList) (.contains "ui-items-container") (not))
-                                                                  (+ acc (or (.-offsetWidth e) 0)))) 0 children)]
-                                         (when-let [width-t (and (number? width-t)
-                                                                 (if-not (state/get-left-sidebar-open?)
-                                                                   (- width-t width-l) width-t))]
-                                           (set-max-width! (max (- width-t width-c' 100) 76))))]
-              (.addEventListener js/window "resize" calc-wrap-max-width)
-              (js/setTimeout calc-wrap-max-width 16)
-              #(.removeEventListener js/window "resize" calc-wrap-max-width)))))
-      [right-sidebar-resized])
+     (fn []
+       (when-let [^js wrap-el (rum/deref *wrap-el)]
+         (when-let [^js header-el (.closest wrap-el ".cp__header")]
+           (let [^js header-l        (.querySelector header-el "* > .l")
+                 ^js header-r        (.querySelector header-el "* > .r")
+                 set-max-width!      #(when (number? %) (set! (.-maxWidth (.-style wrap-el)) (str % "px")))
+                 calc-wrap-max-width #(let [width-l  (.-offsetWidth header-l)
+                                            width-t  (-> (js/document.querySelector "#main-content-container") (.-offsetWidth))
+                                            children (to-array (.-children header-r))
+                                            width-c' (reduce (fn [acc ^js e]
+                                                               (when (some-> e (.-classList) (.contains "ui-items-container") (not))
+                                                                 (+ acc (or (.-offsetWidth e) 0)))) 0 children)]
+                                        (when-let [width-t (and (number? width-t)
+                                                                (if-not (state/get-left-sidebar-open?)
+                                                                  (- width-t width-l) width-t))]
+                                          (set-max-width! (max (- width-t width-c' 100) 76))))]
+             (.addEventListener js/window "resize" calc-wrap-max-width)
+             (js/setTimeout calc-wrap-max-width 16)
+             #(.removeEventListener js/window "resize" calc-wrap-max-width)))))
+     [right-sidebar-resized])
 
     [:div.list-wrap
      {:ref *wrap-el}
      children]))
 
 (rum/defcs hook-ui-items < rum/reactive
-                           < {:key-fn #(identity "plugin-hook-items")}
-                           "type of :toolbar, :pagebar"
+  < {:key-fn #(identity "plugin-hook-items")}
+  "type of :toolbar, :pagebar"
   [_state type]
   (when (state/sub [:plugin/installed-ui-items])
     (let [toolbar?     (= :toolbar type)
@@ -1132,10 +1131,10 @@
 
          [:<>
           (header-ui-items-list-wrap
-            (for [[_ {:keys [key pinned?] :as opts} pid] items]
-              (when (or (not toolbar?)
-                        (not (set? pinned-items)) pinned?)
-                (rum/with-key (ui-item-renderer pid type opts) key))))
+           (for [[_ {:keys [key pinned?] :as opts} pid] items]
+             (when (or (not toolbar?)
+                       (not (set? pinned-items)) pinned?)
+               (rum/with-key (ui-item-renderer pid type opts) key))))
 
           ;; manage plugin buttons
           (when toolbar?
@@ -1151,38 +1150,38 @@
         *el (rum/use-ref nil)]
 
     (rum/use-effect!
-      #(set-content1! content)
-      [content])
+     #(set-content1! content)
+     [content])
 
     (rum/use-effect!
-      (fn []
-        (some-> (rum/deref *el)
-                (.closest ".ui-fenced-code-wrap")
-                (.-classList)
-                (#(if editor-active?
-                    (.add % "is-active")
-                    (.remove % "is-active"))))
-        (when-let [cm (rum/deref *cm)]
-          (.refresh cm)
-          (.focus cm)
-          (.setCursor cm (.lineCount cm) (count (.getLine cm (.lastLine cm))))))
-      [editor-active?])
+     (fn []
+       (some-> (rum/deref *el)
+               (.closest ".ui-fenced-code-wrap")
+               (.-classList)
+               (#(if editor-active?
+                   (.add % "is-active")
+                   (.remove % "is-active"))))
+       (when-let [cm (rum/deref *cm)]
+         (.refresh cm)
+         (.focus cm)
+         (.setCursor cm (.lineCount cm) (count (.getLine cm (.lastLine cm))))))
+     [editor-active?])
 
     (rum/use-effect!
-      (fn []
-        (let [t (js/setTimeout
-                  #(when-let [^js cm (some-> (rum/deref *el)
-                                             (.closest ".ui-fenced-code-wrap")
-                                             (.querySelector ".CodeMirror")
-                                             (.-CodeMirror))]
-                     (rum/set-ref! *cm cm)
-                     (doto cm
-                       (.on "change" (fn []
-                                       (some-> cm (.getDoc) (.getValue) (set-content1!))))))
+     (fn []
+       (let [t (js/setTimeout
+                #(when-let [^js cm (some-> (rum/deref *el)
+                                           (.closest ".ui-fenced-code-wrap")
+                                           (.querySelector ".CodeMirror")
+                                           (.-CodeMirror))]
+                   (rum/set-ref! *cm cm)
+                   (doto cm
+                     (.on "change" (fn []
+                                     (some-> cm (.getDoc) (.getValue) (set-content1!))))))
                   ;; wait for the cm loaded
-                  1000)]
-          #(js/clearTimeout t)))
-      [])
+                1000)]
+         #(js/clearTimeout t)))
+     [])
 
     [:div.ui-fenced-code-result
      {:on-mouse-down (fn [e] (when (false? edit) (util/stop e)))
@@ -1206,14 +1205,14 @@
         *el-ref (rum/create-ref)]
 
     (rum/use-effect!
-      (fn []
-        (state/load-app-user-cfgs)
-        #(clear-dirties-states!))
-      [])
+     (fn []
+       (state/load-app-user-cfgs)
+       #(clear-dirties-states!))
+     [])
 
     (rum/use-effect!
-      #(clear-dirties-states!)
-      [market?])
+     #(clear-dirties-states!)
+     [market?])
 
     [:div.cp__plugins-page
      {:ref       *el-ref
@@ -1264,31 +1263,31 @@
                           (set-uid (notification/show! content status false nil nil cb)))))))]
 
     (rum/use-effect!
-      (fn []
-        (if check-pending?
-          (notify!
-            [:div
-             [:div (t :plugin/checking-for-updates)]
-             (when sub-content [:p.opacity-60 sub-content])]
-            (ui/loading ""))
-          (when uid (notification/clear! uid))))
-      [check-pending? sub-content])
+     (fn []
+       (if check-pending?
+         (notify!
+          [:div
+           [:div (t :plugin/checking-for-updates)]
+           (when sub-content [:p.opacity-60 sub-content])]
+          (ui/loading ""))
+         (when uid (notification/clear! uid))))
+     [check-pending? sub-content])
 
     (rum/use-effect!
       ;; scheduler for auto updates
-      (fn []
-        (when online?
-          (let [last-updates (storage/get :lsp-last-auto-updates)]
-            (when (and (not (false? last-updates))
-                       (or (true? last-updates)
-                           (not (number? last-updates))
+     (fn []
+       (when online?
+         (let [last-updates (storage/get :lsp-last-auto-updates)]
+           (when (and (not (false? last-updates))
+                      (or (true? last-updates)
+                          (not (number? last-updates))
                            ;; interval 12 hours
-                           (> (- (js/Date.now) last-updates) (* 60 60 12 1000))))
-              (js/setTimeout
-                (fn []
-                  (plugin-handler/auto-check-enabled-for-updates!)
-                  (storage/set :lsp-last-auto-updates (js/Date.now))))))))
-      [online?])
+                          (> (- (js/Date.now) last-updates) (* 60 60 12 1000))))
+             (js/setTimeout
+              (fn []
+                (plugin-handler/auto-check-enabled-for-updates!)
+                (storage/set :lsp-last-auto-updates (js/Date.now))))))))
+     [online?])
 
     [:<>]))
 
@@ -1302,7 +1301,7 @@
 
 (rum/defcs focused-settings-content
   < rum/reactive
-    (rum/local (state/sub :plugin/focused-settings) ::cache)
+  (rum/local (state/sub :plugin/focused-settings) ::cache)
   [_state title]
   (let [*cache  (::cache _state)
         focused (state/sub :plugin/focused-settings)
@@ -1338,18 +1337,18 @@
         (when-let [^js pl (and focused (= @*cache focused)
                                (plugin-handler/get-plugin-inst focused))]
           (ui/catch-error
-            [:p.warning.text-lg.mt-5 "Settings schema Error!"]
-            (plugins-settings/settings-container
-              (bean/->clj (.-settingsSchema pl)) pl)))]]]]))
+           [:p.warning.text-lg.mt-5 "Settings schema Error!"]
+           (plugins-settings/settings-container
+            (bean/->clj (.-settingsSchema pl)) pl)))]]]]))
 
 (rum/defc custom-js-installer
   [{:keys [t current-repo db-restoring? nfs-granted?]}]
   (rum/use-effect!
-    (fn []
-      (when (and (not db-restoring?)
-                 (or (not util/nfs?) nfs-granted?))
-        (ui-handler/exec-js-if-exists-&-allowed! t)))
-    [current-repo db-restoring? nfs-granted?])
+   (fn []
+     (when (and (not db-restoring?)
+                (or (not util/nfs?) nfs-granted?))
+       (ui-handler/exec-js-if-exists-&-allowed! t)))
+   [current-repo db-restoring? nfs-granted?])
   nil)
 
 (rum/defc perf-tip-content
@@ -1373,40 +1372,40 @@
                      (p/then #(do
                                 (notification/clear! pid)
                                 (notification/show!
-                                  [:span "The plugin "
-                                   [:strong.text-error "#" name]
-                                   " is disabled."] :success
-                                  true nil 3000 nil)))
+                                 [:span "The plugin "
+                                  [:strong.text-error "#" name]
+                                  " is disabled."] :success
+                                 true nil 3000 nil)))
                      (p/catch #(js/console.error %)))))]])
 
 (defn open-plugins-modal!
   []
   (state/set-modal!
-    (fn [_close!]
-      (plugins-page))
-    {:label "plugins-dashboard"}))
+   (fn [_close!]
+     (plugins-page))
+   {:label "plugins-dashboard"}))
 
 (defn open-waiting-updates-modal!
   []
   (state/set-sub-modal!
-    (fn [_close!]
-      (waiting-coming-updates))
-    {:center? true}))
+   (fn [_close!]
+     (waiting-coming-updates))
+   {:center? true}))
 
 (defn open-plugins-from-file-modal!
   [plugins]
   (state/set-sub-modal!
-    (fn [_close!]
-      (plugins-from-file plugins))
-    {:center? true
-     :id      "ls-plugins-from-file-modal"}))
+   (fn [_close!]
+     (plugins-from-file plugins))
+   {:center? true
+    :id      "ls-plugins-from-file-modal"}))
 
 (defn open-focused-settings-modal!
   [title]
   (state/set-sub-modal!
-    (fn [_close!]
-      [:div.settings-modal.of-plugins
-       (focused-settings-content title)])
-    {:center? false
-     :label   "plugin-settings-modal"
-     :id      "ls-focused-settings-modal"}))
+   (fn [_close!]
+     [:div.settings-modal.of-plugins
+      (focused-settings-content title)])
+   {:center? false
+    :label   "plugin-settings-modal"
+    :id      "ls-focused-settings-modal"}))

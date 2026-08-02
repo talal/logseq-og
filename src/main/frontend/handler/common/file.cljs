@@ -1,17 +1,17 @@
 (ns frontend.handler.common.file
   "Common file related fns for handlers"
-  (:require [frontend.config :as config]
-            [frontend.state :as state]
+  (:require [cljs-bean.core :as bean]
+            [clojure.string :as string]
+            [frontend.config :as config]
+            [frontend.context.i18n :refer [t]]
             [frontend.db :as db]
+            [frontend.fs :as fs]
+            [frontend.fs.diff-merge :as diff-merge]
+            [frontend.state :as state]
+            [lambdaisland.glogi :as log]
             [logseq.graph-parser :as graph-parser]
             [logseq.graph-parser.util :as gp-util]
-            [frontend.fs.diff-merge :as diff-merge]
-            [frontend.fs :as fs]
-            [frontend.context.i18n :refer [t]]
-            [promesa.core :as p]
-            [clojure.string :as string]
-            [cljs-bean.core :as bean]
-            [lambdaisland.glogi :as log]))
+            [promesa.core :as p]))
 
 (defn- page-exists-in-another-file
   "Conflict of files towards same page"

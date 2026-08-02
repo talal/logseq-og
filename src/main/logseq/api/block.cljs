@@ -1,11 +1,11 @@
 (ns logseq.api.block
   "Block related apis"
-  (:require [frontend.db.model :as db-model]
-            [frontend.db.utils :as db-utils]
-            [cljs-bean.core :as bean]
-            [frontend.state :as state]
-            [frontend.modules.outliner.tree :as outliner-tree]
+  (:require [cljs-bean.core :as bean]
             [frontend.db :as db]
+            [frontend.db.model :as db-model]
+            [frontend.db.utils :as db-utils]
+            [frontend.modules.outliner.tree :as outliner-tree]
+            [frontend.state :as state]
             [logseq.sdk.utils :as sdk-utils]))
 
 (defn get_block
@@ -24,5 +24,5 @@
                       ;; attached shallow children
                       (assoc block :block/children
                              (map #(list :uuid (:block/uuid %))
-                               (db/get-block-immediate-children repo uuid))))]
+                                  (db/get-block-immediate-children repo uuid))))]
           (bean/->js (sdk-utils/normalize-keyword-for-json block)))))))

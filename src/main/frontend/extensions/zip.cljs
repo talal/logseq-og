@@ -1,7 +1,7 @@
 (ns frontend.extensions.zip
-  (:require [clojure.string :as string]
+  (:require ["jszip" :as JSZip]
+            [clojure.string :as string]
             [frontend.config :as config]
-            ["jszip" :as JSZip]
             [promesa.core :as p]))
 
 (defn make-file [content file-name args]

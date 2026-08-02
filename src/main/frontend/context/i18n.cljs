@@ -3,9 +3,9 @@
   application. The ns dependencies for this ns must be small since it is used
   throughout the application."
   (:require [frontend.dicts :as dicts]
-            [tongue.core :as tongue]
             [frontend.state :as state]
-            [lambdaisland.glogi :as log]))
+            [lambdaisland.glogi :as log]
+            [tongue.core :as tongue]))
 
 (def dicts (merge dicts/dicts {:tongue/fallback :en}))
 

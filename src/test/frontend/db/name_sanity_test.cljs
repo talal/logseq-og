@@ -1,10 +1,10 @@
 (ns frontend.db.name-sanity-test
   (:require [cljs.test :refer [deftest testing is are]]
             [clojure.string :as string]
-            [logseq.graph-parser.util :as gp-util]
-            [frontend.handler.page :as page-handler]
             [frontend.handler.conversion :as conversion-handler]
-            [frontend.util.fs :as fs-util]))
+            [frontend.handler.page :as page-handler]
+            [frontend.util.fs :as fs-util]
+            [logseq.graph-parser.util :as gp-util]))
 
 (defn- test-page-name
   "Check if page name can be preserved after escaping"
@@ -15,7 +15,7 @@
           url-single  (js/encodeURIComponent file-name)
           url-double  (js/encodeURIComponent url-single)
           file-name'  (js/decodeURIComponent url-single)
-          file-name'' ( js/decodeURIComponent (js/decodeURIComponent url-double))]
+          file-name'' (js/decodeURIComponent (js/decodeURIComponent url-double))]
       (is (= page-name page-name'))
       (is (not (fs-util/include-reserved-chars? file-name)))
       (is (not (contains? fs-util/windows-reserved-filebodies file-name)))

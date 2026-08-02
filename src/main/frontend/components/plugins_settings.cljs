@@ -1,10 +1,10 @@
 (ns frontend.components.plugins-settings
-  (:require [rum.core :as rum]
-            [frontend.util :as util]
-            [frontend.ui :as ui]
+  (:require [cljs-bean.core :as bean]
             [frontend.handler.plugin :as plugin-handler]
-            [cljs-bean.core :as bean]
-            [goog.functions :refer [debounce]]))
+            [frontend.ui :as ui]
+            [frontend.util :as util]
+            [goog.functions :refer [debounce]]
+            [rum.core :as rum]))
 
 (defn- dom-purify
   [html opts]
@@ -77,8 +77,7 @@
          :radio (ui/radio-list options #(update-setting! key %) nil)
          :checkbox (ui/checkbox-list options #(update-setting! key %) nil)
          ;; select
-         (ui/select options (fn [_ value ] (update-setting! key value)) nil))
-       ]]]))
+         (ui/select options (fn [_ value] (update-setting! key value)) nil))]]]))
 
 (rum/defc render-item-object
   [_val {:keys [key title description _default]} pid]

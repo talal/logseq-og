@@ -1,22 +1,22 @@
 (ns frontend.components.server
   (:require
-    [clojure.string :as string]
-    [rum.core :as rum]
-    [electron.ipc :as ipc]
-    [medley.core :as medley]
-    [promesa.core :as p]
-    [frontend.state :as state]
-    [frontend.util :as util]
-    [frontend.handler.notification :as notification]
-    [frontend.ui :as ui]))
+   [clojure.string :as string]
+   [electron.ipc :as ipc]
+   [frontend.handler.notification :as notification]
+   [frontend.state :as state]
+   [frontend.ui :as ui]
+   [frontend.util :as util]
+   [medley.core :as medley]
+   [promesa.core :as p]
+   [rum.core :as rum]))
 
 (rum/defcs panel-of-tokens
   < rum/reactive
-    (rum/local nil ::tokens)
-    {:will-mount
-     (fn [s]
-       (let [*tokens (s ::tokens)]
-         (reset! *tokens (get-in @state/state [:electron/server :tokens])) s))}
+  (rum/local nil ::tokens)
+  {:will-mount
+   (fn [s]
+     (let [*tokens (s ::tokens)]
+       (reset! *tokens (get-in @state/state [:electron/server :tokens])) s))}
   [_state close-panel]
 
   (let [server-state (state/sub :electron/server)
@@ -58,11 +58,11 @@
 
 (rum/defcs panel-of-configs
   < rum/reactive
-    (rum/local nil ::configs)
-    {:will-mount
-     (fn [s]
-       (let [*configs (s ::configs)]
-         (reset! *configs (:electron/server @state/state)) s))}
+  (rum/local nil ::configs)
+  {:will-mount
+   (fn [s]
+     (let [*configs (s ::configs)]
+       (reset! *configs (:electron/server @state/state)) s))}
   [_state close-panel]
 
   (let [server-state (state/sub :electron/server)
@@ -125,13 +125,13 @@
   [server-state]
 
   (rum/use-effect!
-    (fn []
-      (p/let [_ (p/delay 1000)
-              _ (ipc/ipc :server/load-state)]
-        (let [t (js/setTimeout #(when (state/sub [:electron/server :autostart])
-                                  (ipc/ipc :server/do :restart)) 1000)]
-          #(js/clearTimeout t))))
-    [])
+   (fn []
+     (p/let [_ (p/delay 1000)
+             _ (ipc/ipc :server/load-state)]
+       (let [t (js/setTimeout #(when (state/sub [:electron/server :autostart])
+                                 (ipc/ipc :server/do :restart)) 1000)]
+         #(js/clearTimeout t))))
+   [])
 
   (let [{:keys [status error]} server-state
         status   (keyword (util/safe-lower-case status))
@@ -139,48 +139,48 @@
         href     (and running? (str "http://" (:host server-state) ":" (:port server-state)))]
 
     (rum/use-effect!
-      #(when error
-         (notification/show! (str "[Server] " error) :error))
-      [error])
+     #(when error
+        (notification/show! (str "[Server] " error) :error))
+     [error])
 
     [:div.cp__server-indicator
      ;; settings menus
      (ui/dropdown-with-links
-       (fn [{:keys [toggle-fn]}]
-         [:button.button.icon
-          {:on-click #(toggle-fn)}
-          (ui/icon (if running? "api" "api-off") {:size 22})])
+      (fn [{:keys [toggle-fn]}]
+        [:button.button.icon
+         {:on-click #(toggle-fn)}
+         (ui/icon (if running? "api" "api-off") {:size 22})])
 
        ;; items
-       (->> [{:hr true}
+      (->> [{:hr true}
 
-             (cond
-               running?
-               {:title   "Stop server"
-                :options {:on-click #(ipc/ipc :server/do :stop)}
-                :icon    [:span.text-red-500.flex.items-center (ui/icon "player-stop")]}
+            (cond
+              running?
+              {:title   "Stop server"
+               :options {:on-click #(ipc/ipc :server/do :stop)}
+               :icon    [:span.text-red-500.flex.items-center (ui/icon "player-stop")]}
 
-               :else
-               {:title   "Start server"
-                :options {:on-click #(ipc/ipc :server/do :restart)}
-                :icon    [:span.text-green-500.flex.items-center (ui/icon "player-play")]})
+              :else
+              {:title   "Start server"
+               :options {:on-click #(ipc/ipc :server/do :restart)}
+               :icon    [:span.text-green-500.flex.items-center (ui/icon "player-play")]})
 
-             {:title   "Authorization tokens"
-              :options {:on-click #(state/set-modal!
-                                     (fn [close]
-                                       (panel-of-tokens close))
-                                     {:center? true})}
-              :icon    (ui/icon "key")}
+            {:title   "Authorization tokens"
+             :options {:on-click #(state/set-modal!
+                                   (fn [close]
+                                     (panel-of-tokens close))
+                                   {:center? true})}
+             :icon    (ui/icon "key")}
 
-             {:title   "Server configurations"
-              :options {:on-click #(state/set-modal!
-                                     (fn [close]
-                                       (panel-of-configs close))
-                                     {:center? true})}
-              :icon    (ui/icon "server-cog")}])
-       {:links-header
-        [:div.links-header.flex.justify-center.py-2
-         [:span.ml-1.text-sm
-          (if-not running?
-            (string/upper-case (or (:status server-state) "stopped"))
-            [:a.hover:underline {:href href} href])]]})]))
+            {:title   "Server configurations"
+             :options {:on-click #(state/set-modal!
+                                   (fn [close]
+                                     (panel-of-configs close))
+                                   {:center? true})}
+             :icon    (ui/icon "server-cog")}])
+      {:links-header
+       [:div.links-header.flex.justify-center.py-2
+        [:span.ml-1.text-sm
+         (if-not running?
+           (string/upper-case (or (:status server-state) "stopped"))
+           [:a.hover:underline {:href href} href])]]})]))

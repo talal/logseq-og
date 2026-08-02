@@ -1,9 +1,9 @@
 (ns frontend.extensions.graph
   (:require [cljs-bean.core :as bean]
+            [frontend.colors :as colors]
             [frontend.db.model :as model]
             [frontend.extensions.graph.pixi :as pixi]
             [frontend.handler.route :as route-handler]
-            [frontend.colors :as colors]
             [goog.object :as gobj]
             [rum.core :as rum]))
 

@@ -1,9 +1,9 @@
 (ns logseq.tasks.spec
   "Clojure spec related tasks"
-  (:require [clojure.spec.alpha :as s]
-            [cheshire.core :as json]
-            [frontend.spec.storage :as storage-spec]
-            [clojure.edn :as edn]))
+  (:require [cheshire.core :as json]
+            [clojure.edn :as edn]
+            [clojure.spec.alpha :as s]
+            [frontend.spec.storage :as storage-spec]))
 
 ;; To create file for validation, `JSON.stringify(localStorage)` in the js
 ;; console and copy string to file

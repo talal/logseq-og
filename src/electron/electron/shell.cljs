@@ -1,11 +1,11 @@
 (ns electron.shell
   (:require
-   [clojure.string :as string]
-   [electron.state :as state]
-   [clojure.set :as set]
-   [electron.logger :as logger]
    ["child_process" :as child-process]
-   ["command-exists" :as command-exists]))
+   ["command-exists" :as command-exists]
+   [clojure.set :as set]
+   [clojure.string :as string]
+   [electron.logger :as logger]
+   [electron.state :as state]))
 
 (def commands-allowlist
   #{"git" "pandoc" "ag" "grep" "alda"})

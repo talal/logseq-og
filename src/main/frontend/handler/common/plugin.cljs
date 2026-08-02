@@ -1,8 +1,8 @@
 (ns frontend.handler.common.plugin
   "Common plugin related fns for handlers and api"
-  (:require [frontend.state :as state]
-            [promesa.core :as p]
-            [electron.ipc :as ipc]))
+  (:require [electron.ipc :as ipc]
+            [frontend.state :as state]
+            [promesa.core :as p]))
 
 (defn installed?
   "For the given plugin id, returns boolean indicating if it is installed"

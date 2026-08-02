@@ -2,10 +2,10 @@
   "This is a custom version of the node-test-runner for the frontend build"
   {:dev/always true} ;; necessary for test-data freshness
   (:require [frontend.test.node-test-runner :as node-test-runner]
-            [shadow.test.env :as env]
             [lambdaisland.glogi.console :as glogi-console]
             ;; activate humane test output for all tests
-            [pjstadig.humane-test-output]))
+            [pjstadig.humane-test-output]
+            [shadow.test.env :as env]))
 
 ;; Needed for new test runners
 (defn ^:dev/after-load reset-test-data! []

@@ -8,10 +8,10 @@
             [frontend.format :as format]
             [frontend.handler.notification :as notification]
             [frontend.state :as state]
+            [lambdaisland.glogi :as log]
             [logseq.graph-parser.block :as gp-block]
-            [logseq.graph-parser.property :as gp-property]
             [logseq.graph-parser.mldoc :as gp-mldoc]
-            [lambdaisland.glogi :as log]))
+            [logseq.graph-parser.property :as gp-property]))
 
 (defn extract-blocks
   "Wrapper around logseq.graph-parser.block/extract-blocks that adds in system state
@@ -70,14 +70,14 @@ and handles unexpected failure."
   ([block]
    (parse-block block nil))
   ([{:block/keys [uuid content format] :as block} {:keys [with-id?]
-                                                        :or {with-id? true}}]
+                                                   :or {with-id? true}}]
    (when-not (string/blank? content)
      (let [block (dissoc block :block/pre-block?)
            ast (format/to-edn content format nil)
            blocks (extract-blocks ast content format {:with-id? with-id?})
            new-block (first blocks)
            block (cond->
-                   (merge block new-block)
+                  (merge block new-block)
                    (> (count blocks) 1)
                    (assoc :block/warning :multiple-blocks))
            block (dissoc block :block/title :block/body :block/level)]
@@ -133,13 +133,13 @@ and handles unexpected failure."
     (if (= typ "Paragraph")
       (let [indexed-paras (map-indexed vector paras)]
         [typ (->> (filter
-                            #(let [[index value] %]
-                               (not (and (> index 0)
-                                         (= value ["Break_Line"])
-                                         (contains? #{"Timestamp" "Macro"}
-                                                    (first (nth paras (dec index)))))))
-                            indexed-paras)
-                           (map #(last %)))])
+                   #(let [[index value] %]
+                      (not (and (> index 0)
+                                (= value ["Break_Line"])
+                                (contains? #{"Timestamp" "Macro"}
+                                           (first (nth paras (dec index)))))))
+                   indexed-paras)
+                  (map #(last %)))])
       ast)))
 
 (defn trim-break-lines!

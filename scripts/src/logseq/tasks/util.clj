@@ -1,7 +1,7 @@
 (ns logseq.tasks.util
   "Utils for tasks"
-  (:require [clojure.pprint :as pprint]
-            [babashka.fs :as fs]))
+  (:require [babashka.fs :as fs]
+            [clojure.pprint :as pprint]))
 
 (defn file-modified-later-than?
   [file comparison-instant]

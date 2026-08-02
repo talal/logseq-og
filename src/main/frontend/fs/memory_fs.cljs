@@ -31,7 +31,6 @@
                        (p/recur result (concat (rest dirs) dir-content)))))]
     result))
 
-
 (defn- <ensure-dir!
   "dir is path, without memory:// prefix for simplicity"
   [dir]
@@ -44,7 +43,6 @@
           (p/resolved nil)))
       (p/catch (fn [_error]
                  (js/window.pfs.mkdir dir)))))
-
 
 (defn- <exists?
   "dir is path, without memory:// prefix for simplicity"

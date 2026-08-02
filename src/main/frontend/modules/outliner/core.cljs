@@ -1,11 +1,11 @@
 (ns frontend.modules.outliner.core
-  (:require [clojure.set :as set]
+  (:require [cljs.spec.alpha :as s]
+            [clojure.set :as set]
             [clojure.string :as string]
             [datascript.impl.entity :as de]
             [frontend.db :as db]
-            [frontend.db.model :as db-model]
-            [logseq.db.schema :as db-schema]
             [frontend.db.conn :as conn]
+            [frontend.db.model :as db-model]
             [frontend.db.outliner :as db-outliner]
             [frontend.modules.outliner.datascript :as ds]
             [frontend.modules.outliner.tree :as tree]
@@ -13,8 +13,8 @@
             [frontend.state :as state]
             [frontend.util :as util]
             [frontend.util.property :as property]
-            [logseq.graph-parser.util :as gp-util]
-            [cljs.spec.alpha :as s]))
+            [logseq.db.schema :as db-schema]
+            [logseq.graph-parser.util :as gp-util]))
 
 (s/def ::block-map (s/keys :opt [:db/id :block/uuid :block/page :block/left :block/parent]))
 
@@ -58,7 +58,7 @@
   [block]
   (let [updated-at (util/time-ms)
         block (cond->
-                (assoc block :block/updated-at updated-at)
+               (assoc block :block/updated-at updated-at)
                 (nil? (:block/created-at block))
                 (assoc :block/created-at updated-at))]
     block))
@@ -213,8 +213,8 @@
                               (map-indexed (fn [idx child]
                                              (let [parent [:block/uuid left-id]]
                                                (cond->
-                                                 {:db/id (:db/id child)
-                                                  :block/parent parent}
+                                                {:db/id (:db/id child)
+                                                 :block/parent parent}
                                                  (zero? idx)
                                                  (assoc :block/left parent))))
                                            immediate-children)))
@@ -423,13 +423,13 @@
     (letfn [(list-type-fn [b] (some-> b :block/properties :logseq.order-list-type))]
       (if-let [list-type (and target-block (list-type-fn target-block))]
         (mapv
-          (fn [{:block/keys [content format] :as block}]
-            (cond-> block
-              (and (some? (:block/uuid block))
-                   (nil? (list-type-fn block)))
-              (-> (update :block/properties #(assoc % :logseq.order-list-type list-type))
-                  (assoc :block/content (property/insert-property format content :logseq.order-list-type list-type)))))
-          blocks)
+         (fn [{:block/keys [content format] :as block}]
+           (cond-> block
+             (and (some? (:block/uuid block))
+                  (nil? (list-type-fn block)))
+             (-> (update :block/properties #(assoc % :logseq.order-list-type list-type))
+                 (assoc :block/content (property/insert-property format content :logseq.order-list-type list-type)))))
+         blocks)
         blocks))))
 
 ;;; ### insert-blocks, delete-blocks, move-blocks
@@ -500,10 +500,10 @@
                            parent (compute-block-parent block parent target-block prev-hop top-level? sibling? get-new-id outliner-op replace-empty-target? idx)
                            left (compute-block-left blocks block left target-block prev-hop idx replace-empty-target? left-exists-in-blocks? get-new-id)]
                        (cond->
-                         (merge block {:block/uuid uuid
-                                       :block/page target-page
-                                       :block/parent parent
-                                       :block/left left})
+                        (merge block {:block/uuid uuid
+                                      :block/page target-page
+                                      :block/parent parent
+                                      :block/left left})
                          ;; We'll keep the original `:db/id` if it's a move operation,
                          ;; e.g. internal cut or drag and drop shouldn't change the ids.
                          (not move?)
@@ -550,7 +550,7 @@
                                      (not move?)))
         blocks' (blocks-with-level blocks)
         blocks' (if (false? ordered-list?) blocks'
-                  (blocks-with-ordered-list-props blocks' target-block sibling?))
+                    (blocks-with-ordered-list-props blocks' target-block sibling?))
         blocks' (if (= outliner-op :paste)
                   (fix-top-level-blocks blocks')
                   blocks')

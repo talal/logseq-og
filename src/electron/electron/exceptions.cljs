@@ -1,7 +1,7 @@
 (ns electron.exceptions
-  (:require [electron.logger :as logger]
-            [electron.utils :as utils]
-            [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [electron.logger :as logger]
+            [electron.utils :as utils]))
 
 (defonce uncaughtExceptionChan "uncaughtException")
 

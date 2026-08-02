@@ -1,7 +1,7 @@
 (ns frontend.test.node-helper
   "Common helper fns for node tests"
-  (:require ["path" :as node-path]
-            ["fs" :as fs-node]))
+  (:require ["fs" :as fs-node]
+            ["path" :as node-path]))
 
 (defn create-tmp-dir
   "Creates a temporary directory under tmp/. If a subdir is given, creates an

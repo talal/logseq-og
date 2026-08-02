@@ -1,14 +1,14 @@
 (ns frontend.components.shortcut-help
   "Shortcut help"
-  (:require [frontend.context.i18n :refer [t]]
-            [frontend.state :as state]
-            [frontend.extensions.latex :as latex]
+  (:require [frontend.components.shortcut :as shortcut]
+            [frontend.context.i18n :refer [t]]
             [frontend.extensions.highlight :as highlight]
+            [frontend.extensions.latex :as latex]
+            [frontend.state :as state]
             [logseq.graph-parser.util.block-ref :as block-ref]
             [logseq.graph-parser.util.page-ref :as page-ref]
-            [rum.core :as rum]
-            [frontend.components.shortcut :as shortcut]
-            [logseq.shui.core :as shui]))
+            [logseq.shui.core :as shui]
+            [rum.core :as rum]))
 
 (rum/defc trigger-table []
   [:table
@@ -92,8 +92,7 @@
              [:tr
               [:td.text-left [(if (= :pre name) :pre :code) (get raw name)]]
               [:td.text-right (get rendered name)]])
-        list)]]))
-
+           list)]]))
 
 (rum/defc shortcut-page
   [{:keys [show-title?]

@@ -1,12 +1,12 @@
 (ns frontend.components.export
-  (:require [cljs-time.core :as t]
-            ["/frontend/utils" :as utils]
+  (:require ["/frontend/utils" :as utils]
+            [cljs-time.core :as t]
             [frontend.context.i18n :refer [t]]
             [frontend.db :as db]
-            [frontend.handler.export.text :as export-text]
+            [frontend.handler.export :as export]
             [frontend.handler.export.html :as export-html]
             [frontend.handler.export.opml :as export-opml]
-            [frontend.handler.export :as export]
+            [frontend.handler.export.text :as export-text]
             [frontend.image :as image]
             [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
@@ -50,7 +50,6 @@
      [:a#export-as-markdown.hidden]
      [:a#export-as-opml.hidden]
      [:a#convert-markdown-to-unordered-list-or-heading.hidden]]))
-
 
 (def *export-block-type (atom :text))
 

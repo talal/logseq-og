@@ -15,7 +15,6 @@
    [frontend.mobile.util :as mobile-util]
    [frontend.modules.file.core :as outliner-file]
    [frontend.modules.outliner.tree :as outliner-tree]
-   [logseq.publishing.html :as publish-html]
    [frontend.state :as state]
    [frontend.util :as util]
    [frontend.util.property :as property]
@@ -25,6 +24,7 @@
    [logseq.graph-parser.property :as gp-property]
    [logseq.graph-parser.util.block-ref :as block-ref]
    [logseq.graph-parser.util.page-ref :as page-ref]
+   [logseq.publishing.html :as publish-html]
    [promesa.core :as p])
   (:import
    [goog.string StringBuffer]))
@@ -221,7 +221,6 @@
      :embed-blocks (s/union embed-blocks-1 embed-blocks-2 embed-blocks*)
      :block-refs (s/union block-refs-1 block-refs-2 block-refs*)}))
 
-
 (defn get-page-page&block-refs [repo page-name embed-pages embed-blocks block-refs]
   (let [page-name* (util/page-name-sanity-lc page-name)
         page-content (get-page-content repo page-name*)
@@ -256,7 +255,6 @@
      :embed-blocks (s/union embed-blocks-1 embed-blocks-2 embed-blocks*)
      :block-refs (s/union block-refs-1 block-refs-2 block-refs*)}))
 
-
 (defn- export-file-on-mobile [data path]
   (p/catch
    (.writeFile Filesystem (clj->js {:path path
@@ -267,7 +265,6 @@
     (fn [error]
       (notification/show! "Export failed!" :error)
       (log/error :export-file-failed error))))
-
 
 (defn- dissoc-properties [m ks]
   (if (:block/properties m)

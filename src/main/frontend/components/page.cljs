@@ -17,6 +17,7 @@
             [frontend.db-mixins :as db-mixins]
             [frontend.db.model :as model]
             [frontend.extensions.graph :as graph]
+            [frontend.extensions.graph.pixi :as pixi]
             [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.format.block :as block]
             [frontend.handler.common :as common-handler]
@@ -41,8 +42,7 @@
             [medley.core :as medley]
             [promesa.core :as p]
             [reitit.frontend.easy :as rfe]
-            [rum.core :as rum]
-            [frontend.extensions.graph.pixi :as pixi]))
+            [rum.core :as rum]))
 
 (defn- get-page-name
   [state]
@@ -153,9 +153,9 @@
   [:div.flex-1.flex-col.rounded-sm.add-button-link-wrap
    {:on-click (fn [] (editor-handler/api-insert-new-block! "" args))
     :on-key-down (fn [e]
-                    (when (= "Enter" (util/ekey e))
-                      (editor-handler/api-insert-new-block! "" args))
-                    (util/stop e))
+                   (when (= "Enter" (util/ekey e))
+                     (editor-handler/api-insert-new-block! "" args))
+                   (util/stop e))
     :tab-index 0}
    [:div.flex.flex-row
     [:div.block {:style {:height      20
@@ -184,8 +184,8 @@
         (dummy-block page-name)
         (let [document-mode? (state/sub :document/mode?)
               block-entity (db/entity (if block-id
-                                       [:block/uuid block-id]
-                                       [:block/name page-name]))
+                                        [:block/uuid block-id]
+                                        [:block/name page-name]))
               hiccup-config (merge
                              {:id (if block? (str block-id) page-name)
                               :db/id (:db/id block-entity)
@@ -851,27 +851,25 @@
 
 (rum/defc page-graph-inner < rum/reactive
   [_page graph dark?]
-   (let [ show-journals-in-page-graph? (rum/react *show-journals-in-page-graph?) ]
-  [:div.sidebar-item.flex-col
-             [:div.flex.items-center.justify-between.mb-0
-              [:span (t :right-side-bar/show-journals)]
-              [:div.mt-1
-               (ui/toggle show-journals-in-page-graph? ;my-val;
-                           (fn []
-                             (let [value (not show-journals-in-page-graph?)]
-                               (reset! *show-journals-in-page-graph? value)
-                               ))
-                          true)]
-              ]
+  (let [show-journals-in-page-graph? (rum/react *show-journals-in-page-graph?)]
+    [:div.sidebar-item.flex-col
+     [:div.flex.items-center.justify-between.mb-0
+      [:span (t :right-side-bar/show-journals)]
+      [:div.mt-1
+       (ui/toggle show-journals-in-page-graph? ;my-val;
+                  (fn []
+                    (let [value (not show-journals-in-page-graph?)]
+                      (reset! *show-journals-in-page-graph? value)))
+                  true)]]
 
-   (graph/graph-2d {:nodes (:nodes graph)
-                    :links (:links graph)
-                    :width 600
-                    :height 600
-                    :dark? dark?
-                    :register-handlers-fn
-                    (fn [graph]
-                      (graph-register-handlers graph (atom nil) (atom nil) dark?))})]))
+     (graph/graph-2d {:nodes (:nodes graph)
+                      :links (:links graph)
+                      :width 600
+                      :height 600
+                      :dark? dark?
+                      :register-handlers-fn
+                      (fn [graph]
+                        (graph-register-handlers graph (atom nil) (atom nil) dark?))})]))
 
 (rum/defc page-graph < db-mixins/query rum/reactive
   []
@@ -918,8 +916,8 @@
   [:th
    {:class [(name key)]}
    [:a.fade-link {:on-click (fn []
-                    (reset! by-item key)
-                    (swap! desc? not))}
+                              (reset! by-item key)
+                              (swap! desc? not))}
     [:span.flex.items-center
      [:span.mr-1 title]
      (when (= @by-item key)
@@ -1114,20 +1112,20 @@
          [:div.l.flex.items-center
           [:div.actions-wrap
            (ui/button
-             (t :delete)
-             {:on-click
-              (fn []
-                (let [selected (filter (fn [[_ v]] v) @*checks)
-                      selected (and (seq selected)
-                                 (into #{} (for [[k _] selected] k)))]
-                  (when-let [pages (and selected (filter #(contains? selected (:block/idx %)) @*results))]
-                    (state/set-modal! (batch-delete-dialog pages false #(do
-                                                                          (reset! *checks nil)
-                                                                          (refresh-pages)))))))
-              :icon "trash"
-              :variant :destructive
-              :icon-props {:size 14}
-              :size :sm})]
+            (t :delete)
+            {:on-click
+             (fn []
+               (let [selected (filter (fn [[_ v]] v) @*checks)
+                     selected (and (seq selected)
+                                   (into #{} (for [[k _] selected] k)))]
+                 (when-let [pages (and selected (filter #(contains? selected (:block/idx %)) @*results))]
+                   (state/set-modal! (batch-delete-dialog pages false #(do
+                                                                         (reset! *checks nil)
+                                                                         (refresh-pages)))))))
+             :icon "trash"
+             :variant :destructive
+             :icon-props {:size 14}
+             :size :sm})]
 
           [:div.search-wrap.flex.items-center.pl-2
            (let [search-fn (fn []
@@ -1238,9 +1236,9 @@
                                  (let [repo (state/get-current-repo)]
                                    (when (gobj/get e "shiftKey")
                                      (state/sidebar-add-block!
-                                       repo
-                                       (:db/id page)
-                                       :page))))
+                                      repo
+                                      (:db/id page)
+                                      :page))))
                      :href     (rfe/href :page {:name (:block/name page)})}
                  (when-let [icon (get-in page [:block/properties :icon])]
                    [:span.pr-1 icon])

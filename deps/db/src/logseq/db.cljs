@@ -1,8 +1,8 @@
 (ns logseq.db
   "Main namespace for public db fns"
-  (:require [logseq.db.default :as default-db]
-            [logseq.db.schema :as db-schema]
-            [datascript.core :as d]))
+  (:require [datascript.core :as d]
+            [logseq.db.default :as default-db]
+            [logseq.db.schema :as db-schema]))
 
 (defn start-conn
   "Create datascript conn with schema and default data"

@@ -1,9 +1,9 @@
 (ns frontend.components.handbooks
-  (:require [rum.core :as rum]
-            [frontend.state :as state]
-            [frontend.modules.layout.core :as layout]
-            ;[shadow.lazy :as lazy]
-            [frontend.extensions.handbooks.core :as handbooks]))
+  (:require ;[shadow.lazy :as lazy]
+   [frontend.extensions.handbooks.core :as handbooks]
+   [frontend.modules.layout.core :as layout]
+   [frontend.state :as state]
+   [rum.core :as rum]))
 
 ;(def lazy-handbooks (lazy/loadable frontend.extensions.handbooks.core/content))
 ;

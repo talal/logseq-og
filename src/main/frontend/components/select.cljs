@@ -3,17 +3,17 @@
   select-config to add a new use or select-type for this component. To use the
   new select-type, set :ui/open-select to the select-type. See
   :graph/open command for an example."
-  (:require [frontend.modules.shortcut.core :as shortcut]
+  (:require [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
+            [frontend.handler.repo :as repo-handler]
+            [frontend.modules.shortcut.core :as shortcut]
             [frontend.search :as search]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
             [frontend.util.text :as text-util]
-            [rum.core :as rum]
-            [frontend.config :as config]
-            [frontend.handler.repo :as repo-handler]
-            [reitit.frontend.easy :as rfe]))
+            [reitit.frontend.easy :as rfe]
+            [rum.core :as rum]))
 
 (rum/defc render-item < rum/reactive
   [result chosen? multiple-choices? *selected-choices]

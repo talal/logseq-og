@@ -1,15 +1,15 @@
 (ns cljs-time.coerce-test
   (:require
-   [cljs.test :refer-macros [deftest testing is]]
-   [cljs-time.core
-    :refer [date-time date-midnight from-utc-time-zone plus hours
-            local-date local-date-time]]
    [cljs-time.coerce :refer
     [from-date from-long from-string to-date to-date-time to-epoch to-long
      to-string to-local-date to-local-date-time]]
-   [cljs-time.local]
-   [cljs-time.format :refer [instant->map]]
+   [cljs-time.core
+    :refer [date-time date-midnight from-utc-time-zone plus hours
+            local-date local-date-time]]
    [cljs-time.extend]
+   [cljs-time.format :refer [instant->map]]
+   [cljs-time.local]
+   [cljs.test :refer-macros [deftest testing is]]
    [goog.date :as date]))
 
 (deftest test-from-date

@@ -2,7 +2,6 @@
   "Electron logger, do not depends other libs"
   (:require ["electron-log" :as logger]))
 
-
 (defn- transform-args [args]
   (map #(cond
           (or (keyword? %) (map? %) (seq? %))
@@ -11,7 +10,6 @@
           :else
           %)
        args))
-
 
 (defn debug
   [& args]

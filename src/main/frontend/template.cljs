@@ -2,8 +2,8 @@
   "Provides template related functionality"
   (:require [clojure.string :as string]
             [frontend.date :as date]
-            [frontend.state :as state]
             [frontend.db.utils :as db-utils]
+            [frontend.state :as state]
             [frontend.util :as util]
             [logseq.graph-parser.util.page-ref :as page-ref]))
 
@@ -31,14 +31,14 @@
                   (fn [[_ match]]
                     (let [match (string/trim match)]
                       (cond
-                       (string/blank? match)
-                       ""
-                       (get (variable-rules) (string/lower-case match))
-                       (get (variable-rules) (string/lower-case match))
-                       :else
-                       (if-let [nld (date/nld-parse match)]
-                         (let [;; NOTE: This following cannot handle timezones
+                        (string/blank? match)
+                        ""
+                        (get (variable-rules) (string/lower-case match))
+                        (get (variable-rules) (string/lower-case match))
+                        :else
+                        (if-let [nld (date/nld-parse match)]
+                          (let [;; NOTE: This following cannot handle timezones
                                ;; date (tc/to-local-date-time nld)
-                               date (doto (goog.date.DateTime.) (.setTime (.getTime nld)))]
-                           (page-ref/->page-ref (date/journal-name date)))
-                         match))))))
+                                date (doto (goog.date.DateTime.) (.setTime (.getTime nld)))]
+                            (page-ref/->page-ref (date/journal-name date)))
+                          match))))))

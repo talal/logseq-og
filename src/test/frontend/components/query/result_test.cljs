@@ -1,9 +1,9 @@
 (ns frontend.components.query.result-test
   (:require [clojure.test :refer [deftest are testing is]]
-            [rum.core :as rum]
+            [frontend.components.query.result :as query-result]
             [frontend.db :as db]
             [frontend.db.model :as model]
-            [frontend.components.query.result :as query-result]))
+            [rum.core :as rum]))
 
 (defn- mock-get-query-result
   "Mocks get-query-result assuming custom queries are being tested. Db calls are
@@ -26,36 +26,36 @@
            (= expected (mock-get-query-result result query-m {:table? false}))
 
            ;; Default list behavior is to group result
-           {}
-           {{:db/id 1} result}
+        {}
+        {{:db/id 1} result}
 
            ;; User overrides default behavior to return result
-           {:group-by-page? false}
-           result
+        {:group-by-page? false}
+        result
 
            ;; Return transformed result for list view
-           {:result-transform '(partial sort-by :block/scheduled)}
-           sorted-result
+        {:result-transform '(partial sort-by :block/scheduled)}
+        sorted-result
 
            ; User overrides transform to return grouped result
-           {:result-transform '(partial sort-by :block/scheduled) :group-by-page? true}
-           {{:db/id 1} sorted-result})
+        {:result-transform '(partial sort-by :block/scheduled) :group-by-page? true}
+        {{:db/id 1} sorted-result})
 
       (testing "For table view"
         (are [query expected]
              (= expected (mock-get-query-result result query {:table? true}))
 
              ;; Default table behavior is to return result
-             {}
-             result
+          {}
+          result
 
              ;; Return transformed result
-             {:result-transform '(partial sort-by :block/scheduled)}
-             sorted-result
+          {:result-transform '(partial sort-by :block/scheduled)}
+          sorted-result
 
              ;; Ignore override and return normal result
-             {:group-by-page? true}
-             result))
+          {:group-by-page? true}
+          result))
 
       (testing "current block in results"
         (is (= result

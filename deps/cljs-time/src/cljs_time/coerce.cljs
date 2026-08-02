@@ -13,10 +13,10 @@
 ```"
   (:refer-clojure :exclude [extend second])
   (:require
-    [cljs-time.core :refer
-     [date-time to-utc-time-zone from-default-time-zone year month day
-      hour minute second milli]]
-    [cljs-time.format :as time-fmt])
+   [cljs-time.core :refer
+    [date-time to-utc-time-zone from-default-time-zone year month day
+     hour minute second milli]]
+   [cljs-time.format :as time-fmt])
   (:import [goog.date UtcDateTime]))
 
 (defprotocol ICoerce

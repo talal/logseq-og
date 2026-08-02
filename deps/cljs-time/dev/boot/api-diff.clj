@@ -43,14 +43,13 @@
     (set/difference (set (keys (ns-publics clj-ns)))
                     (cljs-ns-publics cljs-ns))))
 
-
 (comment
-  
+
   ;; release
   (test-all)
   ;; change version
   ;; change version in readme
-  
+
   ;; check clj-time api
   (load-clj-time)
 
@@ -96,5 +95,4 @@
   #{}
 
   (api-diff 'predicates)
-  #{}
-  )
+  #{})

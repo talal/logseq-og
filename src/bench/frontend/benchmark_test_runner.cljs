@@ -1,11 +1,11 @@
 (ns frontend.benchmark-test-runner
   "Runs a benchmark"
   (:require [clojure.edn :as edn]
-            [frontend.macros :refer [slurped]]
-            [frontend.modules.file.uprint :as up]
             [clojure.pprint :as pprint]
             [clojure.test :refer [deftest testing]]
-            [fipp.edn :as fipp]))
+            [fipp.edn :as fipp]
+            [frontend.macros :refer [slurped]]
+            [frontend.modules.file.uprint :as up]))
 
 (def onboarding
   (edn/read-string (slurped "resources/whiteboard/onboarding.edn")))

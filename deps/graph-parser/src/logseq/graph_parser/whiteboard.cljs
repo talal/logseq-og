@@ -1,5 +1,5 @@
 (ns logseq.graph-parser.whiteboard
-  "Whiteboard related parser utilities" 
+  "Whiteboard related parser utilities"
   (:require [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.util.block-ref :as block-ref]
             [logseq.graph-parser.util.page-ref :as page-ref]))
@@ -40,7 +40,6 @@
           properties (assoc properties :logseq.tldraw.page properties)]
       (assoc block :block/properties properties))
     block))
-
 
 (defn- get-shape-refs [shape]
   (let [portal-refs (when (= "logseq-portal" (:type shape))

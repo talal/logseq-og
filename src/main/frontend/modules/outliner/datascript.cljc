@@ -23,8 +23,8 @@
    (defn outliner-txs-state?
      [state]
      (and
-       (instance? cljs.core/Atom state)
-       (coll? @state))))
+      (instance? cljs.core/Atom state)
+      (coll? @state))))
 
 #?(:cljs
    (defn after-transact-pipelines
@@ -76,11 +76,11 @@
                                             [[:db/retract id :block/path-refs from-id]
                                              [:db/add id :block/path-refs to-id]])) from-path-refs)
              to-refs-txs (mapcat (fn [ref]
-                                        (let [id (:db/id ref)
-                                              new-content (string/replace (:block/content ref)
-                                                                          (block-ref/->block-ref to)
-                                                                          (block-ref/->block-ref from))]
-                                          [[:db/add id :block/content new-content]])) to-refs)]
+                                   (let [id (:db/id ref)
+                                         new-content (string/replace (:block/content ref)
+                                                                     (block-ref/->block-ref to)
+                                                                     (block-ref/->block-ref from))]
+                                     [[:db/add id :block/content new-content]])) to-refs)]
          (concat txs from-refs-txs from-path-refs-txs to-refs-txs))
        txs)))
 

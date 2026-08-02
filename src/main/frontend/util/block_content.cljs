@@ -4,8 +4,6 @@
             [frontend.format.mldoc :as mldoc]
             [logseq.graph-parser.mldoc :as gp-mldoc]))
 
-
-
 (defn get-ast
   [content format]
   (mldoc/->edn content (gp-mldoc/default-config format)))

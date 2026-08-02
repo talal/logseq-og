@@ -3,20 +3,21 @@
             [clojure.string :as string]
             [clojure.walk :as w]
             [dommy.core :as dom]
+            [electron.ipc :as ipc]
             [frontend.commands :as commands]
             [frontend.config :as config]
             [frontend.date :as date]
             [frontend.db :as db]
             [frontend.db.model :as db-model]
-            [frontend.db.utils :as db-utils]
             [frontend.db.query-dsl :as query-dsl]
+            [frontend.db.utils :as db-utils]
             [frontend.diff :as diff]
+            [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.format.block :as block]
             [frontend.format.mldoc :as mldoc]
             [frontend.fs :as fs]
+            [frontend.fs.capacitor-fs :as capacitor-fs]
             [frontend.fs.nfs :as nfs]
-            [logseq.common.path :as path]
-            [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.handler.assets :as assets-handler]
             [frontend.handler.block :as block-handler]
             [frontend.handler.common :as common-handler]
@@ -43,12 +44,13 @@
             [frontend.util.property :as property]
             [frontend.util.text :as text-util]
             [frontend.util.thingatpt :as thingatpt]
+            [goog.crypt.base64 :as base64]
             [goog.dom :as gdom]
             [goog.dom.classes :as gdom-classes]
             [goog.object :as gobj]
-            [goog.crypt.base64 :as base64]
             [goog.string :as gstring]
             [lambdaisland.glogi :as log]
+            [logseq.common.path :as path]
             [logseq.db.schema :as db-schema]
             [logseq.graph-parser.block :as gp-block]
             [logseq.graph-parser.mldoc :as gp-mldoc]
@@ -59,9 +61,7 @@
             [logseq.graph-parser.util.block-ref :as block-ref]
             [logseq.graph-parser.util.page-ref :as page-ref]
             [promesa.core :as p]
-            [rum.core :as rum]
-            [frontend.fs.capacitor-fs :as capacitor-fs]
-            [electron.ipc :as ipc]))
+            [rum.core :as rum]))
 
 ;; FIXME: should support multiple images concurrently uploading
 
@@ -1593,11 +1593,11 @@
         value (str prefix postfix)
         input (gdom/getElement input-id)
         [prefix _pos] (commands/simple-replace! input-id value selected
-                                                 {:backward-pos (count postfix)
-                                                  :check-fn (fn [new-value prefix-pos]
-                                                              (when (>= prefix-pos 0)
-                                                                [(subs new-value prefix-pos (+ prefix-pos 2))
-                                                                 (+ prefix-pos 2)]))})]
+                                                {:backward-pos (count postfix)
+                                                 :check-fn (fn [new-value prefix-pos]
+                                                             (when (>= prefix-pos 0)
+                                                               [(subs new-value prefix-pos (+ prefix-pos 2))
+                                                                (+ prefix-pos 2)]))})]
     (cond
       (= prefix page-ref/left-brackets)
       (do
@@ -3480,15 +3480,15 @@
   (let [block-ids (map (fn [block-id] (if (string? block-id) (uuid block-id) block-id)) block-ids)
         value (boolean value)]
     (save-current-block!) ;; Save the input contents before collapsing
-      (outliner-tx/transact! ;; Save the new collapsed state as an undo transaction (if it changed)
-       {:outliner-op :collapse-expand-blocks}
-       (doseq [block-id block-ids]
-         (when-let [block (db/entity [:block/uuid block-id])]
-           (let [current-value (boolean (:block/collapsed? block))]
-             (when-not (= current-value value)
-               (let [block {:block/uuid block-id
-                            :block/collapsed? value}]
-                 (outliner-core/save-block! block)))))))
+    (outliner-tx/transact! ;; Save the new collapsed state as an undo transaction (if it changed)
+     {:outliner-op :collapse-expand-blocks}
+     (doseq [block-id block-ids]
+       (when-let [block (db/entity [:block/uuid block-id])]
+         (let [current-value (boolean (:block/collapsed? block))]
+           (when-not (= current-value value)
+             (let [block {:block/uuid block-id
+                          :block/collapsed? value}]
+               (outliner-core/save-block! block)))))))
     (doseq [block-id block-ids]
       (state/set-collapsed-block! block-id value))))
 

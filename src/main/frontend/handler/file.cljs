@@ -1,27 +1,27 @@
 (ns frontend.handler.file
   "Provides util handler fns for files"
   (:refer-clojure :exclude [load-file])
-  (:require [frontend.config :as config]
+  (:require [electron.ipc :as ipc]
+            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.fs :as fs]
-            [frontend.fs.nfs :as nfs]
             [frontend.fs.capacitor-fs :as capacitor-fs]
-            [frontend.handler.common.file :as file-common-handler]
+            [frontend.fs.nfs :as nfs]
             [frontend.handler.common.config-edn :as config-edn-common-handler]
-            [frontend.handler.repo-config :as repo-config-handler]
+            [frontend.handler.common.file :as file-common-handler]
             [frontend.handler.global-config :as global-config-handler]
+            [frontend.handler.repo-config :as repo-config-handler]
             [frontend.handler.ui :as ui-handler]
+            [frontend.mobile.util :as mobile-util]
             [frontend.schema.handler.global-config :as global-config-schema]
             [frontend.schema.handler.repo-config :as repo-config-schema]
             [frontend.state :as state]
             [frontend.util :as util]
-            [logseq.graph-parser.util :as gp-util]
-            [electron.ipc :as ipc]
             [lambdaisland.glogi :as log]
-            [promesa.core :as p]
-            [frontend.mobile.util :as mobile-util]
             [logseq.common.path :as path]
-            [logseq.graph-parser.config :as gp-config]))
+            [logseq.graph-parser.config :as gp-config]
+            [logseq.graph-parser.util :as gp-util]
+            [promesa.core :as p]))
 
 ;; TODO: extract all git ops using a channel
 

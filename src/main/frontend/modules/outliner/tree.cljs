@@ -1,7 +1,7 @@
 (ns frontend.modules.outliner.tree
-  (:require [frontend.db :as db]
+  (:require [clojure.string :as string]
+            [frontend.db :as db]
             [frontend.db.model :as model]
-            [clojure.string :as string]
             [frontend.state :as state]
             [logseq.graph-parser.whiteboard :as gp-whiteboard]))
 
@@ -124,7 +124,7 @@
                 children (db/sort-by-left (get @parent-groups parent-id) parent)
                 _ (swap! parent-groups #(dissoc % parent-id))
                 sorted-nested-children (when (not-empty children) (sort-blocks-aux children parent-groups))]
-                    (if sorted-nested-children [parent sorted-nested-children] [parent])))
+            (if sorted-nested-children [parent sorted-nested-children] [parent])))
         parents))
 
 (defn sort-blocks

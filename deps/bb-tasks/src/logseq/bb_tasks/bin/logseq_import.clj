@@ -1,8 +1,8 @@
 (ns logseq.bb-tasks.bin.logseq-import
   "A CLI that imports an export file created by logseq-export"
   (:require [babashka.fs :as fs]
-            [clojure.string :as string]
-            [clojure.edn :as edn]))
+            [clojure.edn :as edn]
+            [clojure.string :as string]))
 
 (defn ^:api -main
   "Entry fn for logseq-import"

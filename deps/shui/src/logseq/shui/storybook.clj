@@ -10,10 +10,10 @@
            ret# (cond-> ret#
                   (fn? cp#)
                   (assoc :component
-                    (fn [^js args#]
-                      (let [{:keys [~'children] :as args#} (cljs-bean.core/->clj args#)]
-                        (cp# (dissoc args# :children)
-                          (if (fn? ~'children) (~'children) ~'children))))))]
+                         (fn [^js args#]
+                           (let [{:keys [~'children] :as args#} (cljs-bean.core/->clj args#)]
+                             (cp# (dissoc args# :children)
+                                  (if (fn? ~'children) (~'children) ~'children))))))]
        (cljs-bean.core/->js ret#))))
 
 (defmacro defstory
@@ -24,9 +24,9 @@
            ret# (cond-> ret#
                   (fn? render#)
                   (assoc :render
-                    (fn [^js args#]
-                      (let [{:keys [~'children] :as args#} (cljs-bean.core/->clj args#)]
-                        (let [~'res (render# (dissoc args# :children)
-                                      (if (fn? ~'children) (~'children) ~'children))]
-                          (daiquiri.interpreter/interpret ~'res))))))]
+                         (fn [^js args#]
+                           (let [{:keys [~'children] :as args#} (cljs-bean.core/->clj args#)]
+                             (let [~'res (render# (dissoc args# :children)
+                                                  (if (fn? ~'children) (~'children) ~'children))]
+                               (daiquiri.interpreter/interpret ~'res))))))]
        (cljs-bean.core/->js ret#))))

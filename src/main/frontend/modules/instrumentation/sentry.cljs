@@ -1,10 +1,10 @@
 (ns frontend.modules.instrumentation.sentry
-  (:require [frontend.version :refer [version]]
-            [frontend.util :as util]
+  (:require ["@sentry/react" :as Sentry]
             [frontend.config :as config]
-            [medley.core :as medley]
-            ["@sentry/react" :as Sentry]
-            [frontend.mobile.util :as mobile-util]))
+            [frontend.mobile.util :as mobile-util]
+            [frontend.util :as util]
+            [frontend.version :refer [version]]
+            [medley.core :as medley]))
 
 (goog-define SENTRY-DSN "")
 

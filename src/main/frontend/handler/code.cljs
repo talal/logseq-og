@@ -7,8 +7,8 @@
             [frontend.handler.file :as file-handler]
             [frontend.state :as state]
             [goog.object :as gobj]
-            [logseq.graph-parser.utf8 :as utf8]
-            [logseq.common.path :as path]))
+            [logseq.common.path :as path]
+            [logseq.graph-parser.utf8 :as utf8]))
 
 (defn save-code-editor!
   []

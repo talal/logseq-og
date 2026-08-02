@@ -1,12 +1,12 @@
 (ns frontend.fs-test
-  (:require [clojure.test :refer [is use-fixtures]]
+  (:require ["fs" :as fs-node]
+            ["path" :as node-path]
+            [clojure.test :refer [is use-fixtures]]
+            [frontend.fs :as fs]
             [frontend.test.fixtures :as fixtures]
             [frontend.test.helper :as test-helper :include-macros true :refer [deftest-async]]
             [frontend.test.node-helper :as test-node-helper]
-            [frontend.fs :as fs]
-            [promesa.core :as p]
-            ["fs" :as fs-node]
-            ["path" :as node-path]))
+            [promesa.core :as p]))
 
 (use-fixtures :once fixtures/redef-get-fs)
 
@@ -25,9 +25,9 @@
           "something.txt has correct content"))
 
      (p/finally
-      (fn []
-        (fs-node/unlinkSync some-file)
-        (fs-node/rmdirSync dir))))))
+       (fn []
+         (fs-node/unlinkSync some-file)
+         (fs-node/rmdirSync dir))))))
 
 (deftest-async create-if-not-exists-does-not-create-correctly
   (let [dir (node-path/resolve (test-node-helper/create-tmp-dir))
@@ -41,6 +41,6 @@
           "something.txt has not been touched and old content still exists"))
 
      (p/finally
-      (fn []
-        (fs-node/unlinkSync some-file)
-        (fs-node/rmdirSync dir))))))
+       (fn []
+         (fs-node/unlinkSync some-file)
+         (fs-node/rmdirSync dir))))))

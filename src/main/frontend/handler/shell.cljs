@@ -16,7 +16,7 @@
 
 (defn run-git-command2!
   [command]
-  (ipc/ipc :runGitWithinCurrentGraph {:repo (state/get-current-repo) 
+  (ipc/ipc :runGitWithinCurrentGraph {:repo (state/get-current-repo)
                                       :command command}))
 
 (defn run-cli-command!
@@ -60,7 +60,6 @@
         :else
         (run-cli-command! command args)))))
 
-
 (defn get-file-latest-git-log
   [page n]
   (when (integer? n)
@@ -70,7 +69,6 @@
                 lines (->> (string/split-lines result)
                            (filter #(string/starts-with? % "Commit: ")))]
           (state/pub-event! [:modal/display-file-version-selector  lines path  (fn [hash path] (run-git-command! ["show" (str hash ":" path)]))]))))))
-
 
 (defn set-git-username-and-email
   [username email]

@@ -1,6 +1,6 @@
 (ns frontend.fs.sync-test
-  (:require [frontend.fs.sync :as sync]
-            [clojure.test :refer [deftest are]]))
+  (:require [clojure.test :refer [deftest are]]
+            [frontend.fs.sync :as sync]))
 
 (deftest ignored?
   (are [x y] (= y (sync/ignored? x))
@@ -17,9 +17,7 @@
     "foo/backup~" true
     "foo/.test.md" true
     "pages/test.md" false
-    "journals/2022_01_01.md" false
-    ))
-
+    "journals/2022_01_01.md" false))
 
 (deftest diff-file-metadata-sets
   (are [x y z] (= x (sync/diff-file-metadata-sets y z))
@@ -33,13 +31,10 @@
 
     #{(sync/->FileMetadata 1 2 "3" 4 5 nil nil nil)}
     #{(sync/->FileMetadata 1 2 "3" 4 5 nil nil nil)}
-    #{(sync/->FileMetadata 1 22 "3" 4 4 nil nil nil) 
+    #{(sync/->FileMetadata 1 22 "3" 4 4 nil nil nil)
       (sync/->FileMetadata 1 22 "3" 44 5 nil nil nil)}
 
     #{}
     #{(sync/->FileMetadata 1 2 "3" 4 5 nil nil nil)}
-    #{(sync/->FileMetadata 1 2 "3" 4 4 nil nil nil) 
-      (sync/->FileMetadata 1 2 "3" 4 6 nil nil nil)}
-
-    )
-  )
+    #{(sync/->FileMetadata 1 2 "3" 4 4 nil nil nil)
+      (sync/->FileMetadata 1 2 "3" 4 6 nil nil nil)}))

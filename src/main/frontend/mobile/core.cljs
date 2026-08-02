@@ -2,18 +2,18 @@
   "Main ns for handling mobile start"
   (:require ["@capacitor/app" :refer [^js App]]
             ["@capacitor/keyboard" :refer [^js Keyboard]]
+            [cljs-bean.core :as bean]
             [clojure.string :as string]
-            [promesa.core :as p]
+            [frontend.config :as config]
             [frontend.fs.capacitor-fs :as capacitor-fs]
             [frontend.handler.editor :as editor-handler]
+            [frontend.handler.repo :as repo-handler]
             [frontend.mobile.deeplink :as deeplink]
             [frontend.mobile.intent :as intent]
             [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
-            [cljs-bean.core :as bean]
-            [frontend.config :as config]
-            [frontend.handler.repo :as repo-handler]))
+            [promesa.core :as p]))
 
 (def *init-url (atom nil))
 ;; FIXME: `appUrlOpen` are fired twice when receiving a same intent.
@@ -28,7 +28,6 @@
   (when (mobile-util/native-ios?)
     ;; Caution: This must be called before any file accessing
     (capacitor-fs/ios-ensure-documents!)))
-
 
 (defn mobile-postinit
   "postinit logic of mobile platforms: handle deeplink and intent"
@@ -63,8 +62,6 @@
                     (when (or (= (:event event) "download:progress")
                               (= (:event event) "upload:progress"))
                       (state/set-state! [:file-sync/graph-state (:graphUUID payload) :file-sync/progress (:file payload)] payload))))))
-
-
 
 (defn- android-init
   "Initialize Android-specified event listeners"
@@ -111,9 +108,9 @@
   [^js state]
   (println :debug :app-state-change-handler state (js/Date.))
   (let [is-active? (.-isActive state)]
-      (when-not is-active?
-        (editor-handler/save-current-block!)
-        (repo-handler/persist-db!))
+    (when-not is-active?
+      (editor-handler/save-current-block!)
+      (repo-handler/persist-db!))
     (state/set-mobile-app-state-change is-active?)))
 
 (defn- general-init
@@ -147,7 +144,6 @@
                      #(util/scroll-to-top true))
 
   (.addListener App "appStateChange" app-state-change-handler))
-
 
 (defn init! []
   (when (mobile-util/native-android?)

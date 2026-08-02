@@ -1,14 +1,14 @@
 (ns frontend.external.roam
   "Provides roam import by implementing the external protocol"
   (:require [cljs-bean.core :as bean]
-            [frontend.external.protocol :as protocol]
-            [frontend.date :as date]
-            [clojure.walk :as walk]
             [clojure.string :as string]
+            [clojure.walk :as walk]
+            [frontend.date :as date]
+            [frontend.external.protocol :as protocol]
             [goog.string :as gstring]
-            [logseq.graph-parser.util.block-ref :as block-ref]
+            [logseq.graph-parser.text :as text]
             [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.text :as text]))
+            [logseq.graph-parser.util.block-ref :as block-ref]))
 
 (defonce all-refed-uids (atom #{}))
 (defonce uid->uuid (atom {}))
@@ -86,7 +86,7 @@
         properties (when (contains? @all-refed-uids uid)
                      (str
                       (gstring/format "id:: %s"
-                                   (str (get @uid->uuid uid)))
+                                      (str (get @uid->uuid uid)))
                       "\n"))]
     (if string
       (str level-pattern " " (string/triml string) "\n" properties children-text)
@@ -138,7 +138,7 @@
 (defrecord Roam []
   protocol/External
   (toMarkdownFiles [_this content _config]
-                   (-> content json->edn ->files)))
+    (-> content json->edn ->files)))
 
 (comment
   (defonce test-roam-json (frontend.db/get-file "same.json"))

@@ -4,18 +4,18 @@
   ;; Disable clj linters since we don't support clj
   #?(:clj {:clj-kondo/config {:linters {:unresolved-namespace {:level :off}
                                         :unresolved-symbol {:level :off}}}})
-  (:require [clojure.set :as set]
+  (:require #?(:org.babashka/nbb [logseq.graph-parser.log :as log]
+               :default [lambdaisland.glogi :as log])
+            [clojure.set :as set]
             [clojure.string :as string]
             [clojure.walk :as walk]
             [datascript.core :as d]
+            [logseq.graph-parser.block :as gp-block]
+            [logseq.graph-parser.config :as gp-config]
+            [logseq.graph-parser.mldoc :as gp-mldoc]
+            [logseq.graph-parser.property :as gp-property]
             [logseq.graph-parser.text :as text]
             [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.mldoc :as gp-mldoc]
-            [logseq.graph-parser.block :as gp-block]
-            [logseq.graph-parser.property :as gp-property]
-            [logseq.graph-parser.config :as gp-config]
-            #?(:org.babashka/nbb [logseq.graph-parser.log :as log]
-               :default [lambdaisland.glogi :as log])
             [logseq.graph-parser.whiteboard :as gp-whiteboard]))
 
 (defn- filepath->page-name
@@ -71,24 +71,24 @@
                                        (string/blank? %)) ;; disable blank alias
                                   alias')))
         aliases' (keep
-                   (fn [alias]
-                     (let [page-name (gp-util/page-name-sanity-lc alias)
-                           aliases (distinct
-                                    (conj
-                                     (remove #{alias} aliases)
-                                     page))
-                           aliases (when (seq aliases)
-                                     (map
-                                       (fn [alias]
-                                         {:block/name (gp-util/page-name-sanity-lc alias)})
-                                       aliases))]
-                       (if (seq aliases)
-                         {:block/name page-name
-                          :block/original-name alias
-                          :block/alias aliases}
-                         {:block/name page-name
-                          :block/original-name alias})))
-                   aliases)
+                  (fn [alias]
+                    (let [page-name (gp-util/page-name-sanity-lc alias)
+                          aliases (distinct
+                                   (conj
+                                    (remove #{alias} aliases)
+                                    page))
+                          aliases (when (seq aliases)
+                                    (map
+                                     (fn [alias]
+                                       {:block/name (gp-util/page-name-sanity-lc alias)})
+                                     aliases))]
+                      (if (seq aliases)
+                        {:block/name page-name
+                         :block/original-name alias
+                         :block/alias aliases}
+                        {:block/name page-name
+                         :block/original-name alias})))
+                  aliases)
         result (cond-> page-m
                  (seq aliases')
                  (assoc :block/alias aliases')
@@ -99,7 +99,7 @@
                                           tags (remove string/blank? tags)]
                                       (map (fn [tag] {:block/name (gp-util/page-name-sanity-lc tag)
                                                       :block/original-name tag})
-                                        tags))))]
+                                           tags))))]
     (update result :block/properties #(apply dissoc % gp-property/editable-linkable-built-in-properties))))
 
 (defn- build-page-map
@@ -118,7 +118,7 @@
                   :block/file {:file/path (gp-util/path-normalize file)}))
                 (extract-page-alias-and-tags page page-name properties))]
     (cond->
-      page-m
+     page-m
 
       (seq valid-properties)
       (assoc :block/properties valid-properties

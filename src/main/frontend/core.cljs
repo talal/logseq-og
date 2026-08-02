@@ -1,20 +1,20 @@
 (ns frontend.core
   "Entry ns for the mobile, browser and electron frontend apps"
   {:dev/always true}
-  (:require [rum.core :as rum]
+  (:require [frontend.config :as config]
+            [frontend.fs.sync :as sync]
             [frontend.handler :as handler]
             [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.route :as route-handler]
+            [frontend.log]
             [frontend.page :as page]
             [frontend.routes :as routes]
             [frontend.spec]
-            [frontend.log]
+            [logseq.api]
+            [malli.dev.cljs :as md]
             [reitit.frontend :as rf]
             [reitit.frontend.easy :as rfe]
-            [logseq.api]
-            [frontend.fs.sync :as sync]
-            [frontend.config :as config]
-            [malli.dev.cljs :as md]))
+            [rum.core :as rum]))
 
 (defn set-router!
   []

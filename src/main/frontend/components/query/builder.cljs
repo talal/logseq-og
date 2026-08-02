@@ -1,22 +1,22 @@
 (ns frontend.components.query.builder
   "DSL query builder."
-  (:require [frontend.ui :as ui]
+  (:require [clojure.string :as string]
+            [frontend.components.select :as component-select]
             [frontend.date :as date]
             [frontend.db :as db]
             [frontend.db.model :as db-model]
             [frontend.db.query-dsl :as query-dsl]
             [frontend.handler.editor :as editor-handler]
             [frontend.handler.query.builder :as query-builder]
-            [frontend.components.select :as component-select]
-            [frontend.state :as state]
-            [frontend.util :as util]
-            [frontend.search :as search]
             [frontend.mixins :as mixins]
+            [frontend.search :as search]
+            [frontend.state :as state]
+            [frontend.ui :as ui]
+            [frontend.util :as util]
             [logseq.db.default :as db-default]
-            [rum.core :as rum]
-            [clojure.string :as string]
             [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.util.page-ref :as page-ref]))
+            [logseq.graph-parser.util.page-ref :as page-ref]
+            [rum.core :as rum]))
 
 (rum/defc page-block-selector
   [*find]
@@ -27,10 +27,10 @@
                {:label "Pages"
                 :value "page"
                 :selected (= @*find :page)}]
-     (fn [e v]
+              (fn [e v]
        ;; Prevent opening the current block's editor
-       (util/stop e)
-       (reset! *find (keyword v))))])
+                (util/stop e)
+                (reset! *find (keyword v))))])
 
 (defn- select
   ([items on-chosen]
@@ -111,12 +111,12 @@
     (datepicker :start "Start date" (merge opts {:auto-focus true}))
     (datepicker :end "End date" opts)]
    (ui/button "Submit"
-     :on-click (fn []
-                 (let [{:keys [start end]} @*between-dates]
-                   (when (and start end)
-                     (let [clause [:between start end]]
-                       (append-tree! tree opts loc clause)
-                       (reset! *between-dates {}))))))])
+              :on-click (fn []
+                          (let [{:keys [start end]} @*between-dates]
+                            (when (and start end)
+                              (let [clause [:between start end]]
+                                (append-tree! tree opts loc clause)
+                                (reset! *between-dates {}))))))])
 
 (defn- query-filter-picker
   [state *find *tree loc clause opts]
@@ -175,14 +175,14 @@
 
        "priority"
        (select db-default/built-in-priorities
-         (fn [value]
-           (when (seq value)
-             (append-tree! *tree opts loc (vec (cons :priority value)))))
-         {:multiple-choices? true
-          :selected-choices #{}
-          :prompt-key :select/default-select-multiple
-          :close-modal? false
-          :on-apply (:toggle-fn opts)})
+               (fn [value]
+                 (when (seq value)
+                   (append-tree! *tree opts loc (vec (cons :priority value)))))
+               {:multiple-choices? true
+                :selected-choices #{}
+                :prompt-key :select/default-select-multiple
+                :close-modal? false
+                :on-apply (:toggle-fn opts)})
 
        "page"
        (let [pages (sort (db-model/get-all-page-original-names repo))]
@@ -234,18 +234,18 @@
         (when-not @*find
           [:hr.m-0])
         (select
-          (map name filters-and-ops)
-          (fn [value]
-            (cond
-              (= value "all page tags")
-              (append-tree! *tree opts loc [:all-page-tags])
+         (map name filters-and-ops)
+         (fn [value]
+           (cond
+             (= value "all page tags")
+             (append-tree! *tree opts loc [:all-page-tags])
 
-              (operator? value)
-              (append-tree! *tree opts loc [(keyword value)])
+             (operator? value)
+             (append-tree! *tree opts loc [(keyword value)])
 
-              :else
-              (reset! *mode value)))
-          {:input-default-placeholder "Add filter/operator"})])]))
+             :else
+             (reset! *mode value)))
+         {:input-default-placeholder "Add filter/operator"})])]))
 
 (rum/defc add-filter
   [*find *tree loc clause]
@@ -352,13 +352,13 @@
       [:div.flex.flex-row.gap-2
        (for [op query-builder/operators]
          (ui/button (string/upper-case (name op))
-           :intent "logseq"
-           :small? true
-           :on-click (fn []
-                       (swap! *tree (fn [q]
-                                      (let [loc' (if operator? (vec (butlast loc)) loc)]
-                                        (query-builder/wrap-operator q loc' op))))
-                       (toggle-fn))))]
+                    :intent "logseq"
+                    :small? true
+                    :on-click (fn []
+                                (swap! *tree (fn [q]
+                                               (let [loc' (if operator? (vec (butlast loc)) loc)]
+                                                 (query-builder/wrap-operator q loc' op))))
+                                (toggle-fn))))]
 
       (when operator?
         [:div
@@ -366,12 +366,12 @@
          [:div.flex.flex-row.gap-2
           (for [op (remove #{(keyword (string/lower-case clause))} query-builder/operators)]
             (ui/button (string/upper-case (name op))
-              :intent "logseq"
-              :small? true
-              :on-click (fn []
-                          (swap! *tree (fn [q]
-                                         (query-builder/replace-element q loc op)))
-                          (toggle-fn))))]])])
+                       :intent "logseq"
+                       :small? true
+                       :on-click (fn []
+                                   (swap! *tree (fn [q]
+                                                  (query-builder/replace-element q loc op)))
+                                   (toggle-fn))))]])])
    {:modal-class (util/hiccup->class
                   "origin-top-right.absolute.left-0.mt-2.ml-2.rounded-md.shadow-lg.w-64")}))
 

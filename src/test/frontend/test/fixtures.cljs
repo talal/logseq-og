@@ -1,14 +1,14 @@
 (ns frontend.test.fixtures
-  (:require [datascript.core :as d]
+  (:require [cljs.test :refer [async]]
+            [datascript.core :as d]
             [frontend.config :as config]
-            [logseq.db.schema :as db-schema]
             [frontend.db.conn :as conn]
             [frontend.db.react :as react]
-            [frontend.fs.test-node :as test-node]
             [frontend.fs :as fs]
+            [frontend.fs.test-node :as test-node]
             [frontend.state :as state]
             [frontend.test.helper :as test-helper]
-            [cljs.test :refer [async]]))
+            [logseq.db.schema :as db-schema]))
 
 (defn load-test-env
   [f]

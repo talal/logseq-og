@@ -1,9 +1,9 @@
 (ns frontend.mixins
   "Rum mixins for use in components"
-  (:require [rum.core :as rum]
-            [goog.dom :as dom]
+  (:require [frontend.state :as state]
             [frontend.util :refer [profile] :as util]
-            [frontend.state :as state])
+            [goog.dom :as dom]
+            [rum.core :as rum])
   (:import [goog.events EventHandler]))
 
 (defn detach
@@ -38,8 +38,8 @@
                            (let [target (.. e -target)]
                              ;; If the click target is outside of current node
                              (when (and
-                                     (not (dom/contains dom-node target))
-                                     (not (.contains (.-classList target) "ignore-outside-event")))
+                                    (not (dom/contains dom-node target))
+                                    (not (.contains (.-classList target) "ignore-outside-event")))
                                (on-hide state e :click))))]
             (when-not (false? outside?)
               (listen state js/window "mousedown" click-fn)))

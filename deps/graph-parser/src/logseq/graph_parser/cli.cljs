@@ -3,12 +3,12 @@
   (:require ["fs" :as fs]
             ["path" :as path]
             [clojure.edn :as edn]
-            [logseq.common.graph :as common-graph]
             [logseq.common.config :as common-config]
+            [logseq.common.graph :as common-graph]
+            [logseq.db :as ldb]
             [logseq.graph-parser :as graph-parser]
             [logseq.graph-parser.config :as gp-config]
-            [logseq.graph-parser.util :as gp-util]
-            [logseq.db :as ldb]))
+            [logseq.graph-parser.util :as gp-util]))
 
 (defn- slurp
   "Return file contents like clojure.core/slurp"
@@ -29,10 +29,10 @@
   [dir* config]
   (let [dir (path/resolve dir*)]
     (->> (common-graph/get-files dir)
-        (map #(hash-map :file/path %))
-        graph-parser/filter-files
-        (remove-hidden-files dir config)
-        (mapv #(assoc % :file/content (slurp (:file/path %)))))))
+         (map #(hash-map :file/path %))
+         graph-parser/filter-files
+         (remove-hidden-files dir config)
+         (mapv #(assoc % :file/content (slurp (:file/path %)))))))
 
 (defn- read-config
   "Reads repo-specific config from logseq/config.edn"

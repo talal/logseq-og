@@ -9,7 +9,6 @@
             [logseq.common.path :as path]
             [logseq.db.schema :as db-schema]))
 
-
 (defn get-schema-version
   "Get schema version from db, the current version is defined in db-schema/version"
   [db]
@@ -51,7 +50,7 @@
         (let [tx-data (->> all-files
                            (filter (fn [db-file]
                                      (and (path/absolute? (:file/path db-file))
-                                                      (string/starts-with? (:file/path db-file) repo-dir))))
+                                          (string/starts-with? (:file/path db-file) repo-dir))))
                            (mapv (fn [db-file] {:db/id (:db/id db-file)
                                                 :file/path (path/trim-dir-prefix repo-dir (:file/path db-file))})))]
           (when tx-data
@@ -62,7 +61,6 @@
           (prn :migrate-absolute-file-path-to-relative {:count (count tx-data)})
           (d/db-with db tx-data))
         db))))
-
 
 (defmulti do-migration get-schema-version)
 

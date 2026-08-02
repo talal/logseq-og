@@ -1,9 +1,8 @@
 (ns logseq.shui.form.core
-  (:require [rum.core :as rum]
+  (:require [cljs-bean.core :as bean]
             [daiquiri.interpreter :refer [interpret]]
             [logseq.shui.util :as util]
-            [cljs-bean.core :as bean]))
-
+            [rum.core :as rum]))
 
 ;; State
 (def form-provider (util/lsui-wrap "Form" {:static? false}))
@@ -19,10 +18,10 @@
         render (fn [^js ctx]
                  ;; TODO: convert field-state?
                  (render'
-                   (bean/bean (.-field ctx))
-                   (some-> (.-fieldState ctx) (.-error) (bean/bean))
-                   (bean/bean (.-fieldState ctx))
-                   ctx))]
+                  (bean/bean (.-field ctx))
+                  (some-> (.-fieldState ctx) (.-error) (bean/bean))
+                  (bean/bean (.-fieldState ctx))
+                  ctx))]
     (form-field' (assoc props :render render))))
 
 (def form-control (util/lsui-wrap "FormControl" {:static? false}))
@@ -40,9 +39,9 @@
   ([opts]
    (let [yup-schema (:yupSchema opts)
          ^js methods (use-form' (bean/->js
-                                  (cond-> opts
-                                    (not (nil? yup-schema))
-                                    (assoc :resolver (yup-resolver yup-schema)))))]
+                                 (cond-> opts
+                                   (not (nil? yup-schema))
+                                   (assoc :resolver (yup-resolver yup-schema)))))]
      ;; NOTE: just shallow convert return object!
      (bean/bean methods))))
 

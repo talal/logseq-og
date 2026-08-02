@@ -1,7 +1,7 @@
 (ns frontend.extensions.lightbox
-  (:require [promesa.core :as p]
-            [cljs-bean.core :as bean]
-            [frontend.util :as util]))
+  (:require [cljs-bean.core :as bean]
+            [frontend.util :as util]
+            [promesa.core :as p]))
 
 (defn preview-images!
   [images]

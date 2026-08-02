@@ -1,7 +1,6 @@
 (ns frontend.mobile.deeplink
   (:require
    [clojure.string :as string]
-   [goog :refer [Uri]]
    [frontend.config :as config]
    [frontend.db.model :as db-model]
    [frontend.handler.editor :as editor-handler]
@@ -10,6 +9,7 @@
    [frontend.mobile.intent :as intent]
    [frontend.state :as state]
    [frontend.util.text :as text-util]
+   [goog :refer [Uri]]
    [logseq.graph-parser.util :as gp-util]))
 
 (def *link-to-another-graph (atom false))

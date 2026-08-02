@@ -1,7 +1,7 @@
 (ns frontend.extensions.calc-test
-  (:require [clojure.test :as test :refer [are deftest testing]]
+  (:require [clojure.edn :as edn]
             [clojure.string :as str]
-            [clojure.edn :as edn]
+            [clojure.test :as test :refer [are deftest testing]]
             [frontend.extensions.calc :as calc]))
 
 (defn convert-bigNum [b]
@@ -173,7 +173,7 @@
     (are [final-env exprs] (let [env (calc/new-env)]
                              (doseq [expr exprs]
                                (calc/eval env (calc/parse expr)))
-                            (= final-env (into {} (for [[k v] @env] [k (convert-bigNum v)]))))
+                             (= final-env (into {} (for [[k v] @env] [k (convert-bigNum v)]))))
       {"a" 1 "b" 2}          ["a = 1" "b = a + 1"]
       {"a" 1 "b" 0}          ["a = 1" "b = -a + 1"]
       {"a" 1 "b" 3}          ["a = 1" "b=a*2+1"]
@@ -184,7 +184,7 @@
     (are [final-env exprs] (let [env (calc/new-env)]
                              (doseq [expr exprs]
                                (calc/eval env (calc/parse expr)))
-                            (= final-env (into {} (for [[k v] @env] [k (convert-bigNum v)]))))
+                             (= final-env (into {} (for [[k v] @env] [k (convert-bigNum v)]))))
       {"a" 2}              ["a = 1" "a = 2"]
       {"a" 2 "b" 2}        ["a = 1" "b = a + 1" "a = b"]
       {"variable" 1 "x" 0} ["variable = 1 + 0 * 2" "x = log(variable)" "x = variable - 1"])))
@@ -199,7 +199,7 @@
 (deftest formatting
   (testing "display normal"
     (are [values exprs] (= values (calc/eval-lines (str/join "\n" exprs)))
-      [nil "1000000"]     [":format norm" "1e6" ]
+      [nil "1000000"]     [":format norm" "1e6"]
       [nil "1000000"]     [":format norm 7" "1e6"]
       [nil "1e+6"]        [":format norm 6" "1e6"]
       [nil "3.14"]        [":format norm 3" "PI"]
@@ -245,7 +245,7 @@
     (are [values exprs] (= values (calc/eval-lines (str/join "\n" exprs)))
       [nil "35/8"]            [":format improper" "4.375"]
       [nil "-29/4"]           [":format imp" "-7.25"]
-      [nil "3.14157"]         [":format improper" "3.14157" ]
+      [nil "3.14157"]         [":format improper" "3.14157"]
       [nil "314157/100000"]   [":format imp 100000" "3.14157"])))
 
 (deftest base-conversion
@@ -260,7 +260,7 @@
     (are [values exprs] (= values (calc/eval-lines (str/join "\n" exprs)))
       ["12345" "0x3039"]          ["12345" ":hex"]
       ["12345" "0o30071"]         ["12345" ":oct"]
-      ["12345" "0b11000000111001"]["12345" ":bin"]
+      ["12345" "0b11000000111001"] ["12345" ":bin"]
       [nil "0b100000000"]         [":bin" "0b10000 * 0b10000"]
       [nil "-0xff"]               [":hex" "-255"])))
 

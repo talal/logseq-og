@@ -1,14 +1,14 @@
 (ns frontend.components.scheduled-deadlines
-  (:require [frontend.date :as date]
+  (:require [clojure.string :as string]
+            [frontend.components.block :as block]
+            [frontend.components.content :as content]
+            [frontend.components.editor :as editor]
+            [frontend.date :as date]
+            [frontend.db :as db]
+            [frontend.db-mixins :as db-mixins]
             [frontend.state :as state]
             [frontend.ui :as ui]
-            [frontend.components.content :as content]
-            [frontend.components.block :as block]
-            [clojure.string :as string]
-            [frontend.components.editor :as editor]
-            [rum.core :as rum]
-            [frontend.db :as db]
-            [frontend.db-mixins :as db-mixins]))
+            [rum.core :as rum]))
 
 (defn- scheduled-or-deadlines?
   [page-name]

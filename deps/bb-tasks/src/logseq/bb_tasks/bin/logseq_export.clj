@@ -1,8 +1,8 @@
 (ns logseq.bb-tasks.bin.logseq-export
   "A CLI that exports a graph's files for use with logseq-import"
   (:require [babashka.fs :as fs]
-            [clojure.string :as string]
-            [clojure.pprint :as pprint]))
+            [clojure.pprint :as pprint]
+            [clojure.string :as string]))
 
 (defn ^:api -main
   "Entry fn for logseq-export"

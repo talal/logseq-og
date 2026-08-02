@@ -1,8 +1,8 @@
 (ns electron.backup-file
-  (:require [clojure.string :as string]
+  (:require ["fs" :as fs]
+            ["fs-extra" :as fs-extra]
             ["path" :as node-path]
-            ["fs" :as fs]
-            ["fs-extra" :as fs-extra]))
+            [clojure.string :as string]))
 
 (def backup-dir "logseq/bak")
 (def version-file-dir "logseq/version-files/local")

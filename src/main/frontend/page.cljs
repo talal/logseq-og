@@ -1,14 +1,14 @@
 (ns frontend.page
   "Provides root component for both Logseq app and publishing build"
-  (:require [rum.core :as rum]
+  (:require [frontend.components.container :as container]
+            [frontend.components.onboarding.quick-tour :as quick-tour]
+            [frontend.context.i18n :refer [t]]
+            [frontend.handler.notification :as notification]
+            [frontend.handler.plugin :as plugin-handler]
+            [frontend.handler.search :as search-handler]
             [frontend.state :as state]
             [frontend.ui :as ui]
-            [frontend.components.container :as container]
-            [frontend.handler.search :as search-handler]
-            [frontend.handler.notification :as notification]
-            [frontend.components.onboarding.quick-tour :as quick-tour]
-            [frontend.handler.plugin :as plugin-handler]
-            [frontend.context.i18n :refer [t]]))
+            [rum.core :as rum]))
 
 (rum/defc route-view
   [view route-match]
@@ -60,7 +60,7 @@
           [:div.flex.flex-row.justify-between.align-items.mb-2.items-center.separator-top.py-4
            [:div.flex.flex-col.items-start
             [:div.text-2xs.font-bold.uppercase.toned-down (t :page/step "2")]
-            [:div [:span.highlighted.font-bold "Relaunch"][:span.toned-down " the app"]]
+            [:div [:span.highlighted.font-bold "Relaunch"] [:span.toned-down " the app"]]
             [:div.text-xs.toned-down "Quit the app and then reopen it."]]
            [:div (ui/icon "command" {:class "rounded-md p-1 mr-2 bg-quaternary"})
             (ui/icon "letter-q" {:class "rounded-md p-1 bg-quaternary"})]]

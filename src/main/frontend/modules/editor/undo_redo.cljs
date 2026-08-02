@@ -1,15 +1,15 @@
 (ns frontend.modules.editor.undo-redo
-  (:require [datascript.core :as d]
+  (:require [clojure.set :as set]
+            [datascript.core :as d]
             [frontend.db :as db]
             [frontend.db.conn :as conn]
             [frontend.handler.notification :as notification]
             [frontend.modules.datascript-report.core :as db-report]
-            [frontend.util.page :as page-util]
             [frontend.state :as state]
-            [clojure.set :as set]
-            [medley.core :as medley]
             [frontend.util.drawer :as drawer]
-            [frontend.util.property :as property]))
+            [frontend.util.page :as page-util]
+            [frontend.util.property :as property]
+            [medley.core :as medley]))
 
 ;;;; APIs
 

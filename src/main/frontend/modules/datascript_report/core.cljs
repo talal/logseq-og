@@ -55,11 +55,11 @@
   [{:keys [db-before db-after tx-data] :as _tx-report}]
   (let [updated-db-ids (-> (mapv first tx-data) (set))]
     (reduce
-      (fn [acc x]
-        (let [block-entity
-              (get-entity-from-db-after-or-before db-before db-after x)]
-          (cond-> acc
-            (some? block-entity)
-            (conj block-entity))))
-      []
-      updated-db-ids)))
+     (fn [acc x]
+       (let [block-entity
+             (get-entity-from-db-after-or-before db-before db-after x)]
+         (cond-> acc
+           (some? block-entity)
+           (conj block-entity))))
+     []
+     updated-db-ids)))

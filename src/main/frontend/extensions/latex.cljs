@@ -1,12 +1,12 @@
 (ns frontend.extensions.latex
-  (:require [rum.core :as rum]
+  (:require [frontend.config :as config]
+            [frontend.handler.plugin :refer [hook-extensions-enhancer-by-type] :as plugin-handler]
             [frontend.loader :as loader]
             [frontend.ui :as ui]
-            [frontend.config :as config]
             [frontend.util :as util]
-            [frontend.handler.plugin :refer [hook-extensions-enhancer-by-type] :as plugin-handler]
+            [goog.dom :as gdom]
             [promesa.core :as p]
-            [goog.dom :as gdom]))
+            [rum.core :as rum]))
 
 ;; TODO: extracted to a rum mixin
 (defn loaded? []

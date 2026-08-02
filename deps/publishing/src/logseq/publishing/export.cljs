@@ -1,9 +1,9 @@
 (ns ^:node-only logseq.publishing.export
   "This electron only ns (for the main process) exports files from multiple
   locations to provide a complete publishing app"
-  (:require ["fs-extra" :as fse]
+  (:require ["fs" :as fs]
+            ["fs-extra" :as fse]
             ["path" :as node-path]
-            ["fs" :as fs]
             [promesa.core :as p]))
 
 (def ^:api js-files
@@ -97,8 +97,8 @@
                 custom-js (if (fs/existsSync custom-js-path) (str (fs/readFileSync custom-js-path)) "")
                 _ (fs/writeFileSync (node-path/join output-static-dir "js" "custom.js") custom-js)
                 _ (cleanup-js-dir output-static-dir static-dir options)]
-               (notification-fn {:type "success"
-                                 :payload (str "Export public pages and publish assets to " output-dir " successfully 🎉")}))
+          (notification-fn {:type "success"
+                            :payload (str "Export public pages and publish assets to " output-dir " successfully 🎉")}))
         (p/catch (fn [error]
                    (notification-fn {:type "error"
                                      :payload (str "Export public pages unexpectedly failed with: " error)}))))))

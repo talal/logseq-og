@@ -20,7 +20,7 @@
         (let [[_ num-str] (re-find #"^(\d+){1}\." line)
               num (if num-str (parse-long num-str) nil)
               double-newlines?' (or double-newlines?
-                                     (and (newline? line) (seq others) (newline? (first others))))
+                                    (and (newline? line) (seq others) (newline? (first others))))
               [idx' result'] (if (and (not double-newlines?') num)
                                (let [idx' (inc idx)
                                      line' (string/replace-first line (str num ".") (str idx' "."))]

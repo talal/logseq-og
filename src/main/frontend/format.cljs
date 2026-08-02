@@ -1,11 +1,11 @@
 (ns frontend.format
   "Main ns for providing common operations on file content like conversion to html
 and edn. Can handle org-mode and markdown formats"
-  (:require [frontend.format.mldoc :refer [->MldocMode] :as mldoc]
+  (:require [clojure.string :as string]
+            [frontend.format.mldoc :refer [->MldocMode] :as mldoc]
             [frontend.format.protocol :as protocol]
             [logseq.graph-parser.mldoc :as gp-mldoc]
-            [logseq.graph-parser.util :as gp-util]
-            [clojure.string :as string]))
+            [logseq.graph-parser.util :as gp-util]))
 
 (defonce mldoc-record (->MldocMode))
 

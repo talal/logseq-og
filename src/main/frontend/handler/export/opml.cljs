@@ -149,7 +149,6 @@
            (mapcatv (fn [inline] (cons space (inline-ast->simple-ast inline))) inline-coll)
            [(raw-text "}")]))
 
-
 (defn- inline-superscript
   [inline-coll]
   (concatv [(raw-text "^{")]
@@ -212,7 +211,6 @@
 (defn- inline-email
   [{:keys [local_part domain]}]
   [(raw-text (str "<" local_part "@" domain ">"))])
-
 
 (defn- inline-ast->simple-ast
   [inline]

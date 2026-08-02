@@ -1,6 +1,6 @@
 (ns logseq.sdk.utils
-  (:require [clojure.walk :as walk]
-            [camel-snake-kebab.core :as csk]
+  (:require [camel-snake-kebab.core :as csk]
+            [clojure.walk :as walk]
             [frontend.util :as util]))
 
 (defn normalize-keyword-for-json
@@ -8,15 +8,15 @@
   ([input camel-case?]
    (when input
      (walk/postwalk
-       (fn [a]
-         (cond
-           (keyword? a)
-           (cond-> (name a)
-                   camel-case?
-                   (csk/->camelCase))
+      (fn [a]
+        (cond
+          (keyword? a)
+          (cond-> (name a)
+            camel-case?
+            (csk/->camelCase))
 
-           (uuid? a) (str a)
-           :else a)) input))))
+          (uuid? a) (str a)
+          :else a)) input))))
 
 (defn uuid-or-throw-error
   [s]

@@ -3,11 +3,11 @@
             [frontend.config :as config]
             [frontend.fs :as fs]
             [frontend.image :as image]
+            [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
             [frontend.util :as util]
             [goog.dom :as gdom]
-            [goog.object :as gobj]
-            [frontend.mobile.util :as mobile-util]))
+            [goog.object :as gobj]))
 
 (defn render-local-images!
   []

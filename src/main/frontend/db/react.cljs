@@ -4,14 +4,14 @@
   It'll be great if we can find an automatically resolving and performant
   solution.
   "
-  (:require [datascript.core :as d]
+  (:require [cljs.spec.alpha :as s]
+            [clojure.core.async :as async]
+            [datascript.core :as d]
             [frontend.date :as date]
             [frontend.db.conn :as conn]
             [frontend.db.utils :as db-utils]
             [frontend.state :as state]
-            [frontend.util :as util :refer [react]]
-            [cljs.spec.alpha :as s]
-            [clojure.core.async :as async]))
+            [frontend.util :as util :refer [react]]))
 
 ;;; keywords specs for reactive query, used by `react/q` calls
 ;; ::block
@@ -151,7 +151,7 @@
   (when-let [result (get @query-state k)]
     (when (satisfies? IWithMeta @(:result result))
       (set! (.-state (:result result))
-           (with-meta @(:result result) {:query-time (:query-time result)})))
+            (with-meta @(:result result) {:query-time (:query-time result)})))
     (:result result)))
 
 (defn q
@@ -195,9 +195,7 @@
               result-atom
               (add-q! k query time inputs result-atom transform-fn query-fn inputs-fn))))))))
 
-
 ;; TODO: Extract several parts to handlers
-
 
 (defn get-current-page
   []
@@ -251,10 +249,10 @@
                           (map :e))
         blocks (-> (concat blocks other-blocks) distinct)
         block-entities (keep (fn [block-id]
-                              (let [block-id (if (and (string? block-id) (util/uuid-string? block-id))
-                                               [:block/uuid block-id]
-                                               block-id)]
-                                (db-utils/entity block-id))) blocks)
+                               (let [block-id (if (and (string? block-id) (util/uuid-string? block-id))
+                                                [:block/uuid block-id]
+                                                block-id)]
+                                 (db-utils/entity block-id))) blocks)
         affected-keys (concat
                        (mapcat
                         (fn [block]
@@ -320,8 +318,8 @@
                         :else
                         (d/q query db))
                       transform-fn)]
-     (when-not (= new-result result)
-       (set-new-result! k new-result tx)))))
+      (when-not (= new-result result)
+        (set-new-result! k new-result tx)))))
 
 (defn path-refs-need-recalculated?
   [tx-meta]

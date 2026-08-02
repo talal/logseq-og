@@ -1,6 +1,6 @@
 (ns frontend.components.home
-  (:require [rum.core :as rum]
-            [frontend.components.container :as container]))
+  (:require [frontend.components.container :as container]
+            [rum.core :as rum]))
 
 (rum/defc home
   []

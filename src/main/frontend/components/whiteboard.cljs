@@ -5,6 +5,7 @@
             [frontend.components.onboarding.quick-tour :as quick-tour]
             [frontend.components.page :as page]
             [frontend.components.reference :as reference]
+            [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.db-mixins :as db-mixins]
             [frontend.db.model :as model]
@@ -19,8 +20,7 @@
             [frontend.util :as util]
             [promesa.core :as p]
             [rum.core :as rum]
-            [shadow.loader :as loader]
-            [frontend.config :as config]))
+            [shadow.loader :as loader]))
 
 (defonce tldraw-loaded? (atom false))
 (rum/defc tldraw-app < rum/reactive
@@ -289,7 +289,7 @@
      (tldraw-app page-name block-id)]))
 
 (rum/defc whiteboard-route <
-(shortcut/mixin :shortcut.handler/whiteboard false)
+  (shortcut/mixin :shortcut.handler/whiteboard false)
   [route-match]
   (let [name (get-in route-match [:parameters :path :name])
         {:keys [block-id]} (get-in route-match [:parameters :query])]

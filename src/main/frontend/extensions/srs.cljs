@@ -121,9 +121,7 @@
                                       card-next-schedule-property "nil"
                                       card-last-score-property "nil"}))
 
-
 ;;; used by other ns
-
 
 (defn card-block?
   [block]
@@ -187,10 +185,8 @@
       [-1 1 ef next-of-matrix]
       [(fix-2f next-interval) (+ 1 repeats) (fix-2f next-ef) next-of-matrix])))
 
-
 ;;; ================================================================
 ;;; card protocol
-
 
 (defprotocol ICard
   (get-root-block [this]))
@@ -200,7 +196,6 @@
   (show-cycle [this phase])
 
   (show-cycle-config [this phase]))
-
 
 (defn- has-cloze?
   [blocks]
@@ -307,10 +302,8 @@
     {:total (count blocks)
      :result sort-by-next-schedule}))
 
-
 ;;; ================================================================
 ;;; operations
-
 
 (defn- get-next-interval
   [card score]
@@ -670,8 +663,8 @@
               {:icon "letter-a"
                :intent "link"
                :on-click (fn [e]
-                          (util/stop e)
-                          (swap! *preview-mode? not)
+                           (util/stop e)
+                           (swap! *preview-mode? not)
                            (reset! *card-index 0))
                :button-props {:id "preview-all-cards"}
                :small? true}
@@ -781,12 +774,12 @@
   "given a block struct, adds the #card to title and returns
    a seq of [original-block new-content-string]"
   [block]
-    (when-let [content (:block/content block)]
-      (let [format (:block/format block)
-            content (-> (property/remove-built-in-properties format content)
-                        (drawer/remove-logbook))
-            [title body] (content/get-title&body content format)]
-        [block (str title " #" card-hash-tag "\n" body)])))
+  (when-let [content (:block/content block)]
+    (let [format (:block/format block)
+          content (-> (property/remove-built-in-properties format content)
+                      (drawer/remove-logbook))
+          [title body] (content/get-title&body content format)]
+      [block (str title " #" card-hash-tag "\n" body)])))
 
 (defn make-block-a-card!
   [block-id]

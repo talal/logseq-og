@@ -1,8 +1,8 @@
 (ns logseq.shui.select.core
-  (:require [rum.core :as rum]
+  (:require [cljs-bean.core :as bean]
             [daiquiri.interpreter :refer [interpret]]
             [logseq.shui.util :as util]
-            [cljs-bean.core :as bean]))
+            [rum.core :as rum]))
 
 (def select (util/lsui-wrap "Select"))
 (def select-group (util/lsui-wrap "SelectGroup"))

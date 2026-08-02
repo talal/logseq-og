@@ -31,11 +31,11 @@
             [goog.functions :refer [debounce]]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
+            [logseq.shui.core :as shui]
+            [logseq.shui.ui :as shui-ui]
             [medley.core :as medley]
             [promesa.core :as p]
-            [rum.core :as rum]
-            [logseq.shui.core :as shui]
-            [logseq.shui.ui :as shui-ui]))
+            [rum.core :as rum]))
 
 (declare icon)
 
@@ -66,10 +66,10 @@
    "gray"])
 
 (defn ->block-background-color
- [color]
- (if (some #{color} built-in-colors)
-   (str "var(--ls-highlight-color-" color ")")
-   color))
+  [color]
+  (if (some #{color} built-in-colors)
+    (str "var(--ls-highlight-color-" color ")")
+    color))
 
 (defn built-in-color?
   [color]
@@ -99,17 +99,17 @@
                   (.setAttribute el "aria-label" "editing block")
                   (doto el
                     (.addEventListener "select"
-                       #(let [start (util/get-selection-start el)
-                              end (util/get-selection-end el)]
-                          (when (and start end)
-                            (when-let [e (and (not= start end)
-                                              (let [caret-pos (cursor/get-caret-pos el)]
-                                                {:caret caret-pos
-                                                 :start start :end end
-                                                 :text  (. (.-value el) substring start end)
-                                                 :point (select-keys (or @*mouse-point caret-pos) [:x :y])}))]
-                              (plugin-handler/hook-plugin-editor :input-selection-end (bean/->js e))
-                              (vreset! *mouse-point nil)))))
+                                       #(let [start (util/get-selection-start el)
+                                              end (util/get-selection-end el)]
+                                          (when (and start end)
+                                            (when-let [e (and (not= start end)
+                                                              (let [caret-pos (cursor/get-caret-pos el)]
+                                                                {:caret caret-pos
+                                                                 :start start :end end
+                                                                 :text  (. (.-value el) substring start end)
+                                                                 :point (select-keys (or @*mouse-point caret-pos) [:x :y])}))]
+                                              (plugin-handler/hook-plugin-editor :input-selection-end (bean/->js e))
+                                              (vreset! *mouse-point nil)))))
                     (.addEventListener "mouseup" #(vreset! *mouse-point {:x (.-x %) :y (.-y %)}))))
                 state)}
   [{:keys [on-change] :as props}]
@@ -123,11 +123,11 @@
                                                 (on-change e))
                              (state/set-editor-in-composition! true))))
         props (assoc props
-                :on-change (fn [e] (when-not (state/editor-in-composition?)
-                                     (on-change e)))
-                :on-composition-start on-composition
-                :on-composition-update on-composition
-                :on-composition-end on-composition)]
+                     :on-change (fn [e] (when-not (state/editor-in-composition?)
+                                          (on-change e)))
+                     :on-composition-start on-composition
+                     :on-composition-update on-composition
+                     :on-composition-end on-composition)]
     (textarea props)))
 
 (rum/defc dropdown-content-wrapper
@@ -186,11 +186,11 @@
      (dissoc options :only-child?) child]
     [:a.flex.justify-between.menu-link
      (cond-> options
-             (true? no-padding?)
-             (assoc :class (str class " no-padding"))
+       (true? no-padding?)
+       (assoc :class (str class " no-padding"))
 
-             true
-             (dissoc :no-padding?))
+       true
+       (dissoc :no-padding?))
 
      [:span.flex-1 child]
      (when shortcut
@@ -208,15 +208,15 @@
                  links (remove nil? links)]
              (for [{:keys [options title icon key hr hover-detail item _as-link?]} links]
                (let [new-options
-                           (merge options
-                                  (cond->
-                                    {:title    hover-detail
-                                     :on-click (fn [e]
-                                                 (when-not (false? (when-let [on-click-fn (:on-click options)]
-                                                                     (on-click-fn e)))
-                                                   (close-fn)))}
-                                    key
-                                    (assoc :key key)))
+                     (merge options
+                            (cond->
+                             {:title    hover-detail
+                              :on-click (fn [e]
+                                          (when-not (false? (when-let [on-click-fn (:on-click options)]
+                                                              (on-click-fn e)))
+                                            (close-fn)))}
+                              key
+                              (assoc :key key)))
                      child (if hr
                              nil
                              (or item
@@ -227,8 +227,8 @@
                  (if hr
                    [:hr.menu-separator {:key (or key "dropdown-hr")}]
                    (rum/with-key
-                    (menu-link new-options child)
-                    title)))))
+                     (menu-link new-options child)
+                     title)))))
 
            wrapper-children
            [:.menu-links-wrapper
@@ -284,21 +284,21 @@
            [:div.flex-shrink-0.flex {:style {:margin-top -9
                                              :margin-right -18}}
             (button
-              {:button-props {:aria-label "Close"}
-               :variant :ghost
-               :class "hover:bg-transparent hover:text-foreground"
-               :on-click (fn []
-                           (notification/clear! uid))
-               :icon "x"})]]]]]])))
+             {:button-props {:aria-label "Close"}
+              :variant :ghost
+              :class "hover:bg-transparent hover:text-foreground"
+              :on-click (fn []
+                          (notification/clear! uid))
+              :icon "x"})]]]]]])))
 
 (rum/defc notification-clear-all
   []
   [:div.ui__notifications-content
    [:div.pointer-events-auto.notification-clear
     (button (t :notification/clear-all)
-     :intent "logseq"
-     :on-click (fn []
-                 (notification/clear-all!)))]])
+            :intent "logseq"
+            :on-click (fn []
+                        (notification/clear-all!)))]])
 
 (rum/defc notification < rum/reactive
   []
@@ -313,7 +313,7 @@
                                     :key     (name k)}
                                    (fn [state]
                                      (notification-content state (:content v) (:status v) k)))))
-                           contents)
+                              contents)
            clear-all (when (> (count contents) 1)
                        (css-transition
                         {:timeout 100
@@ -537,14 +537,14 @@
                    :on-mouse-move  #(reset! *current-idx idx)}
                   (let [chosen? (= @*current-idx idx)]
                     (menu-link
-                      {:id            (str "ac-" idx)
-                       :class         (when chosen? "chosen")
-                       :on-mouse-down (fn [e]
-                                        (util/stop e)
-                                        (if (and (gobj/get e "shiftKey") on-shift-chosen)
-                                          (on-shift-chosen item)
-                                          (on-chosen item)))}
-                      (if item-render (item-render item chosen?) item)))]]
+                     {:id            (str "ac-" idx)
+                      :class         (when chosen? "chosen")
+                      :on-mouse-down (fn [e]
+                                       (util/stop e)
+                                       (if (and (gobj/get e "shiftKey") on-shift-chosen)
+                                         (on-shift-chosen item)
+                                         (on-chosen item)))}
+                     (if item-render (item-render item chosen?) item)))]]
 
              (if get-group-name
                (if-let [group-name (get-group-name item)]
@@ -698,16 +698,16 @@
 
        [:div.mt-5.sm:mt-4.flex.gap-4
         (button
-          (t :cancel)
-          {:theme :gray
-           :on-click (comp on-cancel close-fn)})
+         (t :cancel)
+         {:theme :gray
+          :on-click (comp on-cancel close-fn)})
         (button
-          (t :yes)
-          {:class "ui__modal-enter"
-           :on-click #(and (fn? on-confirm)
-                           (on-confirm % {:close-fn close-fn
-                                          :sub-selected (and *sub-checkbox-selected @*sub-checkbox-selected)}))
-           :button-props {:autoFocus "on"}})]])))
+         (t :yes)
+         {:class "ui__modal-enter"
+          :on-click #(and (fn? on-confirm)
+                          (on-confirm % {:close-fn close-fn
+                                         :sub-selected (and *sub-checkbox-selected @*sub-checkbox-selected)}))
+          :button-props {:autoFocus "on"}})]])))
 
 (rum/defc sub-modal < rum/reactive
   []
@@ -769,8 +769,8 @@
   (let [control? (get state ::control?)]
     [:div.content
      [:div.flex-1.flex-row.foldable-title (cond->
-                                            {:on-mouse-over #(reset! control? true)
-                                             :on-mouse-out  #(reset! control? false)}
+                                           {:on-mouse-over #(reset! control? true)
+                                            :on-mouse-out  #(reset! control? false)}
                                             title-trigger?
                                             (assoc :on-mouse-down on-mouse-down
                                                    :class "cursor"))
@@ -778,9 +778,9 @@
        (when-not (mobile-util/native-platform?)
          [:a.block-control.opacity-50.hover:opacity-100.mr-2
           (cond->
-            {:style    {:width       14
-                        :height      16
-                        :margin-left -30}}
+           {:style    {:width       14
+                       :height      16
+                       :margin-left -30}}
             (not title-trigger?)
             (assoc :on-mouse-down on-mouse-down))
           [:span {:class (if (or @control? @collapsed?) "control-show cursor-pointer" "control-hide")}
@@ -891,10 +891,10 @@
       [:option (cond->
                 {:key   label
                  :value (or value label)} ;; NOTE: value might be an empty string, `or` is safe here
-                disabled
-                (assoc :disabled disabled)
-                selected
-                (assoc :selected selected))
+                 disabled
+                 (assoc :disabled disabled)
+                 selected
+                 (assoc :selected selected))
        label])]))
 
 (rum/defc radio-list
@@ -1025,9 +1025,9 @@
            :or   {small? false}
            :as   opts}]
   (let [button-props (merge
-                       (dissoc opts
-                         :theme :background :href :variant :class :intent :small? :icon :icon-props :disabled? :button-props)
-                       button-props)
+                      (dissoc opts
+                              :theme :background :href :variant :class :intent :small? :icon :icon-props :disabled? :button-props)
+                      button-props)
         props (merge {:variant (cond
                                  (= theme :gray) :ghost
                                  (= background "gray") :secondary
@@ -1038,10 +1038,10 @@
                       :size    (if small? :xs (or size :sm))
                       :icon    icon
                       :class   (if (and (string? background)
-                                     (not (contains? #{"gray" "red"} background)))
+                                        (not (contains? #{"gray" "red"} background)))
                                  (str class " primary-" background) class)
                       :muted   disabled?}
-                button-props)
+                     button-props)
 
         icon (when icon (shui-ui/tabler-icon icon icon-props))
         href? (not (string/blank? href))
@@ -1066,7 +1066,7 @@
    [:span.ui__point.overflow-hidden.rounded-full.inline-block
     (merge {:class (str (util/hiccup->class klass) " " class)
             :style (merge {:width size :height size} style)}
-      (dissoc opts :style :class))]))
+           (dissoc opts :style :class))]))
 
 (rum/defc type-icon
   [{:keys [name class title extension?]}]

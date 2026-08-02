@@ -10,7 +10,7 @@
 
 (defn search-blocks
   [repo q {:keys [limit page]
-            :or {limit 20}}]
+           :or {limit 20}}]
   (let [indice (or (get-in @search-db/indices [repo :blocks])
                    (search-db/make-blocks-indice! repo))
         result
@@ -22,13 +22,13 @@
         result (bean/->clj result)]
     (->>
      (map
-       (fn [{:keys [item matches]}]
-         (let [{:keys [content uuid page]} item]
-           {:block/uuid uuid
-            :block/content content
-            :block/page page
-            :search/matches matches}))
-       result)
+      (fn [{:keys [item matches]}]
+        (let [{:keys [content uuid page]} item]
+          {:block/uuid uuid
+           :block/content content
+           :block/page page
+           :search/matches matches}))
+      result)
      (remove nil?))))
 
 (defrecord Browser [repo]

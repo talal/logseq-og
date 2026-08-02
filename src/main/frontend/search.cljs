@@ -2,10 +2,11 @@
   "Provides search functionality for a number of features including Cmd-K
   search. Most of these fns depend on the search protocol"
   (:require [cljs-bean.core :as bean]
+            [clojure.set :as set]
             [clojure.string :as string]
-            [logseq.graph-parser.config :as gp-config]
             [frontend.db :as db]
             [frontend.db.model :as db-model]
+            [frontend.modules.datascript-report.core :as db-report]
             [frontend.regex :as regex]
             [frontend.search.agency :as search-agency]
             [frontend.search.db :as search-db]
@@ -14,9 +15,8 @@
             [frontend.util :as util]
             [frontend.util.property :as property]
             [goog.object :as gobj]
-            [promesa.core :as p]
-            [clojure.set :as set]
-            [frontend.modules.datascript-report.core :as db-report]))
+            [logseq.graph-parser.config :as gp-config]
+            [promesa.core :as p]))
 
 (defn get-engine
   [repo]
@@ -65,16 +65,16 @@
                       (if (<= 0 (.indexOf ostr oquery)) MAX-STRING-LENGTH 0))
         (empty? s) 0
         :else (if (= (first q) (first s))
-                  (recur (rest q)
-                         (rest s)
-                         (inc mult) ;; increase the multiplier as more query chars are matched
-                         (dec idx) ;; decrease idx so score gets lowered the further into the string we match
-                         (+ mult score)) ;; score for this match is current multiplier * idx
-                  (recur q
-                         (rest s)
-                         1 ;; when there is no match, reset multiplier to one
-                         (dec idx)
-                         score))))))
+                (recur (rest q)
+                       (rest s)
+                       (inc mult) ;; increase the multiplier as more query chars are matched
+                       (dec idx) ;; decrease idx so score gets lowered the further into the string we match
+                       (+ mult score)) ;; score for this match is current multiplier * idx
+                (recur q
+                       (rest s)
+                       1 ;; when there is no match, reset multiplier to one
+                       (dec idx)
+                       score))))))
 
 (defn fuzzy-search
   [data query & {:keys [limit extract-fn]

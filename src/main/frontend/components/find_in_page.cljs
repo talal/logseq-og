@@ -1,13 +1,13 @@
 (ns frontend.components.find-in-page
-  (:require [rum.core :as rum]
-            [frontend.ui :as ui]
-            [frontend.state :as state]
-            [frontend.util :as util]
+  (:require [clojure.string :as string]
             [frontend.handler.search :as search-handler :refer [debounced-search, stop-debounced-search!]]
-            [goog.object :as gobj]
-            [goog.dom :as gdom]
             [frontend.mixins :as mixins]
-            [clojure.string :as string]))
+            [frontend.state :as state]
+            [frontend.ui :as ui]
+            [frontend.util :as util]
+            [goog.dom :as gdom]
+            [goog.object :as gobj]
+            [rum.core :as rum]))
 
 (rum/defc search-input
   [q matches]

@@ -4,8 +4,8 @@
              :refer [*first-command-group *matched-block-commands *matched-commands]]
             [frontend.components.block :as block]
             [frontend.components.datetime :as datetime-comp]
-            [frontend.components.svg :as svg]
             [frontend.components.search :as search]
+            [frontend.components.svg :as svg]
             [frontend.context.i18n :refer [t]]
             [frontend.db :as db]
             [frontend.db.model :as db-model]
@@ -15,9 +15,9 @@
             [frontend.handler.page :as page-handler]
             [frontend.handler.paste :as paste-handler]
             [frontend.handler.search :as search-handler]
-            [frontend.search :refer [fuzzy-search]]
             [frontend.mixins :as mixins]
             [frontend.modules.shortcut.core :as shortcut]
+            [frontend.search :refer [fuzzy-search]]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
@@ -296,10 +296,10 @@
 (rum/defc code-block-mode-keyup-listener
   [_q _edit-content last-pos current-pos]
   (rum/use-effect!
-    (fn []
-      (when (< current-pos last-pos)
-        (state/clear-editor-action!)))
-    [last-pos current-pos])
+   (fn []
+     (when (< current-pos last-pos)
+       (state/clear-editor-action!)))
+   [last-pos current-pos])
   [:<>])
 
 (rum/defc code-block-mode-picker < rum/reactive
@@ -322,7 +322,7 @@
                                            (let [prefix (str "```" chosen)
                                                  last-pattern (str "```" q)]
                                              (editor-handler/insert-command! id
-                                               prefix format {:last-pattern last-pattern})
+                                                                             prefix format {:last-pattern last-pattern})
                                              (commands/handle-step [:codemirror/focus])))
                             :on-enter    (fn []
                                            (state/clear-editor-action!)
@@ -332,11 +332,11 @@
                             :class       "code-block-mode-picker"})]))))
 
 (rum/defcs input < rum/reactive
-                   (rum/local {} ::input-value)
-                   (mixins/event-mixin
-                     (fn [state]
-                       (mixins/on-key-down
-                         state
+  (rum/local {} ::input-value)
+  (mixins/event-mixin
+   (fn [state]
+     (mixins/on-key-down
+      state
       {;; enter
        13 (fn [state e]
             (let [input-value (get state ::input-value)
@@ -365,23 +365,23 @@
                 [:input.form-input.block.w-full.pl-2.sm:text-sm.sm:leading-5
                  (merge
                   (cond->
-                    {:key           (str "modal-input-" (name id))
-                     :id            (str "modal-input-" (name id))
-                     :type          (or type "text")
-                     :on-change     (fn [e]
-                                      (swap! input-value assoc id (util/evalue e)))
-                     :auto-complete (if (util/chrome?) "chrome-off" "off")}
+                   {:key           (str "modal-input-" (name id))
+                    :id            (str "modal-input-" (name id))
+                    :type          (or type "text")
+                    :on-change     (fn [e]
+                                     (swap! input-value assoc id (util/evalue e)))
+                    :auto-complete (if (util/chrome?) "chrome-off" "off")}
                     placeholder
                     (assoc :placeholder placeholder)
                     autoFocus
                     (assoc :auto-focus true))
                   (dissoc input-item :id))]])
              (ui/button
-               "Submit"
-               :on-click
-               (fn [e]
-                 (util/stop e)
-                 (on-submit command @input-value pos)))]))))))
+              "Submit"
+              :on-click
+              (fn [e]
+                (util/stop e)
+                (on-submit command @input-value pos)))]))))))
 
 (rum/defc absolute-modal < rum/static
   [cp modal-name set-default-width? {:keys [top left rect]}]
@@ -407,8 +407,8 @@
                                     max-height))
                                 max-height)
 
-                              (= modal-name "commands")
-                              (min 500))
+                        (= modal-name "commands")
+                        (min 500))
         right-sidebar? (:ui/sidebar-open? @state/state)
         editing-key    (first (keys (:editor/editing? @state/state)))
         *el (rum/use-ref nil)

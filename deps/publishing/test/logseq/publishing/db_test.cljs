@@ -1,10 +1,10 @@
 (ns logseq.publishing.db-test
   (:require [cljs.test :refer [deftest is]]
             [clojure.set :as set]
-            [logseq.publishing.db :as publish-db]
-            [logseq.graph-parser :as graph-parser]
             [datascript.core :as d]
-            [logseq.db :as ldb]))
+            [logseq.db :as ldb]
+            [logseq.graph-parser :as graph-parser]
+            [logseq.publishing.db :as publish-db]))
 
 (deftest clean-export!
   (let [conn (ldb/start-conn)
@@ -57,7 +57,7 @@
     (is (not (contains? exported-pages "page1"))
         "Doesn't contain private page")
     (is (seq (d/entity filtered-db [:block/name "page2-alias"]))
-          "Alias of public page is exported")
+        "Alias of public page is exported")
     (is (= #{"page2" "page3"} exported-block-pages)
         "Only exports blocks from public pages")
     (is (= ["thumb-on-fire_1648822523866_0.PNG"] assets)

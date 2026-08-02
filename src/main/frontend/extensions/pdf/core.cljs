@@ -1,24 +1,24 @@
 (ns frontend.extensions.pdf.core
   (:require [cljs-bean.core :as bean]
             [clojure.string :as string]
-            [frontend.components.svg :as svg]
+            [frontend.commands :as commands]
             [frontend.components.block :as block]
+            [frontend.components.svg :as svg]
+            [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.extensions.pdf.assets :as pdf-assets]
-            [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.extensions.pdf.toolbar :refer [pdf-toolbar *area-dashed? *area-mode? *highlight-mode? *highlights-ctx*]]
+            [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.extensions.pdf.windows :as pdf-windows]
             [frontend.handler.notification :as notification]
-            [frontend.config :as config]
             [frontend.modules.shortcut.core :as shortcut]
-            [frontend.commands :as commands]
             [frontend.rum :refer [use-atom]]
             [frontend.state :as state]
+            [frontend.ui :as ui]
             [frontend.util :as util]
             [medley.core :as medley]
             [promesa.core :as p]
-            [rum.core :as rum]
-            [frontend.ui :as ui]))
+            [rum.core :as rum]))
 
 (declare pdf-container system-embed-playground)
 

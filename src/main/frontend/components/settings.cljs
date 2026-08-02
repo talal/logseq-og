@@ -1,12 +1,12 @@
 (ns frontend.components.settings
   (:require [clojure.string :as string]
             [electron.ipc :as ipc]
-            [logseq.shui.ui :as shui-ui]
             [frontend.colors :as colors]
             [frontend.components.assets :as assets]
             [frontend.components.conversion :as conversion-component]
             [frontend.components.file-sync :as fs]
             [frontend.components.plugins :as plugins]
+            [frontend.components.shortcut :as shortcut]
             [frontend.components.svg :as svg]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
@@ -24,7 +24,6 @@
             [frontend.mobile.util :as mobile-util]
             [frontend.modules.instrumentation.core :as instrument]
             [frontend.modules.shortcut.data-helper :as shortcut-helper]
-            [frontend.components.shortcut :as shortcut]
             [frontend.spec.storage :as storage-spec]
             [frontend.state :as state]
             [frontend.storage :as storage]
@@ -33,6 +32,7 @@
             [frontend.version :refer [version]]
             [goog.object :as gobj]
             [goog.string :as gstring]
+            [logseq.shui.ui :as shui-ui]
             [promesa.core :as p]
             [reitit.frontend.easy :as rfe]
             [rum.core :as rum]))
@@ -165,11 +165,11 @@
     {:style {:display "flex" :gap "0.5rem" :align-items "center"}}
     [:div {:style (when stretch {:width "100%"})}
      (if action action (shui-ui/button
-                         {:as-child (not (string/blank? href))
-                          :size     :sm
-                          :on-click on-click}
-                         (if (string/blank? href) button-label
-                           (shui-ui/link {:href href} button-label))))]
+                        {:as-child (not (string/blank? href))
+                         :size     :sm
+                         :on-click on-click}
+                        (if (string/blank? href) button-label
+                            (shui-ui/link {:href href} button-label))))]
     (when-not (or (util/mobile?)
                   (mobile-util/native-platform?))
       [:div.text-sm.flex desc])]])
@@ -184,11 +184,11 @@
 
 (defn edit-global-config-edn []
   (row-with-button-action
-    {:left-label   (t :settings-page/custom-global-configuration)
-     :button-label (t :settings-page/edit-global-config-edn)
-     :href         (rfe/href :file {:path (global-config-handler/global-config-path)})
-     :on-click     ui-handler/toggle-settings-modal!
-     :-for         "global_config_edn"}))
+   {:left-label   (t :settings-page/custom-global-configuration)
+    :button-label (t :settings-page/edit-global-config-edn)
+    :href         (rfe/href :file {:path (global-config-handler/global-config-path)})
+    :on-click     ui-handler/toggle-settings-modal!
+    :-for         "global_config_edn"}))
 
 (defn edit-custom-css []
   (row-with-button-action
@@ -229,13 +229,13 @@
      [:div
       [:div.rounded-md.sm:max-w-xs
        (ui/toggle
-         enabled?
-         (fn []
-           (state/set-state! [:electron/user-cfgs :spell-check] (not enabled?))
-           (p/then (ipc/ipc :userAppCfgs :spell-check (not enabled?))
-                   #(when (js/confirm (t :relaunch-confirm-to-work))
-                      (js/logseq.api.relaunch))))
-         true)]]]))
+        enabled?
+        (fn []
+          (state/set-state! [:electron/user-cfgs :spell-check] (not enabled?))
+          (p/then (ipc/ipc :userAppCfgs :spell-check (not enabled?))
+                  #(when (js/confirm (t :relaunch-confirm-to-work))
+                     (js/logseq.api.relaunch))))
+        true)]]]))
 
 (rum/defcs switch-git-auto-commit-row < rum/reactive
   [state t]
@@ -246,13 +246,13 @@
      [:div
       [:div.rounded-md.sm:max-w-xs
        (ui/toggle
-         enabled?
-         (fn []
-           (state/set-state! [:electron/user-cfgs :git/disable-auto-commit?] enabled?)
-           (p/do!
-            (ipc/ipc :userAppCfgs :git/disable-auto-commit? enabled?)
-            (ipc/ipc :setGitAutoCommit)))
-         true)]]]))
+        enabled?
+        (fn []
+          (state/set-state! [:electron/user-cfgs :git/disable-auto-commit?] enabled?)
+          (p/do!
+           (ipc/ipc :userAppCfgs :git/disable-auto-commit? enabled?)
+           (ipc/ipc :setGitAutoCommit)))
+        true)]]]))
 
 (rum/defcs switch-git-commit-on-close-row < rum/reactive
   [state t]
@@ -263,11 +263,11 @@
      [:div
       [:div.rounded-md.sm:max-w-xs
        (ui/toggle
-         enabled?
-         (fn []
-           (state/set-state! [:electron/user-cfgs :git/commit-on-close?] (not enabled?))
-           (ipc/ipc :userAppCfgs :git/commit-on-close? (not enabled?)))
-         true)]]]))
+        enabled?
+        (fn []
+          (state/set-state! [:electron/user-cfgs :git/commit-on-close?] (not enabled?))
+          (ipc/ipc :userAppCfgs :git/commit-on-close? (not enabled?)))
+        true)]]]))
 
 (rum/defcs git-auto-commit-seconds < rum/reactive
   [state t]
@@ -285,9 +285,9 @@
                             (if (and (number? value)
                                      (< 0 value (inc 86400)))
                               (p/do!
-                                (state/set-state! [:electron/user-cfgs :git/auto-commit-seconds] value)
-                                (ipc/ipc :userAppCfgs :git/auto-commit-seconds value)
-                                (ipc/ipc :setGitAutoCommit))
+                               (state/set-state! [:electron/user-cfgs :git/auto-commit-seconds] value)
+                               (ipc/ipc :userAppCfgs :git/auto-commit-seconds value)
+                               (ipc/ipc :setGitAutoCommit))
                               (when-let [elem (gobj/get event "target")]
                                 (notification/show!
                                  [:div "Invalid value! Must be a number between 1 and 86400"]
@@ -341,28 +341,27 @@
                                 none? (= color :none)]]
                       [:div.flex.items-center {:style {:height 28}}
                        (ui/tippy
-                         {:html (case color
-                                  :none [:p {:style {:max-width "300px"}}
-                                         "Cancel accent color. This is currently in beta stage and mainly used for compatibility with custom themes."]
-                                  :logseq "Logseq classical color"
-                                  (str (name color) " color") )
-                          :delay [1000, 100]}
-                         (shui-ui/button
-                           {:class      "w-5 h-5 px-1 rounded-full flex justify-center items-center transition ease-in duration-100 hover:cursor-pointer hover:opacity-100"
-                            :auto-focus (and _in-modal? active?)
-                            :style      {:background-color (colors/variable color :09)
-                                         :outline-color    (colors/variable color (if active? :07 :06))
-                                         :outline-width    (if active? "4px" "1px")
-                                         :outline-style    :solid
-                                         :opacity          (if active? 1 0.5)}
-                            :variant    :text
-                            :on-click   (fn [_e] (state/set-color-accent! color))}
-                           [:strong
-                            {:class (if none? "h-0.5 w-full bg-red-700"
-                                              "w-2 h-2 rounded-full transition ease-in duration-100")
-                             :style {:background-color (if-not none? (str "var(--rx-" (name color) "-07)") "")
-                                     :opacity          (if (or none? active?) 1 0)}}]))
-                       ])]]
+                        {:html (case color
+                                 :none [:p {:style {:max-width "300px"}}
+                                        "Cancel accent color. This is currently in beta stage and mainly used for compatibility with custom themes."]
+                                 :logseq "Logseq classical color"
+                                 (str (name color) " color"))
+                         :delay [1000, 100]}
+                        (shui-ui/button
+                         {:class      "w-5 h-5 px-1 rounded-full flex justify-center items-center transition ease-in duration-100 hover:cursor-pointer hover:opacity-100"
+                          :auto-focus (and _in-modal? active?)
+                          :style      {:background-color (colors/variable color :09)
+                                       :outline-color    (colors/variable color (if active? :07 :06))
+                                       :outline-width    (if active? "4px" "1px")
+                                       :outline-style    :solid
+                                       :opacity          (if active? 1 0.5)}
+                          :variant    :text
+                          :on-click   (fn [_e] (state/set-color-accent! color))}
+                         [:strong
+                          {:class (if none? "h-0.5 w-full bg-red-700"
+                                      "w-2 h-2 rounded-full transition ease-in duration-100")
+                           :style {:background-color (if-not none? (str "var(--rx-" (name color) "-07)") "")
+                                   :opacity          (if (or none? active?) 1 0)}}]))])]]
 
     [:<>
      (row-with-button-action {:left-label  "Accent color"
@@ -370,7 +369,7 @@
                               :-for        "toggle_radix_theme"
                               :desc        (when-not _in-modal?
                                              [:span.pl-6 (ui/render-keyboard-shortcut
-                                                           (shortcut-helper/gen-shortcut-seq :ui/accent-colors-picker))])
+                                                          (shortcut-helper/gen-shortcut-seq :ui/accent-colors-picker))])
                               :stretch     (boolean _in-modal?)
                               :action      pick-theme})]))
 
@@ -415,8 +414,8 @@
                       (when-not (string/blank? format)
                         (config-handler/set-config! :journal/page-title-format format)
                         (notification/show!
-                          [:div (t :settings-page/custom-date-format-notification)]
-                          :warning false)
+                         [:div (t :settings-page/custom-date-format-notification)]
+                         :warning false)
                         (state/close-modal!)
                         (route-handler/redirect! {:to :repos}))))}
       (for [format (sort (date/journal-title-formatters))]
@@ -552,13 +551,13 @@
    [:div.mt-1.sm:mt-0.sm:col-span-2
     [:div
      (ui/button
-       (t :settings)
-       :class "text-sm"
-       :style {:margin-top "0px"}
-       :on-click
-       (fn []
-         (state/close-settings!)
-         (route-handler/redirect! {:to :zotero-setting})))]]])
+      (t :settings)
+      :class "text-sm"
+      :style {:margin-top "0px"}
+      :on-click
+      (fn []
+        (state/close-settings!)
+        (route-handler/redirect! {:to :zotero-setting})))]]])
 
 (defn auto-push-row [_t current-repo enable-git-auto-push?]
   (when (and current-repo (string/starts-with? current-repo "https://"))
@@ -574,7 +573,7 @@
           (t :settings-page/disable-sentry)
           (not instrument-disabled?)
           (fn [] (instrument/disable-instrument
-                   (not instrument-disabled?)))
+                  (not instrument-disabled?)))
           [:span.text-sm.opacity-50 (t :settings-page/disable-sentry-desc)]))
 
 (defn clear-cache-row [t]
@@ -677,8 +676,8 @@
      (t :settings-page/auto-chmod)
      enabled?
      #(do
-       (state/set-state! [:electron/user-cfgs :feature/enable-automatic-chmod?] (not enabled?))
-       (ipc/ipc :userAppCfgs :feature/enable-automatic-chmod? (not enabled?)))
+        (state/set-state! [:electron/user-cfgs :feature/enable-automatic-chmod?] (not enabled?))
+        (ipc/ipc :userAppCfgs :feature/enable-automatic-chmod? (not enabled?)))
      [:span.text-sm.opacity-50 (t :settings-page/auto-chmod-desc)])))
 
 (defn filename-format-row []
@@ -793,8 +792,8 @@
      (clear-cache-row t)
 
      (ui/admonition
-       :warning
-       [:p (t :settings-page/clear-cache-warning)])]))
+      :warning
+      [:p (t :settings-page/clear-cache-warning)])]))
 
 (rum/defc sync-enabled-switcher
   [enabled?]
@@ -870,18 +869,17 @@
      ; storage-usage-formatted "GB of " storage-limit "GB total storage"
      ; [:strong.text-white " (" storage-percent-formatted "%)"]]))
 
-
 (rum/defc settings-account-usage-graphs [_pro-account? graph-usage]
   (when (< 0 (count graph-usage))
-   [:div.grid.gap-3 {:style {:grid-template-columns (str "repeat(" (count graph-usage) ", 1fr)")}}
-    (for [{:keys [name used-percent]} graph-usage
-          :let [color (if (<= 100 used-percent) "bg-red-500" "bg-blue-500")]]
-     [:div.rounded-full.w-full.h-2 {:class "bg-black/50"
-                                    :tooltip name}
-      [:div.rounded-full.h-2 {:class color
-                              :style {:width (str used-percent "%")
-                                      :min-width "0.5rem"
-                                      :max-width "100%"}}]])]))
+    [:div.grid.gap-3 {:style {:grid-template-columns (str "repeat(" (count graph-usage) ", 1fr)")}}
+     (for [{:keys [name used-percent]} graph-usage
+           :let [color (if (<= 100 used-percent) "bg-red-500" "bg-blue-500")]]
+       [:div.rounded-full.w-full.h-2 {:class "bg-black/50"
+                                      :tooltip name}
+        [:div.rounded-full.h-2 {:class color
+                                :style {:width (str used-percent "%")
+                                        :min-width "0.5rem"
+                                        :max-width "100%"}}]])]))
 
 (rum/defc settings-account < rum/reactive
   []
@@ -931,30 +929,30 @@
                                             :icon "cloud"
                                             :on-click #(fs/maybe-onboarding-show :sync-initiate)}))]]
          (when has-subscribed?
-          [:<>
-           [:div "Billing"]
-           [:div.col-span-2.flex.flex-col.gap-4
-            (cond
+           [:<>
+            [:div "Billing"]
+            [:div.col-span-2.flex.flex-col.gap-4
+             (cond
               ;; If there is no expiration date, print the renewal date
-              (and renewal-date (nil? expiration-date))
-              [:div
-               [:strong.font-semibold "Next billing date: "
-                (date/get-locale-string renewal-date)]]
+               (and renewal-date (nil? expiration-date))
+               [:div
+                [:strong.font-semibold "Next billing date: "
+                 (date/get-locale-string renewal-date)]]
               ;; If the expiration date is in the future, word it as such
-              (< (js/Date.) expiration-date)
-              [:div
-               [:strong.font-semibold "Pro plan expires on: "
-                (date/get-locale-string expiration-date)]]
+               (< (js/Date.) expiration-date)
+               [:div
+                [:strong.font-semibold "Pro plan expires on: "
+                 (date/get-locale-string expiration-date)]]
               ;; Otherwise, ind
-              :else
-              [:div
-               [:strong.font-semibold "Pro plan expired on: "
-                (date/get-locale-string expiration-date)]])
+               :else
+               [:div
+                [:strong.font-semibold "Pro plan expired on: "
+                 (date/get-locale-string expiration-date)]])
 
-            [:div (ui/button "Open invoices" {:class "w-full h-8 p-1 justify-center"
-                                              :disabled true
-                                              :background "gray"
-                                              :icon "receipt"})]]])
+             [:div (ui/button "Open invoices" {:class "w-full h-8 p-1 justify-center"
+                                               :disabled true
+                                               :background "gray"
+                                               :icon "receipt"})]]])
          [:div "Profile"]
          [:div.col-span-2.grid.grid-cols-2.gap-4
           [:div.flex.flex-col.gap-2.box-border {:class "basis-1/2"}
@@ -1105,7 +1103,6 @@
      ;;     ;; features
      ;;     ]])
 
-
 (def DEFAULT-ACTIVE-TAB-STATE (if config/ENABLE-SETTINGS-ACCOUNT-TAB [:account :account] [:general :general]))
 
 (rum/defc settings-effect
@@ -1113,35 +1110,35 @@
   [active]
 
   (rum/use-effect!
-    (fn []
-      (let [active (and (sequential? active) (name (first active)))
-            ^js ds (.-dataset js/document.body)]
-        (if active
-          (set! (.-settingsTab ds) active)
-          (js-delete ds "settingsTab"))
-        #(js-delete ds "settingsTab")))
-    [active])
+   (fn []
+     (let [active (and (sequential? active) (name (first active)))
+           ^js ds (.-dataset js/document.body)]
+       (if active
+         (set! (.-settingsTab ds) active)
+         (js-delete ds "settingsTab"))
+       #(js-delete ds "settingsTab")))
+   [active])
 
   [:<>])
 
 (rum/defcs settings
   < (rum/local DEFAULT-ACTIVE-TAB-STATE ::active)
-    {:will-mount
-     (fn [state]
-       (state/load-app-user-cfgs)
-       state)
-     :did-mount
-     (fn [state]
-       (let [active-tab (first (:rum/args state))
-             *active (::active state)]
-         (when (keyword? active-tab)
-           (reset! *active [active-tab nil])))
-       state)
-     :will-unmount
-     (fn [state]
-       (state/close-settings!)
-       state)}
-    rum/reactive
+  {:will-mount
+   (fn [state]
+     (state/load-app-user-cfgs)
+     state)
+   :did-mount
+   (fn [state]
+     (let [active-tab (first (:rum/args state))
+           *active (::active state)]
+       (when (keyword? active-tab)
+         (reset! *active [active-tab nil])))
+     state)
+   :will-unmount
+   (fn [state]
+     (state/close-settings!)
+     state)}
+  rum/reactive
   [state _active-tab]
   (let [current-repo (state/sub :git/current-repo)
         ;; enable-block-timestamps? (state/enable-block-timestamps?)
@@ -1158,7 +1155,7 @@
        [:ul.settings-menu
         (for [[label id text icon]
               [(when config/ENABLE-SETTINGS-ACCOUNT-TAB
-                [:account "account" (t :settings-page/tab-account) (ui/icon "user-circle")])
+                 [:account "account" (t :settings-page/tab-account) (ui/icon "user-circle")])
                [:general "general" (t :settings-page/tab-general) (ui/icon "adjustments")]
                [:editor "editor" (t :settings-page/tab-editor) (ui/icon "writing")]
                [:keymap "keymap" (t :settings-page/tab-keymap) (ui/icon "keyboard")]

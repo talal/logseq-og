@@ -7,9 +7,9 @@
             [frontend.util.cursor :as cursor]
             [goog.dom :as gdom]
             [goog.object :as gobj]
+            [logseq.shui.ui :as ui]
             [promesa.core :as p]
-            [rum.core :as rum]
-            [logseq.shui.ui :as ui]))
+            [rum.core :as rum]))
 
 (defn- commit-all!
   []
@@ -34,7 +34,6 @@
                     (= first-char "?") [:span.text-green-500 line]
                     :else line))))
          (interpose [:br]))))
-
 
 (rum/defcs add-commit-message < rum/reactive
   (rum/local nil ::git-status)
@@ -66,7 +65,7 @@
         [:div.mt-5.sm:mt-4.flex
          (ui/button
           {:on-click state/close-modal!}
-           "Close")]]
+          "Close")]]
 
        [:<>
         [:div.sm:flex.sm:items-start
@@ -85,8 +84,8 @@
           :default-value ""}]
         [:div.mt-5.sm:mt-4.flex.justify-end.pt-4
          (ui/button
-           {:on-click commit-all!}
-           "Commit")]])]))
+          {:on-click commit-all!}
+          "Commit")]])]))
 
 (defn show-commit-modal! [e]
   (state/set-modal! add-commit-message)

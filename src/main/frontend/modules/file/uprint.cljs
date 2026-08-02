@@ -3,13 +3,13 @@
 
 (defn print-prefix-map* [prefix m print-one writer opts]
   (pr-sequential-writer
-    writer
-    (fn [e w opts]
-      (print-one (key e) w opts)
-      (-write w \space)
-      (print-one (val e) w opts))
-    (str prefix "\n{") \newline "}"
-    opts (seq m)))
+   writer
+   (fn [e w opts]
+     (print-one (key e) w opts)
+     (-write w \space)
+     (print-one (val e) w opts))
+   (str prefix "\n{") \newline "}"
+   opts (seq m)))
 
 (defn ugly-pr-str
   "Ugly printing fast, with newlines so that git diffs are smaller"

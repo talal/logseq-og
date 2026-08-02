@@ -1,14 +1,14 @@
 (ns electron.git
   (:require ["dugite" :refer [exec]]
-            [goog.object :as gobj]
+            ["fs-extra" :as fs]
+            ["path" :as node-path]
+            [clojure.string :as string]
             [electron.configs :as cfgs]
+            [electron.logger :as logger]
             [electron.state :as state]
             [electron.utils :as utils]
-            [electron.logger :as logger]
-            [promesa.core :as p]
-            [clojure.string :as string]
-            ["fs-extra" :as fs]
-            ["path" :as node-path]))
+            [goog.object :as gobj]
+            [promesa.core :as p]))
 
 (def log-error (partial logger/error "[Git]"))
 

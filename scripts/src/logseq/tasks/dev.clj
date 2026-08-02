@@ -1,12 +1,12 @@
 (ns logseq.tasks.dev
   "Tasks for general development. For desktop or mobile development see their
   namespaces"
-  (:require [babashka.process :refer [shell]]
-            [babashka.fs :as fs]
-            [logseq.tasks.util :as task-util]
+  (:require [babashka.fs :as fs]
+            [babashka.process :refer [shell]]
+            [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.pprint :as pp]
-            [clojure.edn :as edn]))
+            [logseq.tasks.util :as task-util]))
 
 (defn gen-malli-kondo-config
   "Generate clj-kondo type-mismatch config from malli schema

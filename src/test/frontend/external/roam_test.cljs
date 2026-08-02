@@ -1,7 +1,7 @@
 (ns frontend.external.roam-test
   (:require [cljs.test :refer [is deftest]]
-            [frontend.external.roam :as roam]
-            [frontend.external :refer [to-markdown-files]]))
+            [frontend.external :refer [to-markdown-files]]
+            [frontend.external.roam :as roam]))
 
 (def minimal-json "
 [

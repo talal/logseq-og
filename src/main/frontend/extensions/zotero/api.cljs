@@ -5,8 +5,8 @@
             [cljs.core.async
              :refer [<! >! alt! chan close! go go-loop timeout]]
             [clojure.string :as str]
-            [frontend.util :as util]
-            [frontend.extensions.zotero.setting :as setting]))
+            [frontend.extensions.zotero.setting :as setting]
+            [frontend.util :as util]))
 
 (defn config []
   {:api-version 3

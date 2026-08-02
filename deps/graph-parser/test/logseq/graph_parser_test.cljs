@@ -1,12 +1,12 @@
 (ns logseq.graph-parser-test
   (:require [cljs.test :refer [deftest testing is are]]
             [clojure.string :as string]
-            [logseq.graph-parser :as graph-parser]
+            [datascript.core :as d]
             [logseq.db :as ldb]
             [logseq.db.default :as default-db]
+            [logseq.graph-parser :as graph-parser]
             [logseq.graph-parser.block :as gp-block]
-            [logseq.graph-parser.property :as gp-property]
-            [datascript.core :as d]))
+            [logseq.graph-parser.property :as gp-property]))
 
 (def foo-edn
   "Example exported whiteboard page as an edn exportable."
@@ -383,7 +383,7 @@
                   (remove built-in-pages)
                   set)))))
 
-(testing "for web and page uris in org"
+  (testing "for web and page uris in org"
     (let [conn (ldb/start-conn)
           built-in-pages (set (map string/lower-case default-db/built-in-pages-names))]
       (graph-parser/parse-file conn

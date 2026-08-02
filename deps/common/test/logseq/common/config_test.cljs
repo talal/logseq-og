@@ -1,6 +1,6 @@
 (ns logseq.common.config-test
-  (:require [logseq.common.config :as common-config]
-            [cljs.test :refer [deftest is]]))
+  (:require [cljs.test :refer [deftest is]]
+            [logseq.common.config :as common-config]))
 
 (deftest remove-hidden-files
   (let [files ["pages/foo.md" "pages/bar.md"

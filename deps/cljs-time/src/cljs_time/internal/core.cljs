@@ -2,9 +2,9 @@
   (:refer-clojure :exclude [=])
   (:require
    [clojure.string :as string]
+   [goog.date]
    [goog.string :as gstring]
-   [goog.string.format]
-   [goog.date]))
+   [goog.string.format]))
 
 (def months
   ["January" "February" "March" "April" "May" "June" "July" "August"
@@ -118,7 +118,7 @@
   (let [january (= month 0)
         december (= month 11)
         week-number (goog.date/getWeekNumber year month date)]
-    (cond 
+    (cond
       (and january (>= week-number 52)) (dec year)
       (and december (= week-number 1))  (inc year)
       :else year)))

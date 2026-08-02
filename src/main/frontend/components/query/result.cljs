@@ -1,16 +1,16 @@
 (ns frontend.components.query.result
   "Query result related functionality for query components"
-  (:require [frontend.db.utils :as db-utils]
-            [frontend.search :as search]
+  (:require [clojure.string :as string]
             [frontend.db :as db]
             [frontend.db.query-dsl :as query-dsl]
+            [frontend.db.utils :as db-utils]
+            [frontend.modules.outliner.tree :as tree]
+            [frontend.search :as search]
             [frontend.state :as state]
-            [logseq.graph-parser.util :as gp-util]
             [frontend.util :as util]
-            [clojure.string :as string]
+            [logseq.graph-parser.util :as gp-util]
             [promesa.core :as p]
-            [rum.core :as rum]
-            [frontend.modules.outliner.tree :as tree]))
+            [rum.core :as rum]))
 
 (defn trigger-custom-query!
   [config query *query-error]

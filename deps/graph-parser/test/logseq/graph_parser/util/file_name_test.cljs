@@ -1,6 +1,6 @@
 (ns logseq.graph-parser.util.file-name-test
-  (:require [logseq.graph-parser.util :as gp-util]
-            [cljs.test :refer [is deftest]]))
+  (:require [cljs.test :refer [is deftest]]
+            [logseq.graph-parser.util :as gp-util]))
 
 ;; This is a copy of frontend.util.fs/multiplatform-reserved-chars for reserved chars testing
 (def multiplatform-reserved-chars ":\\*\\?\"<>|\\#\\\\")

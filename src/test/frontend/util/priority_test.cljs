@@ -9,8 +9,7 @@
     "[#A] xxx" "[#B]" "[#B] xxx"
     "## xxx" "[#A]" "## [#A] xxx"
     "## TODO xxx" "[#A]" "## TODO [#A] xxx"
-    "## TODO [#B] xxx" "[#A]" "## TODO [#A] xxx"
-    ))
+    "## TODO [#B] xxx" "[#A]" "## TODO [#A] xxx"))
 
 (deftest add-or-update-marker-org
   (are [content priority expect] (= expect (priority/add-or-update-priority content :org priority))

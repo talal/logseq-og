@@ -4,8 +4,8 @@
             [electron.ipc :as ipc]
             [frontend.search.db :as search-db]
             [frontend.search.protocol :as protocol]
-            [promesa.core :as p]
-            [frontend.state :as state]))
+            [frontend.state :as state]
+            [promesa.core :as p]))
 
 (defrecord Node [repo]
   protocol/Engine

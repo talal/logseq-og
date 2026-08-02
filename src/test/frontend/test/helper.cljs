@@ -1,8 +1,8 @@
 (ns frontend.test.helper
   "Common helper fns for tests"
-  (:require [frontend.handler.repo :as repo-handler]
-            [frontend.state :as state]
-            [frontend.db.conn :as conn]))
+  (:require [frontend.db.conn :as conn]
+            [frontend.handler.repo :as repo-handler]
+            [frontend.state :as state]))
 
 (defonce test-db "test-db")
 

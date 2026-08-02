@@ -1,7 +1,7 @@
 (ns frontend.fs.test-node
   "Test implementation of fs protocol for node.js"
-  (:require [frontend.fs.protocol :as protocol]
-            ["fs/promises" :as fsp]
+  (:require ["fs/promises" :as fsp]
+            [frontend.fs.protocol :as protocol]
             [promesa.core :as p]))
 
 ;; Most protocol fns are not defined. Define them as needed for tests

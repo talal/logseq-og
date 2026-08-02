@@ -1,7 +1,7 @@
 (ns frontend.components.search
-  (:require [rum.core :as rum]
+  (:require [frontend.components.block :as block]
             [frontend.handler.search :as search-handler]
-            [frontend.components.block :as block]))
+            [rum.core :as rum]))
 
 (rum/defc block-search-result-item
   [repo uuid format content q search-mode]

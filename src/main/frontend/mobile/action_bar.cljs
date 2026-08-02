@@ -5,15 +5,15 @@
    [frontend.extensions.srs :as srs]
    [frontend.handler.editor :as editor-handler]
    [frontend.mixins :as mixins]
+   [frontend.mobile.util :as mobile-util]
    [frontend.state :as state]
    [frontend.ui :as ui]
    [frontend.util :as util]
    [frontend.util.url :as url-util]
    [goog.dom :as gdom]
    [goog.object :as gobj]
-   [rum.core :as rum]
    [logseq.graph-parser.util.block-ref :as block-ref]
-   [frontend.mobile.util :as mobile-util]))
+   [rum.core :as rum]))
 
 (defn- action-command
   [icon description command-handler]

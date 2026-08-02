@@ -1,28 +1,28 @@
 (ns frontend.extensions.tldraw
   "Adapters related to tldraw"
   (:require ["/frontend/tldraw-logseq" :as TldrawLogseq]
+            [cljs-bean.core :as bean]
             [frontend.components.block :as block]
             [frontend.components.export :as export]
             [frontend.components.page :as page]
+            [frontend.components.whiteboard :as whiteboard]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
-            [frontend.db.model :as model]
             [frontend.db :as db]
+            [frontend.db.model :as model]
             [frontend.extensions.pdf.assets :as pdf-assets]
             [frontend.handler.editor :as editor-handler]
+            [frontend.handler.history :as history]
             [frontend.handler.route :as route-handler]
             [frontend.handler.whiteboard :as whiteboard-handler]
-            [frontend.handler.history :as history]
             [frontend.rum :as r]
             [frontend.search :as search]
             [frontend.state :as state]
+            [frontend.ui :as ui]
             [frontend.util :as util]
             [goog.object :as gobj]
             [promesa.core :as p]
-            [rum.core :as rum]
-            [frontend.ui :as ui]
-            [frontend.components.whiteboard :as whiteboard]
-            [cljs-bean.core :as bean]))
+            [rum.core :as rum]))
 
 (def tldraw (r/adapt-class (gobj/get TldrawLogseq "App")))
 
@@ -150,11 +150,11 @@
                      (set! (.-appUndo tln) undo)
                      (set! (.-appRedo tln) redo)
                      (when-let [^js api (gobj/get tln "api")]
-                      (p/then (when populate-onboarding?
-                                (whiteboard-handler/populate-onboarding-whiteboard api))
-                              #(do (whiteboard-handler/cleanup! (.-currentPage tln))
-                                   (state/focus-whiteboard-shape tln block-id)
-                                   (set-loaded-app tln))))))]
+                       (p/then (when populate-onboarding?
+                                 (whiteboard-handler/populate-onboarding-whiteboard api))
+                               #(do (whiteboard-handler/cleanup! (.-currentPage tln))
+                                    (state/focus-whiteboard-shape tln block-id)
+                                    (set-loaded-app tln))))))]
     (rum/use-effect! (fn []
                        (when (and loaded-app block-id)
                          (state/focus-whiteboard-shape loaded-app block-id))
@@ -171,9 +171,9 @@
 
        (when
         (and populate-onboarding? (not loaded-app))
-        [:div.absolute.inset-0.flex.items-center.justify-center
-         {:style {:z-index 200}}
-         (ui/loading "Loading onboarding whiteboard ...")])
+         [:div.absolute.inset-0.flex.items-center.justify-center
+          {:style {:z-index 200}}
+          (ui/loading "Loading onboarding whiteboard ...")])
        (tldraw {:renderers tldraw-renderers
                 :handlers (get-tldraw-handlers page-name)
                 :onMount on-mount

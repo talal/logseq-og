@@ -2,10 +2,10 @@
 
 (ns frontend.handler.conversion
   "For conversion logic between old version and new version"
-  (:require [logseq.graph-parser.util :as gp-util]
+  (:require [frontend.handler.config :refer [set-config!]]
+            [frontend.util :as util]
             [frontend.util.fs :as fs-util]
-            [frontend.handler.config :refer [set-config!]]
-            [frontend.util :as util]))
+            [logseq.graph-parser.util :as gp-util]))
 
 (defn write-filename-format!
   "Return:

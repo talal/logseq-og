@@ -9,15 +9,14 @@
             [frontend.date :as date]
             [frontend.db.model :as model]
             [frontend.db.query-react :as query-react]
-            [logseq.graph-parser.util.db :as db-util]
-            [logseq.db.rules :as rules]
             [frontend.template :as template]
-            [logseq.graph-parser.text :as text]
-            [logseq.graph-parser.util.page-ref :as page-ref]
-            [logseq.graph-parser.util :as gp-util]
+            [frontend.util :as util]
             [frontend.util.text :as text-util]
-            [frontend.util :as util]))
-
+            [logseq.db.rules :as rules]
+            [logseq.graph-parser.text :as text]
+            [logseq.graph-parser.util :as gp-util]
+            [logseq.graph-parser.util.db :as db-util]
+            [logseq.graph-parser.util.page-ref :as page-ref]))
 
 ;; Query fields:
 
@@ -206,8 +205,8 @@
 (defn- build-between-two-arg
   [e]
   (let [start (->journal-day-int (nth e 1))
-         end (->journal-day-int (nth e 2))
-         [start end] (sort [start end])]
+        end (->journal-day-int (nth e 2))
+        [start end] (sort [start end])]
     {:query (list 'between '?b start end)
      :rules [:between]}))
 
@@ -219,7 +218,7 @@
               (string/replace "-" "_"))]
     (when (contains? #{"created_at" "last_modified_at"} k)
       (let [start (->timestamp (nth e 2))
-             end (->timestamp (nth e 3))]
+            end (->timestamp (nth e 3))]
         (when (and start end)
           (let [[start end] (sort [start end])
                 sym '?v]
@@ -237,7 +236,6 @@
     ;; (between created_at -1d today)
     (= 4 (count e))
     (build-between-three-arg e)))
-
 
 (defn parse-property-value
   "Parses non-string property values or any page-ref like values"
@@ -322,7 +320,7 @@
 (defn- build-all-page-tags
   []
   {:query (list 'all-page-tags '?p)
-   :rules [:all-page-tags]} )
+   :rules [:all-page-tags]})
 
 (defn- build-sample
   [e sample]
@@ -604,14 +602,14 @@ Some bindings in this fn:
           {:keys [query sort-by blocks? rules]} (parse query-string)]
       (when-let [query' (some-> query (query-wrapper {:blocks? blocks?}))]
         (query-react/react-query repo
-                           (merge
-                            query-m
-                            {:query query'
-                             :rules rules})
-                           (merge
-                            query-opts
-                            (when sort-by
-                              {:transform-fn sort-by})))))))
+                                 (merge
+                                  query-m
+                                  {:query query'
+                                   :rules rules})
+                                 (merge
+                                  query-opts
+                                  (when sort-by
+                                    {:transform-fn sort-by})))))))
 
 (defn query-contains-filter?
   [query filter-name]

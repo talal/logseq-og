@@ -1,13 +1,13 @@
 (ns frontend.db.conn
   "Contains db connections."
   (:require [clojure.string :as string]
-            [frontend.util :as util]
+            [frontend.config :as config]
             [frontend.mobile.util :as mobile-util]
             [frontend.state :as state]
-            [frontend.config :as config]
+            [frontend.util :as util]
             [frontend.util.text :as text-util]
-            [logseq.graph-parser.text :as text]
             [logseq.db :as ldb]
+            [logseq.graph-parser.text :as text]
             [logseq.graph-parser.util :as gp-util]))
 
 (defonce conns (atom {}))

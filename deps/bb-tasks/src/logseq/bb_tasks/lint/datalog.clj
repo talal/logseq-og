@@ -12,9 +12,9 @@
 
 (defn- lint-rule [rule]
   (try (parser-impl/parse-rule rule)
-    {:success true :rule rule}
-    (catch Exception e
-      {:success false :rule rule :error (.getMessage e)})))
+       {:success true :rule rule}
+       (catch Exception e
+         {:success false :rule rule :error (.getMessage e)})))
 
 (defn lint-rules
   "Lint datalog rules for parse-ability and unbound variables"

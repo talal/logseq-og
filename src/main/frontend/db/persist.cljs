@@ -1,10 +1,10 @@
 (ns frontend.db.persist
   "Handles operations to persisting db to disk or indexedDB"
-  (:require [frontend.util :as util]
-            [frontend.idb :as idb]
+  (:require [electron.ipc :as ipc]
             [frontend.config :as config]
-            [electron.ipc :as ipc]
             [frontend.db.conn :as db-conn]
+            [frontend.idb :as idb]
+            [frontend.util :as util]
             [promesa.core :as p]))
 
 (defn get-all-graphs
@@ -43,7 +43,7 @@
       (do
         (ipc/ipc "deleteGraph" key)
         (idb/remove-item! key))
-     (idb/remove-item! key))))
+      (idb/remove-item! key))))
 
 (defn rename-graph!
   [old-repo new-repo]

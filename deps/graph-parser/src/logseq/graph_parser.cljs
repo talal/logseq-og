@@ -1,14 +1,14 @@
 (ns logseq.graph-parser
   "Main ns used by logseq app to parse graph from source files and then save to
   the given database connection"
-  (:require [datascript.core :as d]
-            [logseq.graph-parser.extract :as extract]
-            [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.date-time-util :as date-time-util]
-            [logseq.graph-parser.config :as gp-config]
-            [logseq.db.schema :as db-schema]
+  (:require [clojure.set :as set]
             [clojure.string :as string]
-            [clojure.set :as set]))
+            [datascript.core :as d]
+            [logseq.db.schema :as db-schema]
+            [logseq.graph-parser.config :as gp-config]
+            [logseq.graph-parser.date-time-util :as date-time-util]
+            [logseq.graph-parser.extract :as extract]
+            [logseq.graph-parser.util :as gp-util]))
 
 (defn- retract-blocks-tx
   [blocks retain-uuids]
@@ -98,12 +98,12 @@ Options available:
                        blocks []
                        ast []}}
                (cond (contains? gp-config/mldoc-support-formats format)
-                 (extract/extract file content extract-options')
+                     (extract/extract file content extract-options')
 
-                 (gp-config/whiteboard? file)
-                 (extract/extract-whiteboard-edn file content extract-options')
+                     (gp-config/whiteboard? file)
+                     (extract/extract-whiteboard-edn file content extract-options')
 
-                 :else nil)
+                     :else nil)
                block-ids (map (fn [block] {:block/uuid (:block/uuid block)}) blocks)
                delete-blocks (delete-blocks-fn @conn (first pages) file block-ids)
                block-refs-ids (->> (mapcat :block/refs blocks)
@@ -120,9 +120,9 @@ Options available:
             :ast ast})
          tx (concat tx [(cond-> {:file/path file
                                  :file/content content}
-                                new?
+                          new?
                                 ;; TODO: use file system timestamp?
-                                (assoc :file/created-at (date-time-util/time-ms)))])
+                          (assoc :file/created-at (date-time-util/time-ms)))])
          tx' (gp-util/fast-remove-nils tx)
          result (if skip-db-transact?
                   tx'

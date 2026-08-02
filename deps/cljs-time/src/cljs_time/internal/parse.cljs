@@ -135,8 +135,7 @@
            (if (>= (count n) lower)
              [(js/parseInt (apply str (take (min upper 3) n))) (concat (drop upper n) s)]
              [(js/parseInt (apply str (take 3 n))) s])]
-       [[:millis n] s])
-     )))
+       [[:millis n] s]))))
 
 (defn timezone-adj [sign hh mm]
   (let [hh (js/parseInt hh 10)
@@ -211,7 +210,7 @@
         (update-in [0 1] inc))))
 
 (defn parse-day-of-week-name [short?]
-  (fn [s] 
+  (fn [s]
     (let [[[period value] s] (parse-period-name s :day-of-week i/days short?)]
       [[period (if (= value 0) 7 value)] s])))
 

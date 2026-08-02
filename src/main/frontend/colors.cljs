@@ -16,8 +16,8 @@
   (let [color-index (.indexOf color-list color-name)
         step (fn [dist]
                (str "var(--rx-"
-                 (name (nth color-list (mod (+ color-index dist) (count color-list))))
-                 "-" (name color-stop) ")"))]
+                    (name (nth color-list (mod (+ color-index dist) (count color-list))))
+                    "-" (name color-stop) ")"))]
     (case gradient-level
       2 (str "linear-gradient(-45deg, " (step -1) " -50%, " (step 0) " 50%, " (step 1) " 150%)")
       3 (str "linear-gradient(-45deg, " (step -1) " 0%, " (step 0) " 50%, " (step 1) " 100%)")
@@ -30,15 +30,15 @@
 (defn get-accent-color
   []
   (when-let [color (some-> js/document.documentElement
-                     (js/getComputedStyle)
-                     (.getPropertyValue "--lx-accent-09"))]
+                           (js/getComputedStyle)
+                           (.getPropertyValue "--lx-accent-09"))]
     (when-not (string/blank? color)
       (if (string/starts-with? color "#")
         color
         (let [hsl-color (some-> color
-                          (string/replace "hsl(" "")
-                          (string/replace ")" "")
-                          (string/split ","))]
+                                (string/replace "hsl(" "")
+                                (string/replace ")" "")
+                                (string/split ","))]
           (when-let [hsl-color (and (not (string/blank? (first hsl-color)))
-                                 (map js/parseFloat hsl-color))]
+                                    (map js/parseFloat hsl-color))]
             (apply util/hsl2hex hsl-color)))))))

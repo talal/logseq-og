@@ -1,10 +1,10 @@
 (ns logseq.shui.ui
-  (:require [logseq.shui.util :as util]
+  (:require [logseq.shui.dialog.core :as dialog-core]
+            [logseq.shui.form.core :as form-core]
             [logseq.shui.icon.v2 :as icon-v2]
-            [logseq.shui.toaster.core :as toaster-core]
             [logseq.shui.select.core :as select-core]
-            [logseq.shui.dialog.core :as dialog-core]
-            [logseq.shui.form.core :as form-core]))
+            [logseq.shui.toaster.core :as toaster-core]
+            [logseq.shui.util :as util]))
 
 (def button (util/lsui-wrap "Button" {:static? false}))
 (def link (util/lsui-wrap "Link"))

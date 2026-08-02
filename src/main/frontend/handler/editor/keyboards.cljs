@@ -37,4 +37,4 @@
              (state/clear-edit!)))))
      :node (gdom/getElement id)
     ;; :visibilitychange? true
-)))
+     )))

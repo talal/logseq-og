@@ -1,19 +1,19 @@
 (ns frontend.util.property
   "Property fns needed by the rest of the app and not graph-parser"
-  (:require [clojure.string :as string]
-            [frontend.util :as util]
-            [clojure.set :as set]
+  (:require [clojure.set :as set]
+            [clojure.string :as string]
             [frontend.config :as config]
-            [logseq.graph-parser.util :as gp-util]
+            [frontend.db :as db]
+            [frontend.format.mldoc :as mldoc]
+            [frontend.state :as state]
+            [frontend.util :as util]
+            [frontend.util.block-content :as content]
+            [frontend.util.cursor :as cursor]
             [logseq.graph-parser.mldoc :as gp-mldoc]
             [logseq.graph-parser.property :as gp-property :refer [properties-start properties-end]]
-            [logseq.graph-parser.util.page-ref :as page-ref]
-            [frontend.format.mldoc :as mldoc]
             [logseq.graph-parser.text :as text]
-            [frontend.db :as db]
-            [frontend.state :as state]
-            [frontend.util.cursor :as cursor]
-            [frontend.util.block-content :as content]))
+            [logseq.graph-parser.util :as gp-util]
+            [logseq.graph-parser.util.page-ref :as page-ref]))
 
 (defn hidden-properties
   "These are properties hidden from user including built-in ones and ones
@@ -190,10 +190,10 @@
             properties-in-content? (and title (= (string/upper-case title) properties-start))
             no-title? (or (simplified-property? title) properties-in-content?)
             properties&body (concat
-                                 (when (and no-title? (not org?)) [title])
-                                 (if (and org? properties-in-content?)
-                                   (rest body)
-                                   body))
+                             (when (and no-title? (not org?)) [title])
+                             (if (and org? properties-in-content?)
+                               (rest body)
+                               body))
             {properties-lines true body false} (group-by (fn [s]
                                                            (or (simplified-property? s)
                                                                (and org? (org-property? s)))) properties&body)

@@ -527,7 +527,6 @@
   [[tp _]]
   (= tp "Properties"))
 
-
 (defn replace-Heading-with-Paragraph
   "works on block-ast
   replace all heading with paragraph when indent-style is no-indent"
@@ -565,7 +564,6 @@
        block-ast-coll)
       :result-ast-tcoll
       persistent!))
-
 
 ;;; inline transformers
 
@@ -828,11 +826,9 @@
 
 ;;; simple ast (ends)
 
-
 ;;; TODO: walk the hiccup tree,
 ;;; and call escape-html on all its contents
 ;;;
-
 
 ;;; walk the hiccup tree,
 ;;; and call escape-html on all its contents (ends)

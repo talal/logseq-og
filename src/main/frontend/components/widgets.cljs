@@ -1,14 +1,13 @@
 (ns frontend.components.widgets
-  (:require [frontend.context.i18n :refer [t]]
+  (:require [frontend.config :as config]
+            [frontend.context.i18n :refer [t]]
             [frontend.handler.page :as page-handler]
             [frontend.handler.web.nfs :as nfs]
-            [frontend.modules.shortcut.core :as shortcut]
-            [frontend.ui :as ui]
-            [rum.core :as rum]
-            [frontend.config :as config]
             [frontend.mobile.util :as mobile-util]
-            [frontend.state :as state]))
-
+            [frontend.modules.shortcut.core :as shortcut]
+            [frontend.state :as state]
+            [frontend.ui :as ui]
+            [rum.core :as rum]))
 
 (rum/defc native-fs-api-alert
   []
@@ -26,14 +25,14 @@
      (if (mobile-util/native-platform?)
        [:div.text-sm
         (ui/button "Open a local directory"
-          :on-click #(state/pub-event! [:graph/setup-a-repo]))
+                   :on-click #(state/pub-event! [:graph/setup-a-repo]))
         [:hr]
         [:div
          [:div.font-bold.mb-2 "I need some help"]
          [:p "👋 Join our Forum to chat with the makers and our helpful community members."]
          (ui/button "Join the community"
-           :href "https://discuss.logseq.com"
-           :target "_blank")]]
+                    :href "https://discuss.logseq.com"
+                    :target "_blank")]]
        [:div.cp__widgets-open-local-directory
         [:div.select-file-wrap.cursor
          (when nfs-supported?
@@ -63,7 +62,7 @@
         "."]
        [:div
         (ui/button "Grant Permission"
-          :on-click #(page-handler/ls-dir-files! shortcut/refresh!))]
+                   :on-click #(page-handler/ls-dir-files! shortcut/refresh!))]
        [:p.mb-1 "Note:"]
        [:ol
         [:li "We will never access files outside of your graph folders you choose."]

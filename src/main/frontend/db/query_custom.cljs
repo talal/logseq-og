@@ -1,26 +1,26 @@
 (ns frontend.db.query-custom
   "Handles executing custom queries a.k.a. advanced queries"
-  (:require [frontend.state :as state]
-            [frontend.db.query-react :as query-react]
-            [frontend.db.query-dsl :as query-dsl]
+  (:require [clojure.walk :as walk]
             [frontend.db.model :as model]
-            [logseq.db.rules :as rules]
+            [frontend.db.query-dsl :as query-dsl]
+            [frontend.db.query-react :as query-react]
+            [frontend.state :as state]
             [frontend.util.datalog :as datalog-util]
-            [clojure.walk :as walk]))
+            [logseq.db.rules :as rules]))
 
 ;; FIXME: what if users want to query other attributes than block-attrs?
 (defn- replace-star-with-block-attrs!
   [l]
   (let [block-attrs (butlast model/block-attrs)]
     (walk/postwalk
-    (fn [f]
-      (if (and (list? f)
-               (= 'pull (first f))
-               (= '?b (second f))
-               (= '[*] (nth f 2)))
-        `(~'pull ~'?b ~block-attrs)
-        f))
-    l)))
+     (fn [f]
+       (if (and (list? f)
+                (= 'pull (first f))
+                (= '?b (second f))
+                (= '[*] (nth f 2)))
+         `(~'pull ~'?b ~block-attrs)
+         f))
+     l)))
 
 (defn- add-rules-to-query
   "Searches query's :where for rules and adds them to query if used"

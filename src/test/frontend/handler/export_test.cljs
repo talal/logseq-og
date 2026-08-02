@@ -57,7 +57,6 @@
 	- 4")
     "97a00e55-48c3-48d8-b9ca-417b16e3a616"))
 
-
 (deftest export-blocks-as-markdown-with-properties
   (are [expect block-uuid-s]
        (= expect (string/trim (export-text/export-blocks-as-markdown (state/get-current-repo) [(uuid block-uuid-s)] {})))
@@ -131,21 +130,21 @@
 
 (deftest export-blocks-as-markdown-no-indent
   (are [expect content]
-      (= (string/trim expect)
-         (string/trim (#'export-text/export-helper (string/trim content) :markdown {:indent-style "no-indent"})))
-      "
+       (= (string/trim expect)
+          (string/trim (#'export-text/export-helper (string/trim content) :markdown {:indent-style "no-indent"})))
+    "
 1
 2
 3
 4
 5"
-      "
+    "
 - 1
   2
   3
   - 4
     5"
-"
+    "
 some inner code
 ```jsx
 import React;
@@ -170,17 +169,16 @@ export default main;
     ```
 "))
 
-
 (deftest-async export-files-as-markdown
   (p/do!
    (are [expect files]
-       (= expect
-          (@#'export-text/export-files-as-markdown files {:remove-options #{:property}}))
-       [["pages/page1.md" "- 1\n\t- 2\n\t\t- 3\n\t\t- 3\n- 4\n"]]
-       [{:path "pages/page1.md" :content (:file/content (nth test-files 0)) :names ["page1"] :format :markdown}]
+        (= expect
+           (@#'export-text/export-files-as-markdown files {:remove-options #{:property}}))
+     [["pages/page1.md" "- 1\n\t- 2\n\t\t- 3\n\t\t- 3\n- 4\n"]]
+     [{:path "pages/page1.md" :content (:file/content (nth test-files 0)) :names ["page1"] :format :markdown}]
 
-       [["pages/page2.md" "- 3\n\t- 1\n\t\t- 2\n\t\t\t- 3\n\t\t\t- 3\n\t- 4\n"]]
-       [{:path "pages/page2.md" :content (:file/content (nth test-files 1)) :names ["page2"] :format :markdown}])))
+     [["pages/page2.md" "- 3\n\t- 1\n\t\t- 2\n\t\t\t- 3\n\t\t\t- 3\n\t- 4\n"]]
+     [{:path "pages/page2.md" :content (:file/content (nth test-files 1)) :names ["page2"] :format :markdown}])))
 
 (deftest-async export-repo-as-edn-str
   (p/do!

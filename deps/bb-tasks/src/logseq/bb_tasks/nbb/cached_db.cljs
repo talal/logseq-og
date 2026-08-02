@@ -1,12 +1,12 @@
 (ns logseq.bb-tasks.nbb.cached-db
   "Handles nbb side of cached-db functionality. File path and cache implementation
 encapsulated in this ns"
-  (:require [datascript.transit :as dt]
-            [datascript.core :as d]
-            [logseq.graph-parser.cli :as gp-cli]
-            [logseq.graph-parser :as graph-parser]
+  (:require ["fs" :as fs]
             [clojure.string :as string]
-            ["fs" :as fs]))
+            [datascript.core :as d]
+            [datascript.transit :as dt]
+            [logseq.graph-parser :as graph-parser]
+            [logseq.graph-parser.cli :as gp-cli]))
 
 (def ^:private cache-file
   "Cache file for storing transit db"

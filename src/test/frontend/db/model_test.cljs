@@ -1,14 +1,14 @@
 (ns frontend.db.model-test
   (:require [cljs.test :refer [use-fixtures deftest is are]]
-            [frontend.db.model :as model]
+            [clojure.edn :as edn]
+            [clojure.set :as set]
+            [datascript.core :as d]
             [frontend.db :as db]
             [frontend.db.conn :as conn]
-            [logseq.db.schema :as db-schema]
+            [frontend.db.model :as model]
             [frontend.test.helper :as test-helper :refer [load-test-files]]
-            [datascript.core :as d]
-            [shadow.resource :as rc]
-            [clojure.set :as set]
-            [clojure.edn :as edn]))
+            [logseq.db.schema :as db-schema]
+            [shadow.resource :as rc]))
 
 (use-fixtures :each {:before test-helper/start-test-db!
                      :after test-helper/destroy-test-db!})
@@ -53,11 +53,11 @@
         a-ref-blocks (model/get-page-referenced-blocks "aa")]
 
     (are [x y] (= x y)
-         4 (count a-aliases)
-         4 (count b-aliases)
-         4 (count b-ref-blocks)
-         4 (count a-ref-blocks)
-         #{"ab" "ac" "ad"} (set alias-names))))
+      4 (count a-aliases)
+      4 (count b-aliases)
+      4 (count b-ref-blocks)
+      4 (count a-ref-blocks)
+      #{"ab" "ac" "ad"} (set alias-names))))
 
 (deftest test-page-alias-set
   (load-test-files [{:file/path "aa.md"
@@ -70,9 +70,9 @@
         alias-names (model/get-page-alias-names test-helper/test-db "aa")
         a-ref-blocks (model/get-page-referenced-blocks "aa")]
     (are [x y] (= x y)
-         3 (count a-aliases)
-         3 (count a-ref-blocks)
-         #{"ab" "ac"} (set alias-names))))
+      3 (count a-aliases)
+      3 (count a-ref-blocks)
+      #{"ab" "ac"} (set alias-names))))
 
 (deftest get-pages-that-mentioned-page-with-show-journal
   (load-test-files [{:file/path "journals/2020_08_15.md"
@@ -115,9 +115,9 @@
 
   (is (= '("one/two/tree" "page one")
          (map second (#'model/remove-nested-namespaces-link [["generic page" "one/two/tree"]
-                                                           ["generic page" "one/two"]
-                                                           ["generic page" "one"]
-                                                           ["generic page" "page one"]])))
+                                                             ["generic page" "one/two"]
+                                                             ["generic page" "one"]
+                                                             ["generic page" "page one"]])))
       "(model/remove-nested-namespaces-link) Must be only ns one/two/tree")
 
   (is (= '("one/two/tree" "one/two" "one")
@@ -149,7 +149,6 @@ foo:: bar"}])
   (is (nil?
        (model/get-block-by-page-name-and-block-route-name test-helper/test-db "foo" "b2"))
       "Non header block's content returns nil"))
-
 
 (def broken-outliner-data-with-cycle (-> (rc/inline "fixtures/broken-outliner-data-with-cycle.edn")
                                          edn/read-string))

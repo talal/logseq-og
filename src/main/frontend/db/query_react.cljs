@@ -3,6 +3,7 @@
   (:require [clojure.string :as string]
             [clojure.walk :as walk]
             [frontend.config :as config]
+            [frontend.date :as date]
             [frontend.db.conn :as conn]
             [frontend.db.model :as model]
             [frontend.db.react :as react]
@@ -10,11 +11,10 @@
             [frontend.debug :as debug]
             [frontend.extensions.sci :as sci]
             [frontend.state :as state]
-            [logseq.graph-parser.util.db :as db-util]
-            [logseq.graph-parser.util.page-ref :as page-ref]
             [frontend.util :as util]
-            [frontend.date :as date]
-            [lambdaisland.glogi :as log]))
+            [lambdaisland.glogi :as log]
+            [logseq.graph-parser.util.db :as db-util]
+            [logseq.graph-parser.util.page-ref :as page-ref]))
 
 (defn resolve-input
   "Wrapper around db-util/resolve-input which provides editor-specific state"
@@ -102,7 +102,7 @@
           resolve-with (select-keys query-opts [:current-page-fn :current-block-uuid])
           resolved-inputs (mapv #(resolve-input db % resolve-with) inputs)
           inputs (cond-> resolved-inputs
-                         rules
+                   rules
                    (conj rules))
           k [:custom (or (:query-string query') query') inputs]]
       (pprint "inputs (post-resolution):" resolved-inputs)

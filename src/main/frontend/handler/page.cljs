@@ -4,6 +4,7 @@
             [clojure.string :as string]
             [clojure.walk :as walk]
             [datascript.core :as d]
+            [electron.ipc :as ipc]
             [frontend.commands :as commands]
             [frontend.config :as config]
             [frontend.date :as date]
@@ -16,8 +17,8 @@
             [frontend.handler.common :as common-handler]
             [frontend.handler.config :as config-handler]
             [frontend.handler.editor :as editor-handler]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.notification :as notification]
+            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.recent :as recent-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
@@ -30,13 +31,14 @@
             [frontend.util :as util]
             [frontend.util.cursor :as cursor]
             [frontend.util.fs :as fs-util]
-            [frontend.util.page-property :as page-property]
             [frontend.util.page :as page-util]
+            [frontend.util.page-property :as page-property]
             [frontend.util.property :as property]
             [frontend.util.url :as url-util]
             [goog.functions :refer [debounce]]
             [goog.object :as gobj]
             [lambdaisland.glogi :as log]
+            [logseq.common.path :as path]
             [logseq.db.schema :as db-schema]
             [logseq.graph-parser.block :as gp-block]
             [logseq.graph-parser.config :as gp-config]
@@ -44,9 +46,7 @@
             [logseq.graph-parser.text :as text]
             [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.util.page-ref :as page-ref]
-            [promesa.core :as p]
-            [logseq.common.path :as path]
-            [electron.ipc :as ipc]))
+            [promesa.core :as p]))
 
 ;; FIXME: add whiteboard
 (defn- get-directory
@@ -487,7 +487,6 @@
         (when (and file (not journal?))
           (rename-file! file new-file-name-body (fn [] nil)))
 
-
         (let [home (get (state/get-config) :default-home {})]
           (when (= old-page-name (util/page-name-sanity-lc (get home :page "")))
             (config-handler/set-config! :default-home (assoc home :page new-name))))
@@ -607,7 +606,6 @@
       (rename-update-namespace! from-page
                                 (util/get-page-original-name from-page)
                                 (util/get-page-original-name to-page)))
-
 
     (delete! from-page-name nil)
 

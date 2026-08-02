@@ -2,21 +2,21 @@
   "System-component-like ns that provides common file operations for all
   platforms by delegating to implementations of the fs protocol"
   (:require [cljs-bean.core :as bean]
+            [clojure.string :as string]
+            [electron.ipc :as ipc]
             [frontend.config :as config]
-            [frontend.fs.nfs :as nfs]
-            [frontend.fs.node :as node]
             [frontend.fs.capacitor-fs :as capacitor-fs]
             [frontend.fs.memory-fs :as memory-fs]
-            [frontend.mobile.util :as mobile-util]
+            [frontend.fs.nfs :as nfs]
+            [frontend.fs.node :as node]
             [frontend.fs.protocol :as protocol]
+            [frontend.mobile.util :as mobile-util]
+            [frontend.state :as state]
             [frontend.util :as util]
             [lambdaisland.glogi :as log]
-            [promesa.core :as p]
             [logseq.common.path :as path]
-            [clojure.string :as string]
-            [frontend.state :as state]
             [logseq.graph-parser.util :as gp-util]
-            [electron.ipc :as ipc]))
+            [promesa.core :as p]))
 
 (defonce nfs-backend (nfs/->Nfs))
 (defonce memory-backend (memory-fs/->MemoryFs))

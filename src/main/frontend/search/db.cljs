@@ -1,10 +1,10 @@
 (ns ^:no-doc frontend.search.db
-  (:require [cljs-bean.core :as bean]
+  (:require ["fuse.js" :as fuse]
+            [cljs-bean.core :as bean]
             [clojure.string :as string]
             [frontend.db :as db]
             [frontend.state :as state]
             [frontend.util :as util]
-            ["fuse.js" :as fuse]
             [frontend.util.property :as property]))
 
 ;; Notice: When breaking changes happen, bump version in src/electron/electron/search.cljs
@@ -105,9 +105,9 @@
   []
   (let [repo (state/get-current-repo)
         pages (->> (db/get-pages repo)
-                     (remove string/blank?)
-                     (map original-page-name->index)
-                     (bean/->js))
+                   (remove string/blank?)
+                   (map original-page-name->index)
+                   (bean/->js))
         indice (fuse. pages
                       (clj->js {:keys ["name"]
                                 :shouldSort true

@@ -1,7 +1,6 @@
 # Logseq OG repository analysis
 
-This analysis describes the current working tree after removal of the plugin
-host, marketplace, and developer HTTP API server. It is based on checked-in
+This analysis describes the current working tree. It is based on checked-in
 source and configuration, not on generated output under `static/`, installed
 dependencies, or historical assumptions about upstream Logseq.
 

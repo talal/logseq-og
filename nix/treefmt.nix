@@ -40,7 +40,6 @@
             dprint-plugin-toml
           ]
       );
-      markdown.textWrap = "always";
     };
     includes = ["*.md" "*.toml"];
   };

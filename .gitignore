@@ -22,11 +22,13 @@ tmp/
 
 # Editor / IDE
 *.iml
-.idea/
-.vscode/
 *.sublime*
 .calva/
+.helix/
+.idea/
 .lsp/
+.vscode/
+.zed/
 
 # Clojure
 pom.xml
@@ -63,6 +65,13 @@ debug/
 target/
 crates/**/artifacts/
 **/*.rs.bk
+
+# Python
+__pycache__
+.ruff_cache
+
+# Nix
+/result*
 
 # Project-specific
 .clj-kondo/babashka/sci

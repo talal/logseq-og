@@ -284,7 +284,7 @@ export const LogseqQuickSearch = observer(
                 onChosen: () => {
                   if (block) {
                     finishSearching(uuid)
-                    window.logseq?.api?.set_blocks_id?.([uuid])
+                    handlers.setBlocksId([uuid])
                     return true
                   }
                   return false

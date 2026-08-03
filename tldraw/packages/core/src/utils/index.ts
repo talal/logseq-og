@@ -81,10 +81,7 @@ export function isDarwin(): boolean {
 }
 
 export function isDev(): boolean {
-  return (
-    window?.logseq?.api?.get_state_from_store?.('ui/developer-mode?') ||
-    process.env.NODE_ENV === 'development'
-  )
+  return process.env.NODE_ENV === 'development'
 }
 
 /** Migrated from frontend.util/safari? */

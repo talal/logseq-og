@@ -59,6 +59,11 @@ export interface LogseqContextValue {
     isWhiteboardPage: (pageName: string) => boolean
     saveAsset: (file: File) => Promise<string>
     makeAssetUrl: (relativeUrl: string | null) => string
+    getSelectedBlocks: () => { uuid: string }[]
+    setBlocksId: (uuids: string[]) => void
+    editBlock: (uuid: string) => void
+    openExternalLink: (url: string) => void
+    isDev: () => boolean
     inflateAsset: (src: string) => object
     setCurrentPdf: (src: string | null) => void
     sidebarAddBlock: (uuid: string, type: 'block' | 'page') => void

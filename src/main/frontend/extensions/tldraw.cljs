@@ -11,6 +11,7 @@
             [frontend.db :as db]
             [frontend.db.model :as model]
             [frontend.extensions.pdf.assets :as pdf-assets]
+            [frontend.extensions.tldraw.handlers :as tldraw-handlers]
             [frontend.handler.editor :as editor-handler]
             [frontend.handler.history :as history]
             [frontend.handler.route :as route-handler]
@@ -26,7 +27,11 @@
 
 (def tldraw (r/adapt-class (gobj/get TldrawLogseq "App")))
 
-(def generate-preview (gobj/get TldrawLogseq "generateJSXFromModel"))
+(def generate-preview-jsx (gobj/get TldrawLogseq "generateJSXFromModel"))
+
+(def generate-preview
+  (fn [serialized-app]
+    (generate-preview-jsx serialized-app editor-handler/make-asset-url)))
 
 (rum/defc page-cp
   [props]
@@ -100,6 +105,7 @@
 
 (def undo (fn [] (history/undo! nil)))
 (def redo (fn [] (history/redo! nil)))
+
 (defn get-tldraw-handlers [current-whiteboard-name]
   {:t (fn [key] (t (keyword key)))
    :search search-handler
@@ -114,6 +120,11 @@
    :isWhiteboardPage model/whiteboard-page?
    :saveAsset save-asset-handler
    :makeAssetUrl editor-handler/make-asset-url
+   :getSelectedBlocks tldraw-handlers/get-selected-blocks
+   :setBlocksId tldraw-handlers/set-blocks-id
+   :editBlock tldraw-handlers/edit-block
+   :openExternalLink tldraw-handlers/open-external-link
+   :isDev (fn [] (or (state/developer-mode?) config/dev?))
    :inflateAsset (fn [src] (clj->js (pdf-assets/inflate-asset src)))
    :setCurrentPdf (fn [src] (state/set-current-pdf! (if src (pdf-assets/inflate-asset src) nil)))
    :copyToClipboard (fn [text, html] (util/copy-to-clipboard! text :html html))

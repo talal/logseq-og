@@ -87,7 +87,13 @@ export class ImageShape extends TLImageShape<ImageShapeProps> {
     )
   })
 
-  getShapeSVGJsx({ assets }: { assets: TLAsset[] }) {
+  getShapeSVGJsx({
+    assets,
+    makeAssetUrl,
+  }: {
+    assets: TLAsset[]
+    makeAssetUrl: (relativeUrl: string | null) => string
+  }) {
     // Do not need to consider the original point here
     const bounds = this.getBounds()
     const {
@@ -103,15 +109,7 @@ export class ImageShape extends TLImageShape<ImageShapeProps> {
         ? clipping
         : [clipping, clipping, clipping, clipping]
 
-      const make_asset_url = window.logseq?.api?.make_asset_url
-
-      return (
-        <image
-          width={bounds.width}
-          height={bounds.height}
-          href={make_asset_url ? make_asset_url(asset.src) : asset.src}
-        />
-      )
+      return <image width={bounds.width} height={bounds.height} href={makeAssetUrl(asset.src)} />
     } else {
       return super.getShapeSVGJsx({})
     }

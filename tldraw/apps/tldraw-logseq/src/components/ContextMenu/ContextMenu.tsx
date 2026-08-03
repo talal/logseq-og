@@ -1,6 +1,6 @@
 import { useApp } from '@tldraw/react'
 import { LogseqContext } from '../../lib/logseq-context'
-import { MOD_KEY, AlignType, DistributeType, isDev, EXPORT_PADDING } from '@tldraw/core'
+import { MOD_KEY, AlignType, DistributeType, EXPORT_PADDING } from '@tldraw/core'
 import { observer } from 'mobx-react-lite'
 import { TablerIcon } from '../icons'
 import { Button } from '../Button'
@@ -33,8 +33,8 @@ export const ContextMenu = observer(function ContextMenu({
   }
 
   const developerMode = React.useMemo(() => {
-    return isDev()
-  }, [])
+    return handlers.isDev()
+  }, [handlers])
 
   return (
     <LSUI.ContextMenu

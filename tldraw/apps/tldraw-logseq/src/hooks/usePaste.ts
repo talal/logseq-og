@@ -255,13 +255,13 @@ const handleCreatingShapes = async (
     const rawText = dataTransfer.getData('block-uuid')
     if (rawText) {
       const text = rawText.trim()
-      const allSelectedBlocks = window.logseq?.api?.get_selected_blocks?.()
+      const allSelectedBlocks = handlers.getSelectedBlocks()
       const blockUUIDs =
         allSelectedBlocks && allSelectedBlocks?.length > 1
           ? allSelectedBlocks.map(b => b.uuid)
           : [text]
       // ensure all uuid in blockUUIDs is persisted
-      window.logseq?.api?.set_blocks_id?.(blockUUIDs)
+      handlers.setBlocksId(blockUUIDs)
       const tasks = blockUUIDs.map(uuid => tryCreateLogseqPortalShapesFromUUID(`((${uuid}))`))
       const newShapes = (await Promise.all(tasks)).flat().filter(isNonNullable)
       return newShapes.map((s, idx) => {

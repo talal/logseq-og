@@ -208,7 +208,7 @@ const IFrameSourceAction = observer(() => {
 const YoutubeLinkAction = observer(() => {
   const app = useApp<Shape>()
   const {
-    handlers: { t },
+    handlers: { t, openExternalLink },
   } = React.useContext(LogseqContext)
   const shape = filterShapeByAction<YouTubeShape>('YoutubeLink')[0]
   const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,7 +227,7 @@ const YoutubeLinkAction = observer(() => {
       <Button
         tooltip={t('whiteboard/open-youtube-url')}
         type="button"
-        onClick={() => window.logseq?.api?.open_external_link?.(shape.props.url)}
+        onClick={() => openExternalLink(shape.props.url)}
       >
         <TablerIcon name="external-link" />
       </Button>
@@ -238,7 +238,7 @@ const YoutubeLinkAction = observer(() => {
 const TwitterLinkAction = observer(() => {
   const app = useApp<Shape>()
   const {
-    handlers: { t },
+    handlers: { t, openExternalLink },
   } = React.useContext(LogseqContext)
   const shape = filterShapeByAction<TweetShape>('TwitterLink')[0]
   const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,7 +257,7 @@ const TwitterLinkAction = observer(() => {
       <Button
         tooltip={t('whiteboard/open-twitter-url')}
         type="button"
-        onClick={() => window.logseq?.api?.open_external_link?.(shape.props.url)}
+        onClick={() => openExternalLink(shape.props.url)}
       >
         <TablerIcon name="external-link" />
       </Button>

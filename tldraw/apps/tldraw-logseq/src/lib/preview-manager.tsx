@@ -2,6 +2,8 @@ import { BoundsUtils, TLAsset, TLDocumentModel, TLShapeConstructor, TLViewport }
 import ReactDOMServer from 'react-dom/server'
 import { Shape, shapes } from './shapes'
 
+type MakeAssetUrl = (relativeUrl: string | null) => string
+
 const SVG_EXPORT_PADDING = 16
 
 const ShapesMap = new Map(shapes.map(shape => [shape.id, shape]))
@@ -17,7 +19,10 @@ export class PreviewManager {
   shapes: Shape[] | undefined
   pageId: string | undefined
   assets: TLAsset[] | undefined
-  constructor(serializedApp?: TLDocumentModel<Shape>) {
+  constructor(
+    serializedApp: TLDocumentModel<Shape> | undefined,
+    private readonly makeAssetUrl: MakeAssetUrl
+  ) {
     if (serializedApp) {
       this.load(serializedApp)
     }
@@ -97,6 +102,7 @@ export class PreviewManager {
               <g transform={transformArr.join(' ')} key={s.id}>
                 {s.getShapeSVGJsx({
                   assets: this.assets ?? [],
+                  makeAssetUrl: this.makeAssetUrl,
                 })}
               </g>
             )
@@ -137,12 +143,20 @@ export class PreviewManager {
  *
  * @param serializedApp
  */
-export function generateSVGFromModel(serializedApp: TLDocumentModel<Shape>, ratio = 4 / 3) {
-  const preview = new PreviewManager(serializedApp)
+export function generateSVGFromModel(
+  serializedApp: TLDocumentModel<Shape>,
+  makeAssetUrl: MakeAssetUrl,
+  ratio = 4 / 3
+) {
+  const preview = new PreviewManager(serializedApp, makeAssetUrl)
   return preview.exportAsSVG(ratio)
 }
 
-export function generateJSXFromModel(serializedApp: TLDocumentModel<Shape>, ratio = 4 / 3) {
-  const preview = new PreviewManager(serializedApp)
+export function generateJSXFromModel(
+  serializedApp: TLDocumentModel<Shape>,
+  makeAssetUrl: MakeAssetUrl,
+  ratio = 4 / 3
+) {
+  const preview = new PreviewManager(serializedApp, makeAssetUrl)
   return preview.generatePreviewJsx(undefined, ratio)
 }

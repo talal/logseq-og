@@ -130,24 +130,6 @@
      (fn [_error]
        (mkdir-recur! dir)))))
 
-(defn copy!
-  "Only used by Logseq Sync"
-  [repo old-path new-path]
-  (cond
-    (= old-path new-path)
-    (p/resolved nil)
-
-    :else
-    (let [[old-path new-path]
-          (map #(if (util/electron?)
-                  %
-                  (str (config/get-repo-dir repo) "/" %))
-               [old-path new-path])
-          new-dir (path/dirname new-path)]
-      (p/do!
-       (mkdir-if-not-exists new-dir)
-       (protocol/copy! (get-fs old-path) repo old-path new-path)))))
-
 (defn open-dir
   [dir]
   (let [record (get-native-backend)]

@@ -3,14 +3,12 @@
 (ns frontend.util.fs
   "Misc util fns built on top of frontend.fs"
   (:require ["path" :as node-path]
-            [cljs.reader :as reader]
             [clojure.string :as string]
             [frontend.config :as config]
             [frontend.fs :as fs]
             [frontend.state :as state]
             [frontend.util :as util]
-            [logseq.graph-parser.util :as gp-util]
-            [promesa.core :as p]))
+            [logseq.graph-parser.util :as gp-util]))
 
 ;; NOTE: This is not the same ignored-path? as src/electron/electron/utils.cljs.
 ;;       The assets directory is ignored.
@@ -21,7 +19,7 @@
   "Ignore path for ls-dir-files-with-handler! and reload-dir!"
   [dir path]
   (let [ignores ["." ".recycle" "node_modules" "logseq/bak"
-                 "logseq/version-files" "logseq/graphs-txid.edn"]]
+                 "logseq/version-files"]]
     (when (string? path)
       (or
        (some #(string/starts-with? path
@@ -32,7 +30,7 @@
                                        (str "/" % "/")
                                        (str % "/"))) ignores)
        (some #(string/ends-with? path %)
-             [".DS_Store" "logseq/graphs-txid.edn"])
+             [".DS_Store"])
       ;; hidden directory or file
        (let [relpath (node-path/relative dir path)]
          (or (re-find #"/\.[^.]+" relpath)
@@ -43,30 +41,6 @@
           (not
            (some #(string/ends-with? path %)
                  [".md" ".markdown" ".org" ".js" ".edn" ".css"]))))))))
-
-(defn read-graphs-txid-info
-  [root]
-  (when (string? root)
-    (p/let [exists? (fs/file-exists? root "logseq/graphs-txid.edn")]
-      (when exists?
-        (-> (p/let [txid-str (fs/read-file root "logseq/graphs-txid.edn")
-                    txid-meta (and txid-str (reader/read-string txid-str))]
-              txid-meta)
-            (p/catch
-             (fn [^js e]
-               (js/console.error "[fs read txid data error]" e))))))))
-
-(defn inflate-graphs-info
-  [graphs]
-  (if (seq graphs)
-    (p/all (for [{:keys [root] :as graph} graphs]
-             (p/let [sync-meta (read-graphs-txid-info root)]
-               (if sync-meta
-                 (assoc graph
-                        :sync-meta sync-meta
-                        :GraphUUID (second sync-meta))
-                 graph))))
-    []))
 
 (defn read-repo-file
   [repo-url file-rpath]

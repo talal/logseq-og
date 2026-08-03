@@ -9,7 +9,7 @@
 | `src/electron/electron` | Electron main process              | Window lifecycle, filesystem, graph-local theme loading, watchers, search, updater, protocol handlers, and IPC.              |
 | `src/test`              | Main CLJS test suite               | Compiled by Shadow CLJS to a Node test script.                                                                               |
 | `src/bench`             | CLJS benchmarks                    | Separate Clojure alias and test runner.                                                                                      |
-| `scripts/src`           | Babashka task implementations      | Development, publishing, validation, language, and file-sync automation.                                                     |
+| `scripts/src`           | Babashka task implementations      | Development, publishing, validation, language, and filesystem automation.                                                    |
 | `resources`             | Source assets and packaging inputs | HTML, CSS, fonts, icons, preload bridge, and Electron Forge configuration.                                                   |
 | `static`                | Desktop/web assembly output        | Also a nested Node package used by Electron. Contains installed/generated material and should not be read as primary source. |
 
@@ -63,28 +63,28 @@ at the root.
 | Root `package.json`    | Yarn, Shadow CLI wrapper, Gulp, PostCSS | Shared JS dependencies and top-level scripts.                      |
 | `static/package.json`  | Yarn, Electron Forge                    | Runtime dependencies and packaging for the assembled desktop app.  |
 | `packages/ui`          | React, TypeScript, Parcel, Storybook    | React/Radix UI island emitted as a global bundle consumed by CLJS. |
-| `packages/amplify`     | React, Parcel                           | AWS Amplify UI emitted as a global bundle.                         |
 | `tldraw`               | Yarn workspaces, React/TS               | Vendored/forked whiteboard implementation and Logseq adapter.      |
 | `deps/*/package.json`  | Yarn, `nbb-logseq`                      | Node-based tests for portable CLJS libraries.                      |
 | `scripts/package.json` | Yarn                                    | Script-specific Node dependencies.                                 |
 
 There is no root Yarn `workspaces` declaration tying these together.
-Installation is recursive and selective: root `postinstall` installs/builds
-tldraw and Amplify, while other packages have their own lockfiles and commands.
-This isolation prevents some dependency collisions but weakens unified
-dependency policy and reproducibility.
+Installation is recursive and selective: root `postinstall` builds tldraw, while
+other packages have their own lockfiles and commands. This isolation prevents
+some dependency collisions but weakens unified dependency policy and
+reproducibility.
 
 ## Domain-oriented renderer namespaces
 
 - `frontend.components`: Rum view components; many are feature-scale rather than
   purely presentational.
 - `frontend.handler`: commands and orchestration for blocks, pages,
-  repositories, files, routes, export, sync, UI, themes, and configuration.
+  repositories, files, routes, export, local refresh, UI, themes, and
+  configuration.
 - `frontend.modules.outliner`: transaction and file-write pipeline for
   structural editing.
 - `frontend.db`: connection lifecycle, queries, migrations, persistence, and
   reactive subscriptions.
-- `frontend.fs`: browser and Electron filesystem abstraction/synchronization.
+- `frontend.fs`: browser and Electron filesystem abstraction.
 - `frontend.extensions`: code editor, drawing tools, SRS, PDF, video, and other
   rich content.
 - `frontend.state`: the global application atom, event publication, selectors,

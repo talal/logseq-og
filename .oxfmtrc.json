@@ -10,8 +10,9 @@
   "endOfLine": "lf",
   "insertFinalNewline": true,
   "ignorePatterns": [
-    "resources/electron.html",
     "**/*.md",
+    ".agents/**",
+    "resources/electron.html",
     "src/resources/**/*",
     "static/**/*"
   ],

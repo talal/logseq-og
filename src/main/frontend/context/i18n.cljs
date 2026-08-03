@@ -25,7 +25,7 @@
 (defn- fetch-local-language []
   (.. js/window -navigator -language))
 
-;; TODO: Fetch preferred language from backend if user is logged in
+;; Preferred language is stored in local application state.
 (defn start []
   (let [preferred-language (state/sub :preferred-language)]
     (when (nil? preferred-language)

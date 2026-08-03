@@ -18,10 +18,9 @@ rendering runtime.
 The repository is a federated monorepo rather than a single-package workspace.
 Clojure local-root libraries under `deps/` form the reusable domain core; the
 main CLJS app lives under `src/main`; Electron main-process code lives under
-`src/electron`; remaining TypeScript packages provide UI islands, Amplify
-integration, and a vendored tldraw fork. Clojure CLI/Shadow CLJS, Babashka,
-Yarn, Gulp, Parcel, Webpack, and Electron Forge each own a different part of the
-build.
+`src/electron`; the remaining TypeScript packages provide UI islands and a
+vendored tldraw fork. Clojure CLI/Shadow CLJS, Babashka, Yarn, Gulp, Parcel,
+Webpack, and Electron Forge each own a different part of the build.
 
 The architecture's strongest qualities are a portable functional domain layer, a
 clear graph/database abstraction, local-first operation, and reuse of one

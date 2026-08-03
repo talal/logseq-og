@@ -7,12 +7,13 @@
     "node": true
   },
   "ignorePatterns": [
+    "**/.next/**",
     "**/node_modules/**",
     "**/out/**",
-    "**/.next/**",
+    ".agents/**",
     "public/**",
-    "static/**",
     "resources/js/**",
+    "static/**",
     "tldraw/**/*.js",
     "tldraw/**/*.jsx"
   ],

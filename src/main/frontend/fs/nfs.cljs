@@ -187,7 +187,7 @@
 
   (readdir [_this dir]
     ;; This method is only used for repo-dir and version-files dir
-    ;; There's no Logseq Sync support for nfs. So assume dir is always a repo dir.
+    ;; NFS uses this path only for repository files and version history.
     (p/let [repo-url (str "logseq_local_" dir)
             _ (await-permission-granted repo-url)
             handle-path (str "handle/" dir)
@@ -299,13 +299,6 @@
             old-content (protocol/read-file this repo-dir old-rpath nil)
             _ (protocol/write-file! this repo repo-dir new-rpath old-content nil)
             _ (protocol/unlink! this repo old-path nil)]))
-
-  (copy! [this repo old-path new-path]
-    (p/let [repo-dir (config/get-repo-dir repo)
-            old-rpath (path/relative-path repo-dir old-path)
-            new-rpath (path/relative-path repo-dir new-path)
-            content (protocol/read-file this repo-dir old-rpath nil)]
-      (protocol/write-file! this repo repo-dir new-rpath content nil)))
 
   (stat [_this fpath]
     (if-let [handle (get-nfs-file-handle (str "handle/" fpath))]

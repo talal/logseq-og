@@ -84,8 +84,8 @@
   ([ok-handler] (ls-dir-files-with-handler! ok-handler nil))
   ([ok-handler {:keys [on-open-dir dir-result-fn picked-root-fn dir]}]
    (let [electron? (util/electron?)
-         nfs? (not electron?)
-         *repo (atom nil)]
+         nfs?      (not electron?)
+         *repo     (atom nil)]
      (->
       (p/let [result (if (fn? dir-result-fn)
                        (dir-result-fn)
@@ -93,8 +93,8 @@
               _ (when (fn? on-open-dir)
                   (on-open-dir result))
               root-dir (:path result)
-              ;; calling when root picked
-              _ (when (fn? picked-root-fn) (picked-root-fn root-dir))
+              _ (when (fn? picked-root-fn)
+                  (picked-root-fn root-dir))
               repo (str config/local-db-prefix root-dir)]
         (state/set-loading-files! repo true)
         (when-not (or (state/home?) (state/setups-picker?))
@@ -104,33 +104,27 @@
           (p/let [files (:files result)
                   _ (precheck-graph-dir root-dir (:files result))
                   files (-> (->db-files files nfs?)
-                            ;; filter again, in case fs backend does not handle this
                             (filter-ignored-files root-dir nfs?))
-                  markup-files (filter-markup-and-built-in-files files)]
-            (-> files
-                (p/then (fn [result]
-                          ;; handle graphs txid
-                          (p/let [files (mapv #(dissoc % :file/file) result)
-                                  graphs-txid-meta (util-fs/read-graphs-txid-info root-dir)
-                                  graph-uuid (and (vector? graphs-txid-meta) (second graphs-txid-meta))]
-                            (if-let [exists-graph (state/get-sync-graph-by-id graph-uuid)]
-                              (state/pub-event!
-                               [:notification/show
-                                {:content (str "This graph already exists in \"" (:root exists-graph) "\"")
-                                 :status :warning}])
-                              (p/do! (repo-handler/start-repo-db-if-not-exists! repo)
-                                     (global-config-handler/restore-global-config!)
-                                     (repo-handler/load-new-repo-to-db! repo
-                                                                        {:new-graph?   true
-                                                                         :empty-graph? (nil? (seq markup-files))
-                                                                         :file-objs    files})
-                                     (state/add-repo! {:url repo :nfs? true})
-                                     (state/set-loading-files! repo false)
-                                     (when ok-handler (ok-handler {:url repo}))
-                                     (db/persist-if-idle! repo))))))
-                (p/catch (fn [error]
-                           (log/error :nfs/load-files-error repo)
-                           (log/error :exception error)))))))
+                  markup-files (filter-markup-and-built-in-files files)
+                  exists-graph (some #(when (= repo (:url %)) %)
+                                     (state/get-repos))]
+            (if exists-graph
+              (state/pub-event!
+               [:notification/show
+                {:content (str "This graph already exists: " (:url exists-graph))
+                 :status  :warning}])
+              (p/do!
+               (repo-handler/start-repo-db-if-not-exists! repo)
+               (global-config-handler/restore-global-config!)
+               (repo-handler/load-new-repo-to-db!
+                repo
+                {:new-graph?   true
+                 :empty-graph? (nil? (seq markup-files))
+                 :file-objs    files})
+               (state/add-repo! {:url repo :nfs? true})
+               (state/set-loading-files! repo false)
+               (when ok-handler (ok-handler {:url repo}))
+               (db/persist-if-idle! repo))))))
       (p/catch (fn [error]
                  (log/error :exception error)
                  (when (contains? #{"AbortError" "Error"} (gobj/get error "name"))
@@ -230,8 +224,6 @@
           handle-path (str "handle/" repo-dir)
           electron? (util/electron?)
           nfs? (not electron?)]
-      (when re-index?
-        (state/set-graph-syncing? true))
       (->
        (p/let [handle (when-not electron? (idb/get-item handle-path))]
          (when (or handle electron?)
@@ -243,9 +235,7 @@
              (handle-diffs! repo nfs? old-files new-files re-index? ok-handler))))
        (p/catch (fn [error]
                   (log/error :nfs/load-files-error repo)
-                  (log/error :exception error)))
-       (p/finally (fn [_]
-                    (state/set-graph-syncing? false)))))))
+                  (log/error :exception error)))))))
 
 (defn rebuild-index!
   [repo ok-handler]

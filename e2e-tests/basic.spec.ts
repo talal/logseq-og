@@ -62,6 +62,24 @@ test('create page and blocks, save to disk', async ({
   )
 })
 
+test('local-only navigation has no account or cloud sync controls', async ({
+  page,
+}) => {
+  await page.click('.toolbar-dots-btn')
+  const menuText = await page.locator('.dropdown-wrapper').innerText()
+
+  expect(menuText).not.toMatch(/account|sign in|log in|sync|remote graph/i)
+  expect(await page.evaluate(() => 'user' in window)).toBe(false)
+
+  await page.getByText('Settings', { exact: true }).click()
+  const settings = page.locator('#settings')
+  await expect(settings).toBeVisible()
+  expect(await settings.innerText()).not.toMatch(
+    /account|sign in|log in|sync|remote graph/i
+  )
+  await page.keyboard.press('Escape')
+})
+
 test('delete and backspace', async ({ page, block }) => {
   await createRandomPage(page)
 

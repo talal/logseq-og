@@ -24,7 +24,6 @@
             [frontend.handler.editor :as editor-handler]
             [frontend.handler.page :as page-handler]
             [frontend.handler.route :as route-handler]
-            [frontend.handler.user :as user-handler]
             [frontend.handler.whiteboard :as whiteboard-handler]
             [frontend.mixins :as mixins]
             [frontend.modules.shortcut.data-helper :as shortcut-dh]
@@ -849,7 +848,6 @@
         left-sidebar-open?  (state/sub :ui/left-sidebar-open?)
         wide-mode? (state/sub :ui/wide-mode?)
         ls-block-hl-colored? (state/sub :pdf/block-highlight-colored?)
-        onboarding-state (state/sub :file-sync/onboarding-state)
         right-sidebar-blocks (state/sub-right-sidebar-blocks)
         route-name (get-in route-match [:data :name])
         margin-less-pages? (boolean (#{:graph :whiteboard} route-name))
@@ -861,7 +859,6 @@
         window-controls? (and (util/electron?) (not util/mac?) (not native-titlebar?))
         edit? (:editor/editing? @state/state)
         default-home (get-default-home-if-valid)
-        logged? (user-handler/logged-in?)
         preferred-language (state/sub [:preferred-language])]
     (theme/container
      {:t             t
@@ -876,7 +873,6 @@
       :settings-open? settings-open?
       :sidebar-blocks-len (count right-sidebar-blocks)
       :system-theme? system-theme?
-      :onboarding-state onboarding-state
       :preferred-language preferred-language
       :on-click      (fn [e]
                        (editor-handler/unhighlight-blocks!)
@@ -901,7 +897,6 @@
         (header/header {:open-fn        open-fn
                         :light?         light?
                         :current-repo   current-repo
-                        :logged?        logged?
                         :page?          page?
                         :route-match    route-match
                         :default-home   default-home
@@ -911,7 +906,6 @@
 
         (main {:route-match         route-match
                :margin-less-pages?  margin-less-pages?
-               :logged?             logged?
                :home?               home?
                :route-name          route-name
                :indexeddb-support?  indexeddb-support?

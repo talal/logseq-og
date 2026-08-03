@@ -16,11 +16,18 @@ test('enable whiteboards', async ({ page }) => {
 })
 
 test('should display onboarding tour', async ({ page }) => {
-  await page.evaluate(`
-    window.localStorage.removeItem('whiteboard-onboarding-tour?');
-  `)
+  await page.evaluate(() => {
+    window.localStorage.removeItem('whiteboard-onboarding-tour?')
+  })
+  await page.reload()
+  await page.waitForLoadState('domcontentloaded')
+  await page.waitForFunction('window.document.title !== "Loading"')
+  await page.waitForSelector(':has-text("Loading")', {
+    state: 'hidden',
+    timeout: 1000 * 15,
+  })
+  await page.waitForSelector('.nav-header .whiteboard', { state: 'visible' })
   await page.click('.nav-header .whiteboard')
-
   await expect(page.locator('.cp__whiteboard-welcome')).toBeVisible()
   await page.click('.cp__whiteboard-welcome button.skip-welcome')
   await expect(page.locator('.cp__whiteboard-welcome')).toBeHidden()

@@ -68,28 +68,17 @@
       (log/error :diff-merge/diff-merge-2way-calling-failed e))))
 
 (defn- reset-file!*
-  "Parse file considering diff-merge with local or remote file
-   Decide how to treat the parsed file based on the file's triggering event
-   options - 
+  "Parse a file and update the graph for its triggering event.
+   options -
      :fs/reset-event - the event that triggered the file update
-     :fs/local-file-change - file changed on local disk
-     :fs/remote-file-change - file changed on remote"
+     :fs/local-file-change - file changed on local disk"
   [repo-url file-path content {:fs/keys [event] :as options}]
   (let [db-conn (db/get-db repo-url false)]
     (case event
-      ;; the file is already in db, so we can use the existing file's blocks
-      ;; to do the diff-merge
+      ;; The file is already in the DB, so preserve existing block UUIDs.
       :fs/local-file-change
       (graph-parser/parse-file db-conn file-path content (assoc-in options [:extract-options :resolve-uuid-fn] diff-merge-uuids-2ways))
 
-      ;; TODO Junyi: 3 ways to handle remote file change
-      ;; The file is on remote, so we should have 
-      ;;   1. a "common ancestor" file locally
-      ;;     the worst case is that the file is not in db, so we should use the
-      ;;     empty file as the common ancestor
-      ;;   2. a "remote version" just fetched from remote
-
-      ;; default to parse the file
       (graph-parser/parse-file db-conn file-path content options))))
 
 (defn reset-file!

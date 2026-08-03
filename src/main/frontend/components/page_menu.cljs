@@ -5,11 +5,9 @@
             [frontend.context.i18n :refer [t]]
             [frontend.db :as db]
             [frontend.handler.common.developer :as dev-common-handler]
-            [frontend.handler.file-sync :as file-sync-handler]
             [frontend.handler.notification :as notification]
             [frontend.handler.page :as page-handler]
             [frontend.handler.route :as route-handler]
-            [frontend.handler.user :as user-handler]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
@@ -68,13 +66,7 @@
           favorited? (contains? (set (map util/page-name-sanity-lc favorites))
                                 page-name)
           developer-mode? (state/sub [:ui/developer-mode?])
-          file-rpath (when (util/electron?) (page-util/get-page-file-rpath page-name))
-          _ (state/sub :auth/id-token)
-          file-sync-graph-uuid (and (user-handler/logged-in?)
-                                    (file-sync-handler/enable-sync?)
-                                    ;; FIXME: Sync state is not cleared when switching to a new graph
-                                    (file-sync-handler/current-graph-sync-on?)
-                                    (file-sync-handler/get-current-graph-uuid))]
+          file-rpath (when (util/electron?) (page-util/get-page-file-rpath page-name))]
       (when (and page (not block?))
         (->>
          [(when-not config/publishing?
@@ -86,13 +78,6 @@
                          (if favorited?
                            (page-handler/unfavorite-page! page-original-name)
                            (page-handler/favorite-page! page-original-name)))}})
-
-          (when file-sync-graph-uuid
-            {:title   (t :page/version-history)
-             :options {:on-click
-                       (fn []
-                         (state/pub-event! [:graph/pick-page-histories file-sync-graph-uuid page-name]))
-                       :class "cp__btn_history_version"}})
 
           (when (util/electron?)
             {:title   (t :page/copy-page-url)
@@ -138,8 +123,7 @@
                           (if public? false true))
                          (state/close-modal!))}})
 
-          (when (and (util/electron?) file-rpath
-                     (not (file-sync-handler/synced-file-graph? repo)))
+          (when (and (util/electron?) file-rpath)
             {:title   (t :page/open-backup-directory)
              :options {:on-click
                        (fn []

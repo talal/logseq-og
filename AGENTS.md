@@ -15,8 +15,7 @@ browser and Electron targets, plus publishing and other build products.
 - `scripts/src/` — Babashka task implementations
 - `resources/` — source assets, HTML/CSS inputs, packaging files, and Electron
   preload bridge at `resources/js/preload.js`
-- `packages/ui/` and `packages/amplify/` — independently built React/TypeScript
-  bundles
+- `packages/ui/` — independently built React/TypeScript bundle
 - `tldraw/` — vendored Yarn workspace for whiteboard functionality
 - `static/` — assembled/generated runtime output and Electron package
 - `docs/` — repository analysis and project documentation
@@ -81,6 +80,7 @@ executables directly.
 - When writing tests, prefer existing test namespaces and fixtures over
   introducing a new framework.
 - **Follow a REPL-driven workflow for Clojure where practical.**
+  - Prefer evaluating small, focused expressions.
   - At the start of substantive Clojure work, inspect the project with
     `clojure-mcp` before making assumptions about namespaces, vars, or REPL
     state.

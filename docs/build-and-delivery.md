@@ -11,7 +11,7 @@
 | Gulp             | `gulpfile.js`                                      | Copy resources/vendor assets, compile/minify CSS, assemble `static`, and launch packaging.           |
 | PostCSS/Tailwind | root configs                                       | Main application stylesheet generation.                                                              |
 | Electron Forge   | `resources/forge.config.js`, `static/package.json` | macOS, Windows, and Linux packages; signing/notarization and GitHub publishing.                      |
-| Parcel/Webpack   | package-local configs                              | React UI and Amplify globals.                                                                        |
+| Parcel/Webpack   | package-local configs                              | React UI globals.                                                                                    |
 
 ## Shadow build graph
 
@@ -90,7 +90,7 @@ about 30 TypeScript Playwright files. Test layers include:
 - Playwright end-to-end tests, serialised to one worker and stopping after the
   first failure.
 - Babashka validation of Malli schemas, storage/config formats, AST data,
-  translations, file sync, and clj-kondo rules.
+  translations, local filesystem behavior, and clj-kondo rules.
 - Package-local TypeScript/format/lint/build checks.
 
 No `.github/workflows` directory is present in this checkout, even though local

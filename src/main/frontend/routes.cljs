@@ -8,7 +8,6 @@
             [frontend.components.page :as page]
             [frontend.components.repo :as repo]
             [frontend.components.settings :as settings]
-            [frontend.components.user.login :as login]
             [frontend.components.whiteboard :as whiteboard]
             [frontend.extensions.zotero :as zotero]
             [logseq.shui.demo :as shui]))
@@ -82,10 +81,6 @@
    ["/all-journals"
     {:name :all-journals
      :view journal/all-journals}]
-
-   ["/login"
-    {:name :user-login
-     :view login/page}]
 
    ["/ui"
     {:name :ui

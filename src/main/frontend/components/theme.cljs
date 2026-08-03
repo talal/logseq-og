@@ -9,7 +9,6 @@
             [frontend.handler.ui :as ui-handler]
             [frontend.rum :refer [use-mounted]]
             [frontend.state :as state]
-            [frontend.storage :as storage]
             [frontend.ui :as ui]
             [frontend.util :as util]
             [rum.core :as rum]))
@@ -32,7 +31,7 @@
 
 (rum/defc container
   [{:keys [route theme accent-color on-click current-repo nfs-granted? db-restoring?
-           settings-open? sidebar-open? system-theme? sidebar-blocks-len onboarding-state preferred-language]} child]
+           settings-open? sidebar-open? system-theme? sidebar-blocks-len preferred-language]} child]
   (let [mounted-fn (use-mounted)
         [restored-sidebar? set-restored-sidebar?] (rum/use-state false)]
 
@@ -109,10 +108,6 @@
        (when settings-open?
          (fn [] [:div.settings-modal (settings/settings settings-open?)])))
      [settings-open?])
-
-    (rum/use-effect!
-     #(storage/set :file-sync/onboarding-state onboarding-state)
-     [onboarding-state])
 
     [:div.theme-container
      {:on-click on-click}

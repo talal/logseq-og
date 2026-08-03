@@ -89,7 +89,7 @@
          (fn [path]
            (publish-file-event! dir path "change" options)))
     (.on dir-watcher "unlink"
-         ;; delay 500ms for syncing disks
+         ;; delay 500ms for filesystem changes
          (fn [path]
            (logger/debug ::on-unlink {:path path})
            (js/setTimeout #(when (not (fs/existsSync path))

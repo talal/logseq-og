@@ -202,7 +202,7 @@
 
 .is-mac.is-electron
   :is(.cp__header, .cp__right-sidebar-topbar)
-  :is(button, .button, a):not(.file-sync-item) {
+  :is(button, .button, a) {
   cursor: default !important;
 }
 

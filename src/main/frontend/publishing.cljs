@@ -25,16 +25,8 @@
 
 ;; The publishing site should be as thin as possible.
 
-;; There should be two publishing modes:
-;; 1. Graph version, similar to logseq.com
-;; 2. Traditional blog version, much faster to load
-;; We might host the pages or blocks directly on logseq.com in the future.
-
-;; How to publish?
-;; 1. When you click a publish button, it'll downloads a zip which includes the
-;;    html, css, javascript and other files (image, mp3, etc.), the serialized
-;;    data should include all the public pages and blocks.
-;; 2. Built-in sync with GitHub Pages, you should specify a GitHub repo for publishing.
+;; Publishing exports a self-contained archive containing the public pages and
+;; blocks plus their static assets. The export runs entirely on local data.
 
 (defn- unescape-html
   [text]

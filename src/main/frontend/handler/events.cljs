@@ -5,20 +5,16 @@
   (:refer-clojure :exclude [run!])
   (:require
    [clojure.core.async :as async]
-   [clojure.core.async.interop :refer [p->c]]
    [clojure.set :as set]
    [clojure.string :as string]
    [electron.ipc :as ipc]
    [frontend.components.cmdk :as cmdk]
    [frontend.components.conversion :as conversion-component]
    [frontend.components.diff :as diff]
-   [frontend.components.encryption :as encryption]
-   [frontend.components.file-sync :as file-sync]
    [frontend.components.network-proxy :as network-proxy]
    [frontend.components.settings :as settings]
    [frontend.components.shell :as shell]
    [frontend.components.themes :as themes]
-   [frontend.components.user.login :as login]
    [frontend.components.whiteboard :as whiteboard]
    [frontend.config :as config]
    [frontend.context.i18n :refer [t]]
@@ -27,12 +23,10 @@
    [frontend.extensions.srs :as srs]
    [frontend.fs :as fs]
    [frontend.fs.nfs :as nfs]
-   [frontend.fs.sync :as sync]
    [frontend.fs.watcher-handler :as fs-watcher]
    [frontend.handler.common :as common-handler]
    [frontend.handler.editor :as editor-handler]
    [frontend.handler.file :as file-handler]
-   [frontend.handler.file-sync :as file-sync-handler]
    [frontend.handler.notification :as notification]
    [frontend.handler.page :as page-handler]
    [frontend.handler.repo :as repo-handler]
@@ -41,7 +35,6 @@
    [frontend.handler.search :as search-handler]
    [frontend.handler.shell :as shell-handler]
    [frontend.handler.ui :as ui-handler]
-   [frontend.handler.user :as user-handler]
    [frontend.handler.web.nfs :as nfs-handler]
    [frontend.handler.whiteboard :as whiteboard-handler]
    [frontend.idb :as idb]
@@ -51,7 +44,6 @@
    [frontend.state :as state]
    [frontend.ui :as ui]
    [frontend.util :as util]
-   [frontend.util.persist-var :as persist-var]
    [logseq.db.schema :as db-schema]
    [logseq.graph-parser.config :as gp-config]
    [promesa.core :as p]
@@ -60,55 +52,6 @@
 ;; TODO: should we move all events here?
 
 (defmulti handle first)
-
-(defn- file-sync-restart! []
-  (async/go (async/<! (p->c (persist-var/load-vars)))
-            (async/<! (sync/<sync-stop))
-            (some-> (sync/<sync-start) async/<!)))
-
-(defn- file-sync-stop! []
-  (async/go (async/<! (p->c (persist-var/load-vars)))
-            (async/<! (sync/<sync-stop))))
-
-(defn- enable-beta-features!
-  []
-  (when-not (false? (state/enable-sync?)) ; user turns it off
-    (file-sync-handler/set-sync-enabled! true)))
-
-(defmethod handle :user/fetch-info-and-graphs [[_]]
-  (state/set-state! [:ui/loading? :login] false)
-  (async/go
-    (let [result (async/<! (sync/<user-info sync/remoteapi))]
-      (cond
-        (instance? ExceptionInfo result)
-        nil
-        (map? result)
-        (do
-          (state/set-user-info! result)
-          (let [status (if (user-handler/alpha-or-beta-user?) :welcome :unavailable)]
-            (when (and (= status :welcome) (user-handler/logged-in?))
-              (enable-beta-features!)
-              (async/<! (file-sync-handler/load-session-graphs))
-              (p/let [repos (repo-handler/refresh-repos!)]
-                (let [repo (state/get-current-repo)]
-                  (when (some #(and (= (:url %) repo)
-                                    (vector? (:sync-meta %))
-                                    (util/uuid-string? (first (:sync-meta %)))
-                                    (util/uuid-string? (second (:sync-meta %)))) repos)
-                    (sync/<sync-start)))))
-            (ui-handler/re-render-root!)
-            (file-sync/maybe-onboarding-show status)))))))
-
-(defmethod handle :user/logout [[_]]
-  (file-sync-handler/reset-session-graphs)
-  (sync/remove-all-pwd!)
-  (file-sync-handler/reset-user-state!)
-  (login/sign-out!))
-
-(defmethod handle :user/login [[_ host-ui?]]
-  (if (or host-ui? (not util/electron?))
-    (js/window.open config/LOGIN-URL)
-    (login/open-login-modal!)))
 
 (defmethod handle :graph/added [[_ repo {:keys [empty-graph?]}]]
   (db/set-key-value repo :ast/version db-schema/ast-version)
@@ -119,12 +62,7 @@
       (route-handler/redirect! {:to :import :query-params {:from "picker"}})
       (route-handler/redirect-to-home!)))
   (when-let [dir-name (config/get-repo-dir repo)]
-    (fs/watch-dir! dir-name))
-  (file-sync-restart!))
-
-(defmethod handle :graph/unlinked [repo current-repo]
-  (when (= (:url repo) current-repo)
-    (file-sync-restart!)))
+    (fs/watch-dir! dir-name)))
 
 (defn- graph-switch
   [graph]
@@ -135,7 +73,6 @@
     (route-handler/redirect-to-home!))
   (srs/update-cards-due-count!)
   (state/pub-event! [:graph/ready graph])
-  (file-sync-restart!)
   (when-let [dir-name (config/get-repo-dir graph)]
     (fs/watch-dir! dir-name)))
 
@@ -145,9 +82,6 @@
    :on-error   #(ui/notify-graph-persist-error!)})
 
 (defn- graph-switch-on-persisted
-  "Logic for keeping db sync when switching graphs
-   Only works for electron
-   graph: the target graph to switch to"
   [graph {:keys [persist?]}]
   (let [current-repo (state/get-current-repo)]
     (p/do!
@@ -157,27 +91,15 @@
           (repo-handler/persist-db! current-repo persist-db-noti-m)
           (repo-handler/broadcast-persist-db! graph))))
      (repo-handler/restore-and-setup-repo! graph)
-     (graph-switch graph)
-     (state/set-state! :sync-graph/init? false))))
+     (graph-switch graph))))
 
 (defmethod handle :graph/switch [[_ graph opts]]
   (let [opts (if (false? (:persist? opts)) opts (assoc opts :persist? true))]
-    (if (or (not (false? (get @outliner-file/*writes-finished? graph)))
-            (:sync-graph/init? @state/state))
+    (if (not (false? (get @outliner-file/*writes-finished? graph)))
       (graph-switch-on-persisted graph opts)
       (notification/show!
        "Please wait seconds until all changes are saved for the current graph."
        :warning))))
-
-(defmethod handle :graph/pull-down-remote-graph [[_ graph]]
-  (state/set-modal!
-   (file-sync/pick-dest-to-sync-panel graph)
-   {:center? true}))
-
-(defmethod handle :graph/pick-page-histories [[_ graph-uuid page-name]]
-  (state/set-modal!
-   (file-sync/pick-page-histories-panel graph-uuid page-name)
-   {:id :page-histories :label "modal-page-histories"}))
 
 (defmethod handle :graph/open-new-window [[_ev repo]]
   (p/let [current-repo (state/get-current-repo)
@@ -216,7 +138,7 @@
    (not (util/electron?))
     (fn [close-fn]
       [:div
-      ;; TODO: fn translation with args
+       ;; TODO: fn translation with args
        [:p
         "Grant filesystem permission for directory: "
         [:b (config/get-local-dir repo)]]
@@ -361,14 +283,13 @@
   (st/refresh!))
 
 (defn- refresh-cb []
-  (page-handler/create-today-journal!)
-  (file-sync-restart!))
+  (page-handler/create-today-journal!))
 
 (defmethod handle :graph/ask-for-re-fresh [_]
   (handle
    [:modal/show
     [:div {:style {:max-width 700}}
-     [:p (t :sync-from-local-changes-detected)]
+     [:p (t :refresh-from-local-changes-detected)]
      (ui/button
       (t :yes)
       :autoFocus "on"
@@ -377,32 +298,10 @@
                   (state/close-modal!)
                   (nfs-handler/refresh! (state/get-current-repo) refresh-cb)))]]))
 
-(defmethod handle :sync/create-remote-graph [[_ current-repo]]
-  (let [graph-name (js/decodeURI (util/node-path.basename current-repo))]
-    (async/go
-      (async/<! (sync/<sync-stop))
-      (state/set-state! [:ui/loading? :graph/create-remote?] true)
-      (when-let [GraphUUID (get (async/<! (file-sync-handler/create-graph graph-name)) 2)]
-        (async/<! (sync/<sync-start))
-        (state/set-state! [:ui/loading? :graph/create-remote?] false)
-        ;; update existing repo
-        (state/set-repos! (map (fn [r]
-                                 (if (= (:url r) current-repo)
-                                   (assoc r
-                                          :GraphUUID GraphUUID
-                                          :GraphName graph-name
-                                          :remote? true)
-                                   r))
-                               (state/get-repos)))))))
-
 (defmethod handle :graph/re-index [[_]]
-  ;; Ensure the graph only has ONE window instance
-  (async/go
-    (async/<! (sync/<sync-stop))
-    (repo-handler/re-index!
-     nfs-handler/rebuild-index!
-     #(do (page-handler/create-today-journal!)
-          (file-sync-restart!)))))
+  (repo-handler/re-index!
+   nfs-handler/rebuild-index!
+   #(page-handler/create-today-journal!)))
 
 ;; FIXME: move
 (defn- clear-cache!
@@ -442,16 +341,6 @@
                     (state/close-modal!)
                     (state/pub-event! [:graph/re-index])))]])))
 
-(defmethod handle :modal/remote-encryption-input-pw-dialog [[_ repo-url remote-graph-info type opts]]
-  (state/set-modal!
-   (encryption/input-password
-    repo-url nil (merge
-                  (assoc remote-graph-info
-                         :type (or type :create-pwd-remote)
-                         :repo repo-url)
-                  opts))
-   {:center? true :close-btn? false :close-backdrop? false}))
-
 (defmethod handle :journal/insert-template [[_ page-name]]
   (let [page-name (util/page-name-sanity-lc page-name)]
     (when-let [page (db/pull [:block/name page-name])]
@@ -466,47 +355,12 @@
   (when-let [id (:block/uuid block)]
     (editor-handler/set-heading! id heading)))
 
-(defmethod handle :file-sync-graph/restore-file [[_ graph page-entity content]]
-  (when (db/get-db graph)
-    (let [file (:block/file page-entity)]
-      (when-let [path (:file/path file)]
-        (when (and (not= content (:file/content file))
-                   (:file/content file))
-          (sync/add-new-version-file graph path (:file/content file)))
-        (p/let [_ (file-handler/alter-file graph
-                                           path
-                                           content
-                                           {:re-render-root? true
-                                            :skip-compare? true})]
-          (state/close-modal!)
-          (route-handler/redirect! {:to :page
-                                    :path-params {:name (:block/name page-entity)}}))))))
-
 (defmethod handle :whiteboard/onboarding [[_ opts]]
   (state/set-modal!
    (fn [close-fn] (whiteboard/onboarding-welcome close-fn))
    (merge {:close-btn?      false
            :center?         true
            :close-backdrop? false} opts)))
-
-(defmethod handle :file-sync/onboarding-tip [[_ type opts]]
-  (let [type (keyword type)]
-    (state/set-modal!
-     (file-sync/make-onboarding-panel type)
-     (merge {:close-btn?      false
-             :center?         true
-             :close-backdrop? (not= type :welcome)} opts))))
-
-(defmethod handle :file-sync/maybe-onboarding-show [[_ type]]
-  (file-sync/maybe-onboarding-show type))
-
-(defmethod handle :file-sync/storage-exceed-limit [[_]]
-  (notification/show! "file sync storage exceed limit" :warning false)
-  (file-sync-stop!))
-
-(defmethod handle :file-sync/graph-count-exceed-limit [[_]]
-  (notification/show! "file sync graph count exceed limit" :warning false)
-  (file-sync-stop!))
 
 (defmethod handle :graph/restored [[_ _graph]]
   (state/publish-graph-ready!))
@@ -549,7 +403,7 @@
        "We suggest you upgrade now to avoid potential bugs."]
       (when (seq paths)
         [:p
-         "For example, the files below have reserved characters that can't be synced on some platforms."])]]
+         "For example, the files below have reserved characters that aren't supported on some platforms."])]]
     (ui/button
      "Update filename format"
      :aria-label "Update filename format"
@@ -565,35 +419,8 @@
    :warning
    false))
 
-(defmethod handle :ui/notify-skipped-downloading-files [[_ paths]]
-  (notification/show!
-   [:div
-    [:div.mb-4
-     [:div.font-semibold.mb-4.text-xl "It seems that some of your filenames are in the outdated format."]
-     [:p
-      "The files below that have reserved characters can't be saved on this device."]
-     [:div.overflow-y-auto.max-h-96
-      [:ol.my-2
-       (for [path paths]
-         [:li path])]]
-
-     [:div
-      [:p
-       "Check " [:a {:href "https://docs.logseq.com/#/page/logseq%20file%20and%20folder%20naming%20rules"
-                     :target "_blank"}
-                 "Logseq file and folder naming rules"]
-       " for more details."]
-      [:p
-       (util/format "To solve this problem, we suggest you quit Logseq and update the filename format (on Settings > Advanced > Filename format > click EDIT button)%s to avoid more potential bugs."
-                    (if util/mac?
-                      ""
-                      " in other devices"))]]]]
-   :warning
-   false))
-
 (defmethod handle :graph/setup-a-repo [[_ opts]]
-  (let [opts' (merge {:picked-root-fn #(state/close-modal!)
-                      :logged?        (user-handler/logged-in?)} opts)]
+  (let [opts' (merge {:picked-root-fn #(state/close-modal!)} opts)]
     (page-handler/ls-dir-files! st/refresh! opts')))
 
 (defmethod handle :file/alter [[_ repo path content]]

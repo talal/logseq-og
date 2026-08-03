@@ -3,7 +3,6 @@
   cursors"
   (:require [cljs-bean.core :as bean]
             [cljs.core.async :as async :refer [<! >!]]
-            [cljs.spec.alpha :as s]
             [clojure.string :as string]
             [dommy.core :as dom]
             [electron.ipc :as ipc]
@@ -55,7 +54,7 @@
      ;; TODO: how to detect the network reliably?
       :network/online?         true
       :indexeddb/support?      true
-      :me                      nil
+      :local/preferences                    nil
       :repo/current            current-graph
       :draw?                   false
       :db/restoring?           nil
@@ -196,7 +195,6 @@
 
      ;; all notification contents as k-v pairs
       :notification/contents                 {}
-      :graph/syncing?                        false
      ;; graph -> state
       :graph/parsing-state                   {}
 
@@ -222,35 +220,6 @@
       :srs/cards-due-count                   nil
 
       :reactive/query-dbs                    {}
-
-     ;; login, userinfo, token, ...
-      :auth/refresh-token                    (storage/get "refresh-token")
-      :auth/access-token                     nil
-      :auth/id-token                         nil
-
-     ;; file-sync
-      :file-sync/jstour-inst                   nil
-      :file-sync/onboarding-state            (or (storage/get :file-sync/onboarding-state)
-                                                 {:welcome false})
-      :file-sync/remote-graphs               {:loading false :graphs nil}
-      :file-sync/set-remote-graph-password-result {}
-
-     ;; graph-uuid -> {:graphs-txid {}
-     ;;                :file-sync/sync-manager {}
-     ;;                :file-sync/sync-state {}
-     ;;                ;; {file-path -> payload}
-     ;;                :file-sync/progress {}
-     ;;                :file-sync/start-time {}
-     ;;                :file-sync/last-synced-at {}}
-      :file-sync/graph-state                 {:current-graph-uuid nil}
-                                             ;; graph-uuid -> ...
-
-      :user/info                             {:UserGroups (storage/get :user-groups)}
-      :encryption/graph-parsing?             false
-
-      :ui/loading?                           {}
-      :feature/enable-sync?                  (storage/get :logseq-sync-enabled)
-      :feature/enable-sync-diff-merge?       ((fnil identity true) (storage/get :logseq-sync-diff-merge-enabled))
 
       :file/rename-event-chan                (async/chan 100)
       :ui/find-in-page                       nil
@@ -286,7 +255,7 @@
   (when (and block-uuid content)
     (get-in @blocks-ast-cache [block-uuid content])))
 
-;; User configuration getters under :config (and sometimes :me)
+;; User configuration getters under :config and local preferences
 ;; ========================================
 ;; TODO: Refactor default config values to be data driven. Currently they are all
 ;;  buried in getters
@@ -411,7 +380,7 @@ should be done through this fn in order to get global config and config defaults
      (when-let [fmt (:preferred-format (get-config repo-url))]
        (string/lower-case (name fmt)))
 
-     (get-in @state [:me :preferred_format] "markdown")))))
+     (get-in @state [:local/preferences :preferred_format] "markdown")))))
 
 (defn markdown?
   []
@@ -457,7 +426,7 @@ should be done through this fn in order to get global config and config defaults
         (if (util/safe-re-find #"now|NOW" workflow)
           :now
           :todo)))
-    (get-in @state [:me :preferred_workflow] :now))))
+    (get-in @state [:local/preferences :preferred_workflow] :now))))
 
 (defn get-preferred-todo
   []
@@ -489,7 +458,7 @@ should be done through this fn in order to get global config and config defaults
 (defn get-start-of-week
   []
   (or (:start-of-week (get-config))
-      (get-in @state [:me :settings :start-of-week])
+      (get-in @state [:local/preferences :settings :start-of-week])
       6))
 
 (defn get-ref-open-blocks-level
@@ -569,14 +538,6 @@ Similar to re-frame subscriptions"
    (enable-flashcards? (get-current-repo)))
   ([repo]
    (not (false? (:feature/enable-flashcards? (sub-config repo))))))
-
-(defn enable-sync?
-  []
-  (sub :feature/enable-sync?))
-
-(defn enable-sync-diff-merge?
-  []
-  (sub :feature/enable-sync-diff-merge?))
 
 (defn enable-whiteboards?
   ([]
@@ -658,10 +619,6 @@ Similar to re-frame subscriptions"
   (and (document-mode?)
        (not (:shortcut/doc-mode-enter-for-new-block? (get-config)))))
 
-(defn user-groups
-  []
-  (set (sub [:user/info :UserGroups])))
-
 ;; State mutation helpers
 ;; ======================
 
@@ -730,55 +687,18 @@ Similar to re-frame subscriptions"
   (or (:repo/current @state)
       "local"))
 
-(defn get-remote-graphs
-  []
-  (get-in @state [:file-sync/remote-graphs :graphs]))
-
-(defn get-remote-graph-info-by-uuid
-  [uuid]
-  (when-let [graphs (seq (get-in @state [:file-sync/remote-graphs :graphs]))]
-    (some #(when (= (:GraphUUID %) (str uuid)) %) graphs)))
-
-(defn get-remote-graph-usage
-  []
-  (when-let [graphs (seq (get-in @state [:file-sync/remote-graphs :graphs]))]
-    (->> graphs
-         (map #(hash-map :uuid (:GraphUUID %)
-                         :name (:GraphName %)
-                         :used-gbs (/ (:GraphStorageUsage %) 1024 1024 1024)
-                         :limit-gbs (/ (:GraphStorageLimit %) 1024 1024 1024)
-                         :used-percent (/ (:GraphStorageUsage %) (:GraphStorageLimit %) 0.01)))
-         (map #(assoc % :free-gbs (- (:limit-gbs %) (:used-gbs %))))
-         (vec))))
-
-(defn delete-remote-graph!
-  [repo]
-  (swap! state update-in [:file-sync/remote-graphs :graphs]
-         (fn [repos]
-           (remove #(and
-                     (:GraphUUID repo)
-                     (:GraphUUID %)
-                     (= (:GraphUUID repo) (:GraphUUID %))) repos))))
-
-(defn add-remote-graph!
-  [repo]
-  (swap! state update-in [:file-sync/remote-graphs :graphs]
-         (fn [repos]
-           (->> (conj repos repo)
-                (distinct)))))
-
 (defn get-repos
   []
-  (get-in @state [:me :repos]))
+  (get-in @state [:local/preferences :repos]))
 
 (defn set-repos!
   [repos]
-  (set-state! [:me :repos] repos))
+  (set-state! [:local/preferences :repos] repos))
 
 (defn add-repo!
   [repo]
   (when (not (string/blank? repo))
-    (update-state! [:me :repos]
+    (update-state! [:local/preferences :repos]
                    (fn [repos]
                      (->> (conj repos repo)
                           (distinct))))))
@@ -793,11 +713,11 @@ Similar to re-frame subscriptions"
 
 (defn set-preferred-format!
   [format]
-  (swap! state assoc-in [:me :preferred_format] (name format)))
+  (swap! state assoc-in [:local/preferences :preferred_format] (name format)))
 
 (defn set-preferred-workflow!
   [workflow]
-  (swap! state assoc-in [:me :preferred_workflow] (name workflow)))
+  (swap! state assoc-in [:local/preferences :preferred_workflow] (name workflow)))
 
 (defn set-preferred-language!
   [language]
@@ -806,13 +726,9 @@ Similar to re-frame subscriptions"
 
 (defn delete-repo!
   [repo]
-  (swap! state update-in [:me :repos]
+  (swap! state update-in [:local/preferences :repos]
          (fn [repos]
-           (->> (remove #(or (= (:url repo) (:url %))
-                             (and
-                              (:GraphUUID repo)
-                              (:GraphUUID %)
-                              (= (:GraphUUID repo) (:GraphUUID %)))) repos)
+           (->> (remove #(= (:url repo) (:url %)) repos)
                 (util/distinct-by :url)))))
 
 (defn set-timestamp-block!
@@ -1273,10 +1189,6 @@ Similar to re-frame subscriptions"
   [value]
   (set-state! :today value))
 
-(defn get-me
-  []
-  (:me @state))
-
 (defn set-db-restoring!
   [value]
   (set-state! :db/restoring? value))
@@ -1470,10 +1382,6 @@ Similar to re-frame subscriptions"
   (when-let [app (active-tldraw-app)]
     (and (= 1 (.. app -selectedShapesArray -length))
          (= (.. app -editingShape) (.. app -selectedShapesArray (at 0))))))
-
-(defn set-graph-syncing?
-  [value]
-  (set-state! :graph/syncing? value))
 
 (defn set-editor-in-composition!
   [value]
@@ -1782,62 +1690,6 @@ Similar to re-frame subscriptions"
     {:custom-query? (:custom-query? config)
      :ref? (:ref? config)}))
 
-(defn set-auth-id-token
-  [id-token]
-  (set-state! :auth/id-token id-token))
-
-(defn set-auth-refresh-token
-  [refresh-token]
-  (set-state! :auth/refresh-token refresh-token))
-
-(defn set-auth-access-token
-  [access-token]
-  (set-state! :auth/access-token access-token))
-
-(defn get-auth-id-token []
-  (sub :auth/id-token))
-
-(defn get-auth-refresh-token []
-  (:auth/refresh-token @state))
-
-(defn set-file-sync-manager [graph-uuid v]
-  (when (and graph-uuid v)
-    (set-state! [:file-sync/graph-state graph-uuid :file-sync/sync-manager] v)))
-
-(defn get-file-sync-manager [graph-uuid]
-  (get-in @state [:file-sync/graph-state graph-uuid :file-sync/sync-manager]))
-
-(defn clear-file-sync-state! [graph-uuid]
-  (set-state! [:file-sync/graph-state graph-uuid] nil))
-
-(defn clear-file-sync-progress! [graph-uuid]
-  (set-state! [:file-sync/graph-state
-               graph-uuid
-               :file-sync/progress]
-              nil))
-
-(defn set-file-sync-state [graph-uuid v]
-  (when v (s/assert :frontend.fs.sync/sync-state v))
-  (set-state! [:file-sync/graph-state graph-uuid :file-sync/sync-state] v))
-
-(defn get-current-file-sync-graph-uuid
-  []
-  (get-in @state [:file-sync/graph-state :current-graph-uuid]))
-
-(defn sub-current-file-sync-graph-uuid
-  []
-  (sub [:file-sync/graph-state :current-graph-uuid]))
-
-(defn get-file-sync-state
-  ([]
-   (get-file-sync-state (get-current-file-sync-graph-uuid)))
-  ([graph-uuid]
-   (get-in @state [:file-sync/graph-state graph-uuid :file-sync/sync-state])))
-
-(defn sub-file-sync-state
-  [graph-uuid]
-  (sub [:file-sync/graph-state graph-uuid :file-sync/sync-state]))
-
 (defn reset-parsing-state!
   []
   (set-state! [:graph/parsing-state (get-current-repo)] {}))
@@ -1853,14 +1705,6 @@ Similar to re-frame subscriptions"
     (when (and  (not (contains? #{"system"} type))
                 (every? not-empty (vals agent-opts)))
       (str protocol "://" host ":" port))))
-
-(defn get-sync-graph-by-id
-  [graph-uuid]
-  (when graph-uuid
-    (let [graph (first (filter #(= graph-uuid (:GraphUUID %))
-                               (get-repos)))]
-      (when (:url graph)
-        graph))))
 
 (defn unlinked-dir?
   [dir]
@@ -1910,21 +1754,6 @@ Similar to re-frame subscriptions"
      (when (and shape-id (parse-uuid shape-id))
        (. api selectShapes shape-id)
        (. api zoomToSelection)))))
-
-(defn set-user-info!
-  [info]
-  (when info
-    (set-state! :user/info info)
-    (let [groups (:UserGroups info)]
-      (when (seq groups)
-        (storage/set :user-groups groups)))))
-
-(defn get-user-info []
-  (sub :user/info))
-
-(defn clear-user-info!
-  []
-  (storage/remove :user-groups))
 
 (defn get-color-accent []
   (get @state :ui/radix-color))

@@ -2,6 +2,7 @@
   (:require [clojure.test :refer [deftest is use-fixtures testing]]
             [frontend.db.utils :as db-utils]
             [frontend.handler.route :as route-handler]
+            [frontend.routes :as routes]
             [frontend.test.helper :as test-helper :refer [load-test-files]]))
 
 (use-fixtures :each {:before test-helper/start-test-db!
@@ -58,3 +59,7 @@ foo:: bar
     (is (= {:to :page :path-params {:name "page name"}}
            (#'route-handler/default-page-route "Page name"))
         "Generates a case insensitive page link")))
+
+(deftest local-only-routes
+  (is (not-any? #(contains? #{:user-login :remote-graph :sync} (:name %))
+                (map second routes/routes))))

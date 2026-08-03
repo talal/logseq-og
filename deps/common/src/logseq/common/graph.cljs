@@ -48,7 +48,7 @@ Rules:
 
 - Paths starting with '.' are ignored
 - Paths ending with '.DS_Store' are ignored
-- Dynamic caches used by Logseq are ignored: graph-txid.edn and pages-metadata.edn
+- Dynamic caches used by Logseq are ignored: pages-metadata.edn
 - Contents in '**/node_modules/' are ignored
 - Contents in '/logseq/.recycle/' are ignored
 - Contents in '/logseq/bak/' are ignored
@@ -62,7 +62,7 @@ Rules:
       (or
        (some #(string/starts-with? rpath %)
              ["." "logseq/.recycle" "logseq/bak" "logseq/version-files"])
-       (contains? #{"logseq/graphs-txid.edn" "logseq/pages-metadata.edn"} rpath)
+       (contains? #{"logseq/pages-metadata.edn"} rpath)
        (some #(string/includes? rpath (str "/" % "/"))
              ["node_modules"])
        (some #(string/ends-with? rpath %)

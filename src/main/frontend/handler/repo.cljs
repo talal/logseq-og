@@ -1,38 +1,36 @@
 (ns frontend.handler.repo
   "System-component-like ns that manages user's repos/graphs"
-  (:require [cljs-bean.core :as bean]
-            [clojure.core.async :as async]
-            [clojure.string :as string]
-            [electron.ipc :as ipc]
-            [frontend.config :as config]
-            [frontend.context.i18n :refer [t]]
-            [frontend.date :as date]
-            [frontend.db :as db]
-            [frontend.db.persist :as db-persist]
-            [frontend.fs :as fs]
-            [frontend.fs.nfs :as nfs]
-            [frontend.handler.common.file :as file-common-handler]
-            [frontend.handler.file :as file-handler]
-            [frontend.handler.global-config :as global-config-handler]
-            [frontend.handler.repo-config :as repo-config-handler]
-            [frontend.handler.route :as route-handler]
-            [frontend.handler.ui :as ui-handler]
-            [frontend.idb :as idb]
-            [frontend.search :as search]
-            [frontend.spec :as spec]
-            [frontend.state :as state]
-            [frontend.util :as util]
-            [logseq.common.config :as common-config]
-            [logseq.common.path :as path]
-            [logseq.graph-parser :as graph-parser]
-            [logseq.graph-parser.config :as gp-config]
-            [medley.core :as medley]
-            [promesa.core :as p]
-            [shadow.resource :as rc]))
+  (:require
+   [clojure.core.async :as async]
+   [clojure.string :as string]
+   [electron.ipc :as ipc]
+   [frontend.config :as config]
+   [frontend.context.i18n :refer [t]]
+   [frontend.date :as date]
+   [frontend.db :as db]
+   [frontend.db.persist :as db-persist]
+   [frontend.fs :as fs]
+   [frontend.fs.nfs :as nfs]
+   [frontend.handler.common.file :as file-common-handler]
+   [frontend.handler.file :as file-handler]
+   [frontend.handler.global-config :as global-config-handler]
+   [frontend.handler.repo-config :as repo-config-handler]
+   [frontend.handler.route :as route-handler]
+   [frontend.handler.ui :as ui-handler]
+   [frontend.idb :as idb]
+   [frontend.search :as search]
+   [frontend.spec :as spec]
+   [frontend.state :as state]
+   [frontend.util :as util]
+   [logseq.common.config :as common-config]
+   [logseq.common.path :as path]
+   [logseq.graph-parser :as graph-parser]
+   [logseq.graph-parser.config :as gp-config]
+   [medley.core :as medley]
+   [promesa.core :as p]
+   [shadow.resource :as rc]))
 
-;; Project settings should be checked in two situations:
-;; 1. User changes the config.edn directly in logseq.com (fn: alter-file)
-;; 2. A config file or sync reload loads the new change (fn: load-files)
+;; Project settings are loaded from the graph's local config.edn.
 
 (defn create-contents-file
   [repo-url]
@@ -460,58 +458,26 @@
 (defn get-repos
   []
   (p/let [nfs-dbs (db-persist/get-all-graphs)
-          nfs-dbs (map (fn [db]
-                         {:url db
+          repos   (map (fn [db]
+                         {:url  db
                           :root (config/get-local-dir db)
-                          :nfs? true}) nfs-dbs)
-          nfs-dbs (and (seq nfs-dbs)
-                       (cond (util/electron?)
-                             (ipc/ipc :inflateGraphsInfo nfs-dbs)
-
-                             :else
-                             nil))
-          nfs-dbs (seq (bean/->clj nfs-dbs))]
-    (cond
-      (seq nfs-dbs)
-      nfs-dbs
-
-      :else
+                          :nfs? true})
+                       nfs-dbs)]
+    (if (seq repos)
+      repos
       [{:url config/local-repo
         :example? true}])))
 
-(defn combine-local-&-remote-graphs
-  [local-repos remote-repos]
-  (when-let [repos' (seq (concat (map #(if-let [sync-meta (seq (:sync-meta %))]
-                                         (assoc % :GraphUUID (second sync-meta)) %)
-                                      local-repos)
-                                 (some->> remote-repos
-                                          (map #(assoc % :remote? true)))))]
-    (let [repos' (group-by :GraphUUID repos')
-          repos'' (mapcat (fn [[k vs]]
-                            (if-not (nil? k)
-                              [(merge (first vs) (second vs))] vs))
-                          repos')]
-      (sort-by (fn [repo]
-                 (let [graph-name (or (:GraphName repo)
-                                      (last (string/split (:root repo) #"/")))]
-                   [(:remote? repo) (string/lower-case graph-name)])) repos''))))
-
 (defn get-detail-graph-info
   [url]
-  (when-let [graphs (seq (and url (combine-local-&-remote-graphs
-                                   (state/get-repos)
-                                   (state/get-remote-graphs))))]
-    (first (filter #(when-let [url' (:url %)]
-                      (= url url')) graphs))))
+  (some #(when (= url (:url %)) %)
+        (state/get-repos)))
 
 (defn refresh-repos!
   []
-  (p/let [repos (get-repos)
-          repos' (combine-local-&-remote-graphs
-                  repos
-                  (state/get-remote-graphs))]
-    (state/set-repos! repos')
-    repos'))
+  (p/let [repos (get-repos)]
+    (state/set-repos! repos)
+    repos))
 
 (defn graph-ready!
   ;; FIXME: Call electron that the graph is loaded, an ugly implementation for redirect to page when graph is restored

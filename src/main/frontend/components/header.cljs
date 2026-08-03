@@ -2,7 +2,6 @@
   (:require [cljs-bean.core :as bean]
             [clojure.string :as string]
             [frontend.components.export :as export]
-            [frontend.components.file-sync :as fs-sync]
             [frontend.components.page-menu :as page-menu]
             [frontend.components.right-sidebar :as sidebar]
             [frontend.components.svg :as svg]
@@ -10,10 +9,7 @@
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.handler :as handler]
-            [frontend.handler.file-sync :as file-sync-handler]
             [frontend.handler.route :as route-handler]
-            [frontend.handler.user :as user-handler]
-            [frontend.handler.web.nfs :as nfs]
             [frontend.state :as state]
             [frontend.ui :as ui]
             [frontend.util :as util]
@@ -29,23 +25,6 @@
      {:title (t :home)
       :on-click #(route-handler/redirect-to-home!)}
      (ui/icon "home" {:size ui/icon-size})]))
-
-(rum/defc login < rum/reactive
-  < {:key-fn #(identity "login-button")}
-  []
-  (let [_ (state/sub :auth/id-token)
-        loading? (state/sub [:ui/loading? :login])
-        sync-enabled? (file-sync-handler/enable-sync?)
-        logged? (user-handler/logged-in?)]
-    (when-not (or config/publishing?
-                  logged?
-                  (not sync-enabled?))
-      [:span.flex.space-x-2
-       [:a.button.text-sm.font-medium.block.text-gray-11
-        {:on-click #(state/pub-event! [:user/login])}
-        [:span (t :login)]
-        (when loading?
-          [:span.ml-2 (ui/loading "")])]])))
 
 (rum/defc left-menu-button < rum/reactive
   < {:key-fn #(identity "left-menu-toggle-button")}
@@ -75,8 +54,8 @@
   [{:keys [current-repo t]}]
   (let [page-menu (page-menu/page-menu nil)
         page-menu-and-hr (when (seq page-menu)
-                           (concat page-menu [{:hr true}]))
-        login? (and (state/sub :auth/id-token) (user-handler/logged-in?))]
+                           (concat page-menu [{:hr true}]))]
+
     (ui/dropdown-with-links
      (fn [{:keys [toggle-fn]}]
        [:button.button.icon.toolbar-dots-btn
@@ -121,17 +100,8 @@
        (when config/publishing?
          {:title (t :toggle-theme)
           :options {:on-click #(state/toggle-theme!)}
-          :icon (ui/icon "bulb")})
+          :icon (ui/icon "bulb")})]
 
-       (when login? {:hr true})
-       (when login?
-         {:item [:span.flex.flex-col.relative.group.pt-1
-                 [:b.leading-none (user-handler/username)]
-                 [:small.opacity-70 (user-handler/email)]
-                 [:i.absolute.opacity-0.group-hover:opacity-100.text-red-rx-09
-                  {:class "right-1 top-3" :title (t :logout)}
-                  (ui/icon "logout")]]
-          :options {:on-click #(user-handler/logout)}})]
       (concat page-menu-and-hr)
       (remove nil?))
      {})))
@@ -176,21 +146,16 @@
 
 (rum/defc header < rum/reactive
   [{:keys [open-fn current-repo default-home new-block-mode]}]
-  (let [repos (->> (state/sub [:me :repos])
-                   (remove #(= (:url %) config/local-repo)))
-        _ (state/sub [:user/info :UserGroups])
-        electron-mac? (and util/mac? (util/electron?))
-        show-open-folder? (and (nfs/supported?)
-                               (or (empty? repos)
-                                   (nil? (state/sub :repo/current)))
+  (let [electron-mac?    (and util/mac? (util/electron?))
+        show-open-folder? (and (nil? (state/sub :repo/current))
                                (not config/publishing?))
         left-menu (left-menu-button {:on-click (fn []
                                                  (open-fn)
                                                  (state/set-left-sidebar-open!
                                                   (not (:ui/left-sidebar-open? @state/state))))})
         custom-home-page? (and (state/custom-home-page?)
-                               (= (state/sub-default-home-page) (state/get-current-page)))
-        sync-enabled? (file-sync-handler/enable-sync?)]
+                               (= (state/sub-default-home-page) (state/get-current-page)))]
+
     [:div.cp__header.drag-region#head
      {:class           (util/classnames [{:electron-mac electron-mac?}])
       :on-double-click (fn [^js e]
@@ -209,17 +174,10 @@
             (ui/icon "search" {:size ui/icon-size})]))]]
 
      [:div.r.flex.drag-region
-      (when (and current-repo
-                 (not (config/demo-graph? current-repo))
-                 (user-handler/alpha-or-beta-user?))
-        (fs-sync/indicator))
 
       (when (and (not= (state/get-current-route) :home)
                  (not custom-home-page?))
         (home-button))
-
-      (when sync-enabled?
-        (login))
 
       (when (util/electron?)
         (back-and-forward))

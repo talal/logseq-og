@@ -168,7 +168,7 @@
          :whiteboard/color :whiteboard/connector :whiteboard/text :whiteboard/triangle}
    :es #{:settings-page/tab-general :settings-page/tab-editor :whiteboard/color :right-side-bar/history-global}
    :it #{:home :handbook/home :host :help/awesome-logseq :on-boarding/section-computer
-         :settings-page/tab-account :settings-page/tab-editor :whiteboard/link}
+         :settings-page/tab-editor :whiteboard/link}
    :nl #{:type :left-side-bar/nav-recent-pages}
    :pl #{:port :home :host :whiteboard/link}
    :pt-BR #{:right-side-bar/flashcards :settings-page/enable-flashcards :page/backlinks

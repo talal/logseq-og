@@ -377,9 +377,6 @@
  ;;  :redirect-page? false          ;; Default value: false
  ;;  :default-page "quick capture"} ;; Default page: "quick capture"
 
- ;; File sync options
- ;; Ignore these files when syncing, regexp is supported.
- ;; :file-sync/ignore-files []
 
  ;; Configure the Enter key behavior for
  ;; context-aware editing with DWIM (Do What I Mean).
@@ -400,7 +397,7 @@
  ;;   This is a dangerous operation. To modify the setting,
  ;;   access the 'Filename format' setting and follow the instructions.
  ;;   Otherwise, You may need to manually rename all affected files and
- ;;   re-index them on all clients after synchronization.
+ ;;   re-index each affected graph.
  ;;   Incorrect handling may result in messy page titles.
  ;; Available options:
  ;;   - :triple-lowbar (default)

@@ -9,15 +9,13 @@
   ;; TODO(andelf): clarify the return value. How is this different from `get-files`?
   (readdir [this dir]
     "Read directory and return list of files. Won't read file out.
-     Used by initial watcher, version files of Logseq Sync.
-     
+     Used by the initial filesystem watcher and version-history reader.
      => [string]")
   (unlink! [this repo path opts])
   (rmdir! [this dir])
   (read-file [this dir path opts])
   (write-file! [this repo dir path content opts])
   (rename! [this repo old-path new-path])
-  (copy! [this repo old-path new-path])
   (stat [this path]
     "=> {:type string :size number :mtime number}")
 

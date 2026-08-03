@@ -421,14 +421,6 @@ button.menu:focus {
   @apply my-1 opacity-50 border-t;
 }
 
-a.login {
-  color: var(--ls-link-text-color, #444);
-}
-
-a.login:hover {
-  color: var(--ls-link-text-hover-color, #000);
-}
-
 a.tooltip-priority {
   display: contents;
   position: absolute;

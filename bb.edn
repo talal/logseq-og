@@ -89,8 +89,6 @@
   lang:validate-translations
   logseq.tasks.lang/validate-translations
 
-  file-sync:integration-tests
-  logseq.tasks.file-sync/integration-tests
 
   ;; Node asset steps used by ClojureScript builds
   assets:build

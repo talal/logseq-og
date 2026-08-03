@@ -21,7 +21,7 @@ sequence is imperative and order-sensitive:
 
 1. Install global error handling and platform listeners.
 2. Register component callbacks and command-palette commands in global state.
-3. Restore user tokens and mark the database as restoring.
+3. Mark the local database as restoring.
 4. Attach Electron listeners when hosted by Electron.
 5. Mount the Rum root and start fragment-based Reitit routing.
 6. Initialize localization, instrumentation, IndexedDB, reactive queries, and
@@ -46,7 +46,7 @@ share a host React runtime.
 There are three overlapping state mechanisms:
 
 1. [`frontend.state/state`](../src/main/frontend/state.cljs) is a large global
-   atom holding navigation, editor, UI, graph, sync, and platform state.
+   atom holding navigation, editor, UI, graph, persistence, and platform state.
 2. DataScript connections hold graph entities and transact structured changes.
 3. Rum local state/mixins and reactive database query subscriptions trigger
    component updates.
@@ -68,7 +68,7 @@ flowchart LR
     db --> pipeline["Outliner transaction pipeline"]
     pipeline -->|rate-limited writes| files
     pipeline --> cache["Serialized DB cache"]
-    pipeline --> sync["Cross-window dbsync (Electron)"]
+    pipeline --> persistence["Cross-window database persistence (Electron)"]
 ```
 
 DataScript is a projection/cache and active editing model rather than the only
@@ -93,8 +93,6 @@ Persistence is intentionally multi-layered:
 - IndexedDB/local storage retains browser application state.
 - Electron owns filesystem access, watchers, backups, and cross-window
   coordination.
-- File-sync modules add remote graph synchronization and conflict/merge
-  behavior.
 
 ## Electron process boundary
 

@@ -44,10 +44,6 @@
   content: '\ea04';
 }
 
-.tie-cloud-exclamation::before {
-  content: '\ea05';
-}
-
 .tie-connector::before {
   content: '\ea06';
 }

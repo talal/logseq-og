@@ -32,16 +32,16 @@ are deliberately limited to local CSS assets rather than executable extensions.
 
 ## Principal risks
 
-| Priority | Risk                                               | Evidence and impact                                                                                                                                                                                                   |
-| -------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| High     | Electron capability boundary is broad              | The main channel dispatches many filesystem, shell, export, search, sync, and window operations. A compromised renderer still has a large attack surface unless every command validates origin, operation, and paths. |
-| High     | Lifecycle and state are implicit                   | `frontend.handler/start!` starts listeners, intervals, async loops, and watchers, while `stop!` has no teardown. Global atom/database hooks and registries make tests and hot reload prone to retained effects.       |
-| High     | Dependency/runtime skew                            | Shadow versions differ between npm and Clojure declarations; React 17 is the host while the UI package declares React 18 and React 17 types. External globals hide incompatibility until runtime.                     |
-| Medium   | Build graph is fragmented                          | Babashka, Yarn, Gulp, Parcel, Webpack, Forge, and nested postinstalls share ownership without a machine-readable end-to-end DAG. Clean and reproducible builds are difficult to reason about.                         |
-| Medium   | Data side effects hinge on transaction conventions | Persistence, file writing, cross-window sync, and reactive refresh depend on listeners and transaction metadata. Missing or incorrect metadata can cause loops, stale files, or skipped persistence.                  |
-| Medium   | Global state is a dependency hub                   | UI state, callbacks, graph state, and platform state coexist in `frontend.state`, increasing feature coupling and making ownership unclear.                                                                           |
-| Medium   | Generated and source assets overlap                | `static` is build output, runtime package, and persistent dependency directory. This increases stale-artifact and packaging risk.                                                                                     |
-| Medium   | Visible CI contract is absent                      | This checkout has extensive test tooling but no workflow definitions, so release gates and platform coverage cannot be verified locally.                                                                              |
+| Priority | Risk                                               | Evidence and impact                                                                                                                                                                                              |
+| -------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| High     | Electron capability boundary is broad              | The main channel dispatches many filesystem, shell, export, search, and window operations. A compromised renderer still has a large attack surface unless every command validates origin, operation, and paths.  |
+| High     | Lifecycle and state are implicit                   | `frontend.handler/start!` starts listeners, intervals, async loops, and watchers, while `stop!` has no teardown. Global atom/database hooks and registries make tests and hot reload prone to retained effects.  |
+| High     | Dependency/runtime skew                            | Shadow versions differ between npm and Clojure declarations; React 17 is the host while the UI package declares React 18 and React 17 types. External globals hide incompatibility until runtime.                |
+| Medium   | Build graph is fragmented                          | Babashka, Yarn, Gulp, Parcel, Webpack, Forge, and nested postinstalls share ownership without a machine-readable end-to-end DAG. Clean and reproducible builds are difficult to reason about.                    |
+| Medium   | Data side effects hinge on transaction conventions | Persistence, file writing, cross-window database updates, and reactive refresh depend on listeners and transaction metadata. Missing or incorrect metadata can cause loops, stale files, or skipped persistence. |
+| Medium   | Global state is a dependency hub                   | UI state, callbacks, graph state, and platform state coexist in `frontend.state`, increasing feature coupling and making ownership unclear.                                                                      |
+| Medium   | Generated and source assets overlap                | `static` is build output, runtime package, and persistent dependency directory. This increases stale-artifact and packaging risk.                                                                                |
+| Medium   | Visible CI contract is absent                      | This checkout has extensive test tooling but no workflow definitions, so release gates and platform coverage cannot be verified locally.                                                                         |
 
 ## Recommended sequence
 
@@ -108,7 +108,7 @@ ownership would.
 
 Document required transaction metadata and centralize constructors for common
 transaction types. Add property/integration tests covering edit -> DataScript ->
-file -> watcher -> parser round trips, plus cross-window synchronization.
+file -> watcher -> parser round trips, plus cross-window database propagation.
 Instrument queue depth, transaction duration, persistence delay, and file-write
 failures in development builds.
 
@@ -140,7 +140,7 @@ flowchart TB
     parser["Parser"]
     queries["Graph commands / queries"]
     publishing["Publishing"]
-    services["Application services<br>(filesystem · persistence · sync · themes)"]
+    services["Application services<br>(filesystem · persistence · themes)"]
     presentation["Presentation<br>(Rum + React islands)"]
 
     domain --> schema --> parser --> queries --> publishing

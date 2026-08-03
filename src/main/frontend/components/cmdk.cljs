@@ -323,7 +323,7 @@
                       (or (string/starts-with? f "whiteboards/")
                           (string/starts-with? f "assets/")
                           (string/starts-with? f "logseq/version-files")
-                          (contains? #{"logseq/metadata.edn" "logseq/pages-metadata.edn" "logseq/graphs-txid.edn"} f))))
+                          (contains? #{"logseq/metadata.edn" "logseq/pages-metadata.edn"} f))))
                    files*)
             items (map
                    (fn [file]

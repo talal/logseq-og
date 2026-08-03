@@ -41,8 +41,7 @@
 
 (rum/defcs picker < rum/reactive
   [_state _onboarding-and-home?]
-  (let [parsing? (state/sub :repo/parsing-files?)
-        _ (state/sub :auth/id-token)]
+  (let [parsing? (state/sub :repo/parsing-files?)]
 
     (setups-container
      :picker

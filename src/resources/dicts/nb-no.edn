@@ -165,7 +165,6 @@
  :select.graph/empty-placeholder-description "Ingen grafer matcher. Vil du legge til en ny?"
  :select.graph/add-graph "Ja, legg til en ny graf"
 
- :host "Vert"
  :re-index-discard-unsaved-changes-warning "Reindeksering vil forkaste nåværende graf, og deretter prosessere alle filene på nytt slik de er på disk akkurat nå. Du vil miste ulagrede endringer, og det kan ta litt tid. Forsette?"
  :re-index-multiple-windows-warning "Du må lukke de andre vinduene før du kan reindeksere denne grafen"
  :save "Lagrer..."
@@ -179,7 +178,6 @@
  :page/copy-page-url "Kopier side URL"
  :page/open-backup-directory "Åpne mappe med sidens sikkerhetskopier"
  :settings-page/edit-export-css "Rediger export.css"
- :settings-page/network-proxy "Nettverksproxy"
  :discourse-title "Vårt forum!"
  :asset/copy "Kopier bilde"
  :asset/delete "Slett bilde"
@@ -433,9 +431,7 @@
 
  :home "Hjem"
  :importing "Importerer"
- :port "Port"
  :toggle-theme "Bytt tema"
- :type "Type"
  :whiteboard "Whiteboard"
  :whiteboards "Whiteboard"
  :command.misc/copy "Kopier"

@@ -6,8 +6,7 @@
    [cljs-bean.core :as bean]
    [clojure.string :as string]
    [electron.configs :as cfgs]
-   [electron.logger :as logger]
-   [promesa.core :as p]))
+   [electron.logger :as logger]))
 
 (defonce *win (atom nil)) ;; The main window
 
@@ -23,17 +22,14 @@
                    (= v "true"))))
 
 (defonce dev? (not prod?))
-(defonce *fetchAgent (atom nil))
 
 (defonce open (js/require "open"))
-(defonce HttpsProxyAgent (.-HttpsProxyAgent (js/require "https-proxy-agent")))
-(defonce SocksProxyAgent (.-SocksProxyAgent (js/require "socks-proxy-agent")))
 (defonce _fetch (js/require "node-fetch"))
 
 (defn fetch
-  ([url] (fetch url nil))
+  ([url] (_fetch url))
   ([url options]
-   (_fetch url (bean/->js (merge options {:agent @*fetchAgent})))))
+   (_fetch url (bean/->js options))))
 
 (defn fix-win-path!
   [path]
@@ -55,135 +51,6 @@
   (when-not (fs/existsSync cfgs/dot-root)
     (fs/mkdirSync cfgs/dot-root))
   (fix-win-path! cfgs/dot-root))
-
-(defn- set-fetch-agent-proxy
-  "Set fetch proxy agent."
-  [{:keys [protocol host port]}]
-  (if (and protocol host port (or (= protocol "http") (= protocol "socks5")))
-    (let [proxy-url (str protocol "://" host ":" port)]
-      (condp = protocol
-        "http"
-        (reset! *fetchAgent (new HttpsProxyAgent proxy-url))
-        "socks5"
-        (reset! *fetchAgent (new SocksProxyAgent proxy-url))
-        (logger/error "Unknown proxy protocol:" protocol)))
-    (reset! *fetchAgent nil)))
-
-(defn <set-electron-proxy
-  "Set proxy for electron
-  type: system | direct | socks5 | http"
-  ([{:keys [type host port] :or {type "system"}}]
-   (let [->proxy-rules (fn [type host port]
-                         (cond
-                           (= type "http")
-                           (str "http=" host ":" port ";https=" host ":" port)
-                           (= type "socks5")
-                           (str "http=socks5://" host ":" port ";https=socks5://" host ":" port)
-                           (or (= type "socks") (= type "socks4"))
-                           (str "http=socks://" host ":" port ";https=socks://" host ":" port)
-                           (= type "direct")
-                           "direct://"
-                           :else
-                           nil))
-         config (cond
-                  (= type "system")
-                  #js {:mode "system"}
-
-                  (= type "direct")
-                  #js {:mode "direct"}
-
-                  (or (= type "socks5") (= type "http"))
-                  #js {:mode "fixed_servers"
-                       :proxyRules (->proxy-rules type host port)
-                       :proxyBypassRules "<local>"}
-
-                  :else
-                  #js {:mode "system"})
-         sess (.. ^js @*win -webContents -session)]
-     (if sess
-       (p/do!
-        (.setProxy sess config)
-        (.forceReloadProxyConfig sess))
-       (p/resolved nil)))))
-
-(defn- parse-pac-rule
-  "Parse Proxy Auto Config(PAC) line"
-  [line]
-  (let [parts (string/split line #"[ :]")
-        type (first parts)]
-    (cond
-      (= type "DIRECT")
-      nil
-
-      (and (contains? #{"PROXY" "HTTP" "SOCKS"} type)
-           (>= (count parts) 3))
-      {:protocol (if (= type "SOCKS") "socks5" "http")
-       :host (nth parts 1)
-       :port (nth parts 2)}
-
-      :else
-      (do
-        (logger/warn "Unknown PAC rule:" line)
-        nil))))
-
-(defn <get-system-proxy
-  "Get system proxy for url, requires proxy to be set to system"
-  ([] (<get-system-proxy "https://www.google.com"))
-  ([for-url]
-   (when-let [sess (.. ^js @*win -webContents -session)]
-     (p/let [proxy (.resolveProxy sess for-url)
-             pac-opts (->> (string/split proxy #";")
-                        (map parse-pac-rule)
-                        (remove nil?))]
-       (when (seq pac-opts)
-         (first pac-opts))))))
-
-(defn <set-proxy
-  "Set proxy for electron and fetch"
-  ([{:keys [type host port] :or {type "system"} :as opts}]
-   (logger/info "set proxy to" opts)
-   (cond
-     (= type "system")
-     (p/let [_ (<set-electron-proxy {:type "system"})
-             proxy (<get-system-proxy)]
-       (set-fetch-agent-proxy proxy))
-
-     (= type "direct")
-     (do
-       (<set-electron-proxy {:type "direct"})
-       (set-fetch-agent-proxy nil))
-
-     (or (= type "socks5") (= type "http"))
-     (do
-       (<set-electron-proxy {:type type :host host :port port})
-       (set-fetch-agent-proxy {:protocol type :host host :port port}))
-
-     :else
-     (logger/error "Unknown proxy type:" type))))
-
-(defn <restore-proxy-settings
-  "Restore proxy settings from configs.edn"
-  []
-  (let [settings (cfgs/get-item :settings/agent)
-        settings (cond
-                   (:type settings)
-                   settings
-
-                   ;; migration from old config
-                   (not-empty (:protocol settings))
-                   (assoc settings :type (:protocol settings))
-
-                   :else
-                   {:type "system"})]
-    (logger/info "restore proxy settings" settings)
-    (<set-proxy settings)))
-
-(defn save-proxy-settings
-  "Save proxy settings to configs.edn"
-  [{:keys [type host port test] :or {type "system"}}]
-  (if (or (= type "system") (= type "direct"))
-    (cfgs/set-item! :settings/agent {:type type :test test})
-    (cfgs/set-item! :settings/agent {:type type :protocol type :host host :port port :test test})))
 
 (defn should-read-content?
   "Skip reading content of file while using file-watcher"

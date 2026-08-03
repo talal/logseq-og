@@ -252,8 +252,6 @@
                    _ (reset! *win win)]
                (logger/info (str "Logseq App(" (.getVersion app) ") Starting... "))
 
-               (utils/<restore-proxy-settings)
-
                (js-utils/disableXFrameOptions win)
 
                (search/ensure-search-dir!)

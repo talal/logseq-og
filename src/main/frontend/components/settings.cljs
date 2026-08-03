@@ -4,7 +4,6 @@
             [frontend.colors :as colors]
             [frontend.components.assets :as assets]
             [frontend.components.conversion :as conversion-component]
-            [frontend.components.network-proxy :as network-proxy]
             [frontend.components.shortcut :as shortcut]
             [frontend.components.svg :as svg]
             [frontend.config :as config]
@@ -508,29 +507,10 @@
                  (config-handler/set-config! :feature/enable-flashcards? value)))
              true))
 
-(rum/defc user-proxy-settings
-  [{:keys [type protocol host port] :as agent-opts}]
-  (ui/button [:span.flex.items-center
-              [:span.pr-1
-               (case type
-                 "system" "System Default"
-                 "direct" "Direct"
-                 (and protocol host port (str protocol "://" host ":" port)))]
-              (ui/icon "edit")]
-             :class "text-sm"
-             :on-click #(state/set-sub-modal!
-                         (fn [_] (network-proxy/settings-panel agent-opts))
-                         {:id :https-proxy-panel :center? true})))
-
 (defn flashcards-switcher-row [enable-flashcards?]
   (row-with-button-action
    {:left-label (t :settings-page/enable-flashcards)
     :action (flashcards-enabled-switcher enable-flashcards?)}))
-
-(defn https-user-agent-row [agent-opts]
-  (row-with-button-action
-   {:left-label (t :settings-page/network-proxy)
-    :action (user-proxy-settings agent-opts)}))
 
 (rum/defcs auto-chmod-row < rum/reactive
   [state t]
@@ -620,12 +600,10 @@
 
 (rum/defc settings-advanced < rum/reactive
   [current-repo]
-  (let [developer-mode? (state/sub [:ui/developer-mode?])
-        https-agent-opts (state/sub [:electron/user-cfgs :settings/agent])]
+  (let [developer-mode? (state/sub [:ui/developer-mode?])]
     [:div.panel-wrap.is-advanced
      (when (and (or util/mac? util/win32?) (util/electron?)) (app-auto-update-row t))
      (developer-mode-row t developer-mode?)
-     (when (util/electron?) (https-user-agent-row https-agent-opts))
      (when (util/electron?) (auto-chmod-row t))
      (when (and (util/electron?) (not (config/demo-graph? current-repo))) (filename-format-row))
      (clear-cache-row t)

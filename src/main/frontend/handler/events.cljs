@@ -11,7 +11,6 @@
    [frontend.components.cmdk :as cmdk]
    [frontend.components.conversion :as conversion-component]
    [frontend.components.diff :as diff]
-   [frontend.components.network-proxy :as network-proxy]
    [frontend.components.settings :as settings]
    [frontend.components.shell :as shell]
    [frontend.components.themes :as themes]
@@ -267,11 +266,6 @@
                      :close-btn?  false
                      :panel?      false
                      :label "ls-modal-search"}))
-
-(defmethod handle :go/proxy-settings [[_ agent-opts]]
-  (state/set-sub-modal!
-   (fn [_] (network-proxy/settings-panel agent-opts))
-   {:id :https-proxy-panel :center? true}))
 
 (defmethod handle :redirect-to-home [_]
   (page-handler/create-today-journal!))

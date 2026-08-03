@@ -341,36 +341,6 @@
 (defmethod handle :getLogseqDotDirRoot []
   (utils/get-ls-dotdir-root))
 
-(defmethod handle :getSystemProxy [^js window]
-  (if-let [sess (.. window -webContents -session)]
-    (p/let [proxy (.resolveProxy sess "https://www.google.com")]
-      proxy)
-    (p/resolved nil)))
-
-(defmethod handle :setProxy [_win [_ options]]
-  ;; options: {:type "system" | "direct" | "socks5" | "http" | ... }
-  (p/do!
-   (utils/<set-proxy options)
-   (utils/save-proxy-settings options)))
-
-(defmethod handle :testProxyUrl [_win [_ url options]]
-  ;; FIXME: better not to set proxy while testing url
-  (let [_ (utils/<set-proxy options)
-        start-ms (.getTime (js/Date.))]
-    (-> (utils/fetch url)
-        (p/timeout 10000)
-        (p/then (fn [resp]
-                  (let [code (.-status resp)
-                        response-ms (- (.getTime (js/Date.)) start-ms)]
-                    (if (<= 200 code 299)
-                      #js {:code code
-                           :response-ms response-ms}
-                      (p/rejected (js/Error. (str "HTTP status " code)))))))
-        (p/catch (fn [e]
-                   (if (instance? p/TimeoutException e)
-                     (p/rejected (js/Error. "Timeout"))
-                     (p/rejected e)))))))
-
 (defmethod handle :relaunchApp []
   (.relaunch app) (.quit app))
 

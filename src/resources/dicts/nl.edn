@@ -29,7 +29,6 @@
  :open-a-directory "Open een lokale map"
  :open-new-window "Nieuwe venster"
  :parsing-files "Bestanden analyseren"
- :port "Poort"
  :re-index "Herindexeren"
  :re-index-detail "Grafiek herbouwen"
  :re-index-discard-unsaved-changes-warning "Herindexeren zal de huidige grafiek weggooien, en vervolgens alle bestanden opnieuw verwerken zoals ze momenteel op schijf zijn opgeslagen. U verliest niet-opgeslagen wijzigingen en het kan even duren. Verder?"
@@ -44,7 +43,6 @@
  :refresh-from-local-files "Bijwerken"
  :refresh-from-local-files-detail "Importeer veranderingen uit lokale bestanden"
  :themes "Thema's"
- :type "Type"
  :yes "Ja"
 
  :asset/confirm-delete "Weet u zeker dat u dit wilt verwijderen {1}?"
@@ -167,7 +165,6 @@
  :settings-page/enable-tooltip "Tooltips inschakelen"
  :settings-page/export-theme "Exporteer thema"
  :settings-page/home-default-page "De standaard startpagina instellen"
- :settings-page/network-proxy "Netwerk proxy"
  :settings-page/preferred-file-format "Gewenst bestandsformaat"
  :settings-page/preferred-outdenting "Logische uitdenting"
  :settings-page/preferred-workflow "Voorkeur voor workflow"

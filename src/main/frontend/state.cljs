@@ -1700,12 +1700,6 @@ Similar to re-frame subscriptions"
                  (if (fn? m) m
                      (fn [old-value] (merge old-value m)))))
 
-(defn http-proxy-enabled-or-val? []
-  (when-let [{:keys [type protocol host port] :as agent-opts} (sub [:electron/user-cfgs :settings/agent])]
-    (when (and  (not (contains? #{"system"} type))
-                (every? not-empty (vals agent-opts)))
-      (str protocol "://" host ":" port))))
-
 (defn unlinked-dir?
   [dir]
   (contains? (:file/unlinked-dirs @state) dir))

@@ -280,7 +280,7 @@
     :command.cards/remembered  "Cartes : souvenues"
     :command.cards/toggle-answers  "Cartes : montrer/masquer les réponses/clozes"
     :command.command-palette/toggle "Rechercher des commandes"
-    :command.command/run  "Lancer une commande Git"
+    :command.command/run  "Lancer une commande"
     :command.command/toggle-favorite  "Ajouter/retirer des favoris"
     :command.date-picker/complete  "Sélecteur de date : choisir le jour sélectionné"
     :command.date-picker/next-day  "Sélecteur de date : sélectionner le jour suivant"

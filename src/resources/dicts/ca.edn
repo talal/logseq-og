@@ -111,7 +111,7 @@
  :command.cards/remembered                          "Targetes: recordades"
  :command.cards/toggle-answers                      "Targetes: mostrar/ocultar respostes/prova de completar frases "
  :command.command-palette/toggle                    "Cercar ordres"
- :command.command/run                               "Executar ordre git"
+ :command.command/run                               "Executar ordre"
  :command.command/toggle-favorite                   "Afegir/Eliminar de favorits"
  :command.date-picker/complete                      "Selector de dates: Escollir dia seleccionat"
  :command.date-picker/next-day                      "Selector de dates: Seleccionar dia següent"

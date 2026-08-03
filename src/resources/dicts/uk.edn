@@ -410,7 +410,7 @@
  :command.graph/add                                        "Додати графік"
  :command.graph/save                                       "Зберегти поточний графік на диск"
  :command.graph/re-index                                   "Переіндексувати поточний графік"
- :command.command/run                                      "Виконати команду GIT"
+ :command.command/run                                      "Виконати команду"
  :command.go/home                                          "Перейти на головну сторінку"
  :command.go/all-graphs                                    "Перейти до всіх діаграм"
  :command.go/whiteboards                                   "Перейти до дошок"

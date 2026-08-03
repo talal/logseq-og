@@ -30,12 +30,15 @@
                     ipc/ipc        (fn [& _])]
         (is (= "/current"
                (state/load-current-repo!)))
-        (is (empty? @operations))
+        (is (= [[:remove :git/current-repo]]
+               @operations))
+        (is (nil? (:git/current-repo @storage-values)))
+        (reset! operations [])
         (reset! storage-values {:git/current-repo "/legacy"})
 
         (is (= "/legacy" (state/load-current-repo!)))
-        (is (= [[:set :repo/current "/legacy"]
-                [:remove :git/current-repo]]
+        (is (= [[:remove :git/current-repo]
+                [:set :repo/current "/legacy"]]
                @operations))
         (state/set-current-repo! "/next")
         (is (= "/next" (:repo/current @state/state)))

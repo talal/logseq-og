@@ -19,13 +19,14 @@
 
 (defn load-current-repo!
   []
-  (let [current-repo (storage/get :repo/current)]
-    (if (some? current-repo)
-      current-repo
-      (when-let [legacy-repo (storage/get :git/current-repo)]
-        (storage/set :repo/current legacy-repo)
-        (storage/remove :git/current-repo)
-        legacy-repo))))
+  (let [current-repo (storage/get :repo/current)
+        legacy-repo  (storage/get :git/current-repo)]
+    (when legacy-repo
+      (storage/remove :git/current-repo))
+    (or current-repo
+        (when legacy-repo
+          (storage/set :repo/current legacy-repo)
+          legacy-repo))))
 
 ;; Stores main application state
 (defonce state

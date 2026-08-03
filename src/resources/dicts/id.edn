@@ -564,7 +564,7 @@
  :command.cards/recall "Kartu: ingatlah sejenak"
  :command.cards/remembered "Kartu: diingatkan"
  :command.cards/toggle-answers "Kartu: tampilkan / sembunyikan jawaban/clozes"
- :command.command/run "Jalankan perintah git"
+ :command.command/run "Jalankan perintah"
  :command.command/toggle-favorite "Tambahkan/hapus dari favorit"
  :command.date-picker/complete "Date picker: Pilih hari yang dipilih"
  :command.date-picker/next-day "Date picker: Pilih hari berikutnya"

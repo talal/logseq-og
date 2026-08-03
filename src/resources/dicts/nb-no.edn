@@ -346,7 +346,7 @@
  :command.cards/recall "Kort: bruk litt tid på å huske"
  :command.cards/remembered "Kort: husket"
  :command.cards/toggle-answers "Kort: vis/skjul svar/clozes"
- :command.command/run "Kjør git kommando"
+ :command.command/run "Kjør kommando"
  :command.command/toggle-favorite "Legg til eller fjern fra favoritter"
  :command.date-picker/complete "Datovelger: Bruk valgt dag"
  :command.date-picker/next-day "Datovelger: Velg neste dag"

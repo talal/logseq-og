@@ -30,6 +30,6 @@
   ;; Create files that are ignored
   (fs/mkdirSync (node-path/join "tmp/test-graph" "logseq" "bak"))
   (fs/writeFileSync "tmp/test-graph/logseq/bak/baz.md" "")
-  (fs/writeFileSync "tmp/test-graph/logseq/.gitignore" "")
+  (fs/writeFileSync "tmp/test-graph/logseq/.hidden" "")
   (is (= ["tmp/test-graph/journals/2023_05_09.md" "tmp/test-graph/pages/foo.md"]
          (common-graph/get-files "tmp/test-graph"))))

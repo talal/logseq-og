@@ -714,7 +714,7 @@
   :graph/add                      "Add a graph"
   :graph/save                     "Save current graph to disk"
   :graph/re-index                 "Re-index current graph"
-  :command/run                    "Run git command"
+  :command/run                    "Run command"
   :go/home                        "Go to home"
   :go/all-graphs                  "Go to all graphs"
   :go/whiteboards                 "Go to whiteboards"

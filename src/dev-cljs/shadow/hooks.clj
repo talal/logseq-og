@@ -30,3 +30,16 @@
       (exec "cp" css-source (str public-dir "/" (last (string/split css-source #"/"))))))
   state)
 
+(defn git-revision-hook
+  {:shadow.build/stage :configure}
+  [build-state & args]
+  (let [defines-in-config  (get-in build-state [:shadow.build/config :closure-defines])
+        defines-in-options (get-in build-state [:compiler-options :closure-defines])
+        revision           (exec "git" "describe" args)]
+    (prn ::git-revision-hook revision)
+    (-> build-state
+        (assoc-in [:shadow.build/config :closure-defines]
+                  (assoc defines-in-config 'frontend.config/REVISION revision))
+        (assoc-in [:compiler-options :closure-defines]
+                  (assoc defines-in-options 'frontend.config/REVISION revision)))))
+

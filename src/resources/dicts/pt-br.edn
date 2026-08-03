@@ -569,7 +569,7 @@
  :command.cards/recall "Cartões: lembrar em algum tempo"
  :command.cards/remembered "Cartões: lembrados"
  :command.cards/toggle-answers "Cartões: mostrar/ocultar respostas/ocultados"
- :command.command/run "Executar comando git"
+ :command.command/run "Executar comando"
  :command.command/toggle-favorite "Adicionar/remover dos favoritos"
  :command.command-palette/toggle "Pesquisar comandos"
  :command.date-picker/complete "Seletor de data: Escolher dia selecionado"

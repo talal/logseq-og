@@ -679,7 +679,7 @@
  :command.graph/add                                "Přidat graf"
  :command.graph/save                               "Uložit aktuálny graf na disk"
  :command.graph/re-index                           "Znovu zaindexovat aktuální graf"
- :command.command/run                              "Spustiť příkaz GIT"
+ :command.command/run                              "Spustit příkaz"
  :command.go/home                                  "Přejít na domovskou stránku"
  :command.go/all-graphs                            "Přejít na všechny grafy"
  :command.go/whiteboards                           "Přejít na tabule"

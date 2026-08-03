@@ -57,7 +57,6 @@
   dev:validate-local-storage
   logseq.tasks.spec/validate-local-storage
 
-
   dev:validate-repo-config-edn
   logseq.tasks.malli/validate-repo-config-edn
 
@@ -89,13 +88,15 @@
   lang:validate-translations
   logseq.tasks.lang/validate-translations
 
-
-  ;; Node asset steps used by ClojureScript builds
+;; Node asset steps used by ClojureScript builds
   assets:build
   {:doc "Build static resources, vendor assets, and production CSS"
    :task (shell "yarn gulp:build")}
 
   ;; ClojureScript commands
+  clj-nrepl-eval
+  {:task (apply shell "bb" "-m" "clojure-mcp-light.nrepl-eval" *command-line-args*)}
+
   clj-paren-repair
   {:doc "Repair and format Clojure delimiters"
    :task (apply shell "bb" "-m" "clojure-mcp-light.paren-repair" *command-line-args*)}
@@ -189,6 +190,4 @@
   release:electron
   {:doc "Build and package the Electron application"
    :depends [assets:build cljs:release-electron]
-   :task (shell "yarn electron:package")}
-
-  }}
+   :task (shell "yarn electron:package")}}}

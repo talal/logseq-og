@@ -111,7 +111,7 @@
  :command.cards/remembered                          "Tarjetas: recordadas"
  :command.cards/toggle-answers                      "Tarjetas: mostrar/ocultar respuestas/prueba de completar oraciones "
  :command.command-palette/toggle                    "Buscar comandos"
- :command.command/run                               "Ejecutar comando git"
+ :command.command/run                               "Ejecutar comando"
  :command.command/toggle-favorite                   "Agregar a/eliminar de favoritos"
  :command.date-picker/complete                      "Selector de fechas: Escoger día seleccionado"
  :command.date-picker/next-day                      "Selector de fechas: Seleccionar día siguiente"

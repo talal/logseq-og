@@ -534,7 +534,7 @@
  :command.graph/add                                    "Добавить граф"
  :command.graph/save                                   "Сохранить текущий граф на диск"
  :command.graph/re-index                               "Переиндексировать текущий граф"
- :command.command/run                                  "Выполнить команду git"
+ :command.command/run                                  "Выполнить команду"
  :command.go/home                                      "Домой"
  :command.go/all-graphs                                "Перейти ко всем графам"
  :command.go/whiteboards                               "Перейти к интерактивным доскам"

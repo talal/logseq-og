@@ -272,7 +272,7 @@
  :command.graph/add                               "Dodaj graf"
  :command.graph/save                              "Zapisz obecny graf na dysk"
  :command.graph/re-index                          "Indeksuj ponownie obecny graf"
- :command.command/run                             "Wykonaj polecenie GIT"
+ :command.command/run                             "Wykonaj polecenie"
  :command.command/toggle-favorite                 "Dodaj / Usuń z ulubionych"
  :command.go/home                                 "Idź do strony głównej"
  :command.go/all-pages                            "Idź do indeksu wszystkich stron"

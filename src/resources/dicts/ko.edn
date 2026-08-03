@@ -334,7 +334,7 @@
  :command.ui/toggle-left-sidebar          "왼쪽 사이드바 토글"
  :command.pdf/next-page                   "다음 페이지"
  :command.pdf/previous-page               "이전 페이지"
- :command.command/run                             "Git 명령 실행"
+ :command.command/run                             "명령 실행"
  :command.graph/open                              "그래프 열기"
  :command.graph/remove                            "그래프 제거"
  :command.graph/add                               "그래프 추가"

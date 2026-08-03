@@ -715,7 +715,7 @@
  :command.graph/add "グラフを追加"
  :command.graph/save "現在のグラフをディスクへ保存"
  :command.graph/re-index "現在のグラフを再構築"
- :command.command/run "Git コマンドを実行"
+ :command.command/run "コマンドを実行"
  :command.go/home "ホームへ移動"
  :command.go/all-graphs "全グラフへ移動"
  :command.go/whiteboards "ホワイトボードへ移動"

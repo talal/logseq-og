@@ -331,7 +331,7 @@
  :command.cards/recall                    "Cartões: Demorar um pouco para lembrar"
  :command.cards/remembered                "Cartões: Relembrado"
  :command.cards/toggle-answers            "Cartões: mostrar/esconder as respostas/clozes"
- :command.command/run                     "Execute o comando Git"
+ :command.command/run                     "Execute o comando"
  :command.command/toggle-favorite         "Adicionar aos/remover dos favoritos"
  :command.date-picker/complete            "Escolher data: Escolha o dia selecionado"
  :command.date-picker/next-day            "Escolher data: Selecione o próximo dia"

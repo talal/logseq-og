@@ -188,7 +188,7 @@
  :command.cards/recall                   "Kaarten: het duurt even om terug te roepen"
  :command.cards/remembered               "Kaarten: herinnerd"
  :command.cards/toggle-answers           "Kaarten: toon/verberg antwoorden/clozes"
- :command.command/run                    "Voer git commando uit"
+ :command.command/run                    "Voer commando uit"
  :command.command/toggle-favorite        "Toevoegen aan/verwijderen uit favorieten"
  :command.date-picker/complete           "Datumkiezer: Kies de geselecteerde dag"
  :command.date-picker/next-day           "Datumkiezer: Volgende dag kiezen"

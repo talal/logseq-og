@@ -2,39 +2,19 @@
 
 Conventions and instructions for coding agents.
 
-## Commands
-
-Clojure/ClojureScript commands are defined primarily in `bb.edn`. Node/Yarn
-related commands are defined in `package.json`.
-
-- **Unit tests (ClojureScript):** `bb test`
-- **E2E test suite:** `npx playwright test`
-  - Prefer to run the targeted test spec because the full E2E test suite is slow
-    to run: `npx playwright e2e-tests/<name>.spec.ts`
-  - Do not specify the `--browser` flag or any browser related environment
-    variable. Run the tests without any browser related configuration.
-- **Linting (Clojure/ClojureScript)**: `bb lint`
-- **Linting (JavaScript/TypeScript)**: `yarn lint`
-- **Linting (CSS)**: `yarn css:lint`
-- **Formatting (Clojure/ClojureScript)**: `bb fmt`
-- **Clojure/ClojureScript Parenthesis Repair**: `bb clj-paren-repair <files>`
-- **Formatting (JavaScript/TypeScript/CSS)**: `yarn fmt`
-- **Formatting (other)**: `nix fmt`
-
 ## Repository structure
 
 Logseq OG monorepo has a ClojureScript application with a shared renderer for
 browser and Electron targets, plus publishing and other build products.
 
 - `src/main/frontend/` — shared renderer, Rum UI, handlers, graph database
-  integration, state, plugins, search, and extensions
+  integration, state, search, and extensions
 - `src/electron/electron/` — Electron main process compiled by Shadow CLJS.
 - `src/main/electron/` — renderer-side Electron adapters
 - `deps/` — Clojure local-root libraries
 - `scripts/src/` — Babashka task implementations
 - `resources/` — source assets, HTML/CSS inputs, packaging files, and Electron
   preload bridge at `resources/js/preload.js`
-- `libs/` — TypeScript plugin SDK
 - `packages/ui/` and `packages/amplify/` — independently built React/TypeScript
   bundles
 - `tldraw/` — vendored Yarn workspace for whiteboard functionality
@@ -50,6 +30,43 @@ The `docs/` directory is the source for repository explanations.
 - `docs/build-and-delivery.md` — toolchain, tasks, artifacts, and delivery
 - `docs/assessment.md` — risks and longer-term recommendations
 
+## Ground rules
+
+- Never create Git commits unless the explicitly asked.
+
+## Ground Rules
+
+- **Do not install tools globally.** Use `package.json`, `deps.edn`, `bb.edn`,
+  or `nix/devShell.nix`.
+- Never create Git commits unless the human explicitly asks.
+- Never push to Git remotes.
+- Never create a GitHub issue.
+- Never create a GitHub pull request.
+
+## Commands
+
+Do not use `nix develop --command` or `npx`. Direnv loads the Nix devShell and
+prepends the repository's `node_modules/.bin` directory to `PATH`, so use local
+executables directly.
+
+- **ClojureScript tests:** `bb test`
+  - Use `bb test:compile` and `bb test:run` to isolate compilation from
+    execution.
+- **Browser/Electron E2E tests:** `PLAYWRIGHT_HTML_OPEN=never playwright test`
+  - Prefer the narrowest spec since full test suite is slow to run:
+    `PLAYWRIGHT_HTML_OPEN=never playwright test e2e-tests/<name>.spec.ts`
+  - Use `--project=electron` for desktop behavior.
+  - Do not pass `--browser` or browser-specific environment variables; use the
+    repository's configured projects and fixtures.
+- **Linting (Clojure/ClojureScript):** `bb lint`
+- **Linting (JavaScript/TypeScript):** `yarn lint`
+- **Linting (CSS):** `yarn css:lint`
+- **Formatting (Clojure/ClojureScript):** `bb fmt`
+- **Formatting checks (Clojure/ClojureScript):** `bb fmt:check`
+- **Clojure/ClojureScript parenthesis repair:** `bb clj-paren-repair <files>`
+- **Formatting (JavaScript/TypeScript/CSS):** `yarn fmt`
+- **Formatting (other):** `treefmt`
+
 ## Coding standards
 
 - **Make the smallest coherent change.**
@@ -63,14 +80,19 @@ The `docs/` directory is the source for repository explanations.
   change the code to fix the bug and make sure the test passes.
 - When writing tests, prefer existing test namespaces and fixtures over
   introducing a new framework.
-- Use the `clojure-mcp` MCP server for Clojure-aware exploration and evaluation
-  when working on `.clj`, `.cljc`, `.cljs`, `deps.edn`, or other Clojure project
-  files.
-- **Do not try to manually repair Clojure parenthesis errors.** If you encounter
-  unbalanced delimiters, run `bb clj-paren-repair` on the file instead of
-  attempting to fix them yourself. If the tool doesn't work, report to the user
-  that they need to fix the delimiter error manually. The tool automatically
-  formats files with cljfmt when it processes them.
+- **Follow a REPL-driven workflow for Clojure where practical.**
+  - At the start of substantive Clojure work, inspect the project with
+    `clojure-mcp` before making assumptions about namespaces, vars, or REPL
+    state.
+  - When changing behavior, prefer validating the change in the REPL in addition
+    to running the test suite.
+  - Treat `clojure-mcp` as complementary to shell tools, not a total
+    replacement. Use ordinary shell commands for fast file discovery and
+    repo-wide search.
+- **Do not try to manually repair Clojure parenthesis errors.** Use
+  `bb clj-paren-repair` on the file instead. If the tool doesn't work, report to
+  the user that they need to fix the delimiter error manually. This tool
+  automatically formats files with cljfmt when it processes them.
 - **Always lint and format the relevant files** when you change something before
   moving on to the next step.
 - **Comment sparingly — code says _what_, comments say _why_.** Add a comment
@@ -85,8 +107,7 @@ The `docs/` directory is the source for repository explanations.
   that ages badly and obscures the code it wraps.
 - When a change invalidates documented behavior or structure, update the
   relevant document in `docs/`.
-- Put any files you generate (plan, reports, scratch output) under `files/`
-  (ignored in `.gitignore`).
+- Put any files you generate (plan, reports, scratch output) under `scratch/`.
 - Run proportionate validation, review the diff, and report commands that could
   not run because dependencies or platform toolchains are unavailable.
 
@@ -99,9 +120,8 @@ The `docs/` directory is the source for repository explanations.
   are genuinely supported.
 - Prefer established domain APIs, query helpers, schemas, and migration
   mechanisms over reaching into implementation internals.
-- Give new listeners, timers, watchers, async loops, database listeners, and
-  plugin hooks an explicit teardown path so hot reload and tests can clean them
-  up.
+- Give new listeners, timers, watchers, async loops, and database listeners an
+  explicit teardown path so hot reload and tests can clean them up.
 - Use Malli/spec validation where a boundary already has a schema. Keep errors
   user-safe and follow existing logging conventions.
 
@@ -109,9 +129,9 @@ The `docs/` directory is the source for repository explanations.
 
 - Keep `nodeIntegration: false` and `contextIsolation: true` assumptions intact
   unless a platform change requires otherwise.
-- Validate IPC payloads, file paths, URLs, and plugin package data at the main
-  process boundary. Avoid passing arbitrary channel names or unrestricted paths
-  from renderer code.
+- Validate IPC payloads, file paths, URLs, and graph-local theme manifests at
+  the main process boundary. Avoid passing arbitrary channel names or
+  unrestricted paths from renderer code.
 - Do not weaken navigation, protocol, CSP, sandbox, signing, or updater settings
   without documenting the threat model and testing the affected host.
 - Never commit credentials, signing material, graph data, generated caches, or
@@ -119,9 +139,6 @@ The `docs/` directory is the source for repository explanations.
 
 ## Dependencies and generated assets
 
-- Update the manifest and lockfile belonging to the package whose dependency
-  changes. Keep externalized React globals, TypeScript types, and build targets
-  compatible with their host packages.
 - Do not edit `node_modules`, Shadow output, Gulp output, or other generated
   artifacts by hand. Change their source/configuration and regenerate them only
   when the task requires it.
@@ -133,8 +150,3 @@ The `docs/` directory is the source for repository explanations.
 Keep architectural documentation in `docs/` and link to concrete source files.
 When handing off work, summarize the behavior changed, validation performed, any
 generated artifacts touched, and any platform-specific checks that remain.
-
-## Issue and pull request guidelines
-
-- Never create an issue.
-- Never create a pull request.

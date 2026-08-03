@@ -6,6 +6,8 @@
     "deps/**"
     # Auto-generated
     "**/yarn.lock"
+    ".agents/**"
+    "scratch/**"
     # Release
     "**/node_modules/**"
     "node_modules/**"
@@ -16,7 +18,6 @@
     "test-results/**"
     # Static assets
     "LICENSE**"
-    "files/**"
     "src/resources/**"
     "static/**"
     "tmp/**"

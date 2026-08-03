@@ -1551,6 +1551,11 @@ chownr@^2.0.0:
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-2.0.0.tgz#15bfbe53d2eab4cf70f18a8cd68ebe5b3cb1dece"
   integrity sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==
 
+chrome-devtools-mcp@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/chrome-devtools-mcp/-/chrome-devtools-mcp-1.6.0.tgz#e9d0886861bf86360413a9bdd667e3bc4a1035ee"
+  integrity sha512-VZX6f/OjQSYhy2BGGRs+y3LsrsAQAz/HwZCWKBLVyST/4r/3zjVEjjVW7gMCVbRDuspnVdcp5hQDPrQ5UFrdZw==
+
 chrono-node@2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/chrono-node/-/chrono-node-2.2.4.tgz#0fa169e1d158935bb1d541010046f6107576347d"

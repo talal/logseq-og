@@ -12,6 +12,7 @@
     "@tailwindcss/typography": "0.5.7",
     "@types/gulp": "^4.0.7",
     "autoprefixer": "^10.4.13",
+    "chrome-devtools-mcp": "^1.6.0",
     "cssnano": "^5.1.13",
     "del": "^6.0.0",
     "gulp": "^4.0.2",

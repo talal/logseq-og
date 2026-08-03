@@ -44,28 +44,29 @@ in
     packages = with pkgs;
       [
         # Clojure
-        jdk
+        babashka
         clojure
         clojure-lsp
-        babashka
-        parinfer-rust
+        jdk
 
         # Node
         nodejs_22
-        typescript-language-server
         playwright-driver.browsers
+        typescript-language-server
         yarn
 
         # Rust + Wasm
         rustToolchain
         lld
-        wasm-pack
         cargo-fuzz
+        wasm-pack
 
         # Tools
         alejandra
         just
-        python314
+        parinfer-rust # used by clojure-mcp for faster delimiter repair
+        python314 # for scripting
+        ripgrep # for better `grep` and `glob_files` performance
         treefmtWrapper
       ]
       ++ linuxLibraries;
@@ -73,6 +74,9 @@ in
     shellHook = ''
       export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath linuxLibraries}:$LD_LIBRARY_PATH
       export XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS
+
+      # Add the local Node executable directory to PATH
+      export PATH="$PWD/node_modules/.bin:$PATH"
 
       # Skip checking whether the OS is a supported Ubuntu/Debian version
       export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true

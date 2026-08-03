@@ -1,6 +1,7 @@
-!AGENTS.md
 !.agents/
 !.codex/
+!AGENTS.md
+/scratch
 skills-lock.json
 
 .env*
@@ -16,7 +17,6 @@ tmp/
 /test-graph/
 /test-results/
 /e2e-dump/
-/files
 .hg/
 .hgignore
 

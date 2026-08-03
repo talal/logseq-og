@@ -45,7 +45,7 @@ lint: check-version
 fmt:
     bb fmt
     yarn fmt
-    nix fmt
+    treefmt
 
 # Check that project versions match VERSION file.
 [group('Quality')]

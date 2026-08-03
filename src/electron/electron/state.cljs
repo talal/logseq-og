@@ -23,19 +23,6 @@
     (swap! state assoc-in path value)
     (swap! state assoc path value)))
 
-(defn get-git-commit-seconds
-  []
-  (get-in @state [:config :git/auto-commit-seconds] 60))
-
-(defn git-auto-commit-enabled?
-  []
-  ;; For backward compatibility, use negative logic
-  (false? (get-in @state [:config :git/disable-auto-commit?] true)))
-
-(defn git-commit-on-close-enabled?
-  []
-  (get-in @state [:config :git/commit-on-close?] false))
-
 (defn get-window-graph-path
   "Get the path of the graph of a window (might be `nil`)"
   [window]

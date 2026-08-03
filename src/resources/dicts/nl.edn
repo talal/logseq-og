@@ -198,8 +198,6 @@
  :settings-page/enable-timetracking "Tijdregistratie inschakelen"
  :settings-page/enable-tooltip "Tooltips inschakelen"
  :settings-page/export-theme "Exporteer thema"
- :settings-page/git-commit-delay "Git auto commit seconden"
- :settings-page/git-switcher-label "Git auto commit inschakelen"
  :settings-page/home-default-page "De standaard startpagina instellen"
  :settings-page/network-proxy "Netwerk proxy"
  :settings-page/plugin-system "Plugin systeem"
@@ -210,7 +208,6 @@
  :settings-page/spell-checker "Spellingcontrole"
  :settings-page/tab-advanced "Geavanceerd"
  :settings-page/tab-general "Algemeen"
- :settings-page/tab-version-control "Versiebeheer"
 
  :text/image "Afbeelding"
 
@@ -287,7 +284,6 @@
  :command.editor/up                      "Verplaats cursor omhoog / Selecteer omhoog"
  :command.editor/zoom-in                 "Zoom in bewerkingsblok / Vooruit anders"
  :command.editor/zoom-out                "Zoom uit bewerkingsblok / Achteruit anders"
- :command.git/commit                     "Maak git commit met bericht"
  :command.go/all-pages                   "Ga naar alle pagina's"
  :command.go/backward                    "Achteruit"
  :command.go/forward                     "Vooruit"

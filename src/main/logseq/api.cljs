@@ -26,7 +26,6 @@
             [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.search :as search-handler]
-            [frontend.handler.shell :as shell]
             [frontend.loader :as loader]
             [frontend.modules.layout.core]
             [frontend.modules.outliner.core :as outliner]
@@ -42,7 +41,6 @@
             [logseq.api.block :as api-block]
             [logseq.sdk.assets :as sdk-assets]
             [logseq.sdk.core]
-            [logseq.sdk.git]
             [logseq.sdk.ui :as sdk-ui]
             [logseq.sdk.utils :as sdk-utils]
             [promesa.core :as p]
@@ -903,11 +901,6 @@
   []
   (let [repo (state/get-current-repo)]
     (export-handler/export-repo-as-zip! repo)))
-
-(defn ^:export exec_git_command
-  [^js args]
-  (when-let [args (and args (seq (bean/->clj args)))]
-    (shell/run-git-command! args)))
 
 ;; ui
 (def ^:export show_msg sdk-ui/-show_msg)

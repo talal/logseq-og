@@ -7,7 +7,6 @@
             [frontend.db :as db]
             [frontend.fs :as fs]
             [frontend.fs.nfs :as nfs]
-            [frontend.handler.common :as common-handler]
             [frontend.handler.global-config :as global-config-handler]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.route :as route-handler]
@@ -21,25 +20,10 @@
             [logseq.graph-parser.util :as gp-util]
             [promesa.core :as p]))
 
-(defn remove-ignore-files
+(defn filter-ignored-files
   [files dir-name nfs?]
-  (let [files (remove (fn [f]
-                        (let [path (:file/path f)]
-                          (or (string/starts-with? path ".git/")
-                              (string/includes? path ".git/")
-                              (and (util-fs/ignored-path? (if nfs? "" dir-name) path)
-                                   (not= (:file/name f) ".gitignore")))))
-                      files)]
-    (if-let [ignore-file (some #(when (= (:file/name %) ".gitignore")
-                                  %) files)]
-      (if-let [file (:file/file ignore-file)]
-        (p/let [content (.text file)]
-          (when content
-            (let [paths (set (common-handler/ignore-files content (map :file/path files)))]
-              (when (seq paths)
-                (filter (fn [f] (contains? paths (:file/path f))) files)))))
-        (p/resolved files))
-      (p/resolved files))))
+  (let [dir (if nfs? "" dir-name)]
+    (remove #(util-fs/ignored-path? dir (:file/path %)) files)))
 
 (defn- ->db-files
   ;; TODO(andelf): rm nfs? parameter
@@ -102,7 +86,6 @@
    (let [electron? (util/electron?)
          nfs? (not electron?)
          *repo (atom nil)]
-     ;; TODO: add ext filter to avoid loading .git or other ignored file handlers
      (->
       (p/let [result (if (fn? dir-result-fn)
                        (dir-result-fn)
@@ -122,7 +105,7 @@
                   _ (precheck-graph-dir root-dir (:files result))
                   files (-> (->db-files files nfs?)
                             ;; filter again, in case fs backend does not handle this
-                            (remove-ignore-files root-dir nfs?))
+                            (filter-ignored-files root-dir nfs?))
                   markup-files (filter-markup-and-built-in-files files)]
             (-> files
                 (p/then (fn [result]
@@ -259,7 +242,7 @@
                        ;; reload global config into state
                        (global-config-handler/restore-global-config!))
                    new-files (-> (->db-files (:files local-files-result) nfs?)
-                                 (remove-ignore-files repo-dir nfs?))]
+                                 (filter-ignored-files repo-dir nfs?))]
              (handle-diffs! repo nfs? old-files new-files re-index? ok-handler))))
        (p/catch (fn [error]
                   (log/error :nfs/load-files-error repo)

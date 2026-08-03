@@ -24,8 +24,6 @@
             [rum.core :as rum]))
 
 ;; The publishing site should be as thin as possible.
-;; Both files and git libraries can be removed.
-;; Maybe we can remove some handlers and components too.
 
 ;; There should be two publishing modes:
 ;; 1. Graph version, similar to logseq.com

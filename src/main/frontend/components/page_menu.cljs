@@ -10,7 +10,6 @@
             [frontend.handler.notification :as notification]
             [frontend.handler.page :as page-handler]
             [frontend.handler.route :as route-handler]
-            [frontend.handler.shell :as shell]
             [frontend.handler.user :as user-handler]
             [frontend.state :as state]
             [frontend.ui :as ui]
@@ -58,7 +57,7 @@
                         (state/get-current-page)
                         (state/get-current-whiteboard))]
     (let [page-name (util/page-name-sanity-lc page-name)
-          repo (state/sub :git/current-repo)
+          repo (state/sub :repo/current)
           page (db/entity repo [:block/name page-name])
           page-original-name (:block/original-name page)
           whiteboard? (= "whiteboard" (:block/type page))
@@ -89,19 +88,11 @@
                            (page-handler/unfavorite-page! page-original-name)
                            (page-handler/favorite-page! page-original-name)))}})
 
-          (when (or (util/electron?) file-sync-graph-uuid)
+          (when file-sync-graph-uuid
             {:title   (t :page/version-history)
              :options {:on-click
                        (fn []
-                         (cond
-                           file-sync-graph-uuid
-                           (state/pub-event! [:graph/pick-page-histories file-sync-graph-uuid page-name])
-
-                           (util/electron?)
-                           (shell/get-file-latest-git-log page 100)
-
-                           :else
-                           nil))
+                         (state/pub-event! [:graph/pick-page-histories file-sync-graph-uuid page-name]))
                        :class "cp__btn_history_version"}})
 
           (when (util/electron?)

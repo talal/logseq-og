@@ -385,7 +385,7 @@
                                 ;; is page name or uuid
                                 (get-page-name state)
                                 (state/get-current-page))]
-    (let [current-repo (state/sub :git/current-repo)
+    (let [current-repo (state/sub :repo/current)
           repo (or repo current-repo)
           page-name (util/page-name-sanity-lc path-page-name)
           block-id (parse-uuid page-name)
@@ -974,7 +974,7 @@
   (rum/local nil ::filter-fn)
   (rum/local 1 ::current-page)
   [state]
-  (let [current-repo (state/sub :git/current-repo)
+  (let [current-repo (state/sub :repo/current)
         per-page-num 40
         *sort-by-item (get state ::sort-by-item)
         *desc? (::desc? state)

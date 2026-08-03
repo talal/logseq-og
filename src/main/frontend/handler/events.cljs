@@ -16,7 +16,6 @@
             [frontend.components.diff :as diff]
             [frontend.components.encryption :as encryption]
             [frontend.components.file-sync :as file-sync]
-            [frontend.components.git :as git-component]
             [frontend.components.plugins :as plugin]
             [frontend.components.settings :as settings]
             [frontend.components.shell :as shell]
@@ -306,9 +305,6 @@
 (defmethod handle :modal/show [[_ content]]
   (state/set-modal! #(modal-output content)))
 
-(defmethod handle :modal/set-git-username-and-email [[_ _content]]
-  (state/set-modal! git-component/set-git-username-and-email))
-
 (defmethod handle :page/title-property-changed [[_ old-title new-title]]
   (page-handler/rename! old-title new-title))
 
@@ -326,9 +322,6 @@
                (not= (util/trim-safe disk-content) (util/trim-safe db-content)))
       (state/set-modal! #(diff/local-file repo path disk-content db-content)
                         {:label "diff__cp"}))))
-
-(defmethod handle :modal/display-file-version-selector  [[_ versions path  get-content]]
-  (state/set-modal! #(git-component/file-version-selector versions path get-content)))
 
 ;; Hook on a graph is ready to be shown to the user.
 ;; It's different from :graph/restored, as :graph/restored is for window reloaded

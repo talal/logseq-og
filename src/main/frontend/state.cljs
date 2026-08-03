@@ -19,10 +19,20 @@
             [promesa.core :as p]
             [rum.core :as rum]))
 
+(defn load-current-repo!
+  []
+  (let [current-repo (storage/get :repo/current)]
+    (if (some? current-repo)
+      current-repo
+      (when-let [legacy-repo (storage/get :git/current-repo)]
+        (storage/set :repo/current legacy-repo)
+        (storage/remove :git/current-repo)
+        legacy-repo))))
+
 ;; Stores main application state
 (defonce state
   (let [document-mode? (or (storage/get :document/mode?) false)
-        current-graph  (let [graph (storage/get :git/current-repo)]
+        current-graph  (let [graph (load-current-repo!)]
                          (when graph (ipc/ipc "setCurrentGraph" graph))
                          graph)]
     (atom
@@ -48,7 +58,7 @@
       :network/online?         true
       :indexeddb/support?      true
       :me                      nil
-      :git/current-repo        current-graph
+      :repo/current            current-graph
       :draw?                   false
       :db/restoring?           nil
 
@@ -613,10 +623,6 @@ Similar to re-frame subscriptions"
   ([repo]
    (not (false? (:feature/enable-whiteboards? (sub-config repo))))))
 
-(defn enable-git-auto-push?
-  [repo]
-  (not (false? (:git-auto-push (sub-config repo)))))
-
 (defn enable-block-timestamps?
   []
   (true? (:feature/enable-block-timestamps? (sub-config))))
@@ -760,7 +766,7 @@ Similar to re-frame subscriptions"
 (defn get-current-repo
   "Returns the current repo URL, or else open demo graph"
   []
-  (or (:git/current-repo @state)
+  (or (:repo/current @state)
       "local"))
 
 (defn get-remote-graphs
@@ -818,10 +824,10 @@ Similar to re-frame subscriptions"
 
 (defn set-current-repo!
   [repo]
-  (swap! state assoc :git/current-repo repo)
+  (swap! state assoc :repo/current repo)
   (if repo
-    (storage/set :git/current-repo repo)
-    (storage/remove :git/current-repo))
+    (storage/set :repo/current repo)
+    (storage/remove :repo/current))
   (ipc/ipc "setCurrentGraph" repo))
 
 (defn set-preferred-format!
@@ -1891,14 +1897,6 @@ Similar to re-frame subscriptions"
 
 (defn remove-watch-state [key]
   (remove-watch state key))
-
-(defn get-git-auto-commit-enabled?
-  []
-  (false? (sub [:electron/user-cfgs :git/disable-auto-commit?])))
-
-(defn get-git-commit-on-close-enabled?
-  []
-  (sub [:electron/user-cfgs :git/commit-on-close?]))
 
 (defn set-last-key-code!
   [key-code]

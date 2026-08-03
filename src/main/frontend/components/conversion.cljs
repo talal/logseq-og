@@ -90,7 +90,7 @@
   (rum/local nil ::solid-format)   ;; format persisted to config
   (rum/local false ::switch-disabled?) ;; disable the dropdown box when proceeded
   [state]
-  (let [repo           (state/sub :git/current-repo)
+  (let [repo           (state/sub :repo/current)
         *dir-format    (::dir-format state)
         *target-format (::target-format state)
         *solid-format  (::solid-format state)

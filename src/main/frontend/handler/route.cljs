@@ -148,7 +148,7 @@
     :tag
     (str "#"  (:name path-params))
     :diff
-    "Git diff"
+    "Diff"
     :draw
     "Draw"
     :settings

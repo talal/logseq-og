@@ -646,7 +646,7 @@
 (rum/defc main-content < rum/reactive db-mixins/query
   {:init (fn [state]
            (when-not @sidebar-inited?
-             (let [current-repo (state/sub :git/current-repo)
+             (let [current-repo (state/sub :repo/current)
                    default-home (get-default-home-if-valid)
                    sidebar (:sidebar default-home)
                    sidebar (if (string? sidebar) [sidebar] sidebar)]
@@ -662,7 +662,7 @@
            state)}
   []
   (let [default-home (get-default-home-if-valid)
-        current-repo (state/sub :git/current-repo)
+        current-repo (state/sub :repo/current)
         loading-files? (when current-repo (state/sub [:repo/loading-files? current-repo]))
         journals-length (state/sub :journals-length)
         latest-journals (db/get-latest-journals (state/get-current-repo) journals-length)
@@ -839,7 +839,7 @@
                           (hide-context-menu-and-clear-selection e)))))))
   [state route-match main-content]
   (let [{:keys [open-fn]} state
-        current-repo (state/sub :git/current-repo)
+        current-repo (state/sub :repo/current)
         granted? (state/sub [:nfs/user-granted? (state/get-current-repo)])
         theme (state/sub :ui/theme)
         accent-color (some-> (state/sub :ui/radix-color) (name))

@@ -8,17 +8,18 @@
    [electron.state :as state]))
 
 (def commands-allowlist
-  #{"git" "pandoc" "ag" "grep" "alda"})
+  #{"pandoc" "ag" "grep" "alda"})
 
 ;(def commands-denylist
 ;  #{"rm" "mv" "rename" "dd" ">" "command" "sudo"})
 
 (defn- get-commands-allowlist
   []
-  (set/union (set (some->> (map #(some-> % str string/trim string/lower-case)
-                                (get-in @state/state [:config :commands-allowlist]))
-                           (remove nil?)))
-             commands-allowlist))
+  (-> (set/union (set (some->> (map #(some-> % str string/trim string/lower-case)
+                                    (get-in @state/state [:config :commands-allowlist]))
+                               (remove nil?)))
+                 commands-allowlist)
+      (disj "git")))
 
 (defn- run-command!
   [command args on-data on-exit]

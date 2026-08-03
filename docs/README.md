@@ -73,7 +73,7 @@ flowchart TD
     ui --> hosts["Browser / Electron"]
     hosts --> bridge["Preload IPC bridge"]
     bridge --> main["Electron main process"]
-    main --> capabilities["Filesystem · watcher · search · git · updater · windows · plugins · server"]
+    main --> capabilities["Filesystem · watcher · search · updater · windows · plugins · server"]
 ```
 
 ## Scope and confidence

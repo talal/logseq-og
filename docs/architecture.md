@@ -103,7 +103,7 @@ The Electron main process is itself compiled from ClojureScript using Shadow's
 `:node-script` target.
 [`electron.core/main`](../src/electron/electron/core.cljs) takes a
 single-instance lock, registers custom protocols, creates the main window, opens
-search databases, configures git auto-commit, and installs updater, IPC, server,
+search databases, and installs updater, IPC, server,
 exception, window, and app lifecycle handlers.
 
 Browser windows use `nodeIntegration: false` and `contextIsolation: true`.
@@ -112,7 +112,7 @@ Browser windows use `nodeIntegration: false` and `contextIsolation: true`.
 operations. Renderer-side `electron.ipc` wrappers then invoke the common `main`
 channel. [`electron.handler/handle`](../src/electron/electron/handler.cljs) is a
 multimethod dispatching command vectors to filesystem, graph, watcher, export,
-plugin, search, server, git, and window operations.
+plugin, search, server, and window operations.
 
 ```mermaid
 flowchart TD

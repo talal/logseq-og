@@ -322,19 +322,23 @@ const getTracingFilePath = function (): string {
   return `e2e-dump/trace-${Date.now()}.zip.dump`
 }
 
-test.afterAll(async () => {
-  await context.tracing.stopChunk({ path: getTracingFilePath() })
-})
+const stopTracingChunk = async () => {
+  if (context) {
+    await context.tracing.stopChunk({ path: getTracingFilePath() })
+  }
+}
+
+test.afterAll(stopTracingChunk)
 
 /**
  * Trace all tests in a file
  */
 export const traceAll = function () {
   test.beforeAll(async () => {
-    await context.tracing.startChunk()
+    if (context) {
+      await context.tracing.startChunk()
+    }
   })
 
-  test.afterAll(async () => {
-    await context.tracing.stopChunk({ path: getTracingFilePath() })
-  })
+  test.afterAll(stopTracingChunk)
 }

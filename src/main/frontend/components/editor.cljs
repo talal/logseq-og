@@ -196,7 +196,7 @@
       :item-render (fn [{:block/keys [page uuid]}]  ;; content returned from search engine is normalized
                      (let [page (or (:block/original-name page)
                                     (:block/name page))
-                           repo (state/sub :git/current-repo)
+                           repo (state/sub :repo/current)
                            format (db/get-page-format page)
                            block (db-model/query-block-by-uuid uuid)
                            content (:block/content block)]

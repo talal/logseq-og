@@ -19,7 +19,6 @@
             [electron.file-sync-rsapi :as rsapi]
             [electron.find-in-page :as find]
             [electron.fs-watcher :as watcher]
-            [electron.git :as git]
             [electron.logger :as logger]
             [electron.plugin :as plugin]
             [electron.search :as search]
@@ -28,7 +27,6 @@
             [electron.state :as state]
             [electron.utils :as utils]
             [electron.window :as win]
-            [goog.functions :refer [debounce]]
             [logseq.common.graph :as common-graph]
             [promesa.core :as p]))
 
@@ -467,15 +465,6 @@
   (when graph-name
     (set-current-graph! window (utils/get-graph-dir graph-name))))
 
-(defmethod handle :runGit [_ [_ {:keys [repo command]}]]
-  (when (seq command)
-    (git/raw! (utils/get-graph-dir repo) command)))
-
-(defmethod handle :runGitWithinCurrentGraph [_ [_ {:keys [repo command]}]]
-  (when (seq command)
-    (git/init! (utils/get-graph-dir repo))
-    (git/run-git2! (utils/get-graph-dir repo) (clj->js command))))
-
 (defmethod handle :runCli [window [_ {:keys [command args returnResult]}]]
   (try
     (let [on-data-handler (fn [message]
@@ -493,17 +482,6 @@
       (utils/send-to-renderer window "notification"
                               {:type    "error"
                                :payload (.-message e)}))))
-
-(defmethod handle :gitCommitAll [_ [_ message]]
-  (git/add-all-and-commit! message))
-
-(defmethod handle :gitStatus [_ [_ repo]]
-  (git/short-status! (utils/get-graph-dir repo)))
-
-(def debounced-configure-auto-commit! (debounce git/configure-auto-commit! 5000))
-(defmethod handle :setGitAutoCommit []
-  (debounced-configure-auto-commit!)
-  nil)
 
 (defmethod handle :installMarketPlugin [_ [_ mft]]
   (plugin/install-or-update! mft))

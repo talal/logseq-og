@@ -132,8 +132,6 @@ export type IBatchBlock = {
 }
 export type IDatom = [e: number, a: string, v: any, t: number, added: boolean]
 
-export type IGitResult = { stdout: string; stderr: string; exitCode: number }
-
 export interface AppUserInfo {
   [key: string]: any
 }
@@ -302,7 +300,7 @@ export type ExternalCommandType =
   | 'logseq.ui/toggle-theme'
   | 'logseq.ui/toggle-wide-mode'
 
-export type UserProxyTags = 'app' | 'editor' | 'db' | 'git' | 'ui' | 'assets'
+export type UserProxyTags = 'app' | 'editor' | 'db' | 'ui' | 'assets'
 
 export type SearchIndiceInitStatus = boolean
 export type SearchBlockItem = {
@@ -439,13 +437,6 @@ export interface IAppProxy {
   relaunch: () => Promise<void>
   quit: () => Promise<void>
   openExternalLink: (url: string) => Promise<void>
-
-  /**
-   * @deprecated Using `logseq.Git.execCommand`
-   * @link https://github.com/desktop/dugite/blob/master/docs/api/exec.md
-   * @param args
-   */
-  execGitCommand: (args: string[]) => Promise<string>
 
   // graph
   getCurrentGraph: () => Promise<AppGraphInfo | null>
@@ -863,21 +854,6 @@ export interface IDBProxy {
 }
 
 /**
- * Git related APIS
- */
-export interface IGitProxy {
-  /**
-   * @added 0.0.2
-   * @link https://github.com/desktop/dugite/blob/master/docs/api/exec.md
-   * @param args
-   */
-  execCommand: (args: string[]) => Promise<IGitResult>
-
-  loadIgnoreFile: () => Promise<string>
-  saveIgnoreFile: (content: string) => Promise<void>
-}
-
-/**
  * UI related APIs
  */
 export type UIMsgOptions = {
@@ -1107,7 +1083,6 @@ export interface ILSPluginUser extends EventEmitter<LSPluginUserEvents> {
   App: IAppProxy
   Editor: IEditorProxy
   DB: IDBProxy
-  Git: IGitProxy
   UI: IUIProxy
   Assets: IAssetsProxy
 

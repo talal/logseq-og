@@ -30,7 +30,7 @@
 
 (rum/defc files-all < rum/reactive
   []
-  (when-let [current-repo (state/sub :git/current-repo)]
+  (when-let [current-repo (state/sub :repo/current)]
     (let [files (db/get-files current-repo) ; [[string]]
           files (sort-by first gstring/intAwareCompare files)]
       [:table.table-auto

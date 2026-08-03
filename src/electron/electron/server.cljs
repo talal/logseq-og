@@ -63,12 +63,13 @@
   [s]
   (when-not (string/blank? s)
     (if (type-proxy-api? s)
-      (let [s'   (string/split s ".")
-            tag  (second s')
-            tag' (when (and (not (string/blank? tag))
-                            (contains? #{"ui" "git" "assets"} (string/lower-case tag)))
-                   (str tag "_"))]
-        (csk/->snake_case (str tag' (last s'))))
+      (let [s'  (string/split s ".")
+            tag (second s')]
+        (when-not (= "git" (string/lower-case tag))
+          (let [tag' (when (and (not (string/blank? tag))
+                                (contains? #{"ui" "assets"} (string/lower-case tag)))
+                       (str tag "_"))]
+            (csk/->snake_case (str tag' (last s'))))))
       (string/trim s))))
 
 (defn- validate-auth-token

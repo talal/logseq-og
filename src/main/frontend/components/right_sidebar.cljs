@@ -474,7 +474,7 @@
                  blocks)
         sidebar-open? (state/sub :ui/sidebar-open?)
         width (state/sub :ui/sidebar-width)
-        repo (state/sub :git/current-repo)]
+        repo (state/sub :repo/current)]
     [:div#right-sidebar.cp__right-sidebar.h-screen
      {:class (if sidebar-open? "open" "closed")
       :style {:width width}}

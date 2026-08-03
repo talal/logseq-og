@@ -3,7 +3,6 @@
             [clojure.string :as str]
             [electron.ipc :as ipc]
             [frontend.commands :as commands]
-            [frontend.components.commit :as commit]
             [frontend.config :as config]
             [frontend.dicts :as dicts]
             [frontend.extensions.pdf.utils :as pdf-utils]
@@ -537,10 +536,6 @@
    :ui/accent-colors-picker                 {:binding "c c"
                                              :fn      #(state/pub-event! [:modal/toggle-accent-colors-modal])}
 
-   :git/commit                              {:binding  "mod+g c"
-                                             :inactive (not (util/electron?))
-                                             :fn       commit/show-commit-modal!}
-
    :dev/show-block-data                     {:binding  []
                                              :inactive (not (state/developer-mode?))
                                              :fn       :frontend.handler.common.developer/show-block-data}
@@ -732,7 +727,6 @@
           :ui/install-plugins-from-file
           :editor/toggle-open-blocks
           :ui/clear-all-notifications
-          :git/commit
           :sidebar/close-top
           :dev/show-block-data
           :dev/show-block-ast
@@ -920,7 +914,6 @@
      :date-picker/prev-week
      :date-picker/next-week
      :date-picker/complete
-     :git/commit
      :dev/show-block-data
      :dev/show-block-ast
      :dev/show-page-data

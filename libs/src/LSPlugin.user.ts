@@ -29,7 +29,6 @@ import {
   SimpleCommandKeybinding,
   SettingSchemaDesc,
   IUserOffHook,
-  IGitProxy,
   IUIProxy,
   UserProxyTags,
   BlockUUID,
@@ -444,8 +443,6 @@ const db: Partial<IDBProxy> = {
   },
 }
 
-const git: Partial<IGitProxy> = {}
-
 const ui: Partial<IUIProxy> = {}
 
 const assets: Partial<IAssetsProxy> = {
@@ -784,7 +781,7 @@ export class LSPluginUser
 
           let method = propKey as string
 
-          if ((['git', 'ui', 'assets'] as UserProxyTags[]).includes(tag)) {
+          if ((['ui', 'assets'] as UserProxyTags[]).includes(tag)) {
             method = tag + '_' + method
           }
 
@@ -830,10 +827,6 @@ export class LSPluginUser
 
   get DB(): IDBProxy {
     return this._makeUserProxy(db, 'db')
-  }
-
-  get Git(): IGitProxy {
-    return this._makeUserProxy(git, 'git')
   }
 
   get UI(): IUIProxy {

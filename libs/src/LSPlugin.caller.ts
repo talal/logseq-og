@@ -360,7 +360,6 @@ class LSPluginCaller extends EventEmitter {
       this._call = async (type, payload = {}, actor) => {
         actor && (payload.actor = actor)
 
-        // @ts-expect-error Call in same thread
         this._pluginLocal?.emit(
           type,
           Object.assign(payload, {

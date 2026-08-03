@@ -256,12 +256,6 @@
  :context-menu/input-template-name "Qual é o nome do modelo?"
  :context-menu/template-include-parent-block "Incluir o bloco pai no modelo?"
  :context-menu/template-exists-warning "Modelo já existe!"
- :settings-page/git-tip "Se você tiver a Sincronização do Logseq ativada, você pode visualizar o histórico de edições de uma página diretamente. Esta seção é apenas para usuários técnicos."
- :settings-page/git-desc-1 "Para visualizar o histórico de edições de uma página, clique nos três pontos horizontais no canto superior direito e selecione \"Ver histórico da página\"."
- :settings-page/git-desc-2 "Para usuários avançados, o Logseq também oferece suporte para uso do "
- :settings-page/git-desc-3 " para controle de versão. Use o Git por sua própria conta e risco, uma vez que questões gerais do Git não são suportadas pela equipe do Logseq."
- :settings-page/git-switcher-label "Ativar confirmação automática do Git"
- :settings-page/git-commit-delay "Segundos para confirmação automática do Git"
  :settings-page/edit-config-edn "Editar config.edn"
  :settings-page/edit-global-config-edn "Editar config.edn global"
  :settings-page/edit-custom-css "Editar custom.css"
@@ -308,7 +302,6 @@
  :settings-page/tab-general "Geral"
  :settings-page/tab-editor "Editor"
  :settings-page/tab-keymap "Mapa de teclas"
- :settings-page/tab-version-control "Controle de versão"
  :settings-page/tab-account "Conta"
  :settings-page/tab-advanced "Avançado"
  :settings-page/tab-assets "Ativos"
@@ -724,7 +717,6 @@
  :command.editor/up "Mover cursor para cima / Selecionar para cima"
  :command.editor/zoom-in "Dar zoom no bloco em edição / Avançar caso contrário"
  :command.editor/zoom-out "Dar zoom out no bloco em edição / Retroceder caso contrário"
- :command.git/commit "Criar commit git com mensagem"
  :command.go/all-graphs "Ir para todos os grafos"
  :command.go/all-pages "Ir para todas as páginas"
  :command.go/backward "Retroceder"
@@ -805,7 +797,6 @@
  :linked-references/filter-includes "Incluir: "
  :linked-references/reference-count (fn [filtered-count total] (str (when filtered-count (str filtered-count " de ")) total (if (= total 1) " Referência Vinculada" " Referências Vinculadas")))
  :linked-references/unexpected-error "Referências Vinculadas: Erro inesperado. Reindexe seu grafo primeiro."
- :settings-page/git-commit-on-close "Commitar mudanças no Git ao fechar a janela"
  :unlinked-references/reference-count (fn [total] (str total (if (= total 1) " Referência Não-Vinculada" " Referências Não-Vinculadas")))
  :whiteboard/reference-count (fn [refs-count] (if (= refs-count 1) "Referência" "Referências"))
 

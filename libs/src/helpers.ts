@@ -225,8 +225,8 @@ export function invokeHostExportedApi(method: string, ...args: Array<any>) {
   }
 
   const logseqHostExportedApi = Object.assign(
-    // @ts-expect-error: logseq API is provided by the host runtime.
     {},
+    // @ts-expect-error: logseq API is provided by the host runtime.
     window.logseq?.api,
     nsTarget,
     callables

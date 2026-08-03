@@ -77,10 +77,6 @@
                    (prn "Rebuild search indices")
                    (search-handler/rebuild-indices!)))
 
-  (safe-api-call "setGitUsernameAndEmail"
-                 (fn []
-                   (state/pub-event! [:modal/set-git-username-and-email])))
-
   (safe-api-call "setCurrentGraph"
                  (fn []
                    (let [graph (state/get-current-repo)]

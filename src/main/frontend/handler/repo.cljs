@@ -32,7 +32,7 @@
 
 ;; Project settings should be checked in two situations:
 ;; 1. User changes the config.edn directly in logseq.com (fn: alter-file)
-;; 2. Git pulls the new change (fn: load-files)
+;; 2. A config file or sync reload loads the new change (fn: load-files)
 
 (defn create-contents-file
   [repo-url]

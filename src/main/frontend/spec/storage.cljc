@@ -18,7 +18,7 @@
 (s/def :zotero/setting-profile string?)
 (s/def ::commands-history (s/coll-of map?))
 (s/def :ui/wide-mode boolean?)
-(s/def :git/current-repo string?)
+(s/def :repo/current string?)
 (s/def ::preferred-language string?)
 (s/def ::developer-mode string?) ;; Funny string boolean
 (s/def :document/mode? boolean?)
@@ -52,7 +52,7 @@
             :zotero/setting-profile
             ::commands-history
             :ui/wide-mode
-            :git/current-repo
+            :repo/current
             ::preferred-language
             ::developer-mode
             :document/mode?

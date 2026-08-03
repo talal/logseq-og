@@ -257,12 +257,6 @@
  :context-menu/input-template-name                 "Jak se jmenuje šablona?"
  :context-menu/template-include-parent-block       "Včetně nadřazeného bloku v šabloně?"
  :context-menu/template-exists-warning             "Šablóna už existuje!"
- :settings-page/git-tip                            "Pokud máte povolenou synchronizaci Logseq, můžete si historii úprav stránky zobrazit přímo. Tato část je určena pouze pro technicky zdatné uživatele."
- :settings-page/git-desc-1                         "Chcete-li zobrazit historii úprav stránky, klikněte na tři vodorovné tečky v pravém horním rohu a vyberte možnost „Zobrazit historii stránky“."
- :settings-page/git-desc-2                         "Pro profesionální uživatele podporuje Logseq také použití "
- :settings-page/git-desc-3                         " pro správu verzí. Používání systému Git je na vlastní nebezpečí, protože obecné záležitosti systému Git nejsou týmem Logseq podporovány."
- :settings-page/git-switcher-label                 "Povolit automatický zápis do Git"
- :settings-page/git-commit-delay                   "Automatický zápis do Git po sekundách"
  :settings-page/edit-config-edn                    "upravit config.edn"
  :settings-page/edit-global-config-edn             "upravit globální config.edn"
  :settings-page/edit-custom-css                    "upravit custom.css"
@@ -308,7 +302,6 @@
  :settings-page/current-version                    "Aktuální verze"
  :settings-page/tab-general                        "Obecné"
  :settings-page/tab-keymap                         "Klávesové zkratky"
- :settings-page/tab-version-control                "Verzování"
  :settings-page/tab-account                        "Účet"
  :settings-page/tab-advanced                       "Pokročilé"
  :settings-page/tab-assets                         "Zdroje"
@@ -790,7 +783,6 @@
  :command.ui/install-plugins-from-file             "Nainstalovat zásuvné moduly ze souboru plugins.edn“"
  :command.editor/toggle-open-blocks                "Přepnout otevřené bloky (sbalit nebo rozbalit všechny bloky)"
  :command.ui/clear-all-notifications               "Vymazat všechna oznámení"
- :command.git/commit                               "Spustiť příkaz git commit so zprávou"
  :command.dev/show-block-data                      "(Dev) Zobrazit údaje bloku"
  :command.dev/show-block-ast                       "(Dev) Zobrazit AST bloku"
  :command.dev/show-page-data                       "(Dev) Zobrazit údaje stránky"
@@ -815,7 +807,6 @@
 :linked-references/filter-includes "Zahrnuje: "
 :linked-references/reference-count (fn [filtered-count total] (str (when filtered-count (str filtered-count " z ")) total (if (= total 1) " Propojený odkaz" " Propojené odkazy")))
 :linked-references/unexpected-error "Propojené odkazy: Neočekávaná chyba. Nejprve prosím přeindexujte graf."
-:settings-page/git-commit-on-close "Git commit při zavření okna"
 :settings-page/tab-editor "Editor"
 :unlinked-references/reference-count (fn [total] (str total (if (= total 1) " Nepropojený odkaz" " Nepropojené odkazy")))
 :whiteboard/reference-count (fn [refs-count] (if (= refs-count 1) "Odkaz" "Odkazy"))

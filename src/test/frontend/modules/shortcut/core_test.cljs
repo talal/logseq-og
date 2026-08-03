@@ -1,9 +1,12 @@
 (ns frontend.modules.shortcut.core-test
   (:require [cljs.test :refer [deftest is testing]]
             [clojure.string :as string]
+            [frontend.modules.shortcut.config :as shortcut-config]
             [frontend.modules.shortcut.data-helper :as dh]
             [frontend.util :as util]))
-
+(deftest commit-shortcut-binding-is-not-registered
+  (is (not-any? #(= "mod+g c" (:binding %))
+                (vals shortcut-config/all-built-in-keyboard-shortcuts))))
 (deftest test-core-basic
   (testing "get handler id"
     (is (= (dh/get-group :editor/copy) :shortcut.handler/editor-global))))

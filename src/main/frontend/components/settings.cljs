@@ -29,7 +29,6 @@
             [frontend.ui :as ui]
             [frontend.util :refer [classnames web-platform?] :as util]
             [frontend.version :refer [version]]
-            [goog.object :as gobj]
             [goog.string :as gstring]
             [logseq.shui.ui :as shui-ui]
             [promesa.core :as p]
@@ -66,10 +65,7 @@
       [:div.text-sm.cursor
        {:title (str (t :settings-page/revision) config/revision)
         :on-click (fn []
-                    (notification/show! [:div "Current Revision: "
-                                         [:a {:target "_blank"
-                                              :href (str "https://github.com/logseq/logseq/commit/" config/revision)}
-                                          config/revision]]
+                    (notification/show! [:div "Build Revision: " config/revision]
                                         :info
                                         false))}
        version]
@@ -216,63 +212,6 @@
                   #(when (js/confirm (t :relaunch-confirm-to-work))
                      (js/logseq.api.relaunch))))
         true)]]]))
-
-(rum/defcs switch-git-auto-commit-row < rum/reactive
-  [state t]
-  (let [enabled? (state/get-git-auto-commit-enabled?)]
-    [:div.it.sm:grid.sm:grid-cols-3.sm:gap-4.sm:items-center
-     [:label.block.text-sm.font-medium.leading-5.opacity-70
-      (t :settings-page/git-switcher-label)]
-     [:div
-      [:div.rounded-md.sm:max-w-xs
-       (ui/toggle
-        enabled?
-        (fn []
-          (state/set-state! [:electron/user-cfgs :git/disable-auto-commit?] enabled?)
-          (p/do!
-           (ipc/ipc :userAppCfgs :git/disable-auto-commit? enabled?)
-           (ipc/ipc :setGitAutoCommit)))
-        true)]]]))
-
-(rum/defcs switch-git-commit-on-close-row < rum/reactive
-  [state t]
-  (let [enabled? (state/get-git-commit-on-close-enabled?)]
-    [:div.it.sm:grid.sm:grid-cols-3.sm:gap-4.sm:items-center
-     [:label.block.text-sm.font-medium.leading-5.opacity-70
-      (t :settings-page/git-commit-on-close)]
-     [:div
-      [:div.rounded-md.sm:max-w-xs
-       (ui/toggle
-        enabled?
-        (fn []
-          (state/set-state! [:electron/user-cfgs :git/commit-on-close?] (not enabled?))
-          (ipc/ipc :userAppCfgs :git/commit-on-close? (not enabled?)))
-        true)]]]))
-
-(rum/defcs git-auto-commit-seconds < rum/reactive
-  [state t]
-  (let [secs (or (state/sub [:electron/user-cfgs :git/auto-commit-seconds]) 60)]
-    [:div.it.sm:grid.sm:grid-cols-3.sm:gap-4.sm:items-center
-     [:label.block.text-sm.font-medium.leading-5.opacity-70
-      (t :settings-page/git-commit-delay)]
-     [:div.mt-1.sm:mt-0.sm:col-span-2
-      [:div.max-w-lg.rounded-md.sm:max-w-xs
-       [:input#home-default-page.form-input.is-small.transition.duration-150.ease-in-out
-        {:default-value secs
-         :on-blur       (fn [event]
-                          (let [value (-> (util/evalue event)
-                                          util/safe-parse-int)]
-                            (if (and (number? value)
-                                     (< 0 value (inc 86400)))
-                              (p/do!
-                               (state/set-state! [:electron/user-cfgs :git/auto-commit-seconds] value)
-                               (ipc/ipc :userAppCfgs :git/auto-commit-seconds value)
-                               (ipc/ipc :setGitAutoCommit))
-                              (when-let [elem (gobj/get event "target")]
-                                (notification/show!
-                                 [:div "Invalid value! Must be a number between 1 and 86400"]
-                                 :warning true)
-                                (gobj/set elem "value" secs)))))}]]]]))
 
 (rum/defc app-auto-update-row < rum/reactive [t]
   (let [enabled? (state/sub [:electron/user-cfgs :auto-update])
@@ -539,15 +478,6 @@
         (state/close-settings!)
         (route-handler/redirect! {:to :zotero-setting})))]]])
 
-(defn auto-push-row [_t current-repo enable-git-auto-push?]
-  (when (and current-repo (string/starts-with? current-repo "https://"))
-    (toggle "enable_git_auto_push"
-            "Enable Git auto push"
-            enable-git-auto-push?
-            (fn []
-              (let [value (not enable-git-auto-push?)]
-                (config-handler/set-config! :git-auto-push value))))))
-
 (defn usage-diagnostics-row [t instrument-disabled?]
   (toggle "usage-diagnostics"
           (t :settings-page/disable-sentry)
@@ -701,7 +631,7 @@
      (when current-repo (edit-export-css))]))
 
 (rum/defcs settings-editor < rum/reactive
-  [_state current-repo]
+  [_state]
   (let [preferred-format (state/get-preferred-format)
         preferred-date-format (state/get-date-formatter)
         preferred-workflow (state/get-preferred-workflow)
@@ -713,8 +643,7 @@
         auto-expand-block-refs? (state/auto-expand-block-refs?)
         enable-tooltip? (state/enable-tooltip?)
         enable-shortcut-tooltip? (state/sub :ui/shortcut-tooltip?)
-        show-brackets? (state/show-brackets?)
-        enable-git-auto-push? (state/enable-git-auto-push? current-repo)]
+        show-brackets? (state/show-brackets?)]
 
     [:div.panel-wrap.is-editor
      (file-format-row t preferred-format)
@@ -731,29 +660,7 @@
      (shortcut-tooltip-row t enable-shortcut-tooltip?)
      (tooltip-row t enable-tooltip?)
      (timetracking-row t enable-timetracking?)
-     (enable-all-pages-public-row t enable-all-pages-public?)
-     (auto-push-row t current-repo enable-git-auto-push?)]))
-
-(rum/defc settings-git
-  []
-  [:div.panel-wrap
-   [:div.text-sm.my-4
-    (ui/admonition
-     :tip
-     [:p (t :settings-page/git-tip)])
-    [:span.text-sm.opacity-50.my-4
-     (t :settings-page/git-desc-1)]
-    [:br] [:br]
-    [:span.text-sm.opacity-50.my-4
-     (t :settings-page/git-desc-2)]
-    [:a {:href "https://git-scm.com/" :target "_blank"}
-     "Git"]
-    [:span.text-sm.opacity-50.my-4
-     (t :settings-page/git-desc-3)]]
-   [:br]
-   (switch-git-auto-commit-row t)
-   (switch-git-commit-on-close-row t)
-   (git-auto-commit-seconds t)])
+     (enable-all-pages-public-row t enable-all-pages-public?)]))
 
 (rum/defc settings-advanced < rum/reactive
   [current-repo]
@@ -1118,7 +1025,7 @@
      state)}
   rum/reactive
   [state _active-tab]
-  (let [current-repo (state/sub :git/current-repo)
+  (let [current-repo (state/sub :repo/current)
         ;; enable-block-timestamps? (state/enable-block-timestamps?)
         _installed-plugins (state/sub :plugin/installed-plugins)
         plugins-of-settings (and config/lsp-enabled? (seq (plugin-handler/get-enabled-plugins-if-setting-schema)))
@@ -1138,10 +1045,7 @@
                [:editor "editor" (t :settings-page/tab-editor) (ui/icon "writing")]
                [:keymap "keymap" (t :settings-page/tab-keymap) (ui/icon "keyboard")]
 
-               (when (util/electron?)
-                 [:version-control "git" (t :settings-page/tab-version-control) (ui/icon "history")])
-
-               ;; (when (util/electron?)
+;; (when (util/electron?)
                ;;   [:assets "assets" (t :settings-page/tab-assets) (ui/icon "box")])
 
                [:advanced "advanced" (t :settings-page/tab-advanced) (ui/icon "bulb")]
@@ -1178,13 +1082,10 @@
          (settings-general current-repo)
 
          :editor
-         (settings-editor current-repo)
+         (settings-editor)
 
          :keymap
          (shortcut/shortcut-keymap-x)
-
-         :version-control
-         (settings-git)
 
          :assets
          (assets/settings-content)

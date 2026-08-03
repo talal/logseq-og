@@ -21,8 +21,6 @@
             [logseq.graph-parser.util :as gp-util]
             [promesa.core :as p]))
 
-;; TODO: extract all git ops using a channel
-
 (defn load-file
   [repo-url path]
   (->

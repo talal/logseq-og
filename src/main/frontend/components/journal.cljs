@@ -27,7 +27,7 @@
   [title]
   (let [;; Don't edit the journal title
         page (string/lower-case title)
-        repo (state/sub :git/current-repo)
+        repo (state/sub :repo/current)
         today? (= (string/lower-case title)
                   (string/lower-case (date/journal-name)))
         page-entity (db/pull [:block/name (util/page-name-sanity-lc title)])

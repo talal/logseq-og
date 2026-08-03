@@ -77,8 +77,6 @@
  :content/copy-block-emebed "Copia blocco incorporato"
  :content/open-in-sidebar "Apri nel pannello laterale"
  :content/click-to-edit "Clicca per modificare"
- :settings-page/git-switcher-label "Commit automatico"
- :settings-page/git-commit-delay "Secondi per commit automatico"
  :settings-page/edit-config-edn "Modifica config.edn"
  :settings-page/edit-custom-css "Modifica custom.css"
  :settings-page/custom-configuration "Configurazione personalizzata"
@@ -104,7 +102,6 @@
  :settings-page/developer-mode-desc "La modalità sviluppatore aiuta i contributori e gli sviluppatori di estensioni a testare le loro integrazioni con Logseq in modo più efficiente."
  :settings-page/current-version "Versione attuale"
  :settings-page/tab-general "Generale"
- :settings-page/tab-version-control "Controllo versione"
  :settings-page/tab-advanced "Avanzate"
  :settings-page/plugin-system "Sistema di plugin"
  :settings-page/network-proxy "Proxy di rete"
@@ -306,7 +303,6 @@
  :command.ui/select-theme-color "Seleziona i colori del tema disponibili"
  :command.ui/goto-plugins "Vai alla dashboard dei plugin"
  :command.editor/toggle-open-blocks "Attiva/disattiva i blocchi aperti (collassa o espandi tutti i blocchi)"
- :command.git/commit "Messaggio di commit Git"
  :shortcut.category/basics "Nozioni di base"
  :shortcut.category/formatting "Formattazione"
  :shortcut.category/navigating "Navigazione"
@@ -657,10 +653,6 @@
  :settings-page/edit-setting "Modifica"
  :settings-page/enable-whiteboards "Lavagne"
  :settings-page/filename-format "Formato nomi dei file"
- :settings-page/git-desc-1 "Per vedere la cronologia delle pagine clicca i tre punti orizzontali in alto a destra e seleziona \"Cronologia della pagina\"."
- :settings-page/git-desc-2 "Per gli utenti professionali Logseq supporta anche "
- :settings-page/git-desc-3 " come controllo versione. Usa Git a tuo rischio. Eventuali problemi con Git non sono supportati dal team di Logseq."
- :settings-page/git-tip "Se la sincronizzazione è abilitata puoi vedere la cronologia di modifica di una pagina direttamente. Questa sezione è solo per esperti."
  :settings-page/login-prompt "Per avere accesso a nuove funzionalità prima di tutti gli altri devi essere uno sponsor di Open Collective oppure supportare Logseq, quindi devi prima accedere."
  :settings-page/native-titlebar "Barra del titolo nativa"
  :settings-page/native-titlebar-desc "Abilita la barra del titolo nativa su Windows e Linux."
@@ -800,6 +792,5 @@
  :linked-references/filter-includes "Include: "
  :linked-references/reference-count (fn [filtered-count total] (str (when filtered-count (str filtered-count " di ")) total (if (= total 1) " Riferimento Collegato" " Riferimenti Collegati")))
  :linked-references/unexpected-error "Riferimenti Collegati: Errore inatteso. Per favore, re-indicizza prima il grafo."
- :settings-page/git-commit-on-close "Esegui commit Git alla chiusura della finestra"
  :unlinked-references/reference-count (fn [total] (str total (if (= total 1) " Riferimento Scollegato" " Riferimenti Scollegati")))
  :whiteboard/reference-count (fn [refs-count] (if (= refs-count 1) "Riferimento" "Riferimenti"))}

@@ -183,7 +183,7 @@
   (rum/local false ::electron-multiple-windows?)
   [state]
   (let [multiple-windows? (::electron-multiple-windows? state)
-        current-repo (state/sub :git/current-repo)
+        current-repo (state/sub :repo/current)
         login? (boolean (state/sub :auth/id-token))
         remotes-loading? (state/sub [:file-sync/remote-graphs :loading])]
     (when (or login? current-repo)

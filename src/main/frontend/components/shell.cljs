@@ -36,7 +36,7 @@
          [:input#run-command.form-input.font-mono.block.w-full.sm:text-sm.sm:leading-5
           {:autoFocus true
            :on-key-down util/stop-propagation
-           :placeholder "git commit -m ..."
+           :placeholder "pandoc ..."
            :on-change (fn [e]
                         (reset! *command (util/evalue e)))}]]]]
       [:div.flex.flex-row.items-center

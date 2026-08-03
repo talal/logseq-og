@@ -62,7 +62,7 @@
   (let [ua (.-userAgent js/navigator)
         safe-ua (string/replace ua #"[^_/a-zA-Z0-9\.\(\)]+" " ")
         platform (str "App Version: " version "\n"
-                      "Git Revision: " config/REVISION "\n"
+                      "Build Revision: " config/REVISION "\n"
                       "Platform: " safe-ua "\n"
                       "Language: " (.-language js/navigator) "\n"
                       "Plugins: " (string/join ", " (map (fn [[k v]]
@@ -192,7 +192,7 @@
         electron-mac? (and util/mac? (util/electron?))
         show-open-folder? (and (nfs/supported?)
                                (or (empty? repos)
-                                   (nil? (state/sub :git/current-repo)))
+                                   (nil? (state/sub :repo/current)))
                                (not config/publishing?))
         left-menu (left-menu-button {:on-click (fn []
                                                  (open-fn)

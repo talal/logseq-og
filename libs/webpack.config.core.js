@@ -32,10 +32,13 @@ module.exports = (env, argv) => {
     },
   }
 
-  if (argv.mode === 'production') {
-    delete config.devtool
-    config.plugins.push(new BundleAnalyzerPlugin())
+  if (argv.mode === 'production' && process.env.ANALYZE === 'true') {
+    config.plugins.push(
+      new BundleAnalyzerPlugin({
+        analyzerMode: 'static',
+        openAnalyzer: false,
+      })
+    )
   }
-
   return config
 }

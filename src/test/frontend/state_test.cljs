@@ -1,5 +1,6 @@
 (ns frontend.state-test
   (:require [clojure.test :refer [deftest is]]
+            [electron.ipc :as ipc]
             [frontend.config :as config]
             [frontend.db :as db]
             [frontend.handler :as handler]
@@ -10,8 +11,39 @@
             [frontend.handler.ui :as ui-handler]
             [frontend.modules.shortcut.core :as shortcut]
             [frontend.state :as state]
+            [frontend.storage :as storage]
             [frontend.test.helper :as test-helper :include-macros true :refer [deftest-async]]
             [promesa.core :as p]))
+
+(deftest current-repo-storage-migrates-from-legacy-key
+  (let [old-state      @state/state
+        storage-values (atom {:repo/current "/current"
+                              :git/current-repo "/legacy"})
+        operations     (atom [])]
+    (try
+      (with-redefs [storage/get    (fn [key] (get @storage-values key))
+                    storage/set    (fn [key value]
+                                     (swap! operations conj [:set key value])
+                                     (swap! storage-values assoc key value))
+                    storage/remove (fn [key]
+                                     (swap! operations conj [:remove key])
+                                     (swap! storage-values dissoc key))
+                    ipc/ipc        (fn [& _])]
+        (is (= "/current"
+               (state/load-current-repo!)))
+        (is (empty? @operations))
+        (reset! storage-values {:git/current-repo "/legacy"})
+
+        (is (= "/legacy" (state/load-current-repo!)))
+        (is (= [[:set :repo/current "/legacy"]
+                [:remove :git/current-repo]]
+               @operations))
+        (state/set-current-repo! "/next")
+        (is (= "/next" (:repo/current @state/state)))
+        (is (= "/next" (:repo/current @storage-values)))
+        (is (nil? (:git/current-repo @storage-values))))
+      (finally
+        (reset! state/state old-state)))))
 
 (deftest merge-configs
   (let [global-config
@@ -19,11 +51,11 @@
          :hidden []
          :ui/enable-tooltip? true
          :preferred-workflow :todo
-         :git-pull-secs 60}
+         :pull-secs 60}
         local-config {:hidden ["foo" "bar"]
                       :ui/enable-tooltip? false
                       :preferred-workflow :now
-                      :git-pull-secs 120}]
+                      :pull-secs 120}]
     (is (= local-config
            (dissoc (state/merge-configs global-config local-config) :shortcuts))
         "Later config overrides all non-map values")

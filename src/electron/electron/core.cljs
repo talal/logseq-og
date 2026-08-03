@@ -8,7 +8,6 @@
             [electron.configs :as cfgs]
             [electron.exceptions :as exceptions]
             [electron.fs-watcher :as fs-watcher]
-            [electron.git :as git]
             [electron.handler :as handler]
             [electron.logger :as logger]
             [electron.search :as search]
@@ -291,8 +290,6 @@
 
                (search/open-dbs!)
 
-               (git/configure-auto-commit!)
-
                (vreset! *setup-fn
                         (fn []
                           (let [t1 (setup-updater! win)
@@ -310,7 +307,6 @@
 
                ;; main window events
                (.on win "close" (fn [e]
-                                  (git/before-graph-close-hook!)
                                   (when @*quit-dirty? ;; when not updating
                                     (.preventDefault e)
 

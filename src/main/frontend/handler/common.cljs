@@ -1,8 +1,6 @@
 (ns frontend.handler.common
   "Common fns for handlers"
-  (:require ["ignore" :as Ignore]
-            [cljs-bean.core :as bean]
-            [cljs.reader :as reader]
+  (:require [cljs.reader :as reader]
             [frontend.date :as date]
             [frontend.state :as state]
             [frontend.util :as util]
@@ -19,13 +17,6 @@
   [config]
   (assoc config
          :document/mode? (state/sub [:document/mode?])))
-
-(defn ignore-files
-  [pattern paths]
-  (-> (Ignore)
-      (.add pattern)
-      (.filter (bean/->js paths))
-      (bean/->clj)))
 
 (defn safe-read-string
   [content error-message-or-handler]

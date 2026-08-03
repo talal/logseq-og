@@ -52,7 +52,6 @@
       :repo/loading-files?                   {}
       :nfs/user-granted?                     {}
       :nfs/refreshing?                       nil
-      :instrument/disabled?                  (storage/get "instrument-disabled")
      ;; TODO: how to detect the network reliably?
       :network/online?         true
       :indexeddb/support?      true

@@ -3,62 +3,59 @@
   core.async channel to handle them. Any part of the system can dispatch
   one of these events using state/pub-event!"
   (:refer-clojure :exclude [run!])
-  (:require ["@sentry/react" :as Sentry]
-            [cljs-bean.core :as bean]
-            [clojure.core.async :as async]
-            [clojure.core.async.interop :refer [p->c]]
-            [clojure.set :as set]
-            [clojure.string :as string]
-            [electron.ipc :as ipc]
-            [frontend.components.cmdk :as cmdk]
-            [frontend.components.conversion :as conversion-component]
-            [frontend.components.diff :as diff]
-            [frontend.components.encryption :as encryption]
-            [frontend.components.file-sync :as file-sync]
-            [frontend.components.network-proxy :as network-proxy]
-            [frontend.components.settings :as settings]
-            [frontend.components.shell :as shell]
-            [frontend.components.themes :as themes]
-            [frontend.components.user.login :as login]
-            [frontend.components.whiteboard :as whiteboard]
-            [frontend.config :as config]
-            [frontend.context.i18n :refer [t]]
-            [frontend.db :as db]
-            [frontend.db.model :as db-model]
-            [frontend.extensions.srs :as srs]
-            [frontend.fs :as fs]
-            [frontend.fs.nfs :as nfs]
-            [frontend.fs.sync :as sync]
-            [frontend.fs.watcher-handler :as fs-watcher]
-            [frontend.handler.common :as common-handler]
-            [frontend.handler.editor :as editor-handler]
-            [frontend.handler.file :as file-handler]
-            [frontend.handler.file-sync :as file-sync-handler]
-            [frontend.handler.notification :as notification]
-            [frontend.handler.page :as page-handler]
-            [frontend.handler.repo :as repo-handler]
-            [frontend.handler.repo-config :as repo-config-handler]
-            [frontend.handler.route :as route-handler]
-            [frontend.handler.search :as search-handler]
-            [frontend.handler.shell :as shell-handler]
-            [frontend.handler.ui :as ui-handler]
-            [frontend.handler.user :as user-handler]
-            [frontend.handler.web.nfs :as nfs-handler]
-            [frontend.handler.whiteboard :as whiteboard-handler]
-            [frontend.idb :as idb]
-            [frontend.modules.instrumentation.posthog :as posthog]
-            [frontend.modules.instrumentation.sentry :as sentry-event]
-            [frontend.modules.outliner.file :as outliner-file]
-            [frontend.modules.shortcut.core :as st]
-            [frontend.quick-capture :as quick-capture]
-            [frontend.state :as state]
-            [frontend.ui :as ui]
-            [frontend.util :as util]
-            [frontend.util.persist-var :as persist-var]
-            [logseq.db.schema :as db-schema]
-            [logseq.graph-parser.config :as gp-config]
-            [promesa.core :as p]
-            [rum.core :as rum]))
+  (:require
+   [clojure.core.async :as async]
+   [clojure.core.async.interop :refer [p->c]]
+   [clojure.set :as set]
+   [clojure.string :as string]
+   [electron.ipc :as ipc]
+   [frontend.components.cmdk :as cmdk]
+   [frontend.components.conversion :as conversion-component]
+   [frontend.components.diff :as diff]
+   [frontend.components.encryption :as encryption]
+   [frontend.components.file-sync :as file-sync]
+   [frontend.components.network-proxy :as network-proxy]
+   [frontend.components.settings :as settings]
+   [frontend.components.shell :as shell]
+   [frontend.components.themes :as themes]
+   [frontend.components.user.login :as login]
+   [frontend.components.whiteboard :as whiteboard]
+   [frontend.config :as config]
+   [frontend.context.i18n :refer [t]]
+   [frontend.db :as db]
+   [frontend.db.model :as db-model]
+   [frontend.extensions.srs :as srs]
+   [frontend.fs :as fs]
+   [frontend.fs.nfs :as nfs]
+   [frontend.fs.sync :as sync]
+   [frontend.fs.watcher-handler :as fs-watcher]
+   [frontend.handler.common :as common-handler]
+   [frontend.handler.editor :as editor-handler]
+   [frontend.handler.file :as file-handler]
+   [frontend.handler.file-sync :as file-sync-handler]
+   [frontend.handler.notification :as notification]
+   [frontend.handler.page :as page-handler]
+   [frontend.handler.repo :as repo-handler]
+   [frontend.handler.repo-config :as repo-config-handler]
+   [frontend.handler.route :as route-handler]
+   [frontend.handler.search :as search-handler]
+   [frontend.handler.shell :as shell-handler]
+   [frontend.handler.ui :as ui-handler]
+   [frontend.handler.user :as user-handler]
+   [frontend.handler.web.nfs :as nfs-handler]
+   [frontend.handler.whiteboard :as whiteboard-handler]
+   [frontend.idb :as idb]
+   [frontend.modules.outliner.file :as outliner-file]
+   [frontend.modules.shortcut.core :as st]
+   [frontend.quick-capture :as quick-capture]
+   [frontend.state :as state]
+   [frontend.ui :as ui]
+   [frontend.util :as util]
+   [frontend.util.persist-var :as persist-var]
+   [logseq.db.schema :as db-schema]
+   [logseq.graph-parser.config :as gp-config]
+   [promesa.core :as p]
+   [rum.core :as rum]))
 
 ;; TODO: should we move all events here?
 
@@ -88,8 +85,6 @@
         (map? result)
         (do
           (state/set-user-info! result)
-          (when-let [uid (user-handler/user-uuid)]
-            (sentry-event/set-user! uid))
           (let [status (if (user-handler/alpha-or-beta-user?) :welcome :unavailable)]
             (when (and (= status :welcome) (user-handler/logged-in?))
               (enable-beta-features!)
@@ -358,20 +353,6 @@
 
 (defmethod handle :redirect-to-home [_]
   (page-handler/create-today-journal!))
-
-(defmethod handle :instrument [[_ {:keys [type payload] :as opts}]]
-  (when-not (empty? (dissoc opts :type :payload))
-    (js/console.error "instrument data-map should only contains [:type :payload]"))
-  (posthog/capture type payload))
-
-(defmethod handle :capture-error [[_ {:keys [error payload]}]]
-  (let [[user-uuid graph-uuid tx-id] @sync/graphs-txid
-        payload (assoc payload
-                       :user-id user-uuid
-                       :graph-id graph-uuid
-                       :tx-id tx-id)]
-    (Sentry/captureException error
-                             (bean/->js {:tags payload}))))
 
 (defmethod handle :rebuild-slash-commands-list [[_]]
   (page-handler/rebuild-slash-commands-list!))
@@ -666,12 +647,9 @@
                               (rum/with-key (file-id-conflict-item repo file data) file)
 
                               :else
-                              (do
-                                (state/pub-event! [:capture-error {:error error
-                                                                   :payload {:type :file/parse-and-load-error}}])
-                                [:li.my-1 {:key file}
-                                 [:a {:on-click #(js/window.apis.openPath file)} file]
-                                 [:p (.-message error)]]))))]
+                              [:li.my-1 {:key file}
+                               [:a {:on-click #(js/window.apis.openPath file)} file]
+                               [:p (.-message error)]])))]
                        [:p "Don't forget to re-index your graph when all the conflicts are resolved."]]
                       :status :error}]))
 
@@ -724,11 +702,7 @@
          (p/then (fn [result]
                    (p/resolve! d result)))
          (p/catch (fn [error]
-                    (let [type :handle-system-events/failed]
-                      (state/pub-event! [:capture-error {:error error
-                                                         :payload {:type type
-                                                                   :payload payload}}])
-                      (p/reject! d error))))))
+                    (p/reject! d error)))))
       (recur))
     chan))
 

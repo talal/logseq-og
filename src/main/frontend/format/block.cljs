@@ -27,8 +27,6 @@ and handles unexpected failure."
                               :page-name page-name})
     (catch :default e
       (log/error :exception e)
-      (state/pub-event! [:capture-error {:error e
-                                         :payload {:type "Extract-blocks"}}])
       (notification/show! "An unexpected error occurred during block extraction." :error)
       [])))
 

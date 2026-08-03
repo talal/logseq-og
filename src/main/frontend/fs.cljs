@@ -78,18 +78,9 @@
   "Use it only for plain-text files, not binary"
   [repo dir rpath content opts]
   (when content
-    (let [path (gp-util/path-normalize rpath)
-          fs-record (get-fs dir)]
+    (let [path (gp-util/path-normalize rpath)]
       (->
-       (p/let [opts (assoc opts
-                           :error-handler
-                           (fn [error]
-                             (state/pub-event! [:capture-error {:error error
-                                                                :payload {:type :write-file/failed
-                                                                          :fs (type fs-record)
-                                                                          :user-agent (when js/navigator js/navigator.userAgent)
-                                                                          :content-length (count content)}}])))
-               _ (protocol/write-file! (get-fs dir) repo dir path content opts)])
+       (p/let [_ (protocol/write-file! (get-fs dir) repo dir path content opts)])
        (p/catch (fn [error]
                   (log/error :file/write-failed {:dir dir
                                                  :path path

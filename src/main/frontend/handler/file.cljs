@@ -126,10 +126,7 @@
                        (state/pub-event! [:notification/show
                                           {:content (str "Failed to write to file " path ", error: " error)
                                            :status :error}])
-                       (log/error :write/failed error)
-                       (state/pub-event! [:capture-error
-                                          {:error error
-                                           :payload {:type :write-file/failed-for-alter-file}}]))))))
+                       (log/error :write/failed error))))))
     (log/error :msg "alter-global-file does not support this file" :file path)))
 
 (defn alter-file
@@ -182,10 +179,7 @@
             (p/catch
              (fn [error]
                (println "Write file failed, path: " path ", content: " content)
-               (log/error :write/failed error)
-               (state/pub-event! [:capture-error
-                                  {:error error
-                                   :payload {:type :write-file/failed-for-alter-file}}]))))
+               (log/error :write/failed error))))
         result))))
 
 (defn set-file-content!
@@ -210,9 +204,6 @@
                                                                             error)
                                                               :status :error
                                                               :clear? false}])
-                                          (state/pub-event! [:capture-error
-                                                             {:error error
-                                                              :payload {:type :write-file/failed}}])
                                           (log/error :write-file/failed {:path path
                                                                          :content content
                                                                          :error error})))))))

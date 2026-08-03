@@ -154,8 +154,7 @@
                           (tree->file-content tree {:init-level init-level}))]
         (if (and (string/blank? new-content)
                  (not blocks-just-deleted?))
-          (state/pub-event! [:capture-error {:error (js/Error. "Empty content")
-                                             :payload {}}])
+          nil
           (let [files [[file-path new-content]]
                 repo (state/get-current-repo)]
             (file-handler/alter-files-handler! repo files {} {}))))

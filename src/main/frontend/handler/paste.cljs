@@ -187,9 +187,7 @@
                                                      :keep-uuid? keep-uuid?}))
        (paste-copied-text input text html)))
    (p/catch (fn [error]
-              (log/error :msg "Paste failed" :exception error)
-              (state/pub-event! [:capture-error {:error error
-                                                 :payload {:type ::paste-copied-blocks-or-text}}])))))
+              (log/error :msg "Paste failed" :exception error)))))
 
 (defn paste-text-in-one-block-at-point
   []

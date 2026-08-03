@@ -8,7 +8,6 @@
 (s/def ::ls-left-sidebar-open? boolean?)
 (s/def :ui/theme string?)
 (s/def :ui/system-theme? boolean?)
-(s/def ::instrument-disabled boolean?)
 (s/def ::ls-pdf-area-is-dashed boolean?)
 (s/def ::ls-pdf-hl-block-is-colored boolean?)
 (s/def ::ls-pdf-viewer-theme string?)
@@ -40,7 +39,6 @@
             ::ls-left-sidebar-open?
             :ui/theme
             :ui/system-theme?
-            ::instrument-disabled
             ::ls-pdf-area-is-dashed
             ::ls-pdf-hl-block-is-colored
             ::ls-pdf-viewer-theme

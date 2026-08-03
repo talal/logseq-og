@@ -28,7 +28,6 @@
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.user :as user-handler]
             [frontend.idb :as idb]
-            [frontend.modules.instrumentation.core :as instrument]
             [frontend.modules.outliner.datascript :as outliner-db]
             [frontend.modules.outliner.file :as file]
             [frontend.modules.shortcut.core :as shortcut]
@@ -183,7 +182,6 @@
     (el/listen!))
   (render)
   (i18n/start)
-  (instrument/init)
   (state/set-online! js/navigator.onLine)
   (set-network-watcher!)
 

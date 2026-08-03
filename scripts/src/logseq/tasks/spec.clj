@@ -13,7 +13,7 @@
   (let [local-storage
         (update-vals (json/parse-string (slurp file) keyword)
                      ;; Not all localStorage values are edn so gracefully return.
-                     ;; For example, logseq-plugin-tabs stores data as json
+                     ;; For example, JSON-backed localStorage values may not be EDN
                      #(try (edn/read-string %) (catch Throwable _ %)))]
     (s/assert ::storage-spec/local-storage local-storage)
     (println "Success!")))

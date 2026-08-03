@@ -6,7 +6,6 @@
             [frontend.components.journal :as journal]
             [frontend.components.onboarding.setups :as setups]
             [frontend.components.page :as page]
-            [frontend.components.plugins :as plugins]
             [frontend.components.repo :as repo]
             [frontend.components.settings :as settings]
             [frontend.components.user.login :as login]
@@ -83,10 +82,6 @@
    ["/all-journals"
     {:name :all-journals
      :view journal/all-journals}]
-
-   ["/plugins"
-    {:name :plugins
-     :view plugins/plugins-page}]
 
    ["/login"
     {:name :user-login

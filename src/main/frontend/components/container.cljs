@@ -7,7 +7,6 @@
             [frontend.components.header :as header]
             [frontend.components.journal :as journal]
             [frontend.components.onboarding :as onboarding]
-            [frontend.components.plugins :as plugins]
             [frontend.components.repo :as repo]
             [frontend.components.right-sidebar :as right-sidebar]
             [frontend.components.select :as select]
@@ -934,10 +933,6 @@
       (shui-dialog/install-modals)
       (select/select-modal)
       (custom-context-menu)
-      (plugins/custom-js-installer {:t t
-                                    :current-repo current-repo
-                                    :nfs-granted? granted?
-                                    :db-restoring? db-restoring?})
       [:a#download.hidden]
       (when-not config/publishing?
         (help-button))])))

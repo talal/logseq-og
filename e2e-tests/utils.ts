@@ -340,18 +340,3 @@ export async function getCursorPos(page: Page): Promise<number | null> {
 
   return cursorPosition
 }
-
-/**
- * @param page
- * @param method
- * @param args
- */
-export async function callPageAPI(page, method, ...args) {
-  return await page.evaluate(
-    ([method, args]) => {
-      // @ts-expect-error: the runtime API is dynamically keyed.
-      return window.logseq.api[method]?.(...args)
-    },
-    [method, args]
-  )
-}

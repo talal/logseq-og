@@ -37,6 +37,5 @@
   [command content]
   (let [args (case command
                "alda" (util/format "play -c \"%s\"" content)
-               ;; TODO: plugin slot
                content)]
     (run-cli-command! command args)))

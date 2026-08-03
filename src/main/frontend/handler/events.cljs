@@ -10,15 +10,15 @@
             [clojure.set :as set]
             [clojure.string :as string]
             [electron.ipc :as ipc]
-            [frontend.commands :as commands]
             [frontend.components.cmdk :as cmdk]
             [frontend.components.conversion :as conversion-component]
             [frontend.components.diff :as diff]
             [frontend.components.encryption :as encryption]
             [frontend.components.file-sync :as file-sync]
-            [frontend.components.plugins :as plugin]
+            [frontend.components.network-proxy :as network-proxy]
             [frontend.components.settings :as settings]
             [frontend.components.shell :as shell]
+            [frontend.components.themes :as themes]
             [frontend.components.user.login :as login]
             [frontend.components.whiteboard :as whiteboard]
             [frontend.config :as config]
@@ -36,7 +36,6 @@
             [frontend.handler.file-sync :as file-sync-handler]
             [frontend.handler.notification :as notification]
             [frontend.handler.page :as page-handler]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.repo-config :as repo-config-handler]
             [frontend.handler.route :as route-handler]
@@ -120,7 +119,6 @@
   (db/set-key-value repo :ast/version db-schema/ast-version)
   (search-handler/rebuild-indices!)
   (db/persist! repo)
-  (plugin-handler/hook-plugin-app :graph-after-indexed {:repo repo :empty-graph? empty-graph?})
   (when (state/setups-picker?)
     (if empty-graph?
       (route-handler/redirect! {:to :import :query-params {:from "picker"}})
@@ -285,7 +283,7 @@
                                       :label "flashcards__cp"}))
 
 (defmethod handle :modal/show-themes-modal [_]
-  (plugin/open-select-theme!))
+  (themes/open-select-theme!))
 
 (defmethod handle :modal/toggle-accent-colors-modal [_]
   (let [label "accent-colors-picker"]
@@ -353,26 +351,9 @@
                      :panel?      false
                      :label "ls-modal-search"}))
 
-(defmethod handle :go/plugins [_]
-  (plugin/open-plugins-modal!))
-
-(defmethod handle :go/plugins-waiting-lists [_]
-  (plugin/open-waiting-updates-modal!))
-
-(defmethod handle :go/plugins-from-file [[_ plugins]]
-  (plugin/open-plugins-from-file-modal! plugins))
-
-(defmethod handle :go/plugins-settings [[_ pid nav? title]]
-  (if pid
-    (do
-      (state/set-state! :plugin/focused-settings pid)
-      (state/set-state! :plugin/navs-settings? (not (false? nav?)))
-      (plugin/open-focused-settings-modal! title))
-    (state/close-sub-modal! "ls-focused-settings-modal")))
-
 (defmethod handle :go/proxy-settings [[_ agent-opts]]
   (state/set-sub-modal!
-   (fn [_] (plugin/user-proxy-settings-panel agent-opts))
+   (fn [_] (network-proxy/settings-panel agent-opts))
    {:id :https-proxy-panel :center? true}))
 
 (defmethod handle :redirect-to-home [_]
@@ -391,65 +372,6 @@
                        :tx-id tx-id)]
     (Sentry/captureException error
                              (bean/->js {:tags payload}))))
-
-(defmethod handle :exec-plugin-cmd [[_ {:keys [pid cmd action]}]]
-  (commands/exec-plugin-simple-command! pid cmd action))
-
-(defmethod handle :shortcut-handler-refreshed [[_]]
-  (when-not @st/*pending-inited?
-    (reset! st/*pending-inited? true)
-    (st/consume-pending-shortcuts!)))
-
-(defmethod handle :plugin/consume-updates [[_ id prev-pending? updated?]]
-  (let [downloading?   (:plugin/updates-downloading? @state/state)
-        auto-checking? (plugin-handler/get-auto-checking?)]
-    (when-let [coming (and (not downloading?)
-                           (get-in @state/state [:plugin/updates-coming id]))]
-      (let [error-code (:error-code coming)
-            error-code (if (= error-code (str :no-new-version)) nil error-code)
-            title      (:title coming)]
-        (when (and prev-pending? (not auto-checking?))
-          (if-not error-code
-            (plugin/set-updates-sub-content! (str title "...") 0)
-            (notification/show!
-             (str "[Checked]<" title "> " error-code) :error)))))
-
-    (if (and updated? downloading?)
-      ;; try to start consume downloading item
-      (if-let [next-coming (state/get-next-selected-coming-update)]
-        (plugin-handler/check-or-update-marketplace-plugin!
-         (assoc next-coming :only-check false :error-code nil)
-         (fn [^js e] (js/console.error "[Download Err]" next-coming e)))
-        (plugin-handler/close-updates-downloading))
-
-      ;; try to start consume pending item
-      (if-let [next-pending (second (first (:plugin/updates-pending @state/state)))]
-        (do
-          (println "Updates: take next pending - " (:id next-pending))
-          (js/setTimeout
-           #(plugin-handler/check-or-update-marketplace-plugin!
-             (assoc next-pending :only-check true :auto-check auto-checking? :error-code nil)
-             (fn [^js e]
-               (notification/show! (.toString e) :error)
-               (js/console.error "[Check Err]" next-pending e))) 500))
-
-        ;; try to open waiting updates list
-        (do (when (and prev-pending? (not auto-checking?)
-                       (seq (state/all-available-coming-updates)))
-              (plugin/open-waiting-updates-modal!))
-            (plugin-handler/set-auto-checking! false))))))
-
-(defmethod handle :plugin/hook-db-tx [[_ {:keys [blocks tx-data] :as payload}]]
-  (when-let [payload (and (seq blocks)
-                          (merge payload {:tx-data (map #(into [] %) tx-data)}))]
-    (plugin-handler/hook-plugin-db :changed payload)
-    (plugin-handler/hook-plugin-block-changes payload)))
-
-(defmethod handle :plugin/loader-perf-tip [[_ {:keys [^js o _s _e]}]]
-  (when-let [opts (.-options o)]
-    (notification/show!
-     (plugin/perf-tip-content (.-id o) (.-name opts) (.-url opts))
-     :warning false (.-id o))))
 
 (defmethod handle :rebuild-slash-commands-list [[_]]
   (page-handler/rebuild-slash-commands-list!))

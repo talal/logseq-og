@@ -37,8 +37,7 @@
                      :autoHideMenuBar      (not mac?)
                      :show                 false
                      :webPreferences
-                     {:plugins                 true        ; pdf
-                      :nodeIntegration         false
+                     {:nodeIntegration         false
                       :nodeIntegrationInWorker false
                       :nativeWindowOpen        true
                       :sandbox                 false
@@ -178,8 +177,7 @@
                              :autoHideMenuBar      (not mac?)
                              :fullscreenable       (not fullscreen?)
                              :webPreferences
-                             {:plugins          true
-                              :nodeIntegration  false
+                             {:nodeIntegration  false
                               :webSecurity      (not dev?)
                               :preload          (node-path/join js/__dirname "js/preload.js")
                               :nativeWindowOpen true}}}

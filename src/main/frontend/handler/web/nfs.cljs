@@ -119,8 +119,7 @@
                                 {:content (str "This graph already exists in \"" (:root exists-graph) "\"")
                                  :status :warning}])
                               (p/do! (repo-handler/start-repo-db-if-not-exists! repo)
-                                     (when (config/global-config-enabled?)
-                                       (global-config-handler/restore-global-config!))
+                                     (global-config-handler/restore-global-config!)
                                      (repo-handler/load-new-repo-to-db! repo
                                                                         {:new-graph?   true
                                                                          :empty-graph? (nil? (seq markup-files))
@@ -238,9 +237,7 @@
          (when (or handle electron?)
            (p/let [_ (when nfs? (nfs/verify-permission repo true))
                    local-files-result (fs/get-files repo-dir)
-                   _ (when (config/global-config-enabled?)
-                       ;; reload global config into state
-                       (global-config-handler/restore-global-config!))
+                   _ (global-config-handler/restore-global-config!)
                    new-files (-> (->db-files (:files local-files-result) nfs?)
                                  (filter-ignored-files repo-dir nfs?))]
              (handle-diffs! repo nfs? old-files new-files re-index? ok-handler))))

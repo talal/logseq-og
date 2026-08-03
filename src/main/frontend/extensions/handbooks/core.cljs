@@ -10,7 +10,6 @@
             [frontend.extensions.video.youtube :as youtube]
             [frontend.handler.notification :as notification]
             [frontend.modules.shortcut.config :as shortcut-config]
-            [frontend.rum :as r]
             [frontend.search :as search]
             [frontend.state :as state]
             [frontend.storage :as storage]
@@ -429,52 +428,32 @@
    :topic-detail [pane-topic-detail]
    :settings     [pane-settings]})
 
-(defonce discord-endpoint "https://plugins.logseq.io/ds")
-
 (rum/defc footer-link-cards
   []
-  (let [[config _] (r/use-atom *config)
-        discord-count (:discord-online config)]
+  [:<>
+   ;; more links
+   [:div.flex.space-x-3
+    {:style {:padding-top "4px"}}
+    (link-card
+     {:class "flex-1" :href "https://discord.gg/KpN4eHY"}
+     [:div.inner.flex.space-x-1.flex-col
+      (ui/icon "brand-discord" {:class "opacity-30" :size 26})
+      [:h1.font-medium.py-1 "Chat on Discord"]
+      [:h2.text-xs.leading-4.opacity-40 "Ask quick questions, meet fellow users, and learn new workflows."]
+      [:small.flex.items-center.pt-1.5
+       [:span.opacity-70.font-light "Join the conversation"]]])
 
-    (rum/use-effect!
-     (fn []
-       (when (or (nil? discord-count)
-                 (> (- (js/Date.now) (:discord-online-created config)) (* 10 60 1000)))
-         (-> (js/window.fetch discord-endpoint)
-             (p/then #(.json %))
-             (p/then #(when-let [count (.-approximate_presence_count ^js %)]
-                        (swap! *config assoc
-                               :discord-online (.toLocaleString count)
-                               :discord-online-created (js/Date.now)))))))
-     [discord-count])
-
-    [:<>
-     ;; more links
-     [:div.flex.space-x-3
-      {:style {:padding-top "4px"}}
-      (link-card
-       {:class "flex-1" :href "https://discord.gg/KpN4eHY"}
-       [:div.inner.flex.space-x-1.flex-col
-        (ui/icon "brand-discord" {:class "opacity-30" :size 26})
-        [:h1.font-medium.py-1 "Chat on Discord"]
-        [:h2.text-xs.leading-4.opacity-40 "Ask quick questions, meet fellow users, and learn new workflows."]
-        [:small.flex.items-center.pt-1.5
-         [:i.block.rounded-full.bg-green-500 {:style {:width "8px" :height "8px"}}]
-         [:span.pl-2.opacity-90
-          [:strong.opacity-60 (or discord-count "?")]
-          [:span.opacity-70.font-light " users online"]]]])
-
-      (link-card
-       {:class "flex-1" :href "https://discuss.logseq.com"}
-       [:div.inner.flex.space-x-1.flex-col
-        (ui/icon "message-dots" {:class "opacity-30" :size 26})
-        [:h1.font-medium.py-1 "Visit the forum"]
-        [:h2.text-xs.leading-4.opacity-40 "Give feedback, request features, and have in-depth conversations."]
-        [:small.flex.items-center.pt-1.5
-         [:i.flex.items-center.opacity-50 (ui/icon "bolt" {:size 14})]
-         [:span.pl-1.opacity-90
-          [:strong.opacity-60 "800+"]
-          [:span.opacity-70.font-light " monthly posts"]]]])]]))
+    (link-card
+     {:class "flex-1" :href "https://discuss.logseq.com"}
+     [:div.inner.flex.space-x-1.flex-col
+      (ui/icon "message-dots" {:class "opacity-30" :size 26})
+      [:h1.font-medium.py-1 "Visit the forum"]
+      [:h2.text-xs.leading-4.opacity-40 "Give feedback, request features, and have in-depth conversations."]
+      [:small.flex.items-center.pt-1.5
+       [:i.flex.items-center.opacity-50 (ui/icon "bolt" {:size 14})]
+       [:span.pl-1.opacity-90
+        [:strong.opacity-60 "800+"]
+        [:span.opacity-70.font-light " monthly posts"]]]])]])
 
 (rum/defc content
   []

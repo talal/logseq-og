@@ -6,7 +6,6 @@
             ["react-textarea-autosize" :as TextareaAutosize]
             ["react-tippy" :as react-tippy]
             ["react-transition-group" :refer [CSSTransition TransitionGroup]]
-            [cljs-bean.core :as bean]
             [clojure.string :as string]
             [datascript.core :as d]
             [electron.ipc :as ipc]
@@ -15,7 +14,6 @@
             [frontend.context.i18n :refer [t]]
             [frontend.db-mixins :as db-mixins]
             [frontend.handler.notification :as notification]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.mixins :as mixins]
             [frontend.modules.shortcut.config :as shortcut-config]
             [frontend.modules.shortcut.core :as shortcut]
@@ -25,7 +23,6 @@
             [frontend.storage :as storage]
             [frontend.ui.date-picker]
             [frontend.util :as util]
-            [frontend.util.cursor :as cursor]
             [goog.dom :as gdom]
             [goog.functions :refer [debounce]]
             [goog.object :as gobj]
@@ -94,15 +91,8 @@
                     (.addEventListener "select"
                                        #(let [start (util/get-selection-start el)
                                               end (util/get-selection-end el)]
-                                          (when (and start end)
-                                            (when-let [e (and (not= start end)
-                                                              (let [caret-pos (cursor/get-caret-pos el)]
-                                                                {:caret caret-pos
-                                                                 :start start :end end
-                                                                 :text  (. (.-value el) substring start end)
-                                                                 :point (select-keys (or @*mouse-point caret-pos) [:x :y])}))]
-                                              (plugin-handler/hook-plugin-editor :input-selection-end (bean/->js e))
-                                              (vreset! *mouse-point nil)))))
+                                          (when (not= start end)
+                                            (vreset! *mouse-point nil))))
                     (.addEventListener "mouseup" #(vreset! *mouse-point {:x (.-x %) :y (.-y %)}))))
                 state)}
   [{:keys [on-change] :as props}]
@@ -388,16 +378,6 @@
         (set! (.-id node) "dynamic-style-scope")
         (.appendChild js/document.head node))
       style)))
-
-(defn apply-custom-theme-effect! [theme]
-  (when config/lsp-enabled?
-    (when-let [custom-theme (state/sub [:ui/custom-theme (keyword theme)])]
-      ;; If the name is nil, the user has not set a custom theme (initially {:mode light/dark}).
-      ;; The url is not used because the default theme does not have an url.
-      (if (some? (:name custom-theme))
-        (js/LSPluginCore.selectTheme (bean/->js custom-theme)
-                                     (bean/->js {:emit false}))
-        (state/set-state! :plugin/selected-theme (:url custom-theme))))))
 
 (defn setup-system-theme-effect!
   []

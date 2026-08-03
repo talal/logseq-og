@@ -4,15 +4,13 @@
             [frontend.components.export :as export]
             [frontend.components.file-sync :as fs-sync]
             [frontend.components.page-menu :as page-menu]
-            [frontend.components.plugins :as plugins]
             [frontend.components.right-sidebar :as sidebar]
-            [frontend.components.server :as server]
             [frontend.components.svg :as svg]
+            [frontend.components.themes :as themes]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.handler :as handler]
             [frontend.handler.file-sync :as file-sync-handler]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.user :as user-handler]
             [frontend.handler.web.nfs :as nfs]
@@ -64,10 +62,7 @@
         platform (str "App Version: " version "\n"
                       "Build Revision: " config/REVISION "\n"
                       "Platform: " safe-ua "\n"
-                      "Language: " (.-language js/navigator) "\n"
-                      "Plugins: " (string/join ", " (map (fn [[k v]]
-                                                           (str (name k) " (" (:version v) ")"))
-                                                         (:plugin/installed-plugins @state/state))))]
+                      "Language: " (.-language js/navigator))]
     (str "https://github.com/talal/logseq-og/issues/new?"
          "title=&"
          "template=bug_report.yaml&"
@@ -94,14 +89,9 @@
           :options {:on-click state/open-settings!}
           :icon (ui/icon "settings")})
 
-       (when config/lsp-enabled?
-         {:title (t :plugins)
-          :options {:on-click #(plugin-handler/goto-plugins-dashboard!)}
-          :icon (ui/icon "apps")})
-
-       (when config/lsp-enabled?
+       (when current-repo
          {:title (t :themes)
-          :options {:on-click #(plugins/open-select-theme!)}
+          :options {:on-click themes/open-select-theme!}
           :icon (ui/icon "palette")})
 
        (when current-repo
@@ -230,14 +220,6 @@
 
       (when sync-enabled?
         (login))
-
-      (when config/lsp-enabled?
-        [:<>
-         (plugins/hook-ui-items :toolbar)
-         (plugins/updates-notifications)])
-
-      (when (state/feature-http-server-enabled?)
-        (server/server-indicator (state/sub :electron/server)))
 
       (when (util/electron?)
         (back-and-forward))

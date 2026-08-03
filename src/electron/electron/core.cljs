@@ -5,17 +5,15 @@
             ["path" :as node-path]
             [cljs-bean.core :as bean]
             [clojure.string :as string]
-            [electron.configs :as cfgs]
             [electron.exceptions :as exceptions]
             [electron.fs-watcher :as fs-watcher]
             [electron.handler :as handler]
             [electron.logger :as logger]
             [electron.search :as search]
-            [electron.server :as server]
             [electron.state :as state]
             [electron.updater :refer [init-updater] :as updater]
             [electron.url :refer [logseq-url-handler]]
-            [electron.utils :refer [*win mac? linux? dev? get-win-from-sender
+            [electron.utils :refer [*win mac? linux? dev?
                                     decode-protected-assets-schema-path get-graph-name send-to-renderer]
              :as utils]
             [electron.window :as win]
@@ -27,9 +25,6 @@
 (defonce FILE_LSP_SCHEME "lsp")
 (defonce FILE_ASSETS_SCHEME "assets")
 (defonce LSP_PROTOCOL (str FILE_LSP_SCHEME "://"))
-(defonce PLUGIN_URL (str LSP_PROTOCOL "logseq.io/"))
-(defonce STATIC_URL (str LSP_PROTOCOL "logseq.com/"))
-(defonce PLUGINS_ROOT (.join node-path cfgs/dot-root "plugins"))
 
 (defonce *setup-fn (volatile! nil))
 (defonce *teardown-fn (volatile! nil))
@@ -85,15 +80,9 @@
   (.registerFileProtocol
    protocol FILE_LSP_SCHEME
    (fn [^js request callback]
-     (let [url (.-url request)
-           url' ^js (js/URL. url)
-           [_ ROOT] (if (string/starts-with? url PLUGIN_URL)
-                      [PLUGIN_URL PLUGINS_ROOT]
-                      [STATIC_URL js/__dirname])
-
-           path' (.-pathname url')
-           path' (utils/safe-decode-uri-component path')
-           path' (.join node-path ROOT path')]
+     (let [url' ^js (js/URL. (.-url request))
+           path' (utils/safe-decode-uri-component (.-pathname url'))
+           path' (.join node-path js/__dirname path')]
 
        (callback #js {:path path'}))))
 
@@ -118,8 +107,6 @@
 (defn setup-app-manager!
   [^js win]
   (let [toggle-win-channel "toggle-max-or-min-active-win"
-        call-app-channel "call-application"
-        call-win-channel "call-main-win"
         export-publish-assets "export-publish-assets"
         quit-dirty-state "set-quit-dirty-state"
         clear-win-effects! (win/setup-window-listeners! win)]
@@ -142,27 +129,10 @@
 
       (.handle export-publish-assets handle-export-publish-assets)
 
-      (.handle call-app-channel
-               (fn [_ type & args]
-                 (try
-                   (js-invoke app type args)
-                   (catch :default e
-                     (logger/error (str call-app-channel " " e))))))
-
-      (.handle call-win-channel
-               (fn [^js e type & args]
-                 (let [win (get-win-from-sender e)]
-                   (try
-                     (js-invoke win type args)
-                     (catch :default e
-                       (logger/error (str call-win-channel " " e))))))))
-
-    #(do (clear-win-effects!)
-         (.removeHandler ipcMain toggle-win-channel)
-         (.removeHandler ipcMain export-publish-assets)
-         (.removeHandler ipcMain quit-dirty-state)
-         (.removeHandler ipcMain call-app-channel)
-         (.removeHandler ipcMain call-win-channel))))
+      #(do (clear-win-effects!)
+           (.removeHandler ipcMain toggle-win-channel)
+           (.removeHandler ipcMain export-publish-assets)
+           (.removeHandler ipcMain quit-dirty-state)))))
 
 (defn- set-app-menu! []
   (let [about-fn (fn []
@@ -295,11 +265,10 @@
                           (let [t1 (setup-updater! win)
                                 t2 (setup-app-manager! win)
                                 t3 (handler/set-ipc-handler! win)
-                                t4 (server/setup! win)
                                 tt (exceptions/setup-exception-listeners!)]
 
                             (vreset! *teardown-fn
-                                     #(doseq [f [t0 t1 t2 t3 t4 tt]]
+                                     #(doseq [f [t0 t1 t2 t3 tt]]
                                         (and f (f)))))))
 
                ;; setup effects

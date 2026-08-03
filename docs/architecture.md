@@ -14,8 +14,8 @@ One ClojureScript renderer serves two application hosts:
 
 ## Renderer startup
 
-[`frontend.core/init`](../src/main/frontend/core.cljs) delegates first to plugin
-setup and then to
+[`frontend.core/init`](../src/main/frontend/core.cljs) starts the shared
+renderer and then delegates application startup to
 [`frontend.handler/start!`](../src/main/frontend/handler.cljs). The startup
 sequence is imperative and order-sensitive:
 
@@ -27,8 +27,7 @@ sequence is imperative and order-sensitive:
 6. Initialize localization, instrumentation, IndexedDB, reactive queries, and
    the event loop.
 7. Discover repositories, create/restore the current DataScript connection,
-   restore graph/global/plugin configuration, and install transaction/file
-   watchers.
+   restore graph/global configuration, and install transaction/file watchers.
 8. Start background transaction batching, rate-limited file writes, sleep/wake
    detection, persisted variables, and periodic instrumentation.
 
@@ -47,7 +46,7 @@ share a host React runtime.
 There are three overlapping state mechanisms:
 
 1. [`frontend.state/state`](../src/main/frontend/state.cljs) is a large global
-   atom holding navigation, editor, UI, graph, sync, plugin, and platform state.
+   atom holding navigation, editor, UI, graph, sync, and platform state.
 2. DataScript connections hold graph entities and transact structured changes.
 3. Rum local state/mixins and reactive database query subscriptions trigger
    component updates.
@@ -100,19 +99,17 @@ Persistence is intentionally multi-layered:
 ## Electron process boundary
 
 The Electron main process is itself compiled from ClojureScript using Shadow's
-`:node-script` target.
-[`electron.core/main`](../src/electron/electron/core.cljs) takes a
-single-instance lock, registers custom protocols, creates the main window, opens
-search databases, and installs updater, IPC, server,
-exception, window, and app lifecycle handlers.
+`:node-script` target. `electron.core/main` takes a single-instance lock,
+registers custom protocols, creates the main window, opens search databases, and
+installs updater, IPC, exception, window, and app lifecycle handlers.
 
 Browser windows use `nodeIntegration: false` and `contextIsolation: true`.
 [`resources/js/preload.js`](../resources/js/preload.js) exposes a curated
 `window.apis` object with IPC, shell, clipboard, updater, window, and utility
-operations. Renderer-side `electron.ipc` wrappers then invoke the common `main`
+operations. Renderer-side `electron.ipc` wrappers invoke the common `main`
 channel. [`electron.handler/handle`](../src/electron/electron/handler.cljs) is a
 multimethod dispatching command vectors to filesystem, graph, watcher, export,
-plugin, search, server, and window operations.
+theme, search, and window operations.
 
 ```mermaid
 flowchart TD
@@ -123,33 +120,35 @@ flowchart TD
     dispatch --> capabilities["Node / Electron capabilities"]
 ```
 
-The boundary has good baseline isolation settings but is capability-rich. The
-preload accepts arbitrary channel names in some helpers and the main dispatcher
-exposes many privileged operations through one channel. Security therefore
-depends on exhaustive argument validation in each handler and on navigation/CSP
-controls, rather than on a narrow typed capability interface. The window
-explicitly sets `sandbox: false`; privileged custom protocols include
-`bypassCSP: true`; and development disables web security. These may be
-operationally necessary, but they deserve explicit threat modeling and
-regression tests.
+The boundary has good baseline isolation settings but remains capability-rich:
+the main dispatcher exposes many privileged operations through one channel.
+Security therefore depends on exhaustive argument validation in each handler and
+on navigation/CSP controls, rather than on a narrow typed capability interface.
+The preload no longer exposes a generic arbitrary-channel invoke helper, and the
+removed plugin/API-server paths have no renderer bridge. The window explicitly
+sets `sandbox: false`; privileged custom protocols include `bypassCSP: true`;
+and development disables web security. These may be operationally necessary, but
+they deserve explicit threat modeling and regression tests.
 
-## Plugin architecture
+## Graph-local themes
 
-The plugin system spans both processes and a separately published TypeScript
-SDK:
+Themes are CSS-only assets installed manually in the active graph. Each theme
+lives in its own immediate child directory under
+`<graph>/logseq/themes/<theme-folder>/`. The supported manifest is a
+`package.json` containing `logseq.themes`, whose entries identify a local CSS
+file through `url` and may provide `name`, `description`, and `mode`.
 
-- `libs` produces `@logseq/libs`, the plugin author API/runtime client.
-- `logseq.api` and `logseq.sdk` implement host-side APIs and models.
-- `frontend.handler.plugin` starts plugin hosts, lifecycle hooks, editor hooks,
-  commands, services, UI items, themes, and settings.
-- `frontend.state` stores installed plugin registries and hooks.
-- `electron.plugin` downloads, validates, installs, updates, and removes plugin
-  packages in the desktop data directory.
+Electron enumerates only those graph-local directories and returns file URLs for
+existing CSS entries. Relative paths, URLs, JavaScript entries, traversal, and
+missing files are rejected; no theme code executes. The renderer stores the
+selected theme in the graph configuration, injects one stylesheet, removes it
+when selection changes or the graph changes, and refreshes discovery when the
+theme directory changes. Built-in light, dark, and system modes remain separate
+from graph-local themes.
 
-Plugins are primarily an Electron capability and can contribute commands, hooks,
-UI, themes, and search services. This is a broad extension surface, making API
-compatibility, permission boundaries, package authenticity, and failure
-isolation architectural concerns rather than implementation details.
+The application no longer has a plugin host, marketplace, plugin SDK bridge, or
+developer HTTP API server. External customization is limited to manually copied
+local CSS themes; application behavior is provided by built-in features.
 
 ## Publishing and whiteboards
 

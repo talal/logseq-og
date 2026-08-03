@@ -103,8 +103,7 @@
   ([clear-search-mode?]
    (let [m {:search/result nil
             :search/q ""}]
-     (swap! state/state merge m)
-     (when config/lsp-enabled? (state/reset-plugin-search-engines)))
+     (swap! state/state merge m))
    (when (and clear-search-mode? (not= (state/get-search-mode) :graph))
      (state/set-search-mode! :global))))
 

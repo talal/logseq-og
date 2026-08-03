@@ -343,8 +343,8 @@
                         (when (= current-repo url)
                           (state/set-current-repo! (:url (first (state/get-repos)))))))]
     (when (or (config/local-db? url) (config/demo-graph? url))
-      (-> (p/let [_ (idb/clear-local-db! url)] ; clear file handles
-            )
+      (-> (p/let [_ (idb/clear-local-db! url)]) ; clear file handles
+
           (p/finally delete-db-f)))))
 
 (defn start-repo-db-if-not-exists!
@@ -395,8 +395,7 @@
    (state/set-db-restoring! true)
    (db/restore-graph! repo)
    (repo-config-handler/restore-repo-config! repo)
-   (when (config/global-config-enabled?)
-     (global-config-handler/restore-global-config!))
+   (global-config-handler/restore-global-config!)
     ;; Don't have to unlisten the old listener, as it will be destroyed with the conn
    (db/listen-and-persist! repo)
    (ui-handler/add-style-if-exists!)

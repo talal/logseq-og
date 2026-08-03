@@ -99,11 +99,8 @@
 
 ;; returns a vector to preserve order
 (defn binding-by-category [name]
-  (let [dict (get-bindings-ids-map)
-        plugin? (= name :shortcut.category/plugins)]
-    (->> (if plugin?
-           (->> (keys dict) (filter #(str/starts-with? (str %) ":plugin.")))
-           (shortcut-config/get-category-shortcuts name))
+  (let [dict (get-bindings-ids-map)]
+    (->> (shortcut-config/get-category-shortcuts name)
          (mapv (fn [k] [k (assoc (get dict k) :category name)])))))
 
 (defn shortcut-map

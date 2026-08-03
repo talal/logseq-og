@@ -45,10 +45,9 @@
         (fn [item]
           (let [command-name (first item)
                 command-doc  (get item 2)
-                plugin-id    (get-in item [1 1 1 :pid])
                 doc          (when (state/show-command-doc?) command-doc)]
             (cond
-              (or plugin-id (vector? doc))
+              (vector? doc)
               [:div.has-help
                command-name
                (when doc (ui/tippy
@@ -57,9 +56,7 @@
                            :fixed-position? true
                            :position        "right"}
 
-                          [:small (svg/help-circle)]))
-               (when plugin-id
-                 [:small {:title (str plugin-id)} (ui/icon "puzzle")])]
+                          [:small (svg/help-circle)]))]
 
               (string? doc)
               [:div {:title doc}

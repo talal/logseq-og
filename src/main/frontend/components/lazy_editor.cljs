@@ -1,16 +1,15 @@
-(ns frontend.components.lazy-editor
-  (:require [clojure.string :as string]
-            [frontend.config :as config]
-            [frontend.handler.plugin :refer [hook-extensions-enhancer-by-type]]
-            [frontend.state :as state]
-            [frontend.ui :as ui]
-            [promesa.core :as p]
-            [rum.core :as rum]
-            [shadow.lazy :as lazy]))
+ (ns frontend.components.lazy-editor
+   (:require-macros [frontend.components.lazy-editor :refer [code-editor-loadable]])
+   (:require [clojure.string :as string]
+             [frontend.state :as state]
+             [frontend.ui :as ui]
+             [promesa.core :as p]
+             [rum.core :as rum]
+             [shadow.lazy :as lazy]))
 
-;; TODO: Why does shadow fail when code is required
-#_:clj-kondo/ignore
-(def lazy-editor (lazy/loadable frontend.extensions.code/editor))
+ ;; The test target has no lazy modules; keep the production module boundary intact.
+ ;; See `code-editor-loadable` for the build-aware expansion.
+(def lazy-editor (code-editor-loadable))
 
 (defonce loaded? (atom false))
 
@@ -18,24 +17,20 @@
   rum/reactive
   {:will-mount
    (fn [state]
-     (lazy/load lazy-editor
-                (fn []
-                  (if-not @loaded?
-                    (p/finally
-                      (p/all (when-let [enhancers (and config/lsp-enabled?
-                                                       (seq (hook-extensions-enhancer-by-type :codemirror)))]
-                               (for [{f :enhancer} enhancers]
-                                 (when (fn? f) (f (. js/window -CodeMirror))))))
-                      (fn []
-                        (-> (p/delay 200)
-                            (p/then #(reset! loaded? true)))))
-                    (reset! loaded? true))))
+     (when lazy-editor
+       (lazy/load lazy-editor
+                  (fn []
+                    (if-not @loaded?
+                      (p/finally
+                        (p/delay 200)
+                        #(reset! loaded? true))
+                      (reset! loaded? true)))))
      state)}
   [config id attr code options]
   (let [loaded? (rum/react loaded?)
         theme   (state/sub :ui/theme)
         code    (or code "")
         code    (string/replace-first code #"\n$" "")]      ;; See-also: #3410
-    (if loaded?
+    (if (and loaded? lazy-editor)
       (@lazy-editor config id attr code theme options)
       (ui/loading "CodeMirror"))))

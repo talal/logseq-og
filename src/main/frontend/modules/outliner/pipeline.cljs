@@ -108,13 +108,5 @@
 
         (when-not (:delete-files? tx-meta)
           (doseq [p (seq pages)]
-            (updated-page-hook tx-report p)))
+            (updated-page-hook tx-report p)))))))
 
-        (when (and state/lsp-enabled?
-                   (seq blocks)
-                   (not importing?)
-                   (<= (count blocks) 1000))
-          (state/pub-event! [:plugin/hook-db-tx
-                             {:blocks  blocks
-                              :tx-data (:tx-data tx-report)
-                              :tx-meta (:tx-meta tx-report)}]))))))

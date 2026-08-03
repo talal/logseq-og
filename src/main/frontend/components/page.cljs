@@ -5,7 +5,6 @@
             [frontend.components.content :as content]
             [frontend.components.editor :as editor]
             [frontend.components.hierarchy :as hierarchy]
-            [frontend.components.plugins :as plugins]
             [frontend.components.query :as query]
             [frontend.components.reference :as reference]
             [frontend.components.scheduled-deadlines :as scheduled]
@@ -434,12 +433,7 @@
             [:div.flex.flex-row.space-between
              (when-not whiteboard?
                [:div.ls-page-title.flex-1.flex-row.w-full
-                (page-title page-name icon title format fmt-journal?)])
-             (when (not config/publishing?)
-               (when config/lsp-enabled?
-                 [:div.flex.flex-row
-                  (plugins/hook-ui-slot :page-head-actions-slotted nil)
-                  (plugins/hook-ui-items :pagebar)]))])
+                (page-title page-name icon title format fmt-journal?)])])
           [:div
            (when (and block? (not sidebar?) (not whiteboard?))
              (let [config {:id "block-parent"

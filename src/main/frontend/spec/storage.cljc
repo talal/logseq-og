@@ -8,8 +8,6 @@
 (s/def ::ls-left-sidebar-open? boolean?)
 (s/def :ui/theme string?)
 (s/def :ui/system-theme? boolean?)
-(s/def ::lsp-core-enabled boolean?)
-(s/def ::http-server-enabled boolean?)
 (s/def ::instrument-disabled boolean?)
 (s/def ::ls-pdf-area-is-dashed boolean?)
 (s/def ::ls-pdf-hl-block-is-colored boolean?)
@@ -28,7 +26,6 @@
 (s/def :copy/export-block-text-other-options map?)
 ;; Dynamic keys which aren't as easily validated:
 ;; :ls-pdf-last-page-*
-;; :ls-js-allowed-*
 
 ;; Validates items that are stored in local storage. The validation is approximate here
 ;; e.g. we don't validate deeply into maps and collections.
@@ -43,7 +40,6 @@
             ::ls-left-sidebar-open?
             :ui/theme
             :ui/system-theme?
-            ::lsp-core-enabled
             ::instrument-disabled
             ::ls-pdf-area-is-dashed
             ::ls-pdf-hl-block-is-colored

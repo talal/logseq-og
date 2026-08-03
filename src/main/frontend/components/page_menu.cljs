@@ -1,6 +1,5 @@
 (ns frontend.components.page-menu
   (:require [electron.ipc :as ipc]
-            [frontend.commands :as commands]
             [frontend.components.export :as export]
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
@@ -145,12 +144,6 @@
              :options {:on-click
                        (fn []
                          (ipc/ipc "openFileBackupDir" (config/get-local-dir repo) file-rpath))}})
-
-          (when config/lsp-enabled?
-            (for [[_ {:keys [label] :as cmd} action pid] (state/get-plugins-commands-with-type :page-menu-item)]
-              {:title label
-               :options {:on-click #(commands/exec-plugin-simple-command!
-                                     pid (assoc cmd :page page-name) action)}}))
 
           (when developer-mode?
             {:title   (t :dev/show-page-data)

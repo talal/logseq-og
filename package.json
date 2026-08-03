@@ -5,6 +5,7 @@
   "main": "static/electron.js",
   "devDependencies": {
     "@axe-core/playwright": "=4.4.4",
+    "@playwright/cli": "^0.1.17",
     "@playwright/test": "=1.51.0",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",

@@ -18,7 +18,6 @@
             [frontend.handler.config :as config-handler]
             [frontend.handler.editor :as editor-handler]
             [frontend.handler.notification :as notification]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.recent :as recent-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
@@ -845,9 +844,7 @@
                                 :create-first-block? (not template)
                                 :journal? true})
                 (state/pub-event! [:journal/insert-template today-page])
-                (ui-handler/re-render-root!)
-                (plugin-handler/hook-plugin-app :today-journal-created {:title today-page})))))))))
-
+                (ui-handler/re-render-root!)))))))))
 (defn open-today-in-sidebar
   []
   (when-let [page (db/entity [:block/name (util/page-name-sanity-lc (date/today))])]

@@ -1,7 +1,6 @@
 (ns frontend.state-test
   (:require [clojure.test :refer [deftest is]]
             [electron.ipc :as ipc]
-            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.handler :as handler]
             [frontend.handler.events :as events]
@@ -86,9 +85,7 @@
   (let [published-events (atom [])
         repo             "repo"]
     (test-helper/with-reset reset
-      [config/global-config-enabled?          (constantly false)
-       config/plugin-config-enabled?          (constantly false)
-       db/get-files                           (constantly [:existing-file])
+      [db/get-files                           (constantly [:existing-file])
        db/restore!                            (constantly (p/resolved nil))
        file-handler/watch-for-current-graph-dir! (constantly nil)
        page-handler/create-today-journal!     (constantly nil)

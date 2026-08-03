@@ -1,7 +1,6 @@
 (ns frontend.components.content
   (:require [clojure.string :as string]
             [dommy.core :as d]
-            [frontend.commands :as commands]
             [frontend.components.editor :as editor]
             [frontend.components.export :as export]
             [frontend.components.page-menu :as page-menu]
@@ -270,15 +269,6 @@
                      (editor-handler/collapse-all! block-id {}))
          :shortcut (ui/keyboard-shortcut-from-config :editor/collapse-block-children)}
         (t :editor/collapse-block-children))
-
-       (when (state/sub [:plugin/simple-commands])
-         (when-let [cmds (state/get-plugins-commands-with-type :block-context-menu-item)]
-           (for [[_ {:keys [key label] :as cmd} action pid] cmds]
-             (ui/menu-link
-              {:key      key
-               :on-click #(commands/exec-plugin-simple-command!
-                           pid (assoc cmd :uuid block-id) action)}
-              label))))
 
        (when (state/sub [:ui/developer-mode?])
          (ui/menu-link

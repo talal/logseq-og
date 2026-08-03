@@ -16,7 +16,6 @@
             [frontend.components.datetime :as datetime-comp]
             [frontend.components.lazy-editor :as lazy-editor]
             [frontend.components.macro :as macro]
-            [frontend.components.plugins :as plugins]
             [frontend.components.query :as query]
             [frontend.components.query.builder :as query-builder-component]
             [frontend.components.svg :as svg]
@@ -44,7 +43,6 @@
             [frontend.handler.export.common :as export-common-handler]
             [frontend.handler.file-sync :as file-sync]
             [frontend.handler.notification :as notification]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.repeated :as repeated]
             [frontend.handler.route :as route-handler]
             [frontend.handler.whiteboard :as whiteboard-handler]
@@ -1512,9 +1510,7 @@
       (macro-embed-cp config arguments)
 
       (= name "renderer")
-      (when config/lsp-enabled?
-        (when-let [block-uuid (:block/uuid config)]
-          (plugins/hook-ui-slot :macro-renderer-slotted (assoc options :uuid (str block-uuid)))))
+      nil
 
       (get @macro/macros name)
       ((get @macro/macros name) config options)
@@ -1704,9 +1700,9 @@
                   config (cond->
                           (-> config
                               (assoc :block/uuid (:block/uuid child))
-                              (dissoc :breadcrumb-show? :embed-parent))
-                           (or ref? query?)
-                           (assoc :ref-query-child? true))]
+                              (dissoc :breadcrumb-show? :embed-parent)
+                              (or ref? query?)
+                              (assoc :ref-query-child? true)))]
               (rum/with-key (block-container config child)
                 (str (:blocks-container-id config) "-" (:block/uuid child))))))]])))
 
@@ -2241,27 +2237,19 @@
                      summary]])]))))
 
 (defn- block-content-inner
-  [config block body plugin-slotted? collapsed? block-ref-with-title?]
-  (if plugin-slotted?
-    [:div.block-slotted-body
-     (plugins/hook-block-slot
-      :block-content-slotted
-      (-> block (dissoc :block/children :block/page)))]
-
-    (let [title-collapse-enabled? (:outliner/block-title-collapse-enabled? (state/get-config))]
-      (when (and (not block-ref-with-title?)
-                 (seq body)
-                 (or (not title-collapse-enabled?)
-                     (and title-collapse-enabled?
-                          (or (not collapsed?)
-                              (some? (mldoc/extract-first-query-from-ast body))))))
-        [:div.block-body
-         ;; TODO: consistent id instead of the idx (since it could be changed later)
-         (let [body (block/trim-break-lines! (:block/body block))]
-           (for [[idx child] (medley/indexed body)]
-             (when-let [block (markup-element-cp config child)]
-               (rum/with-key (block-child block)
-                 (str uuid "-" idx)))))]))))
+  [config block body collapsed? block-ref-with-title?]
+  (let [title-collapse-enabled? (:outliner/block-title-collapse-enabled? (state/get-config))]
+    (when (and (not block-ref-with-title?)
+               (seq body)
+               (or (not title-collapse-enabled?)
+                   (and title-collapse-enabled?
+                        (or (not collapsed?)
+                            (some? (mldoc/extract-first-query-from-ast body))))))
+      [:div.block-body
+       (for [[idx child] (medley/indexed body)]
+         (when-let [child-block (markup-element-cp config child)]
+           (rum/with-key (block-child child-block)
+             (str (:block/uuid block) "-" idx))))])))
 
 (rum/defc block-content < rum/reactive
   [config {:block/keys [uuid content children properties scheduled deadline format pre-block?] :as block} edit-input-id block-id slide? selected?]
@@ -2269,7 +2257,6 @@
         {:block/keys [title body] :as block} (if (:block/title block) block
                                                  (merge block (block/parse-title-and-body uuid format pre-block? content)))
         collapsed? (util/collapsed? block)
-        plugin-slotted? (and config/lsp-enabled? (state/slot-hook-exist? uuid))
         block-ref? (:block-ref? config)
         stop-events? (:stop-events? config)
         block-ref-with-title? (and block-ref? (not (state/show-full-blocks?)) (seq title))
@@ -2307,14 +2294,13 @@
         [:div.warning.text-sm
          "Large block will not be editable or searchable to not slow down the app, please use another editor to edit this block."])
       [:div.flex.flex-row.justify-between.block-content-inner
-       (when-not plugin-slotted?
-         [:div.flex-1.w-full
-          (cond
-            (or (seq title) (:block/marker block))
-            (build-block-title config block)
+       [:div.flex-1.w-full
+        (cond
+          (or (seq title) (:block/marker block))
+          (build-block-title config block)
 
-            :else
-            nil)])
+          :else
+          nil)]
 
        (clock-summary-cp block body)]
 
@@ -2340,7 +2326,7 @@
                  (not= block-type :whiteboard-shape))
         (properties-cp config block))
 
-      (block-content-inner config block body plugin-slotted? collapsed? block-ref-with-title?)
+      (block-content-inner config block body collapsed? block-ref-with-title?)
 
       (case (:block/warning block)
         :multiple-blocks
@@ -3279,11 +3265,7 @@
       (let [lang (util/safe-lower-case (:language options))]
         [:div.cp__fenced-code-block
          {:data-lang lang}
-         (if-let [opts (plugin-handler/hook-fenced-code-by-type lang)]
-           [:div.ui-fenced-code-wrap
-            (src-cp config options html-export?)
-            (plugins/hook-ui-fenced-code (:block config) (string/join "" (:lines options)) opts)]
-           (src-cp config options html-export?))])
+         (src-cp config options html-export?)])
 
       :else
       "")

@@ -4,7 +4,6 @@
             [frontend.components.onboarding.quick-tour :as quick-tour]
             [frontend.context.i18n :refer [t]]
             [frontend.handler.notification :as notification]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.search :as search-handler]
             [frontend.state :as state]
             [frontend.ui :as ui]
@@ -92,7 +91,6 @@
                    (ui/inject-document-devices-envs!)
                    (ui/inject-dynamic-style-node!)
                    (quick-tour/init)
-                   (plugin-handler/host-mounted!)
                    (assoc state ::teardown (setup-fns!)))
    :will-unmount (fn [state]
                    (when-let [teardown (::teardown state)]

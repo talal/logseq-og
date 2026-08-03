@@ -5,7 +5,7 @@
             [frontend.components.assets :as assets]
             [frontend.components.conversion :as conversion-component]
             [frontend.components.file-sync :as fs]
-            [frontend.components.plugins :as plugins]
+            [frontend.components.network-proxy :as network-proxy]
             [frontend.components.shortcut :as shortcut]
             [frontend.components.svg :as svg]
             [frontend.config :as config]
@@ -17,15 +17,12 @@
             [frontend.handler.file-sync :as file-sync-handler]
             [frontend.handler.global-config :as global-config-handler]
             [frontend.handler.notification :as notification]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.handler.user :as user-handler]
             [frontend.modules.instrumentation.core :as instrument]
             [frontend.modules.shortcut.data-helper :as shortcut-helper]
-            [frontend.spec.storage :as storage-spec]
             [frontend.state :as state]
-            [frontend.storage :as storage]
             [frontend.ui :as ui]
             [frontend.util :refer [classnames web-platform?] :as util]
             [frontend.version :refer [version]]
@@ -210,7 +207,7 @@
           (state/set-state! [:electron/user-cfgs :spell-check] (not enabled?))
           (p/then (ipc/ipc :userAppCfgs :spell-check (not enabled?))
                   #(when (js/confirm (t :relaunch-confirm-to-work))
-                     (js/logseq.api.relaunch))))
+                     (ipc/ipc :relaunchApp))))
         true)]]]))
 
 (rum/defc app-auto-update-row < rum/reactive [t]
@@ -506,34 +503,6 @@
               (state/set-developer-mode! mode)))
           [:div.text-sm.opacity-50 (t :settings-page/developer-mode-desc)]))
 
-(rum/defc plugin-enabled-switcher
-  [t]
-  (let [value (state/lsp-enabled?-or-theme)
-        [on? set-on?] (rum/use-state value)
-        on-toggle #(let [v (not on?)]
-                     (set-on? v)
-                     (storage/set ::storage-spec/lsp-core-enabled v))]
-    [:div.flex.items-center.gap-2
-     (ui/toggle on? on-toggle true)
-     (when (not= (boolean value) on?)
-       (ui/button (t :plugin/restart)
-                  :on-click #(js/logseq.api.relaunch)
-                  :small? true :intent "logseq"))]))
-
-(rum/defc http-server-enabled-switcher
-  [t]
-  (let [[value _] (rum/use-state (boolean (storage/get ::storage-spec/http-server-enabled)))
-        [on? set-on?] (rum/use-state value)
-        on-toggle #(let [v (not on?)]
-                     (set-on? v)
-                     (storage/set ::storage-spec/http-server-enabled v))]
-    [:div.flex.items-center.gap-2
-     (ui/toggle on? on-toggle true)
-     (when (not= (boolean value) on?)
-       (ui/button (t :plugin/restart)
-                  :on-click #(js/logseq.api.relaunch)
-                  :small? true :intent "logseq"))]))
-
 (rum/defc flashcards-enabled-switcher
   [enable-flashcards?]
   (ui/toggle enable-flashcards?
@@ -553,18 +522,8 @@
               (ui/icon "edit")]
              :class "text-sm"
              :on-click #(state/set-sub-modal!
-                         (fn [_] (plugins/user-proxy-settings-panel agent-opts))
+                         (fn [_] (network-proxy/settings-panel agent-opts))
                          {:id :https-proxy-panel :center? true})))
-
-(defn plugin-system-switcher-row []
-  (row-with-button-action
-   {:left-label (t :settings-page/plugin-system)
-    :action (plugin-enabled-switcher t)}))
-
-(defn http-server-switcher-row []
-  (row-with-button-action
-   {:left-label "HTTP APIs server"
-    :action (http-server-enabled-switcher t)}))
 
 (defn flashcards-switcher-row [enable-flashcards?]
   (row-with-button-action
@@ -608,7 +567,7 @@
      #(when (js/confirm (t :relaunch-confirm-to-work))
         (state/set-state! [:electron/user-cfgs :window/native-titlebar?] (not enabled?))
         (ipc/ipc :userAppCfgs :window/native-titlebar? (not enabled?))
-        (js/logseq.api.relaunch))
+        (ipc/ipc :relaunchApp))
      [:span.text-sm.opacity-50 (t :settings-page/native-titlebar-desc)])))
 
 (rum/defcs settings-general < rum/reactive
@@ -625,7 +584,7 @@
      (theme-modes-row t switch-theme system-theme? dark?)
      (when (and (util/electron?) (not util/mac?)) (native-titlebar-row t))
      (when show-radix-themes? (accent-color-row false))
-     (when (config/global-config-enabled?) (edit-global-config-edn))
+     (when (util/electron?) (edit-global-config-edn))
      (when current-repo (edit-config-edn))
      (when current-repo (edit-custom-css))
      (when current-repo (edit-export-css))]))
@@ -938,10 +897,6 @@
                              (when (= "Enter" (util/ekey e))
                                (update-home-page e)))}]]]])
      (whiteboards-switcher-row enable-whiteboards?)
-     (when (and (util/electron?) config/feature-plugin-system-on?)
-       (plugin-system-switcher-row))
-     (when (util/electron?)
-       (http-server-switcher-row))
      (flashcards-switcher-row enable-flashcards?)
      (zotero-settings-row)
      (when-not web-platform?
@@ -1027,8 +982,6 @@
   [state _active-tab]
   (let [current-repo (state/sub :repo/current)
         ;; enable-block-timestamps? (state/enable-block-timestamps?)
-        _installed-plugins (state/sub :plugin/installed-plugins)
-        plugins-of-settings (and config/lsp-enabled? (seq (plugin-handler/get-enabled-plugins-if-setting-schema)))
         *active (::active state)]
 
     [:div#settings.cp__settings-main
@@ -1049,10 +1002,7 @@
                ;;   [:assets "assets" (t :settings-page/tab-assets) (ui/icon "box")])
 
                [:advanced "advanced" (t :settings-page/tab-advanced) (ui/icon "bulb")]
-               [:features "features" (t :settings-page/tab-features) (ui/icon "app-feature")]
-
-               (when plugins-of-settings
-                 [:plugins-setting "plugins" (t :settings-of-plugins) (ui/icon "puzzle")])]]
+               [:features "features" (t :settings-page/tab-features) (ui/icon "app-feature")]]]
 
           (when label
             [:li.settings-menu-item
@@ -1068,12 +1018,6 @@
         [:h1.cp__settings-category-title (t (keyword (str "settings-page/tab-" (name (first @*active)))))]]
 
        (case (first @*active)
-
-         :plugins-setting
-         (let [label (second @*active)]
-           (state/pub-event! [:go/plugins-settings (:id (first plugins-of-settings))])
-           (reset! *active [label label])
-           nil)
 
          :account
          (settings-account)

@@ -211,7 +211,7 @@
        {:for "zotero_linked_attachment_base_directory"}
        "Zotero linked attachment base directory"
        [:a.ml-2
-        {:title  "If you store attached files in Zotero — the default — this setting does not affect you. It only applies to linked files. If you're using the ZotFile plugin to help with a linked-file workflow, you should configure it to store linked files within the base directory you've configured. Click to learn more."
+        {:title  "If you store attached files in Zotero — the default — this setting does not affect you. It only applies to linked files. If you're using the ZotFile add-on to help with a linked-file workflow, you should configure it to store linked files within the base directory you've configured. Click to learn more."
          :href   "https://www.zotero.org/support/preferences/advanced#linked_attachment_base_directory"
          :target "_blank"}
         (svg/info)]]

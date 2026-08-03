@@ -61,23 +61,6 @@
 ;; Feature flags
 ;; =============
 
-(goog-define ENABLE-PLUGINS true)
-(defonce feature-plugin-system-on? ENABLE-PLUGINS)
-
-;; Desktop only as other platforms requires better understanding of their
-;; multi-graph workflows and optimal place for a "global" dir
-(def global-config-enabled? util/electron?)
-
-;; User level configuration for whether plugins are enabled
-(defonce lsp-enabled?
-  (and (util/electron?)
-       (not (false? feature-plugin-system-on?))
-       (state/lsp-enabled?-or-theme)))
-
-(defn plugin-config-enabled?
-  []
-  (and lsp-enabled? (global-config-enabled?)))
-
 ;; :TODO: How to do this?
 ;; (defonce desktop? ^boolean goog.DESKTOP)
 
@@ -332,7 +315,6 @@
 (def config-file "config.edn")
 (def custom-css-file "custom.css")
 (def export-css-file "export.css")
-(def custom-js-file "custom.js")
 (def config-default-content (rc/inline "templates/config.edn"))
 (def config-default-content-md5 (let [md5 (new crypt/Md5)]
                                   (.update md5 (crypt/stringToUtf8ByteArray config-default-content))
@@ -445,13 +427,6 @@
   (when-let [repo-dir (and (local-db? (state/get-current-repo))
                            (get-repo-dir (state/get-current-repo)))]
     (path/path-join repo-dir "assets")))
-
-(defn get-custom-js-path
-  ([]
-   (get-custom-js-path (state/get-current-repo)))
-  ([repo]
-   (when-let [repo-dir (get-repo-dir repo)]
-     (path/path-join repo-dir app-name custom-js-file))))
 
 (defn get-block-hidden-properties
   []

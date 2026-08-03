@@ -1,9 +1,9 @@
 # Logseq OG repository analysis
 
-This analysis describes the repository at commit
-`29caab203060c13931d5cc9d908066d6589d2214` (2026-08-01). It is based on the
-checked-in source and configuration, not on generated output under `static/`,
-installed dependencies, or historical assumptions about upstream Logseq.
+This analysis describes the current working tree after removal of the plugin
+host, marketplace, and developer HTTP API server. It is based on checked-in
+source and configuration, not on generated output under `static/`, installed
+dependencies, or historical assumptions about upstream Logseq.
 
 ## Executive summary
 
@@ -18,7 +18,7 @@ rendering runtime.
 The repository is a federated monorepo rather than a single-package workspace.
 Clojure local-root libraries under `deps/` form the reusable domain core; the
 main CLJS app lives under `src/main`; Electron main-process code lives under
-`src/electron`; TypeScript packages provide the plugin SDK, UI islands, Amplify
+`src/electron`; remaining TypeScript packages provide UI islands, Amplify
 integration, and a vendored tldraw fork. Clojure CLI/Shadow CLJS, Babashka,
 Yarn, Gulp, Parcel, Webpack, and Electron Forge each own a different part of the
 build.
@@ -73,7 +73,7 @@ flowchart TD
     ui --> hosts["Browser / Electron"]
     hosts --> bridge["Preload IPC bridge"]
     bridge --> main["Electron main process"]
-    main --> capabilities["Filesystem · watcher · search · updater · windows · plugins · server"]
+    main --> capabilities["Filesystem · watcher · search · updater · windows · graph-local themes"]
 ```
 
 ## Scope and confidence

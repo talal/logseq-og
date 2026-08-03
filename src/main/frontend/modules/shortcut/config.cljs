@@ -1,9 +1,7 @@
 (ns frontend.modules.shortcut.config
   (:require [clojure.data :as data]
-            [clojure.string :as str]
             [electron.ipc :as ipc]
             [frontend.commands :as commands]
-            [frontend.config :as config]
             [frontend.dicts :as dicts]
             [frontend.extensions.pdf.utils :as pdf-utils]
             [frontend.extensions.srs.handler :as srs]
@@ -14,8 +12,6 @@
             [frontend.handler.journal :as journal-handler]
             [frontend.handler.page :as page-handler]
             [frontend.handler.paste :as paste-handler]
-            [frontend.handler.plugin :as plugin-handler]
-            [frontend.handler.plugin-config :as plugin-config-handler]
             [frontend.handler.route :as route-handler]
             [frontend.handler.search :as search-handler]
             [frontend.handler.ui :as ui-handler]
@@ -514,15 +510,7 @@
                                              :fn      ui-handler/toggle-wide-mode!}
 
    :ui/select-theme-color                   {:binding "t i"
-                                             :fn      plugin-handler/show-themes-modal!}
-
-   :ui/goto-plugins                         {:binding  "t p"
-                                             :inactive (not config/lsp-enabled?)
-                                             :fn       plugin-handler/goto-plugins-dashboard!}
-
-   :ui/install-plugins-from-file            {:binding  false
-                                             :inactive (not (config/plugin-config-enabled?))
-                                             :fn       plugin-config-handler/open-replace-plugins-modal}
+                                             :fn      #(state/pub-event! [:modal/show-themes-modal])}
 
    :ui/clear-all-notifications              {:binding []
                                              :fn      :frontend.handler.notification/clear-all!}
@@ -723,8 +711,6 @@
           :editor/new-whiteboard
           :ui/toggle-wide-mode
           :ui/select-theme-color
-          :ui/goto-plugins
-          :ui/install-plugins-from-file
           :editor/toggle-open-blocks
           :ui/clear-all-notifications
           :sidebar/close-top
@@ -918,10 +904,7 @@
      :dev/show-block-ast
      :dev/show-page-data
      :dev/show-page-ast
-     :ui/clear-all-notifications]
-
-    :shortcut.category/plugins
-    []}))
+     :ui/clear-all-notifications]}))
 
 (let [category-maps {::category       (set (keys @*category))
                      ::dicts/category dicts/categories}]
@@ -942,11 +925,8 @@
    (swap! *config assoc-in [handler-id id] shortcut-map)
    (when-not config-only?
      (swap! *shortcut-cmds assoc id (:cmd shortcut-map))
-     (let [plugin? (str/starts-with? (str id) ":plugin.")
-           category (or (:category shortcut-map)
-                        (if plugin?
-                          :shortcut.category/plugins
-                          :shortcut.category/others))]
+     (let [category (or (:category shortcut-map)
+                        :shortcut.category/others)]
        (swap! *category update category #(conj % id))))))
 
 (defn remove-shortcut!

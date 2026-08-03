@@ -1,11 +1,9 @@
 (ns frontend.extensions.latex
   (:require [frontend.config :as config]
-            [frontend.handler.plugin :refer [hook-extensions-enhancer-by-type] :as plugin-handler]
             [frontend.loader :as loader]
             [frontend.ui :as ui]
             [frontend.util :as util]
             [goog.dom :as gdom]
-            [promesa.core :as p]
             [rum.core :as rum]))
 
 ;; TODO: extracted to a rum mixin
@@ -41,13 +39,9 @@
          (loader/load
           (config/asset-uri "/static/js/mhchem.min.js")
           (fn []
-            (p/finally
-              (p/all (when-let [enhancers (and config/lsp-enabled? (seq (hook-extensions-enhancer-by-type :katex)))]
-                       (for [{f :enhancer} enhancers]
-                         (when (fn? f) (f js/window.katex)))))
-              (fn []
-                (reset! *loading? false)
-                (render! state))))))
+            (reset! *loading? false)
+            (render! state)))
+         state)
        state))))
 
 (defn- state-&-load-and-render!

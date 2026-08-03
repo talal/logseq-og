@@ -11,8 +11,3 @@
     (p/let [result (js/window.apis.doAction (bean/->js args))]
       result)))
 
-(defn invoke
-  [channel & args]
-  (when (util/electron?)
-    (p/let [result (js/window.apis.invoke channel (bean/->js args))]
-      result)))

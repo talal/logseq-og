@@ -1,7 +1,6 @@
 (ns frontend.handler.command-palette
   "System-component-like ns for command palette's functionality"
   (:require [cljs.spec.alpha :as s]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.modules.shortcut.data-helper :as shortcut-helper]
             [frontend.spec :as spec]
             [frontend.state :as state]
@@ -54,10 +53,11 @@
 (defn add-history [{:keys [id]}]
   (storage/set "commands-history" (conj (history) {:id id :timestamp (.getTime (js/Date.))})))
 
-(defn invoke-command [{:keys [id action] :as cmd}]
+(defn invoke-command [{:keys [action] :as cmd}]
   (add-history cmd)
   (state/close-modal!)
-  (plugin-handler/hook-lifecycle-fn! id action))
+  (when (fn? action)
+    (action)))
 
 (defn top-commands [limit]
   (->> (get-commands)

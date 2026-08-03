@@ -48,10 +48,6 @@ contextBridge.exposeInMainWorld('apis', {
     return await ipcRenderer.invoke('main', arg)
   },
 
-  invoke: async (channel, args) => {
-    return await ipcRenderer.invoke(channel, ...args)
-  },
-
   addListener: ipcRenderer.on.bind(ipcRenderer),
   removeListener: ipcRenderer.removeListener.bind(ipcRenderer),
   removeAllListeners: ipcRenderer.removeAllListeners.bind(ipcRenderer),
@@ -172,26 +168,6 @@ contextBridge.exposeInMainWorld('apis', {
 
   toggleMaxOrMinActiveWindow(isToggleMin = false) {
     ipcRenderer.invoke('toggle-max-or-min-active-win', isToggleMin)
-  },
-
-  /**
-   * internal
-   * @param type
-   * @param args
-   * @private
-   */
-  async _callApplication(type, ...args) {
-    return await ipcRenderer.invoke('call-application', type, ...args)
-  },
-
-  /**
-   * internal
-   * @param type
-   * @param args
-   * @private
-   */
-  async _callMainWin(type, ...args) {
-    return await ipcRenderer.invoke('call-main-win', type, ...args)
   },
 
   getFilePathFromClipboard,

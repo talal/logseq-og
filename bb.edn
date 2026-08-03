@@ -57,8 +57,6 @@
   dev:validate-local-storage
   logseq.tasks.spec/validate-local-storage
 
-  dev:validate-plugins-edn
-  logseq.tasks.malli/validate-plugins-edn
 
   dev:validate-repo-config-edn
   logseq.tasks.malli/validate-repo-config-edn

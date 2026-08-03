@@ -29,7 +29,6 @@
 (defonce HttpsProxyAgent (.-HttpsProxyAgent (js/require "https-proxy-agent")))
 (defonce SocksProxyAgent (.-SocksProxyAgent (js/require "socks-proxy-agent")))
 (defonce _fetch (js/require "node-fetch"))
-(defonce extract-zip (js/require "extract-zip"))
 
 (defn fetch
   ([url] (fetch url nil))
@@ -57,21 +56,8 @@
     (fs/mkdirSync cfgs/dot-root))
   (fix-win-path! cfgs/dot-root))
 
-(defn get-ls-default-plugins
-  []
-  (let [plugins-root (node-path/join (get-ls-dotdir-root) "plugins")
-        _ (when-not (fs/existsSync plugins-root)
-            (fs/mkdirSync plugins-root))
-        dirs (js->clj (fs/readdirSync plugins-root #js{"withFileTypes" true}))
-        dirs (->> dirs
-                  (filter #(.isDirectory %))
-                  (filter (fn [f] (not (some #(string/starts-with? (.-name f) %) ["_" "."]))))
-                  (map #(node-path/join plugins-root (.-name %))))]
-    dirs))
-
 (defn- set-fetch-agent-proxy
-  "Set proxy for fetch agent(plugin system)
-  protocol: http | socks5"
+  "Set fetch proxy agent."
   [{:keys [protocol host port]}]
   (if (and protocol host port (or (= protocol "http") (= protocol "socks5")))
     (let [proxy-url (str protocol "://" host ":" port)]

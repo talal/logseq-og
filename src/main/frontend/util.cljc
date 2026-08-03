@@ -977,24 +977,26 @@
 
 #?(:cljs
    (defn add-style!
-     [style]
-     (when (some? style)
-       (let [parent-node (d/sel1 :head)
-             id "logseq-custom-theme-id"
-             old-link-element (d/sel1 (str "#" id))
-             style (if (string/starts-with? style "http")
-                     style
-                     (str "data:text/css;charset=utf-8," (js/encodeURIComponent style)))]
-         (when old-link-element
-           (d/remove! old-link-element))
-         (let [link (->
-                     (d/create-element :link)
-                     (d/set-attr! :id id)
-                     (d/set-attr! :rel "stylesheet")
-                     (d/set-attr! :type "text/css")
-                     (d/set-attr! :href style)
-                     (d/set-attr! :media "all"))]
-           (d/append! parent-node link))))))
+     ([style]
+      (add-style! "logseq-custom-theme-id" style))
+     ([id style]
+      (when (some? style)
+        (let [parent-node (d/sel1 :head)
+              old-link-element (d/sel1 (str "#" id))
+              style (if (or (string/starts-with? style "http")
+                            (string/starts-with? style "file:"))
+                      style
+                      (str "data:text/css;charset=utf-8," (js/encodeURIComponent style)))]
+          (when old-link-element
+            (d/remove! old-link-element))
+          (let [link (->
+                      (d/create-element :link)
+                      (d/set-attr! :id id)
+                      (d/set-attr! :rel "stylesheet")
+                      (d/set-attr! :type "text/css")
+                      (d/set-attr! :href style)
+                      (d/set-attr! :media "all"))]
+            (d/append! parent-node link)))))))
 
 (defn remove-common-preceding
   [col1 col2]

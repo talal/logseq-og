@@ -2,7 +2,6 @@
   "This ns starts the event handling for the electron main process and defines
   all the application-specific event types"
   (:require ["/electron/utils" :as js-utils]
-            ["abort-controller" :as AbortController]
             ["buffer" :as buffer]
             ["diff-match-patch" :as google-diff]
             ["electron" :refer [app autoUpdater dialog ipcMain shell]]
@@ -20,14 +19,13 @@
             [electron.find-in-page :as find]
             [electron.fs-watcher :as watcher]
             [electron.logger :as logger]
-            [electron.plugin :as plugin]
             [electron.search :as search]
-            [electron.server :as server]
             [electron.shell :as shell]
             [electron.state :as state]
             [electron.utils :as utils]
             [electron.window :as win]
             [logseq.common.graph :as common-graph]
+            [logseq.common.theme :as common-theme]
             [promesa.core :as p]))
 
 (defmulti handle (fn [_window args] (keyword (first args))))
@@ -46,8 +44,8 @@
     (js-utils/deepReadDir dir (if (boolean? flat?) flat? true))))
 
 (defmethod handle :unlink [_window [_ repo-dir path]]
-  (if (or (plugin/dotdir-file? path)
-          (plugin/assetsdir-file? path))
+  (if (or (string/starts-with? path (str repo-dir "/logseq/"))
+          (string/starts-with? path (str repo-dir "/assets/")))
     (fs/unlinkSync path)
     (try
       (logger/info ::unlink {:path path})
@@ -403,21 +401,6 @@
                      (p/rejected (js/Error. "Timeout"))
                      (p/rejected e)))))))
 
-(defmethod handle :httpFetchJSON [_win [_ url options]]
-  (p/let [res (utils/fetch url options)
-          json (.json res)]
-    json))
-
-(defmethod handle :getUserDefaultPlugins []
-  (utils/get-ls-default-plugins))
-
-(defmethod handle :validateUserExternalPlugins [_win [_ urls]]
-  (zipmap urls (for [url urls]
-                 (try
-                   (and (fs-extra/pathExistsSync url)
-                        (fs-extra/pathExistsSync (node-path/join url "package.json")))
-                   (catch :default _e false)))))
-
 (defmethod handle :relaunchApp []
   (.relaunch app) (.quit app))
 
@@ -446,6 +429,54 @@
       (when (fs-extra/pathExistsSync assets-path)
         (p/let [^js files (js-utils/getAllFiles assets-path (clj->js exts))]
           files)))))
+(defn- regular-file?
+  [path]
+  (try
+    (.isFile (fs-extra/lstatSync path))
+    (catch :default _
+      false)))
+
+(defn- read-theme-manifest
+  [manifest-path]
+  (try
+    (when (regular-file? manifest-path)
+      (js->clj (js/JSON.parse (fs/readFileSync manifest-path "utf8"))
+               :keywordize-keys true))
+    (catch :default e
+      (logger/warn ::theme-manifest-read-failed {:path manifest-path
+                                                 :error e})
+      nil)))
+
+(defn- theme-file-url
+  [path]
+  (let [path-to-file-url (.-pathToFileURL (js/require "url"))]
+    (.toString (path-to-file-url path))))
+
+(defn- read-graph-themes
+  [window]
+  (when-let [graph-path (state/get-window-graph-path window)]
+    (let [themes-path (.join node-path graph-path "logseq" "themes")]
+      (when (fs-extra/pathExistsSync themes-path)
+        (->> (array-seq (.readdirSync fs-extra themes-path #js {:withFileTypes true}))
+             (filter #(.isDirectory ^js %))
+             (mapcat
+              (fn [^js theme-dir]
+                (let [theme-id (.-name theme-dir)
+                      theme-path (.join node-path themes-path theme-id)
+                      manifest-path (.join node-path theme-path "package.json")
+                      manifest (read-theme-manifest manifest-path)]
+                  (when manifest
+                    (keep
+                     (fn [{:keys [url] :as theme}]
+                       (let [css-path (.join node-path theme-path url)]
+                         (when (regular-file? css-path)
+                           (assoc theme :href (theme-file-url css-path)))))
+                     (common-theme/manifest->themes theme-id manifest))))))
+             common-theme/sort-themes
+             vec)))))
+
+(defmethod handle :getGraphThemes [window _]
+  (read-graph-themes window))
 
 (defn close-watcher-when-orphaned!
   "When it's the last window for the directory, close the watcher."
@@ -482,58 +513,6 @@
       (utils/send-to-renderer window "notification"
                               {:type    "error"
                                :payload (.-message e)}))))
-
-(defmethod handle :installMarketPlugin [_ [_ mft]]
-  (plugin/install-or-update! mft))
-
-(defmethod handle :updateMarketPlugin [_ [_ pkg]]
-  (plugin/install-or-update! pkg))
-
-(defmethod handle :uninstallMarketPlugin [_ [_ id]]
-  (plugin/uninstall! id))
-
-(def *request-abort-signals (atom {}))
-
-(defmethod handle :httpRequest [_ [_ req-id opts]]
-  (let [{:keys [url abortable method data returnType headers]} opts]
-    (when-let [[method type] (and (not (string/blank? url))
-                                  [(keyword (string/upper-case (or method "GET")))
-                                   (keyword (string/lower-case (or returnType "json")))])]
-      (-> (utils/fetch url
-                       (-> {:method  method
-                            :headers (and headers (bean/->js headers))}
-                           (merge (when (and (not (contains? #{:GET :HEAD} method)) data)
-                                    ;; TODO: support type of arrayBuffer
-                                    {:body (js/JSON.stringify (bean/->js data))})
-
-                                  (when-let [^js controller (and abortable (AbortController.))]
-                                    (swap! *request-abort-signals assoc req-id controller)
-                                    {:signal (.-signal controller)}))))
-          (p/then (fn [^js res]
-                    (case type
-                      :json
-                      (.json res)
-
-                      :arraybuffer
-                      (.arrayBuffer res)
-
-                      :base64
-                      (-> (.buffer res)
-                          (p/then #(.toString % "base64")))
-
-                      :text
-                      (.text res))))
-          (p/catch
-           (fn [^js e]
-             ;; TODO: handle special cases
-             (throw e)))
-          (p/finally
-            (fn []
-              (swap! *request-abort-signals dissoc req-id)))))))
-
-(defmethod handle :httpRequestAbort [_ [_ req-id]]
-  (when-let [^js controller (get @*request-abort-signals req-id)]
-    (.abort controller)))
 
 (defmethod handle :quitAndInstall []
   (logger/info ::quick-and-install)
@@ -701,15 +680,6 @@
 
 (defmethod handle :clear-find-in-page [^js win [_]]
   (find/clear! win))
-
-(defmethod handle :server/load-state []
-  (server/load-state-to-renderer!))
-
-(defmethod handle :server/do [^js _win [_ action]]
-  (server/do-server! action))
-
-(defmethod handle :server/set-config [^js _win [_ config]]
-  (server/set-config! config))
 
 (defmethod handle :window/open-blank-callback [^js win [_ _type]]
   (win/setup-window-listeners! win) nil)

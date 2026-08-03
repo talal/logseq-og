@@ -3,7 +3,6 @@
             [frontend.handler.config :as config-handler]
             [frontend.handler.global-config :as global-config-handler]
             [frontend.handler.notification :as notification]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.modules.shortcut.config :as shortcut-config]
             [frontend.modules.shortcut.data-helper :as dh]
             [frontend.modules.shortcut.utils :as shortcut-utils]
@@ -138,7 +137,7 @@
                     dispatch-fn (get shortcut-map id)]
                 ;; trigger fn
                 (when dispatch-fn
-                  (plugin-handler/hook-lifecycle-fn! id dispatch-fn e))))
+                  (dispatch-fn e))))
           install-id (random-uuid)
           data {install-id
                 {:group       handler-id
@@ -249,7 +248,6 @@
       (doseq [id ids] (uninstall-shortcut-handler! id))
       ;; TODO: should re-install existed handlers
       (install-shortcuts! nil))
-    (state/pub-event! [:shortcut-handler-refreshed])
     (state/set-state! :ui/shortcut-handler-refreshing? false)))
 
 (def refresh! (debounce refresh-internal! 1000))

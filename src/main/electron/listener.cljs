@@ -21,8 +21,7 @@
             [frontend.ui :as ui]
             [logseq.common.path :as path]
             [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.whiteboard :as gp-whiteboard]
-            [promesa.core :as p]))
+            [logseq.graph-parser.whiteboard :as gp-whiteboard]))
 
 (defn- safe-api-call
   "Force the callback result to be nil, otherwise, ipc calls could lead to
@@ -161,28 +160,6 @@
                  ;; No db cache persisting ensured. Should be handled by the caller
                  (fn [repo]
                    (ui-handler/open-new-window! repo)))
-
-  (safe-api-call "invokeLogseqAPI"
-                 (fn [^js data]
-                   (let [sync-id (.-syncId data)
-                         method  (.-method data)
-                         args    (.-args data)
-                         ret-fn! #(ipc/invoke (str :electron.server/sync! sync-id) %)]
-
-                     (try
-                       (println "invokeLogseqAPI:" method)
-                       (let [^js apis (aget js/window.logseq "api")]
-                         (when-not (aget apis method)
-                           (throw (js/Error. (str "MethodNotExist: " method))))
-                         (-> (p/promise (apply js-invoke apis method args))
-                             (p/then #(ret-fn! %))
-                             (p/catch #(ret-fn! {:error %}))))
-                       (catch js/Error e
-                         (ret-fn! {:error (.-message e)}))))))
-
-  (safe-api-call "syncAPIServerState"
-                 (fn [^js data]
-                   (state/set-state! :electron/server (bean/->clj data))))
 
   (safe-api-call "handbook"
                  (fn [^js data]

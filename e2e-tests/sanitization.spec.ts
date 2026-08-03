@@ -48,7 +48,7 @@ test('custom hiccup should not spawn any dialogs', async ({ page, block }) => {
   expect(true).toBeTruthy()
 })
 
-test('"is" attribute should be allowed for plugin purposes', async ({
+test('"is" attribute should be preserved for custom elements', async ({
   page,
   block,
 }) => {

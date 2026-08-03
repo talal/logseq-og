@@ -18,9 +18,6 @@ test('enable whiteboards', async ({ page }) => {
 test('should display onboarding tour', async ({ page }) => {
   await page.evaluate(`
     window.localStorage.removeItem('whiteboard-onboarding-tour?');
-    if (window.logseq && window.logseq.api) {
-      window.logseq.api.set_state_from_store('whiteboard/onboarding-tour?', false);
-    }
   `)
   await page.click('.nav-header .whiteboard')
 
@@ -32,9 +29,6 @@ test('should display onboarding tour', async ({ page }) => {
 test('create new whiteboard', async ({ page }) => {
   await page.evaluate(`
     window.localStorage.setItem('whiteboard-onboarding-tour?', 'true');
-    if (window.logseq && window.logseq.api) {
-      window.logseq.api.set_state_from_store('whiteboard/onboarding-tour?', true);
-    }
   `)
   await page.click('.nav-header .whiteboard')
   await page.click('#tl-create-whiteboard')

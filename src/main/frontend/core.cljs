@@ -4,13 +4,11 @@
   (:require [frontend.config :as config]
             [frontend.fs.sync :as sync]
             [frontend.handler :as handler]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.handler.route :as route-handler]
             [frontend.log]
             [frontend.page :as page]
             [frontend.routes :as routes]
             [frontend.spec]
-            [logseq.api]
             [malli.dev.cljs :as md]
             [reitit.frontend :as rf]
             [reitit.frontend.easy :as rfe]
@@ -21,9 +19,7 @@
   (rfe/start!
    (rf/router routes/routes nil)
    (fn [route]
-     (route-handler/set-route-match! route)
-     (plugin-handler/hook-plugin-app
-      :route-changed (select-keys route [:template :path :parameters])))
+     (route-handler/set-route-match! route))
 
    ;; set to false to enable HistoryAPI
    {:use-fragment true}))
@@ -59,8 +55,7 @@
   ;; this is called in the index.html and must be exported
   ;; so it is available even in :advanced release builds
 
-  (plugin-handler/setup!
-   #(handler/start! start)))
+  (handler/start! start))
 
 (defn stop []
   ;; stop is called before any code is reloaded

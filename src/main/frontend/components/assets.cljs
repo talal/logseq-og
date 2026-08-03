@@ -5,7 +5,6 @@
    [electron.ipc :as ipc]
    [frontend.components.select :as cp-select]
    [frontend.config :as config]
-   [frontend.context.i18n :refer [t]]
    [frontend.handler.assets :as assets-handler]
    [frontend.handler.notification :as notification]
    [frontend.state :as state]
@@ -90,8 +89,8 @@
 
 (rum/defc restart-button
   []
-  (ui/button (t :plugin/restart)
-             :on-click #(js/logseq.api.relaunch)
+  (ui/button "Restart App"
+             :on-click #(ipc/ipc :relaunchApp)
              :small? true :intent "logseq"))
 
 (rum/defcs alias-directories

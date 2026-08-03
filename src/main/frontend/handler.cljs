@@ -23,7 +23,6 @@
             [frontend.handler.global-config :as global-config-handler]
             [frontend.handler.notification :as notification]
             [frontend.handler.page :as page-handler]
-            [frontend.handler.plugin-config :as plugin-config-handler]
             [frontend.handler.repo :as repo-handler]
             [frontend.handler.repo-config :as repo-config-handler]
             [frontend.handler.ui :as ui-handler]
@@ -81,10 +80,7 @@
 
            (->
             (p/do! (repo-config-handler/start {:repo repo})
-                   (when (config/global-config-enabled?)
-                     (global-config-handler/start {:repo repo}))
-                   (when (config/plugin-config-enabled?)
-                     (plugin-config-handler/start)))
+                   (global-config-handler/start {:repo repo}))
             (p/finally
               (fn []
                 ;; install after config is restored
@@ -225,5 +221,5 @@
 (defn quit-and-install-new-version!
   []
   (p/let [_ (el/persist-dbs!)
-          _ (ipc/invoke "set-quit-dirty-state" false)]
+          _ (ipc/ipc :set-quit-dirty-state false)]
     (ipc/ipc :quitAndInstall)))

@@ -4,11 +4,9 @@
             [frontend.config :as config]
             [frontend.date :as date]
             [frontend.db :as db]
-            [frontend.db.utils :as db-utils]
             [frontend.extensions.video.youtube :as youtube]
             [frontend.handler.draw :as draw]
             [frontend.handler.notification :as notification]
-            [frontend.handler.plugin :as plugin-handler]
             [frontend.search :as search]
             [frontend.state :as state]
             [frontend.util :as util]
@@ -306,8 +304,7 @@
     @*extend-slash-commands
     ;; Allow user to modify or extend, should specify how to extend.
 
-    (state/get-commands)
-    (state/get-plugins-slash-commands))
+    (state/get-commands))
    (remove nil?)
    (util/distinct-by-last-wins first)))
 
@@ -494,9 +491,6 @@
                         :limit 50)))
 
 (defmulti handle-step first)
-
-(defmethod handle-step :editor/hook [[_ event {:keys [pid uuid] :as payload}] format]
-  (plugin-handler/hook-plugin-editor event (merge payload {:format format :uuid (or uuid (:block/uuid (state/get-edit-block)))}) pid))
 
 (defmethod handle-step :editor/input [[_ value option]]
   (when-let [input-id (state/get-edit-input-id)]
@@ -725,8 +719,3 @@
   (doseq [step vector]
     (handle-step step format)))
 
-(defn exec-plugin-simple-command!
-  [pid {:keys [block-id] :as cmd} action]
-  (let [format (and block-id (:block/format (db-utils/pull [:block/uuid block-id])))
-        inputs (vector (conj action (assoc cmd :pid pid)))]
-    (handle-steps inputs format)))

@@ -7,7 +7,6 @@
             [clojure.string :as string]
             [dommy.core :as dom]
             [electron.ipc :as ipc]
-            [frontend.spec.storage :as storage-spec]
             [frontend.storage :as storage]
             [frontend.util :as util]
             [frontend.util.cursor :as cursor]
@@ -98,7 +97,6 @@
       :ui/left-sidebar-open?                 (boolean (storage/get "ls-left-sidebar-open?"))
       :ui/theme                              (or (storage/get :ui/theme) "light")
       :ui/system-theme?                      ((fnil identity (or util/mac? util/win32? false)) (storage/get :ui/system-theme?))
-      :ui/custom-theme                       (or (storage/get :ui/custom-theme) {:light {:mode "light"} :dark {:mode "dark"}})
       :ui/wide-mode?                         (storage/get :ui/wide-mode)
       :ui/radix-color                        (storage/get :ui/radix-color)
 
@@ -186,42 +184,10 @@
       :electron/updater-pending?             false
       :electron/updater                      {}
       :electron/user-cfgs                    nil
-      :electron/server                       nil
-      :electron/window-maximized?            false
-      :electron/window-fullscreen?           false
 
-     ;; assets
-      :assets/alias-enabled?                 (or (storage/get :assets/alias-enabled?) false)
-      :assets/alias-dirs                     (or (storage/get :assets/alias-dirs) [])
-
-     ;; plugin
-      :plugin/enabled                        (and (util/electron?)
-                                                 ;; true false :theme-only
-                                                  ((fnil identity true) (storage/get ::storage-spec/lsp-core-enabled)))
-      :plugin/preferences                    nil
-      :plugin/indicator-text                 nil
-      :plugin/installed-plugins              {}
-      :plugin/installed-themes               []
-      :plugin/installed-slash-commands       {}
-      :plugin/installed-ui-items             {}
-      :plugin/installed-resources            {}
-      :plugin/installed-hooks                {}
-      :plugin/installed-services             {}
-      :plugin/simple-commands                {}
-      :plugin/selected-theme                 nil
-      :plugin/selected-unpacked-pkg          nil
-      :plugin/marketplace-pkgs               nil
-      :plugin/marketplace-stats              nil
-      :plugin/installing                     nil
-      :plugin/active-readme                  nil
-      :plugin/updates-auto-checking?         false
-      :plugin/updates-pending                {}
-      :plugin/updates-coming                 {}
-      :plugin/updates-downloading?           false
-      :plugin/updates-unchecked              #{}
-      :plugin/navs-settings?                 true
-      :plugin/focused-settings               nil ;; plugin id
-
+     ;; graph-local themes
+      :theme/installed                       []
+      :theme/selected                       nil
      ;; pdf
       :pdf/system-win?                       false
       :pdf/current                           nil
@@ -416,10 +382,6 @@ should be done through this fn in order to get global config and config defaults
 (defn get-custom-css-link
   []
   (:custom-css-url (get-config)))
-
-(defn get-custom-js-link
-  []
-  (:custom-js-url (get-config)))
 
 (defn get-default-journal-template
   []
@@ -1246,13 +1208,6 @@ Similar to re-frame subscriptions"
   []
   (use-theme-mode! (toggle-theme (:ui/theme @state))))
 
-(defn set-custom-theme!
-  ([custom-theme]
-   (set-custom-theme! nil custom-theme))
-  ([mode theme]
-   (set-state! (if mode [:ui/custom-theme (keyword mode)] :ui/custom-theme) theme)
-   (storage/set :ui/custom-theme (:ui/custom-theme @state))))
-
 (defn set-editing-block-dom-id!
   [block-dom-id]
   (set-state! :editor/block-dom-id block-dom-id))
@@ -1505,122 +1460,6 @@ Similar to re-frame subscriptions"
 (defn set-online!
   [value]
   (set-state! :network/online? value))
-
-(defn get-plugins-slash-commands
-  []
-  (mapcat seq (flatten (vals (:plugin/installed-slash-commands @state)))))
-
-(defn get-plugins-commands-with-type
-  [type]
-  (->> (apply concat (vals (:plugin/simple-commands @state)))
-       (filterv #(= (keyword (first %)) (keyword type)))))
-
-(defn get-plugins-ui-items-with-type
-  [type]
-  (->> (apply concat (vals (:plugin/installed-ui-items @state)))
-       (filterv #(= (keyword (first %)) (keyword type)))))
-
-(defn get-plugin-resources-with-type
-  [pid type]
-  (when-let [pid (and type (keyword pid))]
-    (get-in @state [:plugin/installed-resources pid (keyword type)])))
-
-(defn get-plugin-resource
-  [pid type key]
-  (when-let [resources (get-plugin-resources-with-type pid type)]
-    (get resources key)))
-
-(defn upt-plugin-resource
-  [pid type key attr val]
-  (when-let [resource (get-plugin-resource pid type key)]
-    (let [resource (assoc resource (keyword attr) val)]
-      (set-state!
-       [:plugin/installed-resources (keyword pid) (keyword type) key] resource)
-      resource)))
-
-(defn get-plugin-services
-  [pid type]
-  (when-let [installed (and pid (:plugin/installed-services @state))]
-    (some->> (seq (get installed (keyword pid)))
-             (filterv #(= type (:type %))))))
-
-(defn install-plugin-service
-  ([pid type name] (install-plugin-service pid type name nil))
-  ([pid type name opts]
-   (when-let [pid (and pid type name (keyword pid))]
-     (let [exists (get-plugin-services pid type)]
-       (when-let [service (and (or (not exists) (not (some #(= name (:name %)) exists)))
-                               {:pid pid :type type :name name :opts opts})]
-         (update-state! [:plugin/installed-services pid] #(conj (vec %) service))
-
-         ;; search engines state for results
-         (when (= type :search)
-           (set-state! [:search/engines (str pid name)] service)))))))
-
-(defn uninstall-plugin-service
-  [pid type-or-all]
-  (when (some? pid)
-    (let [pid (keyword pid)]
-      (when-let [installed (get (:plugin/installed-services @state) pid)]
-        (let [remove-all? (or (true? type-or-all) (nil? type-or-all))
-              remains     (if remove-all? nil (filterv #(not= type-or-all (:type %)) installed))
-              removed     (if remove-all? installed (filterv #(= type-or-all (:type %)) installed))]
-          (set-state! [:plugin/installed-services pid] remains)
-
-          ;; search engines state for results
-          (when-let [removed' (seq (filter #(= :search (:type %)) removed))]
-            (update-state! :search/engines #(apply dissoc % (mapv (fn [{:keys [pid name]}] (str pid name)) removed')))))))))
-
-(defn get-all-plugin-services-with-type
-  [type]
-  (let [installed (vals (:plugin/installed-services @state))]
-    (mapcat (fn [s] (filter #(= (keyword type) (:type %)) s)) installed)))
-
-(defn get-all-plugin-search-engines
-  []
-  (:search/engines @state))
-
-(defn update-plugin-search-engine
-  [pid name f]
-  (when (some? pid)
-    (let [pid (keyword pid)]
-      (set-state! :search/engines
-                  (update-vals (get-all-plugin-search-engines)
-                               #(if (and (= pid (:pid %)) (= name (:name %)))
-                                  (f %) %))))))
-
-(defn reset-plugin-search-engines
-  []
-  (when-let [engines (get-all-plugin-search-engines)]
-    (set-state! :search/engines
-                (update-vals engines #(assoc % :result nil)))))
-
-(defn install-plugin-hook
-  ([pid hook] (install-plugin-hook pid hook true))
-  ([pid hook opts]
-   (when (some? pid)
-     (let [pid (keyword pid)]
-       (set-state!
-        [:plugin/installed-hooks hook]
-        (assoc
-         ((fnil identity {}) (get-in @state [:plugin/installed-hooks hook]))
-         pid opts)) true))))
-
-(defn uninstall-plugin-hook
-  [pid hook-or-all]
-  (when (some? pid)
-    (let [pid (keyword pid)]
-      (if (nil? hook-or-all)
-        (swap! state update :plugin/installed-hooks #(update-vals % (fn [ids] (dissoc ids pid))))
-        (when-let [coll (get-in @state [:plugin/installed-hooks hook-or-all])]
-          (set-state! [:plugin/installed-hooks hook-or-all] (dissoc coll pid))))
-      true)))
-
-(defn slot-hook-exist?
-  [uuid]
-  (when-let [type (and uuid (string/replace (str uuid) "-" "_"))]
-    (when-let [hooks (sub :plugin/installed-hooks)]
-      (contains? hooks (str "hook:editor:slot_" type)))))
 
 (defn active-tldraw-app
   []
@@ -1913,83 +1752,6 @@ Similar to re-frame subscriptions"
 (defn get-block-op-type
   []
   (:editor/block-op-type @state))
-
-(defn feature-http-server-enabled?
-  []
-  (boolean (storage/get ::storage-spec/http-server-enabled)))
-
-(defn get-plugin-by-id
-  [id]
-  (when-let [id (and id (keyword id))]
-    (get-in @state [:plugin/installed-plugins id])))
-
-(defn get-enabled?-installed-plugins
-  ([theme?] (get-enabled?-installed-plugins theme? true false false))
-  ([theme? enabled? include-unpacked? include-all?]
-   (filterv
-    #(and (if include-unpacked? true (:iir %))
-          (if-not (boolean? enabled?) true (= (not enabled?) (boolean (get-in % [:settings :disabled]))))
-          (or include-all? (if (boolean? theme?) (= theme? (:theme %)) true)))
-    (vals (:plugin/installed-plugins @state)))))
-
-(defn lsp-enabled?-or-theme
-  []
-  (:plugin/enabled @state))
-
-(def lsp-enabled?
-  (lsp-enabled?-or-theme))
-
-(defn consume-updates-from-coming-plugin!
-  [payload updated?]
-  (when (some? (:id payload))
-    (let [raw-id (:id payload)
-          id (keyword raw-id)
-          prev-pending? (boolean (seq (:plugin/updates-pending @state)))]
-      (println "Updates: consumed pending - " id)
-      (swap! state update :plugin/updates-pending dissoc id)
-      (if updated?
-        (if-let [error (:error-code payload)]
-          (swap! state update-in [:plugin/updates-coming id] assoc :error-code error)
-          (swap! state update :plugin/updates-coming dissoc id))
-        (swap! state update :plugin/updates-coming assoc id payload))
-      (pub-event! [:plugin/consume-updates id prev-pending? updated?]))))
-
-(defn coming-update-new-version?
-  [pkg]
-  (and pkg (:latest-version pkg)))
-
-(defn plugin-update-available?
-  [id]
-  (when-let [pkg (and id (get (:plugin/updates-coming @state) (keyword id)))]
-    (coming-update-new-version? pkg)))
-
-(defn all-available-coming-updates
-  ([] (all-available-coming-updates (:plugin/updates-coming @state)))
-  ([updates] (let [updates (vals updates)]
-               (filterv #(coming-update-new-version? %) updates))))
-
-(defn get-next-selected-coming-update
-  []
-  (let [updates (all-available-coming-updates)
-        unchecked (:plugin/updates-unchecked @state)]
-    (first (filter #(and (not (and (seq unchecked) (contains? unchecked (:id %))))
-                         (not (:error-code %))) updates))))
-
-(defn set-unchecked-update
-  [id unchecked?]
-  (swap! state update :plugin/updates-unchecked (if unchecked? conj disj) id))
-
-(defn reset-unchecked-update
-  []
-  (swap! state assoc :plugin/updates-unchecked #{}))
-
-(defn reset-all-updates-state
-  []
-  (swap! state assoc
-         :plugin/updates-auto-checking?         false
-         :plugin/updates-pending                {}
-         :plugin/updates-coming                 {}
-         :plugin/updates-downloading?           false))
 
 (defn sub-right-sidebar-blocks
   []

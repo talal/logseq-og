@@ -17,13 +17,6 @@
 (defn- average [coll]
   (/ (reduce + coll) (count coll)))
 
-(defn- call-api
-  "Given a fn name from logseq.api, invokes it with the given arguments"
-  [fn-name & args]
-  (when-not (aget js/window.logseq "api" fn-name)
-    (throw (ex-info "Api function does not exist" {:fn fn-name})))
-  (apply js-invoke (aget js/window.logseq "api") fn-name args))
-
 ;; Public fns
 ;; ==========
 (defn eval-string
@@ -38,9 +31,7 @@
                                                 'parseFloat js/parseFloat
                                                 'isNaN js/isNaN
                                                 'log js/console.log
-                                                'pprint util/pp-str
-                                                ;; Provide to all evals as it useful in most contexts
-                                                'call-api call-api}}
+                                                'pprint util/pp-str}}
                                     options))
      (catch :default e
        (println "Query: sci eval failed:")

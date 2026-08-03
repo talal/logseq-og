@@ -27,7 +27,6 @@
           :shortcut.category/formatting
           :shortcut.category/toggle
           :shortcut.category/whiteboard
-          :shortcut.category/plugins
           :shortcut.category/others))
 
 (defonce *refresh-sentry (atom 0))
@@ -152,12 +151,8 @@
 (rum/defc shortcut-desc-label
   [id binding-map]
   (when-let [id' (and id binding-map (str id))]
-    (let [plugin? (string/starts-with? id' ":plugin.")
-          id' (if plugin? (some-> id' (string/replace "plugin." "")) id')
-          plugin-id (when plugin? (namespace id))]
-      [:span {:title (str id' "#" (some-> (:handler-id binding-map) (name)))}
-       [:span.px-1 (dh/get-shortcut-desc (assoc binding-map :id id))]
-       (when plugin? [:code plugin-id])])))
+    [:span {:title (str id' "#" (some-> (:handler-id binding-map) (name)))}
+     [:span.px-1 (dh/get-shortcut-desc (assoc binding-map :id id))]]))
 
 (defn- open-customize-shortcut-dialog!
   [id]

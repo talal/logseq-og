@@ -4,9 +4,8 @@
             [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.extensions.pdf.core :as pdf]
-            [frontend.handler.plugin :as plugin-handler]
-            [frontend.handler.plugin-config :as plugin-config-handler]
             [frontend.handler.route :as route-handler]
+            [frontend.handler.theme :as theme-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.rum :refer [use-mounted]]
             [frontend.state :as state]
@@ -46,9 +45,19 @@
           ; The white-theme is for backward compatibility. See: https://github.com/logseq/logseq/pull/4652.
           (do (.add cls "dark") (doto cls-body (.remove "white-theme" "light-theme") (.add "dark-theme")))
           (do (.remove cls "dark") (doto cls-body (.remove "dark-theme") (.add "white-theme" "light-theme"))))
-        (ui/apply-custom-theme-effect! theme)
-        (plugin-handler/hook-plugin-app :theme-mode-changed {:mode theme}))
+        (theme-handler/apply-selected-theme!))
      [theme])
+    (rum/use-effect!
+     #(when (and restored-sidebar?
+                 (mounted-fn))
+        (ui-handler/persist-right-sidebar-state!))
+     [sidebar-open? restored-sidebar? sidebar-blocks-len])
+
+    (rum/use-effect!
+     (fn []
+       (theme-handler/load-themes! current-repo)
+       (pdf/reset-current-pdf!))
+     [current-repo])
 
     ;; theme color
     (rum/use-effect!
@@ -64,29 +73,6 @@
     (rum/use-effect!
      #(js/setTimeout (fn [] (ipc/ipc "theme-loaded")) 100) ; Wait for the theme to be applied
      [])
-
-    (rum/use-effect!
-     #(when (and restored-sidebar?
-                 (mounted-fn))
-        (plugin-handler/hook-plugin-app :sidebar-visible-changed {:visible sidebar-open?})
-        (ui-handler/persist-right-sidebar-state!))
-     [sidebar-open? restored-sidebar? sidebar-blocks-len])
-
-    (rum/use-effect!
-     #(when config/lsp-enabled?
-        (plugin-handler/setup-install-listener!)
-        (plugin-config-handler/setup-install-listener!)
-        (plugin-handler/load-plugin-preferences)
-        (fn []
-          (js/window.apis.removeAllListeners (name :lsp-updates))))
-     [])
-
-    (rum/use-effect!
-     (fn []
-       (ui-handler/reset-custom-css!)
-       (pdf/reset-current-pdf!)
-       (plugin-handler/hook-plugin-app :current-graph-changed {}))
-     [current-repo])
 
     (rum/use-effect!
      #(let [db-restored? (false? db-restoring?)]

@@ -13,6 +13,7 @@
             [frontend.handler.global-config :as global-config-handler]
             [frontend.handler.notification :as notification]
             [frontend.handler.page :as page-handler]
+            [frontend.handler.theme :as theme-handler]
             [frontend.handler.ui :as ui-handler]
             [frontend.state :as state]
             [frontend.util :as util]
@@ -67,13 +68,20 @@
                  :else (config/get-local-repo dir))
           repo-dir (config/get-local-dir repo)
           {:keys [mtime]} stat
-          ext (keyword (path/file-ext path))]
-      (when (contains? #{:org :md :markdown :css :js :edn :excalidraw :tldr} ext)
+          ext (keyword (path/file-ext path))
+          theme-path? (or (= path "logseq/themes")
+                          (string/starts-with? path "logseq/themes/"))]
+      (when (or (contains? #{:org :md :markdown :css :js :edn :excalidraw :tldr} ext)
+                theme-path?)
         (let [db-content (db/get-file repo path)
               exists-in-db? (not (nil? db-content))
               db-content (or db-content "")]
           (when (or content (contains? #{"unlink" "unlinkDir" "addDir"} type))
             (cond
+              theme-path?
+              (when (= repo (state/get-current-repo))
+                (theme-handler/refresh!))
+
               (and (= "unlinkDir" type) dir)
               (state/pub-event! [:graph/dir-gone dir])
 

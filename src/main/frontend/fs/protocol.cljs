@@ -13,7 +13,6 @@
      
      => [string]")
   (unlink! [this repo path opts])
-  ;; FIXME(andelf): remove this API? since the only usage is plugin API
   (rmdir! [this dir])
   (read-file [this dir path opts])
   (write-file! [this repo dir path content opts])

@@ -1,10 +1,8 @@
 (ns frontend.extensions.pdf.core
   (:require [cljs-bean.core :as bean]
             [clojure.string :as string]
-            [frontend.commands :as commands]
             [frontend.components.block :as block]
             [frontend.components.svg :as svg]
-            [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.extensions.pdf.assets :as pdf-assets]
             [frontend.extensions.pdf.toolbar :refer [pdf-toolbar *area-dashed? *area-mode? *highlight-mode? *highlights-ctx*]]
@@ -211,20 +209,7 @@
 
      (and id [:li.item {:data-action "link"} (t :pdf/linked-ref)])
 
-     (and id [:li.item {:data-action "del"} (t :delete)])
-
-     (when (and config/lsp-enabled? (not area?))
-       (for [[_ {:keys [key label extras] :as _cmd} action pid]
-             (state/get-plugins-commands-with-type :highlight-context-menu-item)]
-         [:li.item {:key         key
-                    :data-action "hook"
-                    :on-click    #(let [highlight (if (fn? highlight) (highlight) highlight)]
-                                    (commands/exec-plugin-simple-command!
-                                     pid {:key key :content (:content highlight) :point point} action)
-
-                                    (when (true? (:clearSelection extras))
-                                      (pdf-utils/clear-all-selection)))}
-          label]))]))
+     (and id [:li.item {:data-action "del"} (t :delete)])]))
 
 (rum/defc pdf-highlights-text-region
   [^js viewer vw-hl hl {:keys [show-ctx-menu!]}]

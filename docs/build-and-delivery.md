@@ -11,7 +11,7 @@
 | Gulp             | `gulpfile.js`                                      | Copy resources/vendor assets, compile/minify CSS, assemble `static`, and launch packaging.           |
 | PostCSS/Tailwind | root configs                                       | Main application stylesheet generation.                                                              |
 | Electron Forge   | `resources/forge.config.js`, `static/package.json` | macOS, Windows, and Linux packages; signing/notarization and GitHub publishing.                      |
-| Parcel/Webpack   | package-local configs                              | React UI/Amplify globals and plugin SDK builds.                                                      |
+| Parcel/Webpack   | package-local configs                              | React UI and Amplify globals.                                                                        |
 
 ## Shadow build graph
 
@@ -23,6 +23,15 @@
   lazy modules.
 - `stories-dev`: npm module feeding the UI package's Storybook.
 - `gen-malli-kondo-config`: utility Node script for lint configuration.
+
+## Graph-local theme assets
+
+Themes are not fetched, bundled, or installed by the build. To install one
+manually, copy its folder into `<graph>/logseq/themes/<theme-folder>/`. The
+folder must contain a `package.json` with a `logseq.themes` vector whose entries
+point to local CSS files. The desktop renderer discovers immediate child folders
+when a graph is opened and refreshes them when the directory changes. JavaScript
+entries, remote URLs, traversal paths, and missing CSS files are ignored.
 
 React and ReactDOM are resolved to globals instead of bundled by Shadow. That
 decision reduces duplication and supports JavaScript-produced UI globals, but it

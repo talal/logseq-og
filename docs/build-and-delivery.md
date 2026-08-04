@@ -15,8 +15,8 @@
 
 ## Shadow build graph
 
-- `app`: browser target, entry `frontend.core/init`; lazy `code-editor`,
-  `excalidraw`, and `tldraw` modules.
+- `app`: browser target, entry `frontend.core/init`; the code editor is a lazy
+  module.
 - `electron`: Node script at `static/electron.js`, entry `electron.core/main`.
 - `test`: Node test bundle at `static/tests.js`.
 - `publishing`: browser target, entry `frontend.publishing/init`, with parallel

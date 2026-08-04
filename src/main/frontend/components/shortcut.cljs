@@ -26,7 +26,6 @@
           :shortcut.category/block-selection
           :shortcut.category/formatting
           :shortcut.category/toggle
-          :shortcut.category/whiteboard
           :shortcut.category/others))
 
 (defonce *refresh-sentry (atom 0))

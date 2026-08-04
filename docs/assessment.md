@@ -84,9 +84,8 @@ check for conflicting versions across manifests and confirm that externalized
 React consumers are tested against the exact host global. Declare direct Clojure
 dependencies directly rather than relying on transitive local roots.
 
-Do not force every subproject into one workspace immediately; the vendored
-tldraw fork and package-local UI builds may benefit from isolation. First
-produce a root command that installs and verifies all intended subprojects
+Keep package-local UI builds isolated where they benefit from independent tooling,
+but provide a root command that installs and verifies all supported packages
 deterministically.
 
 ### 4. Describe the build as an artifact DAG

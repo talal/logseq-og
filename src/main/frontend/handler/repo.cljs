@@ -25,7 +25,6 @@
    [logseq.common.config :as common-config]
    [logseq.common.path :as path]
    [logseq.graph-parser :as graph-parser]
-   [logseq.graph-parser.config :as gp-config]
    [medley.core :as medley]
    [promesa.core :as p]
    [shadow.resource :as rc]))
@@ -196,11 +195,9 @@
       (async/go-loop [tx []]
         (if-let [item (async/<! chan)]
           (let [[idx file] item
-                whiteboard? (gp-config/whiteboard? (:file/path file))
                 yield-for-ui? (or (not large-graph?)
                                   (zero? (rem idx 10))
-                                  (<= (- total idx) 10)
-                                  whiteboard?)]
+                                  (<= (- total idx) 10))]
             (state/set-parsing-state! (fn [m]
                                         (assoc m :current-parsing-file (:file/path file))))
 
@@ -208,17 +205,12 @@
 
             (let [opts' (-> (select-keys opts [:new-graph? :verbose])
                             (assoc :extracted-block-ids *extracted-block-ids))
-                  ;; whiteboards might have conflicting block IDs so that db transaction could be failed
-                  opts' (if whiteboard?
-                          (assoc opts' :skip-db-transact? false)
-                          opts')
                   result (parse-and-load-file! repo-url file opts')
                   page-name (some (fn [x] (when (and (map? x) (:block/original-name x)
                                                      (= (:file/path file) (:file/path (:block/file x))))
                                             (:block/name x))) result)
                   page-exists? (and page-name (get @*page-names page-name))
                   tx' (cond
-                        whiteboard? tx
                         page-exists? (do
                                        (state/pub-event! [:notification/show
                                                           {:content [:div
@@ -232,7 +224,7 @@
                   _ (when (and page-name (not page-exists?))
                       (swap! *page-names conj page-name)
                       (swap! *page-name->path assoc page-name (:file/path file)))
-                  tx' (if (or whiteboard? (zero? (rem (inc idx) 100)))
+                  tx' (if (zero? (rem (inc idx) 100))
                         (do (db/transact! repo-url tx' {:from-disk? true})
                             [])
                         tx')]

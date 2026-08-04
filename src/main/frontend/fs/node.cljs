@@ -45,7 +45,7 @@
           (and
            (not= stat :not-found)         ; file on the disk was deleted
            (not contents-matched?)
-           (not (contains? #{"excalidraw" "edn" "css"} ext))
+           (not (contains? #{"edn" "css"} ext))
            (not (string/includes? rpath "/.recycle/")))
           (state/pub-event! [:file/not-matched-from-disk rpath disk-content content])
 

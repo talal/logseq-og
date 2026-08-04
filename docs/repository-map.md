@@ -63,15 +63,13 @@ at the root.
 | Root `package.json`    | Yarn, Shadow CLI wrapper, Gulp, PostCSS | Shared JS dependencies and top-level scripts.                      |
 | `static/package.json`  | Yarn, Electron Forge                    | Runtime dependencies and packaging for the assembled desktop app.  |
 | `packages/ui`          | React, TypeScript, Parcel, Storybook    | React/Radix UI island emitted as a global bundle consumed by CLJS. |
-| `tldraw`               | Yarn workspaces, React/TS               | Vendored/forked whiteboard implementation and Logseq adapter.      |
 | `deps/*/package.json`  | Yarn, `nbb-logseq`                      | Node-based tests for portable CLJS libraries.                      |
 | `scripts/package.json` | Yarn                                    | Script-specific Node dependencies.                                 |
 
-There is no root Yarn `workspaces` declaration tying these together.
-Installation is recursive and selective: root `postinstall` builds tldraw, while
-other packages have their own lockfiles and commands. This isolation prevents
-some dependency collisions but weakens unified dependency policy and
-reproducibility.
+There is no root Yarn `workspaces` declaration tying these packages together.
+Installation is recursive and selective across the root and package-local
+manifests. This isolation prevents some dependency collisions but weakens unified
+dependency policy and reproducibility.
 
 ## Domain-oriented renderer namespaces
 

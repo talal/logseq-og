@@ -49,16 +49,13 @@
 
 (defn page-menu
   [page-name]
-  (when-let [page-name (or
-                        page-name
-                        (state/get-current-page)
-                        (state/get-current-whiteboard))]
+  (when-let [page-name (or page-name
+                           (state/get-current-page))]
     (let [page-name (util/page-name-sanity-lc page-name)
           repo (state/sub :repo/current)
           page (db/entity repo [:block/name page-name])
           page-original-name (:block/original-name page)
-          whiteboard? (= "whiteboard" (:block/type page))
-          block? (and page (util/uuid-string? page-name) (not whiteboard?))
+          block? (and page (util/uuid-string? page-name))
           contents? (= page-name "contents")
           properties (:block/properties page)
           public? (true? (:public properties))
@@ -108,11 +105,11 @@
                {:title   (t :page/open-with-default-app)
                 :options {:on-click #(js/window.apis.openPath file-fpath)}}]))
 
-          (when (or (state/get-current-page) whiteboard?)
+          (when (state/get-current-page)
             {:title   (t :export-page)
              :options {:on-click #(state/set-modal!
                                    (fn []
-                                     (export/export-blocks (:block/name page) {:whiteboard? whiteboard?})))}})
+                                     (export/export-blocks (:block/name page) {})))}})
 
           (when (util/electron?)
             {:title   (t (if public? :page/make-private :page/make-public))

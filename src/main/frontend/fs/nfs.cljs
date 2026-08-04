@@ -122,7 +122,7 @@
                            (string/starts-with? rpath ".")
                            (string/starts-with? rpath "logseq/bak")
                            ; (string/starts-with? rpath "logseq/version-files")
-                           (not (contains? #{"md" "org" "excalidraw" "edn" "css"} ext))))))
+                           (not (contains? #{"md" "org" "edn" "css"} ext))))))
          (map (fn [file]
                 (-> (.-webkitRelativePath file)
                     gp-util/path-normalize))))))
@@ -146,7 +146,7 @@
                                   (string/starts-with? rpath ".")
                                   (string/starts-with? rpath "logseq/bak")
                                   (string/starts-with? rpath "logseq/version-files")
-                                  (not (contains? #{"md" "org" "excalidraw" "edn" "css"} ext))))))
+                                  (not (contains? #{"md" "org" "edn" "css"} ext))))))
                 ;; Read out using .text, Promise<string>
                 (map (fn [file]
                        (p/let [content (.text file)]
@@ -255,7 +255,7 @@
                  (not (string/blank? db-content))
                  (not (:skip-compare? opts))
                  (not contents-matched?)
-                 (not (contains? #{"excalidraw" "edn" "css"} ext))
+                 (not (contains? #{"edn" "css"} ext))
                  (not (string/includes? path "/.recycle/")))
               (state/pub-event! [:file/not-matched-from-disk path disk-content content])
               (p/let [_ (verify-permission repo true)
@@ -331,7 +331,7 @@
                                          (string/starts-with? rpath ".")
                                          (string/starts-with? rpath "logseq/bak")
                                          (string/starts-with? rpath "logseq/version-files")
-                                         (not (contains? #{"md" "org" "excalidraw" "edn" "css"} ext))))))
+                                         (not (contains? #{"md" "org" "edn" "css"} ext))))))
                        ;; Read out using .text, Promise<string>
                        (map (fn [file]
                               (js/console.log "handle" file)

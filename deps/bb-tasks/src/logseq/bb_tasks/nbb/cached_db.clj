@@ -8,7 +8,7 @@
   ;; :depends fn are weirdly pass their dependent's args so allow anything through
   [& _args]
   (when-let [files (seq (fs/modified-since (fs/file "script/.cached-db-transit.json")
-                                           (fs/glob "." "{pages,journals,assets,logseq,whiteboards,draws}/*")))]
+                                           (fs/glob "." "{pages,journals,assets,logseq}/*")))]
     (println "Updating db since files have changed...")
     (shell {:dir "script"} "yarn -s nbb-logseq -e"
            (str "(require '[logseq.bb-tasks.nbb.cached-db]) "

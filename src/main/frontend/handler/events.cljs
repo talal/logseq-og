@@ -14,7 +14,6 @@
    [frontend.components.settings :as settings]
    [frontend.components.shell :as shell]
    [frontend.components.themes :as themes]
-   [frontend.components.whiteboard :as whiteboard]
    [frontend.config :as config]
    [frontend.context.i18n :refer [t]]
    [frontend.db :as db]
@@ -35,7 +34,6 @@
    [frontend.handler.shell :as shell-handler]
    [frontend.handler.ui :as ui-handler]
    [frontend.handler.web.nfs :as nfs-handler]
-   [frontend.handler.whiteboard :as whiteboard-handler]
    [frontend.idb :as idb]
    [frontend.modules.outliner.file :as outliner-file]
    [frontend.modules.shortcut.core :as st]
@@ -44,7 +42,6 @@
    [frontend.ui :as ui]
    [frontend.util :as util]
    [logseq.db.schema :as db-schema]
-   [logseq.graph-parser.config :as gp-config]
    [promesa.core :as p]
    [rum.core :as rum]))
 
@@ -68,8 +65,7 @@
   (state/set-current-repo! graph)
   ;; load config
   (repo-config-handler/restore-repo-config! graph)
-  (when-not (= :draw (state/get-current-route))
-    (route-handler/redirect-to-home!))
+  (route-handler/redirect-to-home!)
   (srs/update-cards-due-count!)
   (state/pub-event! [:graph/ready graph])
   (when-let [dir-name (config/get-repo-dir graph)]
@@ -349,23 +345,8 @@
   (when-let [id (:block/uuid block)]
     (editor-handler/set-heading! id heading)))
 
-(defmethod handle :whiteboard/onboarding [[_ opts]]
-  (state/set-modal!
-   (fn [close-fn] (whiteboard/onboarding-welcome close-fn))
-   (merge {:close-btn?      false
-           :center?         true
-           :close-backdrop? false} opts)))
-
 (defmethod handle :graph/restored [[_ _graph]]
   (state/publish-graph-ready!))
-
-(defmethod handle :whiteboard-link [[_ shapes]]
-  (route-handler/go-to-search! :whiteboard/link)
-  (state/set-state! :whiteboard/linked-shapes shapes))
-
-(defmethod handle :whiteboard-go-to-link [[_ link]]
-  (route-handler/redirect! {:to :whiteboard
-                            :path-params {:name link}}))
 
 (defmethod handle :graph/dir-gone [[_ dir]]
   (state/pub-event! [:notification/show
@@ -421,68 +402,22 @@
   (p/let [_ (file-handler/alter-file repo path content {:from-disk? true})]
     (ui-handler/re-render-root!)))
 
-(rum/defcs file-id-conflict-item <
-  (rum/local false ::resolved?)
-  [state repo file data]
-  (let [resolved? (::resolved? state)
-        id (last (:assertion data))]
-    [:li {:key file}
-     [:div
-      [:a {:on-click #(js/window.apis.openPath file)} file]
-      (if @resolved?
-        [:div.flex.flex-row.items-center
-         (ui/icon "circle-check" {:style {:font-size 20}})
-         [:div.ml-1 "Resolved"]]
-        [:div
-         [:p
-          (str "It seems that another whiteboard file already has the ID \"" id
-               "\". You can fix it by changing the ID in this file with another UUID.")]
-         [:p
-          "Or, let me"
-          (ui/button "Fix"
-                     :on-click (fn []
-                                 (let [dir (config/get-repo-dir repo)]
-                                   (p/let [content (fs/read-file dir file)]
-                                     (let [new-content (string/replace content (str id) (str (random-uuid)))]
-                                       (p/let [_ (fs/write-plain-text-file! repo
-                                                                            dir
-                                                                            file
-                                                                            new-content
-                                                                            {})]
-                                         (reset! resolved? true))))))
-                     :class "inline mx-1")
-          "it."]])]]))
-
-(defmethod handle :file/parse-and-load-error [[_ repo parse-errors]]
+(defmethod handle :file/parse-and-load-error [[_ _repo parse-errors]]
   (state/pub-event! [:notification/show
                      {:content
                       [:div
                        [:h2.title "Oops. These files failed to import to your graph:"]
                        [:ol.my-2
                         (for [[file error] parse-errors]
-                          (let [data (ex-data error)]
-                            (cond
-                              (and (gp-config/whiteboard? file)
-                                   (= :transact/upsert (:error data))
-                                   (uuid? (last (:assertion data))))
-                              (rum/with-key (file-id-conflict-item repo file data) file)
-
-                              :else
-                              [:li.my-1 {:key file}
-                               [:a {:on-click #(js/window.apis.openPath file)} file]
-                               [:p (.-message error)]])))]
+                          [:li.my-1 {:key file}
+                           [:a {:on-click #(js/window.apis.openPath file)} file]
+                           [:p (.-message error)]])]
                        [:p "Don't forget to re-index your graph when all the conflicts are resolved."]]
                       :status :error}]))
 
 (defmethod handle :run/cli-command [[_ command content]]
   (when (and command (not (string/blank? content)))
     (shell-handler/run-cli-command-wrapper! command content)))
-
-(defmethod handle :whiteboard/undo [[_ e]]
-  (whiteboard-handler/undo! e))
-
-(defmethod handle :whiteboard/redo [[_ e]]
-  (whiteboard-handler/redo! e))
 
 (defmethod handle :editor/quick-capture [[_ args]]
   (quick-capture/quick-capture args))

@@ -87,7 +87,6 @@ test('page rename test', async ({ page }) => {
   // Expect the page name to be updated in the search results
   // await page_rename_test(page, "DcBA_", "dCBA_")
   // const results = await searchPage(page, "DcBA_")
-  // // search result 0 is the new page & 1 is the new whiteboard
   // const resultRow = await results[0].innerText()
   // expect(resultRow).toContain("dCBA_");
   // expect(resultRow).not.toContain("DcBA_");

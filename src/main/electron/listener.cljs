@@ -17,8 +17,7 @@
             [frontend.state :as state]
             [frontend.ui :as ui]
             [logseq.common.path :as path]
-            [logseq.graph-parser.util :as gp-util]
-            [logseq.graph-parser.whiteboard :as gp-whiteboard]))
+            [logseq.graph-parser.util :as gp-util]))
 
 (defn- safe-api-call
   "Force the callback result to be nil, otherwise, ipc calls could lead to
@@ -86,19 +85,11 @@
                    (let [{:keys [page-name block-id file]} (bean/->clj data)]
                      (cond
                        page-name
-                       (let [db-page-name (db-model/get-redirect-page-name page-name)
-                             whiteboard? (db-model/whiteboard-page? db-page-name)]
-                         ;; No error handling required, as a page name is always valid
-                         ;; Open new page if the page does not exist
-                         (if whiteboard?
-                           (route-handler/redirect-to-whiteboard! page-name {:block-id block-id})
-                           (editor-handler/insert-first-page-block-if-not-exists! db-page-name)))
+                       (editor-handler/insert-first-page-block-if-not-exists! (db-model/get-redirect-page-name page-name))
 
                        block-id
-                       (if-let [block (db-model/get-block-by-uuid block-id)]
-                         (if (gp-whiteboard/shape-block? block)
-                           (route-handler/redirect-to-whiteboard! (get-in block [:block/page :block/name]) {:block-id block-id})
-                           (route-handler/redirect-to-page! block-id))
+                       (if (db-model/get-block-by-uuid block-id)
+                         (route-handler/redirect-to-page! block-id)
                          (notification/show! (str "Open link failed. Block-id `" block-id "` doesn't exist in the graph.") :error false))
 
                        file

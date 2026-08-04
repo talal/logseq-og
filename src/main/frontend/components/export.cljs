@@ -73,15 +73,6 @@
              current-repo block-uuids-or-page-name {:remove-options text-remove-options :other-options text-other-options})
       "")))
 
-(defn- get-zoom-level
-  [page-uuid]
-  (let [uuid (:block/uuid (db/get-page page-uuid))
-        whiteboard-camera (->> (str "logseq.tldraw.camera:" uuid)
-                               (.getItem js/sessionStorage)
-                               (js/JSON.parse)
-                               (js->clj))]
-    (or (get whiteboard-camera "zoom") 1)))
-
 (defn- get-image-blob
   [block-uuids-or-page-name {:keys [transparent-bg? x y width height zoom]} callback]
   (let [html js/document.body.parentNode
@@ -92,7 +83,7 @@
                    "#main-content-container"
                    (str "[blockid='" (first block-uuids-or-page-name) "']"))
         container  (js/document.querySelector selector)
-        scale (if page? (/ 1 (or zoom (get-zoom-level block-uuids-or-page-name))) 1)
+        scale (if page? (/ 1 (or zoom 1)) 1)
         options #js {:allowTaint true
                      :useCORS true
                      :backgroundColor (or background "transparent")
@@ -121,18 +112,13 @@
   (rum/local nil ::text-other-options)
   (rum/local nil ::content)
   {:will-mount (fn [state]
-                 (reset! *export-block-type (if (:whiteboard? (last (:rum/args state))) :png :text))
-                 (if (= @*export-block-type :png)
-                   (do (reset! (::content state) nil)
-                       (get-image-blob (first (:rum/args state))
-                                       (merge (second (:rum/args state)) {:transparent-bg? false})
-                                       (fn [blob] (reset! (::content state) blob))))
-                   (reset! (::content state) (export-helper (first (:rum/args state)))))
+                 (reset! *export-block-type :text)
+                 (reset! (::content state) (export-helper (first (:rum/args state))))
                  (reset! (::text-remove-options state) (set (state/get-export-block-text-remove-options)))
                  (reset! (::text-indent-style state) (state/get-export-block-text-indent-style))
                  (reset! (::text-other-options state) (state/get-export-block-text-other-options))
                  state)}
-  [state root-block-uuids-or-page-name {:keys [whiteboard?] :as options}]
+  [state root-block-uuids-or-page-name options]
   (let [tp @*export-block-type
         *text-other-options (::text-other-options state)
         *text-remove-options (::text-remove-options state)
@@ -140,27 +126,26 @@
         *copied? (::copied? state)
         *content (::content state)]
     [:div.export.resize
-     (when-not whiteboard?
-       [:div.flex
-        {:class "mb-2"}
-        (ui/button "Text"
-                   :class "mr-4 w-20"
-                   :on-click #(do (reset! *export-block-type :text)
-                                  (reset! *content (export-helper root-block-uuids-or-page-name))))
-        (ui/button "OPML"
-                   :class "mr-4 w-20"
-                   :on-click #(do (reset! *export-block-type :opml)
-                                  (reset! *content (export-helper root-block-uuids-or-page-name))))
-        (ui/button "HTML"
-                   :class "mr-4 w-20"
-                   :on-click #(do (reset! *export-block-type :html)
-                                  (reset! *content (export-helper root-block-uuids-or-page-name))))
-        (when-not (seq? root-block-uuids-or-page-name)
-          (ui/button "PNG"
-                     :class "w-20"
-                     :on-click #(do (reset! *export-block-type :png)
-                                    (reset! *content nil)
-                                    (get-image-blob root-block-uuids-or-page-name (merge options {:transparent-bg? false}) (fn [blob] (reset! *content blob))))))])
+     [:div.flex
+      {:class "mb-2"}
+      (ui/button "Text"
+                 :class "mr-4 w-20"
+                 :on-click #(do (reset! *export-block-type :text)
+                                (reset! *content (export-helper root-block-uuids-or-page-name))))
+      (ui/button "OPML"
+                 :class "mr-4 w-20"
+                 :on-click #(do (reset! *export-block-type :opml)
+                                (reset! *content (export-helper root-block-uuids-or-page-name))))
+      (ui/button "HTML"
+                 :class "mr-4 w-20"
+                 :on-click #(do (reset! *export-block-type :html)
+                                (reset! *content (export-helper root-block-uuids-or-page-name))))
+      (when-not (seq? root-block-uuids-or-page-name)
+        (ui/button "PNG"
+                   :class "w-20"
+                   :on-click #(do (reset! *export-block-type :png)
+                                  (reset! *content nil)
+                                  (get-image-blob root-block-uuids-or-page-name (merge options {:transparent-bg? false}) (fn [blob] (reset! *content blob))))))]
 
      (if (= :png tp)
        [:div.flex.items-center.justify-center.relative

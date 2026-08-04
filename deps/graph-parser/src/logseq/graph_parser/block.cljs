@@ -45,8 +45,7 @@
                   (and
                    (= url-type "Page_ref")
                    (and (string? value)
-                        (not (or (gp-config/local-asset? value)
-                                 (gp-config/draw? value))))
+                        (not (gp-config/local-asset? value)))
                    value)
 
                   (and

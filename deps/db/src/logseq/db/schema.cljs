@@ -13,7 +13,6 @@
    :recent/pages {}
 
    ;; :block/type is a string type of the current block
-   ;; "whiteboard" for whiteboards
    ;; "macros" for macro
    :block/type {}
    :block/uuid {:db/unique :db.unique/identity}

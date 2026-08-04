@@ -39,14 +39,12 @@
             [logseq.common.path :as path]
             [logseq.db.schema :as db-schema]
             [logseq.graph-parser.block :as gp-block]
-            [logseq.graph-parser.config :as gp-config]
             [logseq.graph-parser.property :as gp-property]
             [logseq.graph-parser.text :as text]
             [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.util.page-ref :as page-ref]
             [promesa.core :as p]))
 
-;; FIXME: add whiteboard
 (defn- get-directory
   [journal?]
   (if journal?
@@ -96,14 +94,13 @@
        (= (state/get-filename-format) :legacy) ;; reduce title computation
        (fs-util/create-title-property? page-name)))
 
-(defn- build-page-tx [format properties page journal? whiteboard?]
+(defn- build-page-tx [format properties page journal?]
   (when (:block/uuid page)
     (let [page-entity   [:block/uuid (:block/uuid page)]
           title         (util/get-page-original-name page)
           create-title? (create-title-property? journal? title)
           page          (merge page
-                               (when (seq properties) {:block/properties properties})
-                               (when whiteboard? {:block/type "whiteboard"}))
+                               (when (seq properties) {:block/properties properties}))
           page-empty?   (db/page-empty? (state/get-current-repo) (:block/name page))]
       (cond
         (not page-empty?)
@@ -128,7 +125,7 @@
    :uuid                - when set, use this uuid instead of generating a new one."
   ([title]
    (create! title {}))
-  ([title {:keys [redirect? create-first-block? format properties split-namespace? journal? uuid whiteboard?]
+  ([title {:keys [redirect? create-first-block? format properties split-namespace? journal? uuid]
            :or   {redirect?           true
                   create-first-block? true
                   format              nil
@@ -156,11 +153,11 @@
              txs      (->> pages
                            ;; for namespace pages, only last page need properties
                            drop-last
-                           (mapcat #(build-page-tx format nil % journal? whiteboard?))
+                           (mapcat #(build-page-tx format nil % journal?))
                            (remove nil?)
                            (remove (fn [m]
                                      (some? (db/entity [:block/name (:block/name m)])))))
-             last-txs (build-page-tx format properties (last pages) journal? whiteboard?)
+             last-txs (build-page-tx format properties (last pages) journal?)
              txs      (concat txs last-txs)]
          (when (seq txs)
            (db/transact! repo txs {:outliner-op :create-page})))
@@ -497,7 +494,7 @@
 
       ;; Redirect to the newly renamed page
       (when redirect?
-        (route-handler/redirect! {:to          (if (model/whiteboard-page? page) :whiteboard :page)
+        (route-handler/redirect! {:to          :page
                                   :push        false
                                   :path-params {:name new-page-name}}))
 
@@ -737,7 +734,6 @@
        (remove (fn [p]
                  (let [name (:block/name p)]
                    (or (util/uuid-string? name)
-                       (gp-config/draw? name)
                        (db/built-in-pages-names (string/upper-case name))))))
        (common-handler/fix-pages-timestamps)))
 
@@ -820,8 +816,7 @@
   []
   (let [repo (state/get-current-repo)]
     (when (and (state/enable-journals? repo)
-               (not (state/loading-files? repo))
-               (not (state/whiteboard-route?)))
+               (not (state/loading-files? repo)))
       (state/set-today! (date/today))
       (when (or (config/local-db? repo)
                 (= "local" repo))

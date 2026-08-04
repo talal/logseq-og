@@ -14,7 +14,6 @@ browser and Electron targets, plus publishing and other build products.
 - `scripts/src/` — Babashka task implementations
 - `resources/` — source assets, HTML/CSS inputs, packaging files, and Electron preload bridge at `resources/js/preload.js`
 - `packages/ui/` — independently built React/TypeScript bundle
-- `tldraw/` — vendored Yarn workspace for whiteboard functionality
 - `static/` — assembled/generated runtime output and Electron package
 - `docs/` — repository analysis and project documentation
 
@@ -27,26 +26,28 @@ The `docs/` directory is the source for repository explanations.
 - `docs/build-and-delivery.md` — toolchain, tasks, artifacts, and delivery
 - `docs/assessment.md` — risks and longer-term recommendations
 
-## Ground rules
+## Core rules
 
-- **Do not install tools globally.** Use `package.json`, `deps.edn`, `bb.edn`, or `nix/devShell.nix`.
 - Never create Git commits unless explicitly asked.
 - Never push to Git remotes.
 - Never create a GitHub issue.
 - Never create a GitHub pull request.
+- **Do not install tools globally.** Use `package.json`, `deps.edn`, `bb.edn`, or `nix/devShell.nix`.
+- **Do not run Electron packaging or build tasks** they are slow to run. Verify your changes using tests.
+- Do not edit `node_modules`, Shadow output, Gulp output, or other generated artifacts by hand. Change their source/configuration and regenerate them only when the task requires it.
+- Before changing `static/`, determine whether the file is source, assembled output, or a nested runtime package; prefer the owning source/config file.
 
 ## Commands
 
-Do not use `nix develop --command` or `npx`. Direnv loads the Nix devShell and
-prepends the repository's `node_modules/.bin` directory to `PATH`, so use local
-executables directly.
+Do not use `nix develop --command` or `npx`. This repo uses direnv which loads
+the Nix devShell and prepends the repository's `node_modules/.bin` directory to
+`PATH`, so use local executables directly.
 
 - **ClojureScript tests:** `bb test`
   - Use `bb test:compile` and `bb test:run` to isolate compilation from execution.
-- **Browser/Electron E2E tests:** `PLAYWRIGHT_HTML_OPEN=never playwright test`
-  - Prefer the narrowest spec since full test suite is slow to run: `PLAYWRIGHT_HTML_OPEN=never playwright test e2e-tests/<name>.spec.ts`
-  - Do not pass `--browser` or browser-specific environment variables; use the repository's configured projects and fixtures.
-  - Use `--project=electron` for desktop behavior.
+- **Browser/Electron E2E tests:** `playwright test`
+  - Run the targeted spec since full test suite is slow to run: `playwright test e2e-tests/<name>.spec.ts`
+  - Do not pass `--browser` or browser-specific environment variables to Playwright.
 - **Linting (Clojure/ClojureScript):** `bb lint`
 - **Linting (JavaScript/TypeScript):** `yarn lint`
 - **Linting (CSS):** `yarn css:lint`
@@ -89,11 +90,6 @@ executables directly.
 - Validate IPC payloads, file paths, URLs, and graph-local theme manifests at the main process boundary. Avoid passing arbitrary channel names or unrestricted paths from renderer code.
 - Do not weaken navigation, protocol, CSP, sandbox, signing, or updater settings without documenting the threat model and testing the affected host.
 - Never commit credentials, signing material, graph data, generated caches, or local machine paths.
-
-## Dependencies and generated assets
-
-- Do not edit `node_modules`, Shadow output, Gulp output, or other generated artifacts by hand. Change their source/configuration and regenerate them only when the task requires it.
-- Before changing `static/`, determine whether the file is source, assembled output, or a nested runtime package; prefer the owning source/config file.
 
 ## Documentation and handoff
 

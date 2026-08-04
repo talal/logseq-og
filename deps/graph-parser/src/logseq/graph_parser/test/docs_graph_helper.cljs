@@ -73,8 +73,7 @@
     (is (= (->> files
                 ;; logseq files aren't saved under :block/file
                 (remove #(string/includes? % (str graph-dir "/" gp-config/app-name "/")))
-                ;; edn files being listed in docs by parse-graph aren't graph files
-                (remove #(and (not (gp-config/whiteboard? %)) (string/ends-with? % ".edn")))
+                (remove #(string/ends-with? % ".edn"))
                 set)
            (->> (d/q '[:find (pull ?b [* {:block/file [:file/path]}])
                        :where [?b :block/name] [?b :block/file]]
@@ -96,21 +95,21 @@
                 (into {})))
         "Task marker counts")
 
-    (is (= {:markdown 5499 :org 457} (get-block-format-counts db))
+    (is (= {:markdown 5419 :org 457} (get-block-format-counts db))
         "Block format counts")
 
-    (is (= {:description 81, :updated-at 46, :tags 5, :logseq.macro-arguments 104
-            :logseq.tldraw.shape 79, :card-last-score 6, :card-repeats 6,
-            :card-next-schedule 6, :ls-type 79, :card-last-interval 6, :type 107,
+    (is (= {:description 81, :updated-at 46, :tags 5, :logseq.macro-arguments 104,
+            :card-last-score 6, :card-repeats 6,
+            :card-next-schedule 6, :card-last-interval 6, :type 107,
             :template 5, :title 114, :alias 41, :supports 5, :id 145, :url 5,
             :card-ease-factor 6, :logseq.macro-name 104, :created-at 46,
             :card-last-reviewed 6, :platforms 51, :initial-version 8, :heading 226}
            (get-top-block-properties db))
         "Counts for top block properties")
 
-    (is (= {:description 77, :tags 5, :permalink 1, :ls-type 1, :type 104,
+    (is (= {:description 77, :tags 5, :permalink 1, :type 104,
             :related 1, :source 1, :title 113, :author 1, :sample 1, :alias 41,
-            :logseq.tldraw.page 1, :supports 5, :url 5, :platforms 50,
+            :supports 5, :url 5, :platforms 50,
             :initial-version 7, :full-title 1}
            (get-all-page-properties db))
         "Counts for all page properties")
@@ -129,14 +128,6 @@
                 (into {})))
         "Counts for blocks with common block attributes")
 
-    (is (= #{"term" "setting" "book" "templates" "Query table" "page"
-             "Whiteboard" "Whiteboard/Tool" "Whiteboard/Tool/Shape" "Whiteboard/Object"
-             "Whiteboard/Property" "Community" "Tweet"}
-           (->> (d/q '[:find (pull ?n [*]) :where [?b :block/namespace ?n]] db)
-                (map (comp :block/original-name first))
-                set))
-        "Has correct namespaces")
-
     (is (empty? (->> (d/q '[:find ?n :where [?b :block/name ?n]] db)
                      (map first)
                      (filter #(string/includes? % "___"))))
@@ -152,7 +143,7 @@
   ;; only increase over time as the docs graph rarely has deletions
   (testing "Counts"
     (is (= 303 (count files)) "Correct file count")
-    (is (= 63632 (count (d/datoms db :eavt))) "Correct datoms count")
+    (is (= 62985 (count (d/datoms db :eavt))) "Correct datoms count")
 
     (is (= 5866
            (ffirst

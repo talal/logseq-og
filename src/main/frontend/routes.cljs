@@ -8,7 +8,6 @@
             [frontend.components.page :as page]
             [frontend.components.repo :as repo]
             [frontend.components.settings :as settings]
-            [frontend.components.whiteboard :as whiteboard]
             [frontend.extensions.zotero :as zotero]
             [logseq.shui.demo :as shui]))
 
@@ -21,14 +20,6 @@
    ["/graphs"
     {:name :repos
      :view repo/repos}]
-
-   ["/whiteboard/:name"
-    {:name :whiteboard
-     :view whiteboard/whiteboard-route}]
-
-   ["/whiteboards"
-    {:name :whiteboards
-     :view whiteboard/whiteboard-dashboard}]
 
    ["/repo/add"
     {:name :repo-add

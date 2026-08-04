@@ -43,10 +43,6 @@
   []
   (redirect! {:to :repos}))
 
-(defn redirect-to-whiteboard-dashboard!
-  []
-  (redirect! {:to :whiteboards}))
-
 ;; Named block links only works on web (and publishing)
 (if util/web-platform?
   (defn- default-page-route [page-name-or-block-uuid]
@@ -86,26 +82,11 @@
                (assoc :push push))]
        (redirect! m)))))
 
-(defn redirect-to-whiteboard!
-  ([name]
-   (redirect-to-whiteboard! name nil))
-  ([name {:keys [block-id new-whiteboard? click-from-recent?]}]
-   ;; Always skip onboarding when loading an existing whiteboard
-   (when-not new-whiteboard? (state/set-onboarding-whiteboard! true))
-   (recent-handler/add-page-to-recent! (state/get-current-repo) name click-from-recent?)
-   (if (= name (state/get-current-whiteboard))
-     (state/focus-whiteboard-shape block-id)
-     (redirect! {:to :whiteboard
-                 :path-params {:name (str name)}
-                 :query-params (merge {:block-id block-id})}))))
-
 (defn get-title
   [name path-params]
   (case name
     :home
     "Logseq"
-    :whiteboards
-    (t :whiteboards)
     :repos
     "Repos"
     :repo-add
@@ -136,21 +117,10 @@
         (let [page (db/pull [:block/name (util/page-name-sanity-lc name)])]
           (or (util/get-page-original-name page)
               "Logseq"))))
-    :whiteboard
-    (let [name (:name path-params)
-          block? (util/uuid-string? name)]
-      (str
-       (if block?
-         (t :untitled)
-         (let [page (db/pull [:block/name (util/page-name-sanity-lc name)])]
-           (or (util/get-page-original-name page)
-               "Logseq"))) " - " (t :whiteboard)))
     :tag
     (str "#"  (:name path-params))
     :diff
     "Diff"
-    :draw
-    "Draw"
     :settings
     "Settings"
     :import

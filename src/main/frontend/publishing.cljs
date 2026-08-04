@@ -8,7 +8,6 @@
             [frontend.components.editor :as editor]
             [frontend.components.page :as page-component]
             [frontend.components.reference :as reference]
-            [frontend.components.whiteboard :as whiteboard]
             [frontend.context.i18n :as i18n]
             [frontend.db :as db]
             [frontend.handler.command-palette :as command-palette]
@@ -70,7 +69,6 @@
   []
   (state/set-page-blocks-cp! page-component/page-blocks-cp)
   (state/set-component! :block/linked-references reference/block-linked-references)
-  (state/set-component! :whiteboard/tldraw-preview whiteboard/tldraw-preview)
   (state/set-component! :block/single-block block/single-block-cp)
   (state/set-component! :editor/box editor/box)
   (command-palette/register-global-shortcut-commands))

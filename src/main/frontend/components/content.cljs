@@ -61,7 +61,7 @@
      :on-click (fn [_]
                  (let [block-uuids (editor-handler/get-selected-toplevel-block-uuids)]
                    (state/set-modal!
-                    #(export/export-blocks block-uuids {:whiteboard? false}))))}
+                    #(export/export-blocks block-uuids {}))))}
     (t :content/copy-export-as))
    (ui/menu-link
     {:key "copy block refs"
@@ -215,7 +215,7 @@
        (ui/menu-link
         {:key      "Copy as"
          :on-click (fn [_]
-                     (state/set-modal! #(export/export-blocks [block-id] {:whiteboard? false})))}
+                     (state/set-modal! #(export/export-blocks [block-id] {})))}
         (t :content/copy-export-as))
 
        (ui/menu-link
@@ -400,25 +400,11 @@
            [:div.cursor (t :content/click-to-edit)]
            content)]))))
 
-(defn- set-draw-iframe-style!
-  []
-  (let [width (gobj/get js/window "innerWidth")]
-    (when (>= width 1024)
-      (let [draws (d/by-class "draw-iframe")
-            width (- width 200)]
-        (doseq [draw draws]
-          (d/set-style! draw :width (str width "px"))
-          (let [height (max 700 (/ width 2))]
-            (d/set-style! draw :height (str height "px")))
-          (d/set-style! draw :margin-left (str (- (/ (- width 570) 2)) "px")))))))
-
 (rum/defcs content < rum/reactive
   {:did-mount (fn [state]
-                (set-draw-iframe-style!)
                 (image-handler/render-local-images!)
                 state)
    :did-update (fn [state]
-                 (set-draw-iframe-style!)
                  (image-handler/render-local-images!)
                  state)}
   [state id {:keys [format

@@ -78,12 +78,11 @@
 
        [:ul
         (for [[title label icon]
-              [[(t :on-boarding/section-assets) "/assets" "whiteboard"]
-               [(t :on-boarding/section-journals) "/journals" "calendar-plus"]
+              [[(t :on-boarding/section-journals) "/journals" "calendar-plus"]
                [(t :on-boarding/section-pages) "/pages" "page"]
                []
                [(t :on-boarding/section-app) "/logseq" "tool"]
-               [(t :on-boarding/section-config) "/logseq/config.edn"]]]
+               [(t :on-boarding/section-config) "/logseq/config.edn" "settings"]]]
           (if-not title
             [:li.hr]
             [:li

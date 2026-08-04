@@ -17,7 +17,6 @@
             [frontend.util.drawer :as drawer]
             [logseq.db.default :as default-db]
             [logseq.db.rules :as rules]
-            [logseq.graph-parser.config :as gp-config]
             [logseq.graph-parser.text :as text]
             [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.util.db :as db-util]
@@ -381,9 +380,7 @@ independent of format as format specific heading characters are stripped"
    (sort-by-left blocks parent {:check? true}))
   ([blocks parent {:keys [check?]}]
    (let [blocks (util/distinct-by :db/id blocks)]
-     (when (and check?
-                ;; Top-level blocks on whiteboards have no relationships of :block/left
-                (not= "whiteboard" (:block/type (db-utils/entity (:db/id parent)))))
+     (when check?
        (when (not= (count blocks) (count (set (map :block/left blocks))))
          (let [duplicates (->> (map (comp :db/id :block/left) blocks)
                                frequencies
@@ -1600,23 +1597,6 @@ independent of format as format specific heading characters are stripped"
                                 {:block/file [:db/id :file/path]}]
                               ids))))))
 
-(defn whiteboard-page?
-  "Given a page name or a page object, check if it is a whiteboard page"
-  [page]
-  (cond
-    (string? page)
-    (let [page (db-utils/entity [:block/name (util/safe-page-name-sanity-lc page)])]
-      (or
-       (= "whiteboard" (:block/type page))
-       (when-let [file (:block/file page)]
-         (when-let [path (:file/path (db-utils/entity (:db/id file)))]
-           (gp-config/whiteboard? path)))))
-
-    (seq page)
-    (= "whiteboard" (:block/type page))
-
-    :else false))
-
 (defn get-orphaned-pages
   [{:keys [repo pages empty-ref-f]
     :or {repo (state/get-current-repo)
@@ -1640,7 +1620,6 @@ independent of format as format specific heading characters are stripped"
                                     (= 1 (count children))
                                     (contains? #{"" "-" "*"} (string/trim (:block/content first-child))))))
                                 (not (contains? built-in-pages name))
-                                (not (whiteboard-page? page))
                                 (not (:block/_namespace page))
                                  ;; a/b/c might be deleted but a/b/c/d still exists (for backward compatibility)
                                 (not (and (string/includes? name "/")
@@ -1677,23 +1656,3 @@ independent of format as format specific heading characters are stripped"
   [page-name]
   (when-let [entity (db-utils/entity [:block/name (util/page-name-sanity-lc page-name)])]
     (some? (parse-uuid page-name))))
-
-(defn get-all-whiteboards
-  [repo]
-  (d/q
-   '[:find [(pull ?page [:block/name
-                         :block/original-name
-                         :block/created-at
-                         :block/updated-at]) ...]
-     :where
-     [?page :block/name]
-     [?page :block/type "whiteboard"]]
-   (conn/get-db repo)))
-
-(defn get-whiteboard-id-nonces
-  [repo page-name]
-  (->> (get-page-blocks-no-cache repo page-name {:keys [:block/uuid :block/properties]})
-       (filter #(:logseq.tldraw.shape (:block/properties %)))
-       (map (fn [{:block/keys [uuid properties]}]
-              {:id (str uuid)
-               :nonce (get-in properties [:logseq.tldraw.shape :nonce])}))))

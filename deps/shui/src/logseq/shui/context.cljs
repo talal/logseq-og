@@ -27,5 +27,4 @@
                 :query-result (:query-result block-config)
                 :sidebar? (:sidebar? block-config)
                 :start-time (:start-time block-config)
-                :uuid (:uuid block-config)
-                :whiteboard? (:whiteboard? block-config)}))
+                :uuid (:uuid block-config)}))

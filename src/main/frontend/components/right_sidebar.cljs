@@ -148,7 +148,7 @@
       [[:.flex.items-center.page-title
         (if-let [icon (get-in page [:block/properties :icon])]
           [:.text-md.mr-2 icon]
-          (ui/icon (if (= "whiteboard" (:block/type page)) "whiteboard" "page") {:class "text-md mr-2"}))
+          (ui/icon "page" {:class "text-md mr-2"}))
         [:span.overflow-hidden.text-ellipsis (db-model/get-page-original-name page-name)]]
        (page-cp repo page-name)])
 
@@ -213,10 +213,8 @@
        (let [name (:block/name (db/entity db-id))]
          (menu-item {:on-click
                      (fn []
-                       (let [link (if (db-model/whiteboard-page? name)
-                                    (rfe/href :whiteboard {:name name})
-                                    (rfe/href :page {:name name}))]
-                         (util/open-url link)))} (t :right-side-bar/pane-open-as-page)))))))
+                       (util/open-url (rfe/href :page {:name name})))}
+                    (t :right-side-bar/pane-open-as-page)))))))
 
 (rum/defc drop-indicator
   [idx drag-to]

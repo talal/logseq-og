@@ -130,7 +130,7 @@
     (log/error :msg "alter-global-file does not support this file" :file path)))
 
 (defn alter-file
-  "Write any in-DB file, e.g. repo config, page, whiteboard, etc."
+  "Write any in-DB file, e.g. repo config or page."
   [repo path content {:keys [reset? re-render-root? from-disk? skip-compare? new-graph? verbose
                              skip-db-transact? extracted-block-ids]
                       :fs/keys [event]

@@ -57,7 +57,6 @@
       :indexeddb/support?      true
       :local/preferences                    nil
       :repo/current            current-graph
-      :draw?                   false
       :db/restoring?           nil
 
       :journals-length                       3
@@ -124,7 +123,6 @@
       :editor/op                             nil
       :editor/latest-op                      nil
       :editor/hidden-editors                 #{}             ;; page names
-      :editor/draw-mode?                     false
       :editor/action                         nil
       :editor/action-data                    nil
      ;; With label or other data
@@ -229,10 +227,6 @@
 
       :handbook/route-chan                   (async/chan (async/sliding-buffer 1))
 
-      :whiteboard/onboarding-whiteboard?     (or (storage/get :ls-onboarding-whiteboard?) false)
-      :whiteboard/onboarding-tour?           (or (storage/get :whiteboard-onboarding-tour?) false)
-      :whiteboard/last-persisted-at          {}
-      :whiteboard/pending-tx-data            {}
       :history/page-only-mode?               false
      ;; db tx-id -> editor cursor
       :history/tx->editor-cursor             {}})))
@@ -402,13 +396,6 @@ should be done through this fn in order to get global config and config defaults
      (:journals-directory (get-config repo)))
    "journals"))
 
-(defn get-whiteboards-directory
-  []
-  (or
-   (let [repo (get-current-repo)]
-     (:whiteboards-directory (get-config repo)))
-   "whiteboards"))
-
 (defn org-mode-file-link?
   [repo]
   (:org-mode/insert-file-link? (get-config repo)))
@@ -540,12 +527,6 @@ Similar to re-frame subscriptions"
   ([repo]
    (not (false? (:feature/enable-flashcards? (sub-config repo))))))
 
-(defn enable-whiteboards?
-  ([]
-   (enable-whiteboards? (get-current-repo)))
-  ([repo]
-   (not (false? (:feature/enable-whiteboards? (sub-config repo))))))
-
 (defn enable-block-timestamps?
   []
   (true? (:feature/enable-block-timestamps? (sub-config))))
@@ -666,10 +647,6 @@ Similar to re-frame subscriptions"
   []
   (= :home (get-current-route)))
 
-(defn whiteboard-dashboard?
-  []
-  (= :whiteboards (get-current-route)))
-
 (defn setups-picker?
   []
   (= :repo-add (get-current-route)))
@@ -677,16 +654,6 @@ Similar to re-frame subscriptions"
 (defn get-current-page
   []
   (when (= :page (get-current-route))
-    (get-in (get-route-match)
-            [:path-params :name])))
-
-(defn whiteboard-route?
-  []
-  (= :whiteboard (get-current-route)))
-
-(defn get-current-whiteboard
-  []
-  (when (whiteboard-route?)
     (get-in (get-route-match)
             [:path-params :name])))
 
@@ -1385,17 +1352,6 @@ Similar to re-frame subscriptions"
   [value]
   (set-state! :network/online? value))
 
-(defn active-tldraw-app
-  []
-  (when-let [tldraw-el (.querySelector js/document.body ".logseq-tldraw[data-tlapp]")]
-    (gobj/get js/window.tlapps (.. tldraw-el -dataset -tlapp))))
-
-(defn tldraw-editing-logseq-block?
-  []
-  (when-let [app (active-tldraw-app)]
-    (and (= 1 (.. app -selectedShapesArray -length))
-         (= (.. app -editingShape) (.. app -selectedShapesArray (at 0))))))
-
 (defn set-editor-in-composition!
   [value]
   (set-state! :editor/in-composition? value))
@@ -1444,16 +1400,7 @@ Similar to re-frame subscriptions"
        (let [now (util/time-ms)]
          (>= (- now last-time) diff)))
      ;; not in editing mode
-     ;; Is this a good idea to put whiteboard check here?
      (not (get-edit-input-id)))))
-
-(defn whiteboard-idle?
-  "Check if whiteboard is idle."
-  [repo]
-  (when repo
-    (>= (- (util/time-ms) (or (get-in @state [:whiteboard/last-persisted-at repo])
-                              (- (util/time-ms) 10000)))
-        3000)))
 
 (defn set-nfs-refreshing!
   [value]
@@ -1574,14 +1521,9 @@ Similar to re-frame subscriptions"
   [args]
   (set-state! :editor/args args))
 
-(defn editing-whiteboard-portal?
-  []
-  (and (active-tldraw-app) (tldraw-editing-logseq-block?)))
-
 (defn block-component-editing?
   []
-  (and (:block/component-editing-mode? @state)
-       (not (editing-whiteboard-portal?))))
+  (:block/component-editing-mode? @state))
 
 (defn set-block-component-editing-mode!
   [value]
@@ -1727,15 +1669,6 @@ Similar to re-frame subscriptions"
          (= #{:repo :old-path :new-path} (set (keys v)))]}
   (async/offer! (get-file-rename-event-chan) v))
 
-(defn set-onboarding-whiteboard!
-  [v]
-  (set-state! :whiteboard/onboarding-whiteboard? v)
-  (storage/set :ls-onboarding-whiteboard? v))
-
-(defn get-onboarding-whiteboard?
-  []
-  (get-in @state [:whiteboard/onboarding-whiteboard?]))
-
 (defn get-current-pdf
   []
   (:pdf/current @state))
@@ -1752,15 +1685,6 @@ Similar to re-frame subscriptions"
       (when (apply not= (map :identity [inflated-file (get-current-pdf)]))
         (set-state! :pdf/current nil)
         (js/setTimeout #(settle-file!) 16)))))
-
-(defn focus-whiteboard-shape
-  ([shape-id]
-   (focus-whiteboard-shape (active-tldraw-app) shape-id))
-  ([tln shape-id]
-   (when-let [^js api (gobj/get tln "api")]
-     (when (and shape-id (parse-uuid shape-id))
-       (. api selectShapes shape-id)
-       (. api zoomToSelection)))))
 
 (defn get-color-accent []
   (get @state :ui/radix-color))

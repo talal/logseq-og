@@ -5,7 +5,6 @@
             [frontend.date :as date]
             [frontend.db :as db]
             [frontend.extensions.video.youtube :as youtube]
-            [frontend.handler.draw :as draw]
             [frontend.handler.notification :as notification]
             [frontend.search :as search]
             [frontend.state :as state]
@@ -16,7 +15,6 @@
             [frontend.util.property :as property]
             [goog.dom :as gdom]
             [goog.object :as gobj]
-            [logseq.graph-parser.config :as gp-config]
             [logseq.graph-parser.property :as gp-property]
             [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.util.block-ref :as block-ref]
@@ -279,13 +277,6 @@
      ["Calculator" [[:editor/input "```calc\n\n```" {:type "block"
                                                      :backward-pos 4}]
                     [:codemirror/focus]] "Insert a calculator"]
-     ["Draw" (fn []
-               (let [file (draw/file-name)
-                     path (str gp-config/default-draw-directory "/" file)
-                     text (page-ref/->page-ref path)]
-                 (p/let [_ (draw/create-draw-with-default-content path)]
-                   (println "draw file created, " path))
-                 text)) "Draw a graph with Excalidraw"]
      ["Embed HTML " (->inline "html")]
 
      ["Embed Video URL" [[:editor/input "{{video }}" {:last-pattern command-trigger

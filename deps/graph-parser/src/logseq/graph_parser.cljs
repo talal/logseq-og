@@ -100,9 +100,6 @@ Options available:
                (cond (contains? gp-config/mldoc-support-formats format)
                      (extract/extract file content extract-options')
 
-                     (gp-config/whiteboard? file)
-                     (extract/extract-whiteboard-edn file content extract-options')
-
                      :else nil)
                block-ids (map (fn [block] {:block/uuid (:block/uuid block)}) blocks)
                delete-blocks (delete-blocks-fn @conn (first pages) file block-ids)

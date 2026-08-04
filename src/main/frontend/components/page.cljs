@@ -80,7 +80,7 @@
   (let [[_ blocks _ sidebar? preview?] (:rum/args state)]
     (when (and
            (or preview?
-               (not (contains? #{:home :all-journals :whiteboard} (state/get-current-route))))
+               (not (contains? #{:home :all-journals} (state/get-current-route))))
            (not sidebar?))
       (let [block (first blocks)]
         (when (and (= (count blocks) 1)
@@ -98,8 +98,8 @@
                       (or (not= page-name old-page-name)
                           (not= hiccup old-hiccup)
                           (not= block-uuid old-block-uuid))))}
-  [page-name _blocks hiccup sidebar? whiteboard? _block-uuid]
-  [:div.page-blocks-inner {:style {:margin-left (if (or sidebar? whiteboard?) 0 -20)}}
+  [page-name _blocks hiccup sidebar? _block-uuid]
+  [:div.page-blocks-inner {:style {:margin-left (if sidebar? 0 -20)}}
    (rum/with-key
      (content/content page-name
                       {:hiccup   hiccup
@@ -149,12 +149,15 @@
 (rum/defc add-button
   [args]
   [:div.flex-1.flex-col.rounded-sm.add-button-link-wrap
-   {:on-click (fn [] (editor-handler/api-insert-new-block! "" args))
-    :on-key-down (fn [e]
-                   (when (= "Enter" (util/ekey e))
-                     (editor-handler/api-insert-new-block! "" args))
-                   (util/stop e))
-    :tab-index 0}
+   {:on-mouse-down (fn [e]
+                     (when-not (util/right-click? e)
+                       (editor-handler/api-insert-new-block! "" args)
+                       (util/stop e)))
+    :on-key-down   (fn [e]
+                     (when (= "Enter" (util/ekey e))
+                       (editor-handler/api-insert-new-block! "" args))
+                     (util/stop e))
+    :tab-index     0}
    [:div.flex.flex-row
     [:div.block {:style {:height      20
                          :width       20
@@ -171,7 +174,7 @@
                                   (date/journal-title->int (date/today))))
                      (state/pub-event! [:journal/insert-template page-name])))
                  state)}
-  [repo page-e {:keys [sidebar? whiteboard?] :as config}]
+  [repo page-e {:keys [sidebar?] :as config}]
   (when page-e
     (let [page-name (or (:block/name page-e)
                         (str (:block/uuid page-e)))
@@ -194,7 +197,7 @@
               hiccup-config (common-handler/config-with-document-mode hiccup-config)
               hiccup (component-block/->hiccup page-blocks hiccup-config {})]
           [:div
-           (page-blocks-inner page-name page-blocks hiccup sidebar? whiteboard? block-id)
+           (page-blocks-inner page-name page-blocks hiccup sidebar? block-id)
            (when-not config/publishing?
              (let [args (if block-id
                           {:block-uuid block-id}
@@ -238,13 +241,13 @@
          {:default-collapsed? false})]])))
 
 (rum/defc page-title-editor < rum/reactive
-  [{:keys [*input-value *title-value *edit? untitled? page-name old-name title whiteboard-page?]}]
+  [{:keys [*input-value *title-value *edit? page-name old-name title]}]
   (let [input-ref (rum/create-ref)
         collide? #(and (not= (util/page-name-sanity-lc page-name)
                              (util/page-name-sanity-lc @*title-value))
                        (db/page-exists? page-name)
                        (db/page-exists? @*title-value))
-        rollback-fn #(let [old-name (if untitled? "" old-name)]
+        rollback-fn #(do
                        (reset! *title-value old-name)
                        (gobj/set (rum/deref input-ref) "value" old-name)
                        (reset! *edit? true)
@@ -265,23 +268,16 @@
                     (swap! *title-value gp-util/unquote-string)
                     (gobj/set (rum/deref input-ref) "value" @*title-value))
                   (cond
-                    (or (= old-name @*title-value) (and whiteboard-page? (string/blank? @*title-value)))
+                    (= old-name @*title-value)
                     (reset! *edit? false)
 
                     (string/blank? @*title-value)
-                    (do (when-not untitled? (notification/show! (t :page/illegal-page-name) :warning))
+                    (do (notification/show! (t :page/illegal-page-name) :warning)
                         (rollback-fn))
 
-                    (and (collide?) (or whiteboard-page? (model/whiteboard-page? @*title-value)))
+                    (collide?)
                     (do (notification/show! (t :page/page-already-exists @*title-value) :error)
                         (rollback-fn))
-
-                    (and (date/valid-journal-title? @*title-value) whiteboard-page?)
-                    (do (notification/show! (t :page/whiteboard-to-journal-error) :error)
-                        (rollback-fn))
-
-                    untitled?
-                    (page-handler/rename! (or title page-name) @*title-value)
 
                     :else
                     (state/set-modal! (confirm-fn)))
@@ -305,14 +301,11 @@
        :on-key-down   (fn [^js e]
                         (when (= (gobj/get e "key") "Enter")
                           (blur-fn e)))
-       :placeholder   (when untitled? (t :untitled))
        :on-key-up     (fn [^js e]
                             ;; Esc
                         (when (= 27 (.-keyCode e))
                           (reset! *title-value old-name)
-                          (reset! *edit? false)))
-       :on-focus (fn []
-                   (when untitled? (reset! *title-value "")))}]]))
+                          (reset! *edit? false)))}]]))
 
 (rum/defcs page-title < rum/reactive
   (rum/local false ::edit?)
@@ -327,8 +320,6 @@
           *input-value (get state ::input-value)
           repo (state/get-current-repo)
           hls-page? (pdf-utils/hls-file? title)
-          whiteboard-page? (model/whiteboard-page? page-name)
-          untitled? (and whiteboard-page? (parse-uuid page-name)) ;; normal page cannot be untitled right?
           title (if hls-page?
                   [:a.asset-ref (pdf-utils/fix-local-asset-pagename title)]
                   (if fmt-journal?
@@ -336,7 +327,7 @@
                     title))
           old-name (or title page-name)]
       [:h1.page-title.flex.cursor-pointer.gap-1.w-full
-       {:class (when-not whiteboard-page? "title")
+       {:class "title"
         :on-mouse-down (fn [e]
                          (when (util/right-click? e)
                            (state/set-state! :page-title/context {:page page-name})))
@@ -350,7 +341,7 @@
                            (:db/id page)
                            :page))
                         (when (and (not hls-page?) (not fmt-journal?) (not config/publishing?))
-                          (reset! *input-value (if untitled? "" old-name))
+                          (reset! *input-value old-name)
                           (reset! *edit? true)))))}
        (when (not= icon "") [:span.page-icon icon])
        [:div.page-title-sizer-wrapper.relative
@@ -360,9 +351,8 @@
                               :*input-value *input-value
                               :title title
                               :page-name page-name
-                              :old-name old-name
-                              :untitled? untitled?
-                              :whiteboard-page? whiteboard-page?}))
+                              :old-name old-name}))
+
         [:span.title.block
          {:data-value @*input-value
           :data-ref   page-name
@@ -370,7 +360,6 @@
          (let [nested? (and (string/includes? title page-ref/left-brackets)
                             (string/includes? title page-ref/right-brackets))]
            (cond @*edit? [:span {:style {:white-space "pre"}} (rum/react *input-value)]
-                 untitled? [:span.opacity-50 (t :untitled)]
                  nested? (component-block/map-inline {} (gp-mldoc/inline->edn title (gp-mldoc/default-config
                                                                                      (:block/format page))))
                  :else title))]]])))
@@ -396,8 +385,6 @@
           journal? (db/journal-page? page-name)
           fmt-journal? (boolean (date/journal-title->int page-name))
           sidebar? (:sidebar? option)
-          whiteboard? (:whiteboard? option) ;; in a whiteboard portal shape?
-          whiteboard-page? (model/whiteboard-page? page-name) ;; is this page a whiteboard?
           route-page-name path-page-name
           page (if block?
                  (->> (:db/id (:block/page (db/entity repo [:block/uuid block-id])))
@@ -415,8 +402,7 @@
           today? (and
                   journal?
                   (= page-name (util/page-name-sanity-lc (date/journal-name))))
-          *current-block-page (::current-page state)
-          block-or-whiteboard? (or block? whiteboard?)]
+          *current-block-page (::current-page state)]
       [:div.flex-1.page.relative
        (merge (if (seq (:block/tags page))
                 (let [page-names (model/get-page-names-by-ids (map :db/id (:block/tags page)))]
@@ -426,29 +412,26 @@
               {:key path-page-name
                :class (util/classnames [{:is-journals (or journal? fmt-journal?)}])})
 
-       (if (and whiteboard-page? (not sidebar?))
-         [:div ((state/get-component :whiteboard/tldraw-preview) page-name)] ;; FIXME: this is not reactive
-         [:div.relative
-          (when (and (not sidebar?) (not block?))
-            [:div.flex.flex-row.space-between
-             (when-not whiteboard?
-               [:div.ls-page-title.flex-1.flex-row.w-full
-                (page-title page-name icon title format fmt-journal?)])])
-          [:div
-           (when (and block? (not sidebar?) (not whiteboard?))
-             (let [config {:id "block-parent"
-                           :block? true}]
-               [:div.mb-4
-                (component-block/breadcrumb config repo block-id {:level-limit 3})]))
+       [:div.relative
+        (when (and (not sidebar?) (not block?))
+          [:div.flex.flex-row.space-between
+           [:div.ls-page-title.flex-1.flex-row.w-full
+            (page-title page-name icon title format fmt-journal?)]])
+        [:div
+         (when (and block? (not sidebar?))
+           (let [config {:id "block-parent"
+                         :block? true}]
+             [:div.mb-4
+              (component-block/breadcrumb config repo block-id {:level-limit 3})]))
 
-           ;; blocks
-           (let [page (if block?
-                        (db/entity repo [:block/uuid block-id])
-                        page)
-                 _ (and block? page (reset! *current-block-page (:block/name (:block/page page))))
-                 _ (when (and block? (not page))
-                     (route-handler/redirect-to-page! @*current-block-page))]
-             (page-blocks-cp repo page {:sidebar? sidebar? :whiteboard? whiteboard?}))]])
+         ;; blocks
+         (let [page (if block?
+                      (db/entity repo [:block/uuid block-id])
+                      page)
+               _ (and block? page (reset! *current-block-page (:block/name (:block/page page))))
+               _ (when (and block? (not page))
+                   (route-handler/redirect-to-page! @*current-block-page))]
+           (page-blocks-cp repo page {:sidebar? sidebar?}))]]
 
        (when today?
          (today-queries repo today? sidebar?))
@@ -460,17 +443,17 @@
          (tagged-pages repo page-name))
 
        ;; referenced blocks
-       (when-not block-or-whiteboard?
+       (when-not block?
          [:div {:key "page-references"}
           (rum/with-key
             (reference/references route-page-name)
             (str route-page-name "-refs"))])
 
-       (when-not block-or-whiteboard?
+       (when-not block?
          (when (not journal?)
            (hierarchy/structures route-page-name)))
 
-       (when-not block-or-whiteboard?
+       (when-not block?
          (when-not sidebar?
            [:div {:key "page-unlinked-references"}
             (reference/unlinked-references route-page-name)]))])))
@@ -964,7 +947,6 @@
   (rum/local :block/updated-at ::sort-by-item)
   (rum/local true ::desc?)
   (rum/local false ::journals)
-  (rum/local false ::whiteboards)
   (rum/local nil ::filter-fn)
   (rum/local 1 ::current-page)
   [state]
@@ -973,7 +955,6 @@
         *sort-by-item (get state ::sort-by-item)
         *desc? (::desc? state)
         *journal? (::journals state)
-        *whiteboard? (::whiteboards state)
         *results (::results state)
         *results-all (::results-all state)
         *checks (::checks state)
@@ -1029,19 +1010,16 @@
                                                              :block/backlinks (count (:block/_refs (db/entity (:db/id page))))
                                                              :block/idx idx))))]
            (reset! *filter-fn
-                   (memoize (fn [sort-by-item desc? journal? whiteboard?]
+                   (memoize (fn [sort-by-item desc? journal?]
                               (->> pages
-                                   (filter #(and
-                                             (or (boolean journal?)
-                                                 (= false (boolean (:block/journal? %))))
-                                             (or (boolean whiteboard?)
-                                                 (not= "whiteboard" (:block/type %)))))
+                                   (filter #(or (boolean journal?)
+                                                (= false (boolean (:block/journal? %)))))
                                    (sort-pages-by sort-by-item desc?)))))
            (reset! *pages pages)))
 
        ;; filter results
        (when @*filter-fn
-         (let [pages (@*filter-fn @*sort-by-item @*desc? @*journal? @*whiteboard?)
+         (let [pages (@*filter-fn @*sort-by-item @*desc? @*journal?)
 
                ;; search key
                pages (if-not (string/blank? @*search-key)
@@ -1110,14 +1088,6 @@
                  (ui/icon "x")])])]]
 
          [:div.r.flex.items-center.justify-between
-          [:div
-           (ui/tippy
-            {:html  [:small (t :page/show-whiteboards)]
-             :arrow true}
-            [:a.button.whiteboard
-             {:class    (util/classnames [{:active (boolean @*whiteboard?)}])
-              :on-click #(reset! *whiteboard? (not @*whiteboard?))}
-             (ui/icon "whiteboard" {:extension? true :style {:fontSize ui/icon-size}})])]
           [:div
            (ui/tippy
             {:html  [:small (t :page/show-journals)]

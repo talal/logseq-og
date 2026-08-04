@@ -107,7 +107,7 @@
                   :color/purple :color/gray]
    ;; from 3 files
    "(t (if" [:asset/show-in-folder :asset/open-in-browser
-             :search-item/whiteboard :search-item/page
+             :search-item/page
              :page/make-private :page/make-public]
    "(t (name" [] ;; shortcuts related
    "(t (dh/decorate-namespace" [] ;; shortcuts related
@@ -115,14 +115,6 @@
    ;; All args to ui/make-confirm-modal are not keywords
    "(t title" []
    "(t subtitle" [:asset/physical-delete]})
-
-(defn- whiteboard-dicts
-  []
-  (->> (shell {:out :string}
-              "grep -E -oh" "\\bt\\('[^ ']+" "-r" "tldraw/apps/tldraw-logseq/src/components")
-       :out
-       string/split-lines
-       (map #(keyword (subs % 3)))))
 
 (defn- validate-ui-translations-are-used
   "This validation checks to see that translations done by (t ...) are equal to
@@ -138,7 +130,6 @@
                           string/split-lines
                           (map #(keyword (subs % 4)))
                           (concat (mapcat val manual-ui-dicts))
-                          (concat (whiteboard-dicts))
                           set)
         expected-dicts (set (remove #(re-find #"^(command|shortcut)\." (str (namespace %)))
                                     (keys (:en (get-dicts)))))
@@ -159,31 +150,24 @@
   "Allows certain keys in a language to have the same translation
    as English. Happens more in romance languages but pretty rare otherwise"
   {:fr #{:port :type :help/docs :search-item/page :shortcut.category/navigating :text/image
-         :code :on-boarding/section-pages :paginates/pages :right-side-bar/history-global
-         :whiteboard/rectangle :whiteboard/triangle}
-   :de #{:graph :host :port :right-side-bar/whiteboards
-         :search-item/whiteboard :shortcut.category/navigating
-         :settings-page/enable-tooltip :settings-page/enable-whiteboards}
-   :ca #{:port :right-side-bar/history-global :settings-page/tab-editor :settings-page/tab-general
-         :whiteboard/color :whiteboard/connector :whiteboard/text :whiteboard/triangle}
-   :es #{:settings-page/tab-general :settings-page/tab-editor :whiteboard/color :right-side-bar/history-global}
+         :code :on-boarding/section-pages :paginates/pages :right-side-bar/history-global}
+   :de #{:graph :host :port :shortcut.category/navigating
+         :settings-page/enable-tooltip}
+   :ca #{:port :right-side-bar/history-global :settings-page/tab-editor :settings-page/tab-general}
+   :es #{:settings-page/tab-general :settings-page/tab-editor :right-side-bar/history-global}
    :it #{:home :handbook/home :host :help/awesome-logseq :on-boarding/section-computer
-         :settings-page/tab-editor :whiteboard/link}
+         :settings-page/tab-editor}
    :nl #{:type :left-side-bar/nav-recent-pages}
-   :pl #{:port :home :host :whiteboard/link}
+   :pl #{:port :home :host}
    :pt-BR #{:right-side-bar/flashcards :settings-page/enable-flashcards :page/backlinks
-            :host :settings-page/tab-editor :whiteboard/link :whiteboard
-            :whiteboards :on-boarding/quick-tour-journal-page-desc-2 :right-side-bar/history-global
-            :right-side-bar/whiteboards :search-item/whiteboard :settings-page/enable-whiteboards
-            :shortcut.category/whiteboard :command.whiteboard/zoom-in :command.whiteboard/zoom-out}
+            :host :settings-page/tab-editor :on-boarding/quick-tour-journal-page-desc-2
+            :right-side-bar/history-global}
    :pt-PT #{:right-side-bar/flashcards :settings-page/enable-flashcards}
-   :nb-NO #{:port :type :whiteboard :right-side-bar/flashcards :right-side-bar/whiteboards
-            :search-item/whiteboard :settings-page/enable-flashcards :settings-page/enable-whiteboards
-            :settings-page/tab-editor :shortcut.category/whiteboard :whiteboard/medium
-            :whiteboard/twitter-url :whiteboard/youtube-url :right-side-bar/history-global :linked-references/filter-heading}
+   :nb-NO #{:port :type :right-side-bar/flashcards
+            :settings-page/tab-editor :right-side-bar/history-global :linked-references/filter-heading}
    :tr #{:help/awesome-logseq}
    :id #{:host :port :on-boarding/section-app :right-side-bar/history-global}
-   :cs #{:host :port :help/blog :settings-page/tab-editor :whiteboard/text}})
+   :cs #{:host :port :help/blog :settings-page/tab-editor}})
 
 (defn- validate-languages-dont-have-duplicates
   "Looks up duplicates for all languages"

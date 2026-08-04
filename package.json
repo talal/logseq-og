@@ -48,12 +48,9 @@
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
-    "test:e2e": "playwright test",
-    "tldraw:build": "yarn --cwd tldraw install",
-    "postinstall": "yarn tldraw:build"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@excalidraw/excalidraw": "0.16.1",
     "@highlightjs/cdn-assets": "10.4.1",
     "@isomorphic-git/lightning-fs": "^4.6.0",
     "@logseq/diff-merge": "0.2.2",

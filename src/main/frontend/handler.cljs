@@ -8,7 +8,6 @@
             [frontend.components.editor :as editor]
             [frontend.components.page :as page]
             [frontend.components.reference :as reference]
-            [frontend.components.whiteboard :as whiteboard]
             [frontend.config :as config]
             [frontend.context.i18n :as i18n]
             [frontend.db :as db]
@@ -160,7 +159,6 @@
   []
   (state/set-page-blocks-cp! page/page-blocks-cp)
   (state/set-component! :block/linked-references reference/block-linked-references)
-  (state/set-component! :whiteboard/tldraw-preview whiteboard/tldraw-preview)
   (state/set-component! :block/single-block block/single-block-cp)
   (state/set-component! :block/container block/block-container)
   (state/set-component! :block/embed block/block-embed)

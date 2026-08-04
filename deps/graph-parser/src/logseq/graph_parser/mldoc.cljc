@@ -168,9 +168,6 @@
 
           (and (contains? #{"Page_ref"} ref-type)
                (or
-                ;; 2. excalidraw link
-                (gp-config/draw? ref-value)
-
                 ;; 3. local asset link
                 (boolean (gp-config/local-asset? ref-value))))))))
 

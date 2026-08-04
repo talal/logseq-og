@@ -8,9 +8,9 @@ One ClojureScript renderer serves two application hosts:
   storage/filesystem capabilities.
 - Desktop: Electron loads assembled HTML and JS, while a CLJS-compiled Node main
   process supplies privileged capabilities. The separate `publishing` build
-  creates a read-oriented browser application from exported graph data. Code
-  editor, Excalidraw, and tldraw are lazy Shadow modules depending on the main
-  module, reducing initial loading cost.
+  creates a read-oriented browser application from exported graph data. The code
+  editor remains a lazy Shadow module depending on the main module, reducing
+  initial loading cost.
 
 ## Renderer startup
 
@@ -148,14 +148,8 @@ The application no longer has a plugin host, marketplace, plugin SDK bridge, or
 developer HTTP API server. External customization is limited to manually copied
 local CSS themes; application behavior is provided by built-in features.
 
-## Publishing and whiteboards
+## Publishing
 
 The publishing build has its own entry point and creates a DataScript connection
 from exported graph data. It reuses much of the renderer and lazy extension
 modules while setting a compile-time `PUBLISHING` define.
-
-Whiteboards use a vendored tldraw monorepo. The CLJS application integrates it
-through `frontend.extensions.tldraw` and stores whiteboard shapes/pages in the
-same graph transaction model. This preserves graph semantics but carries a
-substantial independently tooled React/TypeScript codebase inside the
-repository.

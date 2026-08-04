@@ -5,7 +5,6 @@
  ;; "." for /static
  :dev-http {3001 ["static" "."]}
 
- :js-options {:js-package-dirs ["node_modules" "tldraw/apps"]}
 
  :builds
  {:app {:target :browser
@@ -20,13 +19,8 @@
                   :code-editor
                   {:entries [frontend.extensions.code]
                    :depends-on #{:main}}
-                  :excalidraw
-                  {:entries [frontend.extensions.excalidraw]
-                   :depends-on #{:main}}
-                  :tldraw
-                  {:entries [frontend.extensions.tldraw]
-                   :depends-on #{:main}}}
 
+        }
         :output-dir "./static/js"
         :asset-path "/static/js"
         :release {:asset-path "https://asset.logseq.com/static/js"}
@@ -97,12 +91,7 @@
                          :code-editor
                          {:entries [frontend.extensions.code]
                           :depends-on #{:main}}
-                         :excalidraw
-                         {:entries [frontend.extensions.excalidraw]
-                          :depends-on #{:main}}
-                         :tldraw
-                         {:entries [frontend.extensions.tldraw]
-                          :depends-on #{:main}}}
+                         }
 
                :output-dir "./static/js/publishing"
                :asset-path "static/js"

@@ -134,7 +134,6 @@
  :right-side-bar/block-ref "Blok verwijzingen"
  :right-side-bar/contents "Inhoud"
  :right-side-bar/graph-view "Grafiekweergave"
- :right-side-bar/new-page "Nieuwe pagina"
  :right-side-bar/page-graph "Pagina grafiek"
  :right-side-bar/show-journals "Toon Journaals"
  :right-side-bar/switch-theme "Thema modes"

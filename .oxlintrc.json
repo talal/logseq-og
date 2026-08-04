@@ -13,9 +13,7 @@
     ".agents/**",
     "public/**",
     "resources/js/**",
-    "static/**",
-    "tldraw/**/*.js",
-    "tldraw/**/*.jsx"
+    "static/**"
   ],
   "rules": {
     "constructor-super": "error",

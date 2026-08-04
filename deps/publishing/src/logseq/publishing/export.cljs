@@ -8,7 +8,7 @@
 
 (def ^:api js-files
   "js files from publishing release build"
-  ["main.js" "code-editor.js" "excalidraw.js" "tldraw.js"])
+  ["main.js" "code-editor.js"])
 
 (def ^:api static-dirs
   "dirs under static dir to copy over"
@@ -46,7 +46,7 @@
             ;; remove source map files
             _ (p/all (map (fn [file]
                             (fs/rmSync (node-path/join output-static-dir "js" (str file ".map")) #js {:force true}))
-                          ["main.js" "code-editor.js" "excalidraw.js"]))])))
+                          ["main.js" "code-editor.js"]))])))
 
 (defn- copy-static-files-and-assets
   [static-dir repo-path output-dir {:keys [log-error-fn asset-filenames]

@@ -45,7 +45,6 @@
             [frontend.handler.repeated :as repeated]
             [frontend.handler.route :as route-handler]
             [frontend.handler.ui :as ui-handler]
-            [frontend.handler.whiteboard :as whiteboard-handler]
             [frontend.modules.outliner.tree :as tree]
             [frontend.security :as security]
             [frontend.shui :refer [get-shui-component-version make-shui-context]]
@@ -68,13 +67,11 @@
             [logseq.graph-parser.util :as gp-util]
             [logseq.graph-parser.util.block-ref :as block-ref]
             [logseq.graph-parser.util.page-ref :as page-ref]
-            [logseq.graph-parser.whiteboard :as gp-whiteboard]
             [logseq.shui.core :as shui]
             [medley.core :as medley]
             [promesa.core :as p]
             [reitit.frontend.easy :as rfe]
-            [rum.core :as rum]
-            [shadow.loader :as loader]))
+            [rum.core :as rum]))
 
 ;; local state
 (defonce *dragging?
@@ -422,7 +419,7 @@
 (declare page-reference)
 
 (defn open-page-ref
-  [e page-name redirect-page-name page-name-in-block contents-page? whiteboard-page?]
+  [e page-name redirect-page-name page-name-in-block contents-page?]
   (util/stop e)
   (when (not (util/right-click? e))
     (cond
@@ -432,14 +429,6 @@
          (state/get-current-repo)
          (:db/id page-entity)
          :page))
-
-      (and (util/meta-key? e) (whiteboard-handler/inside-portal? (.-target e)))
-      (whiteboard-handler/add-new-block-portal-shape!
-       page-name
-       (whiteboard-handler/closest-shape (.-target e)))
-
-      whiteboard-page?
-      (route-handler/redirect-to-whiteboard! page-name)
 
       (not= redirect-page-name page-name)
       (route-handler/redirect-to-page! redirect-page-name)
@@ -457,10 +446,9 @@
    page-name-in-block is the overridable name of the page (legacy)
 
    All page-names are sanitized except page-name-in-block"
-  [config page-name-in-block page-name redirect-page-name page-entity contents-page? children html-export? label whiteboard-page?]
+  [config page-name-in-block page-name redirect-page-name page-entity contents-page? children html-export? label]
   (let [[mouse-down? set-mouse-down!] (rum/use-state false) ;; avoid click event after drag
         tag? (:tag? config)
-        config (assoc config :whiteboard-page? whiteboard-page?)
         untitled? (model/untitled-page? page-name)]
         ; gradient-styles (state/sub-color-gradient-text-styles :09)]
 
@@ -482,10 +470,10 @@
                                                          (date/journal-title->custom-format page-name))
                                                     redirect-page-name)
                              redirect-page-name (string/lower-case redirect-page-name)]
-                         (open-page-ref e page-name redirect-page-name page-name-in-block contents-page? whiteboard-page?))
+                         (open-page-ref e page-name redirect-page-name page-name-in-block contents-page?))
                        (set-mouse-down! false)))
       :on-key-up (fn [e] (when (and e (= (.-key e) "Enter"))
-                           (open-page-ref e page-name redirect-page-name page-name-in-block contents-page? whiteboard-page?)))}
+                           (open-page-ref e page-name redirect-page-name page-name-in-block contents-page?)))}
 
      (if (and (coll? children) (seq children))
        (for [child children]
@@ -528,7 +516,6 @@
   [{:keys [children sidebar? tippy-position tippy-distance fixed-position? open? manual?] :as config} page-name]
   (let [*tippy-ref (rum/create-ref)
         page-name (util/page-name-sanity-lc page-name)
-        whiteboard-page? (model/whiteboard-page? page-name)
         redirect-page-name (or (model/get-redirect-page-name page-name (:block/alias? config))
                                page-name)
         page-original-name (model/get-page-original-name redirect-page-name)
@@ -574,11 +561,8 @@
                                                                   page-original-name])])
                                       (let [page (db/entity [:block/name (util/page-name-sanity-lc redirect-page-name)])]
                                         (editor-handler/insert-first-page-block-if-not-exists! redirect-page-name {:redirect? false})
-                                        (let [page-blocks-cp (state/get-page-blocks-cp)
-                                              tldraw-preview (state/get-component :whiteboard/tldraw-preview)]
-                                          (if whiteboard-page?
-                                            (tldraw-preview page-name)
-                                            (page-blocks-cp (state/get-current-repo) page {:sidebar? sidebar? :preview? true}))))])))]
+                                        (let [page-blocks-cp (state/get-page-blocks-cp)]
+                                          (page-blocks-cp (state/get-current-repo) page {:sidebar? sidebar? :preview? true})))])))]
 
     (if (or (not manual?) open?)
       (ui/tippy {:ref             *tippy-ref
@@ -604,7 +588,6 @@
     (let [page-name-in-block (gp-util/remove-boundary-slashes page-name-in-block)
           page-name (util/page-name-sanity-lc page-name-in-block)
           page-entity (db/entity [:block/name page-name])
-          whiteboard-page? (model/whiteboard-page? page-name)
           redirect-page-name (or (and (= :org (state/get-preferred-format))
                                       (:org-mode/insert-file-link? (state/get-config))
                                       redirect-page-name)
@@ -612,7 +595,7 @@
           inner (page-inner config
                             page-name-in-block
                             page-name
-                            redirect-page-name page-entity contents-page? children html-export? label whiteboard-page?)
+                            redirect-page-name page-entity contents-page? children html-export? label)
           modal? (:modal/show? @state/state)]
       (cond
         (:breadcrumb? config)
@@ -661,44 +644,26 @@
        [:a.asset-ref {:target "_blank" :href real-path-url}
         title-or-path])]))
 
-(defonce excalidraw-loaded? (atom false))
-(rum/defc excalidraw < rum/reactive
-  {:init (fn [state]
-           (p/let [_ (loader/load :excalidraw)]
-             (reset! excalidraw-loaded? true))
-           state)}
-  [file block-uuid]
-  (let [loaded? (rum/react excalidraw-loaded?)
-        draw-component (when loaded?
-                         (resolve 'frontend.extensions.excalidraw/draw))]
-    (when draw-component
-      (draw-component {:file file :block-uuid block-uuid}))))
-
 (rum/defc page-reference < rum/reactive
   "Component for page reference"
   [html-export? s {:keys [nested-link? id] :as config} label]
   (let [show-brackets? (state/show-brackets?)
-        block-uuid (:block/uuid config)
         contents-page? (= "contents" (string/lower-case (str id)))]
-    (if (string/ends-with? s ".excalidraw")
-      [:div.draw {:on-click (fn [e]
-                              (.stopPropagation e))}
-       (excalidraw s block-uuid)]
-      [:span.page-reference
-       {:data-ref s}
-       (when (and (or show-brackets? nested-link?)
-                  (not html-export?)
-                  (not contents-page?))
-         [:span.text-gray-500.bracket page-ref/left-brackets])
-       (let [s (string/trim s)]
-         (page-cp (assoc config
-                         :label (mldoc/plain->text label)
-                         :contents-page? contents-page?)
-                  {:block/name s}))
-       (when (and (or show-brackets? nested-link?)
-                  (not html-export?)
-                  (not contents-page?))
-         [:span.text-gray-500.bracket page-ref/right-brackets])])))
+    [:span.page-reference
+     {:data-ref s}
+     (when (and (or show-brackets? nested-link?)
+                (not html-export?)
+                (not contents-page?))
+       [:span.text-gray-500.bracket page-ref/left-brackets])
+     (let [s (string/trim s)]
+       (page-cp (assoc config
+                       :label (mldoc/plain->text label)
+                       :contents-page? contents-page?)
+                {:block/name s}))
+     (when (and (or show-brackets? nested-link?)
+                (not html-export?)
+                (not contents-page?))
+       [:span.text-gray-500.bracket page-ref/right-brackets])]))
 
 (defn- latex-environment-content
   [name option content]
@@ -737,8 +702,7 @@
 (rum/defc page-embed < rum/reactive db-mixins/query
   [config page-name]
   (let [page-name (util/page-name-sanity-lc (string/trim page-name))
-        current-page (state/get-current-page)
-        whiteboard-page? (model/whiteboard-page? page-name)]
+        current-page (state/get-current-page)]
     [:div.color-level.embed.embed-page.bg-base-2
      {:class (when (:sidebar? config) "in-sidebar")
       :on-double-click #(edit-parent-block % config)
@@ -751,16 +715,14 @@
                   page-name)
             (not= (util/page-name-sanity-lc (get config :id ""))
                   page-name))
-       (if whiteboard-page?
-         ((state/get-component :whiteboard/tldraw-preview) page-name)
-         (let [page (model/get-page page-name)
-               blocks (db/get-paginated-blocks (state/get-current-repo) (:db/id page))]
-           (blocks-container blocks (assoc config
-                                           :db/id (:db/id page)
-                                           :id page-name
-                                           :embed? true
-                                           :page-embed? true
-                                           :ref? false)))))]))
+       (let [page (model/get-page page-name)
+             blocks (db/get-paginated-blocks (state/get-current-repo) (:db/id page))]
+         (blocks-container blocks (assoc config
+                                         :db/id (:db/id page)
+                                         :id page-name
+                                         :embed? true
+                                         :page-embed? true
+                                         :ref? false))))]))
 
 (defn- get-label-text
   [label]
@@ -792,11 +754,10 @@
           block (when db-id (db/sub-block db-id))
           block-type (keyword (get-in block [:block/properties :ls-type]))
           hl-type (get-in block [:block/properties :hl-type])
-          repo (state/get-current-repo)
-          stop-inner-events? (= block-type :whiteboard-shape)]
+          repo (state/get-current-repo)]
       (if (and block (:block/content block))
         (let [title [:span.block-ref
-                     (block-content (assoc config :block-ref? true :stop-events? stop-inner-events?)
+                     (block-content (assoc config :block-ref? true)
                                     block nil (:block/uuid block)
                                     (:slide? config)
                                     false)]
@@ -827,20 +788,12 @@
                      (:db/id block)
                      :block-ref)
 
-                    (and (util/meta-key? e) (whiteboard-handler/inside-portal? (.-target e)))
-                    (whiteboard-handler/add-new-block-portal-shape!
-                     (:block/uuid block)
-                     (whiteboard-handler/closest-shape (.-target e)))
-
                     :else
                     (match [block-type (util/electron?)]
                       ;; pdf annotation
                       [:annotation true] (pdf-assets/open-block-ref! block)
 
-                      [:whiteboard-shape true] (route-handler/redirect-to-whiteboard!
-                                                (get-in block [:block/page :block/name]) {:block-id block-id})
-
-                      ;; default open block page
+;; default open block page
                       :else (route-handler/redirect-to-page! id))))))}
            (if (and (not (util/mobile?))
                     (not (:preview? config))
@@ -1607,9 +1560,6 @@
 (defn- bullet-on-click
   [e block uuid]
   (cond
-    (gp-whiteboard/shape-block? block)
-    (route-handler/redirect-to-whiteboard! (get-in block [:block/page :block/name]) {:block-id uuid})
-
     (gobj/get e "shiftKey")
     (do
       (state/sidebar-add-block!
@@ -1617,12 +1567,6 @@
        (:db/id block)
        :block)
       (util/stop e))
-
-    (and (util/meta-key? e) (whiteboard-handler/inside-portal? (.-target e)))
-    (do (whiteboard-handler/add-new-block-portal-shape!
-         uuid
-         (whiteboard-handler/closest-shape (.-target e)))
-        (util/stop e))
 
     :else
     (when uuid (route-handler/redirect-to-page! uuid))))
@@ -1898,7 +1842,7 @@
      ;; children
      (let [area?  (= :area (keyword (:hl-type properties)))
            hl-ref #(when (and (or config/publishing? (util/electron?))
-                              (not (#{:default :whiteboard-shape} block-type)))
+                              (not= :default block-type))
                      [:div.prefix-link
                       {:on-mouse-down
                        (fn [^js e]
@@ -1931,9 +1875,7 @@
          (when-not area? [(hl-ref)])
 
          (if title
-           (conj
-            (map-inline config title)
-            (when (= block-type :whiteboard-shape) [:span.mr-1 (ui/icon "whiteboard-element" {:extension? true})]))
+           (map-inline config title)
            [[:span.opacity-50 "Click here to start writing, type '/' to see all the commands."]])
 
          [tags]
@@ -2274,8 +2216,7 @@
                  (let [hidden? (property/properties-hidden? properties)]
                    (not hidden?))
                  (not (and block-ref? (or (seq title) (seq body))))
-                 (not (:slide? config))
-                 (not= block-type :whiteboard-shape))
+                 (not (:slide? config)))
         (properties-cp config block))
 
       (block-content-inner config block body collapsed? block-ref-with-title?)
@@ -2735,7 +2676,6 @@
         embed? (:embed? config)
         page-embed? (:page-embed? config)
         reference? (:reference? config)
-        whiteboard-block? (gp-whiteboard/shape-block? block)
         block-id (str "ls-block-" blocks-container-id "-" uuid)
         has-child? (first (:block/_parent (db/entity (:db/id block))))
         attrs (on-drag-and-mouse-attrs block uuid top? block-id *move-to)
@@ -2798,12 +2738,9 @@
       (when (not slide?)
         (block-control config block uuid block-id collapsed? *control-show? edit? selected?))
 
-      (if whiteboard-block?
-        (block-reference {} (str uuid) nil)
-        ;; Not embed self
-        (let [hide-block-refs-count? (and (:embed? config)
-                                          (= (:block/uuid block) (:embed-id config)))]
-          (block-content-or-editor config block edit-input-id block-id edit? hide-block-refs-count? selected?)))]
+      (let [hide-block-refs-count? (and (:embed? config)
+                                        (= (:block/uuid block) (:embed-id config)))]
+        (block-content-or-editor config block edit-input-id block-id edit? hide-block-refs-count? selected?))]
 
      (block-children config block children collapsed?)
 
@@ -3029,8 +2966,7 @@
     (let [{:keys [lines language]} options
           attr (when language
                  {:data-lang language})
-          code (apply str lines)
-          [inside-portal? set-inside-portal?] (rum/use-state nil)]
+          code (apply str lines)]
       (cond
         html-export?
         (highlight/html-export attr code)
@@ -3038,18 +2974,11 @@
         :else
         (let [language (if (contains? #{"edn" "clj" "cljc" "cljs" "clojurescript"} language) "clojure" language)]
           [:div.ui-fenced-code-editor
-           {:ref (fn [el]
-                   (set-inside-portal? (and el (whiteboard-handler/inside-portal? el))))}
-           (cond
-             (nil? inside-portal?) nil
-
-             (or (:slide? config) inside-portal?)
+           (if (:slide? config)
              (highlight/highlight (str (random-uuid))
                                   {:class     (str "language-" language)
                                    :data-lang language}
                                   code)
-
-             :else
              [:<>
               (lazy-editor/editor config (str (d/squuid)) attr code options)
               (let [options (:options options) block (:block config)]
@@ -3424,14 +3353,13 @@
           (let [blocks (remove nil? blocks)]
             (when (seq blocks)
               (let [alias? (:block/alias? page)
-                    page (db/entity (:db/id page))
-                    whiteboard? (model/whiteboard-page? page)]
+                    page (db/entity (:db/id page))]
                 [:div.my-2 {:key (str "page-" (:db/id page))}
                  (ui/foldable
                   [:div
                    (page-cp config page)
                    (when alias? [:span.text-sm.font-medium.opacity-50 " Alias"])]
-                  (when-not whiteboard? (blocks-container blocks config))
+                  (blocks-container blocks config)
                   {})])))))]
 
      :else

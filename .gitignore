@@ -77,7 +77,6 @@ __pycache__
 .clj-kondo/babashka/sci
 .shadow-cljs
 /.preprocessor-cljs
-/src/main/frontend/tldraw-logseq.js
 /src/test/docs*
 cljs-test-runner-out
 deps/graph-parser/test/docs*

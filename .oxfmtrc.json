@@ -15,17 +15,5 @@
     "resources/electron.html",
     "src/resources/**/*",
     "static/**/*"
-  ],
-  "overrides": [
-    {
-      "files": ["tldraw/**/*"],
-      "options": {
-        "printWidth": 100,
-        "arrowParens": "avoid",
-        "jsxSingleQuote": false,
-        "bracketSameLine": false,
-        "jsdoc": true
-      }
-    }
   ]
 }

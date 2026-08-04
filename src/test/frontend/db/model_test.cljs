@@ -185,15 +185,15 @@ foo:: bar"}])
                      :file/content "type:: https://schema.org/Class\npublic:: true"}
                     {:file/path "pages/DatePicker.md"
                      :file/content "type:: #Feature, #Command"}
-                    {:file/path "pages/Whiteboard___Tool___Eraser.md"
-                     :file/content "type:: [[Tool]], [[Whiteboard/Object]]"}])
+                    {:file/path "pages/Diagram___Tool___Eraser.md"
+                     :file/content "type:: [[Tool]], [[Diagram/Object]]"}])
 
   (let [type-values (set (model/get-property-values :type))
         public-values (set (model/get-property-values :public))]
 
     (is (contains? type-values "[[Class]]")
         "Property value from single page-ref is wrapped in square brackets")
-    (is (= #{} (set/difference #{"[[Tool]]" "[[Whiteboard/Object]]"} type-values))
+    (is (= #{} (set/difference #{"[[Tool]]" "[[Diagram/Object]]"} type-values))
         "Property values from multiple page-refs are wrapped in square brackets")
     (is (= #{} (set/difference #{"#Feature" "#Command"} type-values))
         "Property values from multiple tags have hashtags")

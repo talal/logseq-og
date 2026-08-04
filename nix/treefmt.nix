@@ -2,7 +2,6 @@
   projectRootFile = "flake.nix";
 
   settings.global.excludes = [
-    "tldraw/**"
     "deps/**"
     # Auto-generated
     "**/yarn.lock"

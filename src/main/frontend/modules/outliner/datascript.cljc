@@ -32,8 +32,7 @@
      (when-not config/test?
        (pipelines/invoke-hooks tx-report)
 
-       (when (or (:outliner/transact? tx-meta)
-                 (:whiteboard/transact? tx-meta))
+       (when (:outliner/transact? tx-meta)
          (undo-redo/listen-db-changes! tx-report))
 
        (search/sync-search-indice! repo tx-report))))

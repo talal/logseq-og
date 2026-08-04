@@ -55,19 +55,6 @@
         (re-matches #"^https://x\.com.*?$" url))
     (util/format "{{twitter %s}}" url)))
 
-(defn- try-parse-as-json
-  "Result is not only to be an Object.
-   Maybe JSON types like string, number, boolean, null, array"
-  [text]
-  (try (js/JSON.parse text)
-       (catch :default _ #js{})))
-
-(defn- get-whiteboard-tldr-from-text
-  [text]
-  (when-let [matched-text (util/safe-re-find #"<whiteboard-tldr>(.*)</whiteboard-tldr>"
-                                             (gp-util/safe-decode-uri-component text))]
-    (try-parse-as-json (second matched-text))))
-
 (defn- selection-within-link?
   [selection-and-format]
   (let [{:keys [format selection-start selection-end selection value]} selection-and-format]
@@ -120,16 +107,10 @@
                            (commands/simple-insert! input-id text nil)))
         text (string/replace *text "\r\n" "\n") ;; Fix for Windows platform
         input-id (state/get-edit-input-id)
-        shape-refs-text (when (and (not (string/blank? html))
-                                   (get-whiteboard-tldr-from-text html))
-                          ;; text should always be prepared block-ref generated in tldr
-                          text)
         {:keys [selection] :as selection-and-format} (editor-handler/get-selection-and-format)
         text-url? (gp-util/url? text)
         selection-url? (gp-util/url? selection)]
     (cond
-      (not (string/blank? shape-refs-text))
-      (commands/simple-insert! input-id shape-refs-text nil)
 
       ;; When a url is selected in a formatted link, replaces it with pasted text
       (or (and (or text-url? selection-url?)
@@ -174,7 +155,6 @@
           (replace-text-f text'))))))
 
 (defn- paste-copied-blocks-or-text
-  ;; todo: logseq/whiteboard-shapes is now text/html
   [input text e html]
   (util/stop e)
   (->
@@ -230,7 +210,6 @@
 - pastes file if it exists
 - wraps certain urls with macros
 - wraps selected urls with link formatting
-- whiteboard friendly pasting
 - paste replaces selected text"
   [id]
   (fn [e]

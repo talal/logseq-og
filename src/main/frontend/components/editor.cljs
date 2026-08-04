@@ -152,7 +152,6 @@
                               (block/page-preview-trigger
                                {:children
                                 [:div.flex
-                                 (when (db-model/whiteboard-page? page-name) [:span.mr-1 (ui/icon "whiteboard" {:extension? true})])
                                  [:div.flex.space-x-1
                                   [:div (when-not (db/page-exists? page-name) (t :new-page))]
                                   (search-handler/highlight-exact-query page-name q)]]

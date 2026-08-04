@@ -71,7 +71,7 @@
           ext (keyword (path/file-ext path))
           theme-path? (or (= path "logseq/themes")
                           (string/starts-with? path "logseq/themes/"))]
-      (when (or (contains? #{:org :md :markdown :css :js :edn :excalidraw :tldr} ext)
+      (when (or (contains? #{:org :md :markdown :css :js :edn} ext)
                 theme-path?)
         (let [db-content (db/get-file repo path)
               exists-in-db? (not (nil? db-content))

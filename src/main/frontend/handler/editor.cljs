@@ -1445,7 +1445,7 @@
 
 (defn make-asset-url
   "Make asset URL for UI element, to fill img.src"
-  [path] ;; path start with "/assets"(editor) or compatible for "../assets"(whiteboards)
+  [path]
   (if config/publishing?
     path
     (let [repo      (state/get-current-repo)
@@ -3143,11 +3143,6 @@
       :else
       (js/document.execCommand "copy"))))
 
-(defn whiteboard?
-  []
-  (and (state/whiteboard-route?)
-       (.closest (.-activeElement js/document) ".logseq-tldraw")))
-
 (defn shortcut-cut
   "shortcut cut action:
   * when in selection mode, cut selected blocks
@@ -3162,9 +3157,6 @@
                            (gdom/getElement (state/get-edit-input-id))))
     (keydown-backspace-handler true e)
 
-    (whiteboard?)
-    (.cut (state/active-tldraw-app))
-
     :else
     nil))
 
@@ -3173,9 +3165,6 @@
   (cond
     (state/selection?)
     (shortcut-delete-selection e)
-
-    (and (whiteboard?) (not (state/editing?)))
-    (.deleteShapes (.-api ^js (state/active-tldraw-app)))
 
     :else
     nil))
@@ -3475,10 +3464,6 @@
             doall)
        (and clear-selection? (clear-selection!)))
 
-     (state/whiteboard-route?)
-     (when (state/active-tldraw-app)
-       (.setCollapsed (.-api ^js (state/active-tldraw-app)) false))
-
      :else
      ;; expand one level
      (let [blocks-with-level (all-blocks-with-level {})
@@ -3512,10 +3497,6 @@
                        collapse-block!)))
             doall)
        (and clear-selection? (clear-selection!)))
-
-     (state/whiteboard-route?)
-     (when (state/active-tldraw-app)
-       (.setCollapsed (.-api ^js (state/active-tldraw-app)) true))
 
      :else
      ;; collapse by one level from outside
@@ -3560,13 +3541,6 @@
                (doseq [block-id block-ids] (expand-block! block-id))
                (doseq [block-id block-ids] (collapse-block! block-id))))))
        (and clear-selection? (clear-selection!)))
-
-     (state/whiteboard-route?)
-     (when-let [api (and (state/active-tldraw-app) (.-api ^js (state/active-tldraw-app)))]
-       (when-let [shapes (.-allSelectedShapesArray api)]
-         (when (not-empty shapes)
-           (let [collapsed? (not-every? #(.-collapsed ^js %) shapes)]
-             (.setCollapsed api collapsed?)))))
 
      :else
       ;; If no block is being edited or selected, the "toggle" action doesn't make sense,
@@ -3665,11 +3639,6 @@
       ;; Focusing other input element, e.g. when editing page title.
       (contains? #{"INPUT" "TEXTAREA"} target-element)
       nil
-
-      (whiteboard?)
-      (do
-        (util/stop e)
-        (.selectAll (.-api ^js (state/active-tldraw-app))))
 
       :else
       (do

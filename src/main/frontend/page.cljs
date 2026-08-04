@@ -97,15 +97,12 @@
                      (teardown)))}
   []
   (when-let [route-match (state/sub :route-match)]
-    (let [route-name (get-in route-match [:data :name])]
-      (when-let [view (:view (:data route-match))]
-        (ui/catch-error-and-notify
-         (helpful-default-error-screen)
-         (if (= :draw route-name)
-           (view route-match)
-           (container/sidebar
-            route-match
-            (view route-match))))))))
+    (when-let [view (:view (:data route-match))]
+      (ui/catch-error-and-notify
+       (helpful-default-error-screen)
+       (container/sidebar
+        route-match
+        (view route-match))))))
 
         ;; FIXME: disable for now
         ;; (let [route-name (get-in route-match [:data :name])

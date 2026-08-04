@@ -24,7 +24,6 @@
             [frontend.handler.editor :as editor-handler]
             [frontend.handler.page :as page-handler]
             [frontend.handler.route :as route-handler]
-            [frontend.handler.whiteboard :as whiteboard-handler]
             [frontend.mixins :as mixins]
             [frontend.modules.shortcut.data-helper :as shortcut-dh]
             [frontend.modules.shortcut.utils :as shortcut-utils]
@@ -72,15 +71,13 @@
 (rum/defc page-name
   [name icon recent?]
   (let [original-name (db-model/get-page-original-name name)
-        whiteboard-page? (db-model/whiteboard-page? name)
         untitled? (db-model/untitled-page? name)
         name (util/safe-page-name-sanity-lc name)
         file-rpath (when (util/electron?) (page-util/get-page-file-rpath name))
         source-page (db-model/get-alias-source-page (state/get-current-repo) name)
         ctx-icon #(shui/tabler-icon %1 {:class "scale-90 pr-1 opacity-80"})
-        open-in-sidebar #(when-let [page-entity (and (not whiteboard-page?)
-                                                     (if (empty? source-page)
-                                                       (db/entity [:block/name name]) source-page))]
+        open-in-sidebar #(when-let [page-entity (if (empty? source-page)
+                                                  (db/entity [:block/name name]) source-page)]
                            (state/sidebar-add-block!
                             (state/get-current-repo)
                             (:db/id page-entity)
@@ -129,10 +126,8 @@
           (let [name (if (empty? source-page) name (:block/name source-page))]
             (if (gobj/get e "shiftKey")
               (open-in-sidebar)
-              (if whiteboard-page?
-                (route-handler/redirect-to-whiteboard! name {:click-from-recent? recent?})
-                (route-handler/redirect-to-page! name {:click-from-recent? recent?})))))}
-       [:span.page-icon.ml-3.justify-center (if whiteboard-page? (ui/icon "whiteboard" {:extension? true}) icon)]
+              (route-handler/redirect-to-page! name {:click-from-recent? recent?}))))}
+       [:span.page-icon.ml-3.justify-center icon]
        [:span.page-title {:class (when untitled? "opacity-50")}
         (if untitled? (t :untitled)
             (pdf-utils/fix-local-asset-pagename original-name))]
@@ -312,19 +307,12 @@
                 :shortcut (ui/keyboard-shortcut-from-config :go/search)}
       :icon (ui/type-icon {:name "new-page"
                            :class "highlight"
-                           :extension? true})}
-     {:title (t :left-side-bar/new-whiteboard)
-      :class "new-whiteboard-link"
-      :options {:on-click #(do (close-sidebar-on-mobile!)
-                               (whiteboard-handler/create-new-whiteboard-and-redirect!))
-                :shortcut (ui/keyboard-shortcut-from-config :editor/new-whiteboard)}
-      :icon (ui/type-icon {:name "new-whiteboard"
-                           :class "highlight"
                            :extension? true})}])
+
    {}))
 
 (rum/defc sidebar-nav
-  [route-match close-modal-fn left-sidebar-open? enable-whiteboards? srs-open?
+  [route-match close-modal-fn left-sidebar-open? srs-open?
    *closing? close-signal touching-x-offset]
   (let [[local-closing? set-local-closing?] (rum/use-state false)
         [el-rect set-el-rect!] (rum/use-state nil)
@@ -425,17 +413,6 @@
                :icon "calendar"
                :shortcut :go/journals})))
 
-         (when enable-whiteboards?
-           (sidebar-item
-            {:class "whiteboard"
-             :title (t :right-side-bar/whiteboards)
-             :href (rfe/href :whiteboards)
-             :on-click-handler (fn [_e] (whiteboard-handler/onboarding-show))
-             :active (and (not srs-open?) (#{:whiteboard :whiteboards} route-name))
-             :icon "whiteboard"
-             :icon-extension? true
-             :shortcut :go/whiteboards}))
-
          (when (state/enable-flashcards? (state/get-current-repo))
            [:div.flashcards-nav
             (flashcards srs-open?)])
@@ -464,15 +441,7 @@
 
        [:footer.px-2 {:class "create"}
         (when-not config/publishing?
-          (if enable-whiteboards?
-            (create-dropdown)
-            [:a.item.group.flex.items-center.px-2.py-2.text-sm.font-medium.rounded-md.new-page-link
-             {:on-click (fn []
-                          (and (util/sm-breakpoint?)
-                               (state/toggle-left-sidebar!))
-                          (state/pub-event! [:go/search]))}
-             (ui/icon "circle-plus" {:style {:font-size 20}})
-             [:span.flex-1 (t :right-side-bar/new-page)]]))]]]
+          (create-dropdown))]]]
      [:span.shade-mask
       (cond-> {:on-click close-fn}
         (number? offset-ratio)
@@ -527,7 +496,6 @@
         *closing?            (::closing? s)
         *touch-state         (::touch-state s)
         *close-signal        (::close-signal s)
-        enable-whiteboards?  (state/enable-whiteboards?)
         touch-point-fn       (fn [^js e] (some-> (gobj/get e "touches") (aget 0) (#(hash-map :x (.-clientX %) :y (.-clientY %)))))
         srs-open?            (= :srs (state/sub :modal/id))
         touching-x-offset    (and (some-> @*touch-state :after)
@@ -559,7 +527,7 @@
         (reset! *touch-state nil))}
 
      ;; sidebar contents
-     (sidebar-nav route-match close-fn left-sidebar-open? enable-whiteboards? srs-open? *closing?
+     (sidebar-nav route-match close-fn left-sidebar-open? srs-open? *closing?
                   @*close-signal (and touch-pending? touching-x-offset))
      ;; resizer
      (sidebar-resizer)]))
@@ -857,7 +825,7 @@
         ls-block-hl-colored? (state/sub :pdf/block-highlight-colored?)
         right-sidebar-blocks (state/sub-right-sidebar-blocks)
         route-name (get-in route-match [:data :name])
-        margin-less-pages? (boolean (#{:graph :whiteboard} route-name))
+        margin-less-pages? (boolean (#{:graph} route-name))
         db-restoring? (state/sub :db/restoring?)
         indexeddb-support? (state/sub :indexeddb/support?)
         page? (= :page route-name)

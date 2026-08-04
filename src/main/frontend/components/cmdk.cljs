@@ -12,7 +12,6 @@
    [frontend.handler.editor :as editor-handler]
    [frontend.handler.page :as page-handler]
    [frontend.handler.route :as route-handler]
-   [frontend.handler.whiteboard :as whiteboard-handler]
    [frontend.mixins :as mixins]
    [frontend.modules.shortcut.core :as shortcut]
    [frontend.modules.shortcut.utils :as shortcut-utils]
@@ -51,8 +50,6 @@
                                                                                                            :group :blocks}}
    {:text "Search only commands"     :info "Add filter to search" :icon-theme :gray :icon "command" :filter {:mode "search"
                                                                                                              :group :commands}}
-   {:text "Search only whiteboards"  :info "Add filter to search" :icon-theme :gray :icon "whiteboard" :filter {:mode "search"
-                                                                                                                :group :whiteboards}}
    {:text "Search only files"        :info "Add filter to search" :icon-theme :gray :icon "file" :filter {:mode "search"
                                                                                                           :group :files}}])
 
@@ -74,12 +71,9 @@
 
 (defn create-items [q]
   (when-not (string/blank? q)
-    [{:text "Create page"       :icon "new-page"
+    [{:text "Create page" :icon "new-page"
       :icon-theme :gray
-      :info (str "Create page called '" q "'") :source-create :page}
-     {:text "Create whiteboard" :icon "new-whiteboard"
-      :icon-theme :gray
-      :info (str "Create whiteboard called '" q "'") :source-create :whiteboard}]))
+      :info (str "Create page called '" q "'") :source-create :page}]))
 
 ;; Take the results, decide how many items to show, and order the results appropriately
 (defn state->results-ordered [state search-mode]
@@ -223,35 +217,13 @@
                        (remove nil?)
                        (map
                         (fn [page]
-                          (let [entity (db/entity [:block/name (util/page-name-sanity-lc page)])
-                                whiteboard? (= (:block/type entity) "whiteboard")
-                                source-page (model/get-alias-source-page repo page)]
-                            (hash-map :icon (if whiteboard? "whiteboard" "page")
+                          (let [source-page (model/get-alias-source-page repo page)]
+                            (hash-map :icon "page"
                                       :icon-theme :gray
                                       :text page
                                       :source-page (if source-page
                                                      (:block/original-name source-page)
                                                      page))))))]
-      (swap! !results update group        merge {:status :success :items items}))))
-
-(defmethod load-results :whiteboards [group state]
-  (let [!input (::input state)
-        !results (::results state)]
-    (swap! !results assoc-in [group :status] :loading)
-    (p/let [whiteboards (->> (model/get-all-whiteboards (state/get-current-repo))
-                             (map :block/original-name))
-            pages (search/fuzzy-search whiteboards @!input {:limit 100})
-            items (->> pages
-                       (remove nil?)
-                       (keep
-                        (fn [page]
-                          (let [entity (db/entity [:block/name (util/page-name-sanity-lc page)])
-                                whiteboard? (= (:block/type entity) "whiteboard")]
-                            (when whiteboard?
-                              (hash-map :icon "whiteboard"
-                                        :icon-theme :gray
-                                        :text page
-                                        :source-page page))))))]
       (swap! !results update group        merge {:status :success :items items}))))
 
 (defn highlight-page-content-query
@@ -320,10 +292,9 @@
                      (and
                       f
                       (string/ends-with? f ".edn")
-                      (or (string/starts-with? f "whiteboards/")
-                          (string/starts-with? f "assets/")
-                          (string/starts-with? f "logseq/version-files")
-                          (contains? #{"logseq/metadata.edn" "logseq/pages-metadata.edn"} f))))
+                      (string/starts-with? f "assets/")
+                      (string/starts-with? f "logseq/version-files")
+                      (contains? #{"logseq/metadata.edn" "logseq/pages-metadata.edn"} f)))
                    files*)
             items (map
                    (fn [file]
@@ -406,8 +377,7 @@
           (load-results :pages state)
           (load-results :filters state)
           (load-results :files state)
-          (load-results :recents state)
-          (load-results :whiteboards state))))))
+          (load-results :recents state))))))
 
 (defn- copy-block-ref [state]
   (when-let [block-uuid (some-> state state->highlighted-item :source-block :block/uuid uuid)]
@@ -421,9 +391,7 @@
     (let [redirect-page-name (model/get-redirect-page-name page-name)
           page (db/entity [:block/name (util/page-name-sanity-lc redirect-page-name)])
           original-name (:block/original-name page)]
-      (if (= (:block/type page) "whiteboard")
-        (route-handler/redirect-to-whiteboard! original-name)
-        (route-handler/redirect-to-page! original-name)))
+      (route-handler/redirect-to-page! original-name))
     (state/close-modal!)))
 
 (defmethod handle-action :open-block [_ state _event]
@@ -435,8 +403,6 @@
       (when-let [page (some-> block-id get-block-page)]
         (let [page-name (:block/name page)]
           (cond
-            (= (:block/type page) "whiteboard")
-            (route-handler/redirect-to-whiteboard! page-name {:block-id block-id})
             (model/parents-collapsed? (state/get-current-repo) block-id)
             (route-handler/redirect-to-page! (:block/uuid block))
             :else
@@ -504,12 +470,10 @@
 
 (defmethod handle-action :create [_ state _event]
   (let [item (state->highlighted-item state)
-        create-whiteboard? (= :whiteboard (:source-create item))
         create-page? (= :page (:source-create item))
         !input (::input state)]
-    (cond
-      create-whiteboard? (whiteboard-handler/create-new-whiteboard-and-redirect! @!input)
-      create-page? (page-handler/create! @!input {:redirect? true}))
+    (when create-page?
+      (page-handler/create! @!input {:redirect? true}))
     (state/close-modal!)))
 
 (defn- get-filter-user-input
@@ -767,7 +731,7 @@
                             backspace? (= (util/ekey e) "Backspace")
                             filter-group (:group @(::filter state))
                             slash? (= (util/ekey e) "/")
-                            namespace-page-matched? (when (and slash? (contains? #{:pages :whiteboards} filter-group))
+                            namespace-page-matched? (when (and slash? (= :pages filter-group))
                                                       (some #(string/includes? % "/") (search/page-search (str value "/"))))]
                         (when (and filter-group
                                    (or (and slash? (not namespace-page-matched?))

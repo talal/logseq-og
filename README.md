@@ -24,21 +24,21 @@ focus and prioritize the following principles:
 
 ## Disclaimer
 
-I created this fork primarily for my **personal use**. I have made this
-repository public for education purposes and in case others might find it
-useful. I have no intention of supporting end-users and if you use this fork
-then you should **not expect any support** from me.
+I created this fork primarily for **personal use**, without any intention of
+supporting end users. I'm releasing the code publicly for educational purposes
+and in case others find it useful.
 
-This means that I will only add or remove features/functionality which make
-sense and are beneficial to me.
+As a result, this fork is **highly opinionated**, and I'll only add or remove
+features at my own discretion.
 
-However, if the app violates any of the [core principles](#core-principles)
-listed above then feel free to
-[open an issue](https://github.com/talal/logseq-og/issues/new/) and I will fix
-it. For example, if the app crashes (Principle #1) or if the app is slow
-(Principle #2) then you may open an issue. Please don't open issues where you
-ask for feature requests because I'm the one who will have to maintain this fork
-and I would like to keep it easy to maintain (Principle #3).
+That said, if the app violates any of the [core principles](#core-principles)
+above, feel free to [open an issue](https://github.com/talal/logseq-og/issues/new/)
+and I'll fix it. For example, if the app crashes (Principle #1) or runs slowly
+(Principle #2).
+
+## Installation instructions
+
+Coming Soon™
 
 ## Credits and Acknowledgement
 

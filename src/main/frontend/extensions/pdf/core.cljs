@@ -903,7 +903,6 @@
                             :password      (or doc-password "")
                             :ownerDocument (.-ownerDocument loader-el)
                             :cMapUrl       "./js/pdfjs/cmaps/"
-                            ;:cMapUrl       "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.9.179/cmaps/"
                             :cMapPacked    true}]
 
          (set-loader-state! {:status :loading})

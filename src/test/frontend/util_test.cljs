@@ -13,6 +13,16 @@
       (is (string/starts-with? printed "{:foo \"bar\"}"))
       (is (string/ends-with? printed "\n")))))
 
+(deftest test-asset-uri-uses-local-assets
+  (testing "web assets stay under the local static path"
+    (with-redefs [util/file-protocol? (constantly false)]
+      (is (= "/static/js/katex.min.js"
+             (config/asset-uri "/static/js/katex.min.js")))))
+  (testing "desktop assets resolve relative to the Electron entrypoint"
+    (with-redefs [util/file-protocol? (constantly true)]
+      (is (= "./js/katex.min.js"
+             (config/asset-uri "/static/js/katex.min.js"))))))
+
 (deftest test-find-first
   (testing "find-first"
     (is (= 1 (util/find-first identity [1])))))

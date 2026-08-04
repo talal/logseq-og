@@ -59,7 +59,7 @@
                          :latex "$$E = mc^2$$"
                          :code (str "`" (t :code) "`")
                          :pre "```clojure\n  (println \"Hello world!\")\n```"
-                         :img "![image](https://asset.logseq.com/static/img/logo.png)"}
+                         :img "![image](./img/logo.png)"}
               :org {:bold (str "*" (t :bold) "*")
                     :italics (str "/" (t :italics) "/")
                     :del (str "+" (t :strikethrough) "+")
@@ -68,7 +68,7 @@
                     :mark (str "^^" (t :highlight) "^^")
                     :latex "$$E = mc^2$$"
                     :code "~Code~"
-                    :img "[[https://asset.logseq.com/static/img/logo.png][image]]"})
+                    :img "[[./img/logo.png][image]]"})
 
         rendered {:italics [:i (t :italics)]
                   :bold [:b (t :bold)]
@@ -79,7 +79,7 @@
                   :code [:code (t :code)]
                   :pre (highlight/highlight "help-highlight" {:data-lang "clojure"} "(println \"Hello world!\")")
                   :img [:img {:style {:float "right" :width 32 :height 32}
-                              :src "https://asset.logseq.com/static/img/logo.png"
+                              :src "./img/logo.png"
                               :alt "image"}]}]
 
     [:table

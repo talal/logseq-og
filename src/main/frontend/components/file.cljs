@@ -32,13 +32,16 @@
   []
   (when-let [current-repo (state/sub :repo/current)]
     (let [files (db/get-files current-repo) ; [[string]]
-          files (sort-by first gstring/intAwareCompare files)]
+          files (sort-by first gstring/intAwareCompare files)
+          mobile? (util/mobile?)]
       [:table.table-auto
        [:thead
         [:tr
          [:th (t :file/name)]
-         [:th (t :file/last-modified-at)]
-         [:th ""]]]
+         (when-not mobile?
+           [:th (t :file/last-modified-at)])
+         (when-not mobile?
+           [:th ""])]]
        [:tbody
         (for [[file modified-at] files]
           (let [file-id file]
@@ -49,16 +52,17 @@
                            (rfe/href :file {:path file-id}))]
                 [:a {:href href}
                  file])]
-             [:td [:span.text-gray-500.text-sm
-                   (if (zero? modified-at)
-                     (t :file/no-data)
-                     (date/get-date-time-string
-                      (t/to-default-time-zone (tc/to-date-time modified-at))))]]
-
-             [:td [:a.text-sm
-                   {:on-click (fn [_e]
-                                (export-handler/download-file! file))}
-                   [:span (t :download)]]]]))]])))
+             (when-not mobile?
+               [:td [:span.text-gray-500.text-sm
+                     (if (zero? modified-at)
+                       (t :file/no-data)
+                       (date/get-date-time-string
+                        (t/to-default-time-zone (tc/to-date-time modified-at))))]])
+             (when-not mobile?
+               [:td [:a.text-sm
+                     {:on-click (fn [_e]
+                                  (export-handler/download-file! file))}
+                     [:span (t :download)]]])]))]])))
 
 (rum/defc files
   []

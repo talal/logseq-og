@@ -990,6 +990,8 @@
                             (if (every? true? checks)
                               1 (if (some true? checks) -1 0)))))
 
+        mobile? (util/mobile?)
+
         total-items (count @*results-all)
         ;; FIXME: "pages" is ambiguous here, it can be either "Logseq pages" or "result pages"
         total-pages (if-not @*results-all 0
@@ -1167,9 +1169,10 @@
                                                 (swap! *checks assoc idx (or indeterminate? (not all?))))))
                            :indeterminate (when (= -1 @*indeterminate) "indeterminate")})]
            (sortable-title (t :block/name) :block/name *sort-by-item *desc?)
-           [(sortable-title (t :page/backlinks) :block/backlinks *sort-by-item *desc?)
-            (sortable-title (t :page/created-at) :block/created-at *sort-by-item *desc?)
-            (sortable-title (t :page/updated-at) :block/updated-at *sort-by-item *desc?)]]]
+           (when-not mobile?
+             [(sortable-title (t :page/backlinks) :block/backlinks *sort-by-item *desc?)
+              (sortable-title (t :page/created-at) :block/created-at *sort-by-item *desc?)
+              (sortable-title (t :page/updated-at) :block/updated-at *sort-by-item *desc?)])]]
 
          [:tbody
           (for [{:block/keys [idx name created-at updated-at backlinks] :as page} @*results]
@@ -1194,13 +1197,14 @@
                    [:span.pr-1 icon])
                  (component-block/page-cp {} page)]]
 
-               [[:td.backlinks [:span backlinks]]
-                [:td.created-at [:span (if created-at
-                                         (date/int->local-time-2 created-at)
-                                         "Unknown")]]
-                [:td.updated-at [:span (if updated-at
-                                         (date/int->local-time-2 updated-at)
-                                         "Unknown")]]]]))]]
+               (when-not mobile?
+                 [[:td.backlinks [:span backlinks]]
+                  [:td.created-at [:span (if created-at
+                                           (date/int->local-time-2 created-at)
+                                           "Unknown")]]
+                  [:td.updated-at [:span (if updated-at
+                                           (date/int->local-time-2 updated-at)
+                                           "Unknown")]]])]))]]
 
         [:div.flex.justify-end.py-4
          (pagination :current @*current-page

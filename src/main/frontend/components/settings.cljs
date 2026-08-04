@@ -140,7 +140,8 @@
                          :on-click on-click}
                         (if (string/blank? href) button-label
                             (shui-ui/link {:href href} button-label))))]
-    [:div.text-sm.flex desc]]])
+    (when-not (util/mobile?)
+      [:div.text-sm.flex desc])]])
 
 (defn edit-config-edn []
   (row-with-button-action
@@ -184,8 +185,9 @@
      (ui/toggle show-brackets?
                 config-handler/toggle-ui-show-brackets!
                 true)]]
-   [:div {:style {:text-align "right"}}
-    (ui/render-keyboard-shortcut (shortcut-helper/gen-shortcut-seq :ui/toggle-brackets))]])
+   (when-not (util/mobile?)
+     [:div {:style {:text-align "right"}}
+      (ui/render-keyboard-shortcut (shortcut-helper/gen-shortcut-seq :ui/toggle-brackets))])])
 
 (rum/defcs switch-spell-check-row < rum/reactive
   [state t]
@@ -593,8 +595,8 @@
      (showing-full-blocks t show-full-blocks?)
      (preferred-pasting-file t preferred-pasting-file?)
      (auto-expand-row t auto-expand-block-refs?)
-     (shortcut-tooltip-row t enable-shortcut-tooltip?)
-     (tooltip-row t enable-tooltip?)
+     (when-not (util/mobile?) (shortcut-tooltip-row t enable-shortcut-tooltip?))
+     (when-not (util/mobile?) (tooltip-row t enable-tooltip?))
      (timetracking-row t enable-timetracking?)
      (enable-all-pages-public-row t enable-all-pages-public?)]))
 

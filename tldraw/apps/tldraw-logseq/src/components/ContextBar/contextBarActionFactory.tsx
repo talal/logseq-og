@@ -161,10 +161,14 @@ const LogseqPortalViewModeAction = observer(() => {
 })
 
 const ScaleLevelAction = observer(() => {
+  const {
+    handlers: { isMobile },
+  } = React.useContext(LogseqContext)
+
   const shapes = filterShapeByAction<LogseqPortalShape>('ScaleLevel')
   const scaleLevel = new Set(shapes.map(s => s.scaleLevel)).size > 1 ? '' : shapes[0].scaleLevel
 
-  return <ScaleInput scaleLevel={scaleLevel} />
+  return <ScaleInput scaleLevel={scaleLevel} compact={isMobile()} />
 })
 
 const IFrameSourceAction = observer(() => {

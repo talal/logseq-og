@@ -721,6 +721,20 @@ html[data-theme='dark'] .keyboard-shortcut > code {
   overflow-x: clip;
 }
 
+html.is-mobile {
+  h1.title {
+    margin-bottom: 10px;
+  }
+
+  #journals .journal-item:first-child {
+    margin-top: 5px;
+  }
+
+  main.theme-inner {
+    @apply overflow-x-hidden;
+  }
+}
+
 @layer base {
   .ls-grid-cols {
     @apply grid grid-flow-col auto-cols-max;

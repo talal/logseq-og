@@ -57,6 +57,7 @@ export interface LogseqContextValue {
     getRedirectPageName: (uuidOrPageName: string) => string
     insertFirstPageBlock: (pageName: string) => string
     isWhiteboardPage: (pageName: string) => boolean
+    isMobile: () => boolean
     saveAsset: (file: File) => Promise<string>
     makeAssetUrl: (relativeUrl: string | null) => string
     getSelectedBlocks: () => { uuid: string }[]

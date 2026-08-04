@@ -235,6 +235,29 @@
   }
 }
 
+html.is-mobile {
+  .ui__modal {
+    @apply bottom-0 inset-x-0 top-20;
+
+    &[label='ls-modal-search'] {
+      .panel-content {
+        padding-bottom: 0;
+      }
+
+      .ls-search {
+        padding-bottom: 0;
+      }
+    }
+
+    &[label='ls-modal-align-center'] {
+      .ui__modal-panel {
+        top: 8vh;
+        transform: translateY(-10%);
+      }
+    }
+  }
+}
+
 .ui__confirm-modal {
   .sublabel {
     display: flex;

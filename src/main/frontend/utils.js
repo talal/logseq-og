@@ -226,6 +226,21 @@ export const win32 = (path) => {
   return Boolean(result[2] || isUnc)
 }
 
+export const ios = () => {
+  return (
+    [
+      'iPad Simulator',
+      'iPhone Simulator',
+      'iPod Simulator',
+      'iPad',
+      'iPhone',
+      'iPod',
+    ].includes(navigator.platform) ||
+    // iPad on iOS 13 detection
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+  )
+}
+
 export const getClipText = (cb, errorHandler) => {
   navigator.permissions
     .query({

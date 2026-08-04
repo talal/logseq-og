@@ -65,6 +65,15 @@ necessary db filtering"
              {:href icon
               :sizes "192x192",
               :rel "shortcut icon"}]
+            [:link
+             {:href icon
+              :rel "apple-touch-icon"}]
+
+            [:meta {:name "apple-mobile-web-app-title" :content project}]
+            [:meta {:name "apple-mobile-web-app-capable" :content "yes"}]
+            [:meta {:name "apple-touch-fullscreen" :content "yes"}]
+            [:meta {:name "apple-mobile-web-app-status-bar-style" :content "black-translucent"}]
+            [:meta {:name "mobile-web-app-capable" :content "yes"}]
             [:meta {:content title, :property "og:title"}]
             [:meta {:content "site", :property "og:type"}]
             (when url [:meta {:content url, :property "og:url"}])

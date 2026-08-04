@@ -118,6 +118,7 @@
                           (:block/name (db/entity [:block/name (util/page-name-sanity-lc block-id-str)]))))
    :exportToImage (fn [page-name options] (state/set-modal! #(export/export-blocks page-name (merge (js->clj options :keywordize-keys true) {:whiteboard? true}))))
    :isWhiteboardPage model/whiteboard-page?
+   :isMobile util/mobile?
    :saveAsset save-asset-handler
    :makeAssetUrl editor-handler/make-asset-url
    :getSelectedBlocks tldraw-handlers/get-selected-blocks

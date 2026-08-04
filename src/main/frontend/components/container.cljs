@@ -290,6 +290,11 @@
     (when shortcut
       [:span.ml-1 (ui/render-keyboard-shortcut (ui/keyboard-shortcut-from-config shortcut))])]])
 
+(defn close-sidebar-on-mobile!
+  []
+  (and (util/sm-breakpoint?)
+       (state/toggle-left-sidebar!)))
+
 (defn create-dropdown
   []
   (ui/dropdown-with-links
@@ -302,14 +307,16 @@
    (->>
     [{:title (t :left-side-bar/new-page)
       :class "new-page-link"
-      :options {:on-click #(state/pub-event! [:go/search])
+      :options {:on-click #(do (close-sidebar-on-mobile!)
+                               (state/pub-event! [:go/search]))
                 :shortcut (ui/keyboard-shortcut-from-config :go/search)}
       :icon (ui/type-icon {:name "new-page"
                            :class "highlight"
                            :extension? true})}
      {:title (t :left-side-bar/new-whiteboard)
       :class "new-whiteboard-link"
-      :options {:on-click #(whiteboard-handler/create-new-whiteboard-and-redirect!)
+      :options {:on-click #(do (close-sidebar-on-mobile!)
+                               (whiteboard-handler/create-new-whiteboard-and-redirect!))
                 :shortcut (ui/keyboard-shortcut-from-config :editor/new-whiteboard)}
       :icon (ui/type-icon {:name "new-whiteboard"
                            :class "highlight"

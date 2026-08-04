@@ -591,9 +591,21 @@ Similar to re-frame subscriptions"
   [repo]
   (or (:block/content-max-length (sub-config repo)) 10000))
 
+(defn enable-fold-button-right?
+  []
+  (let [_ (sub :ui/viewport)]
+    (and (util/mobile?)
+         (util/sm-breakpoint?))))
+
+(defn mobile?
+  []
+  (util/mobile?))
+
 (defn enable-tooltip?
   []
-  (get (sub-config) :ui/enable-tooltip? true))
+  (if (mobile?)
+    false
+    (get (sub-config) :ui/enable-tooltip? true)))
 
 (defn show-command-doc?
   []

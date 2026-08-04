@@ -206,6 +206,16 @@
   cursor: default !important;
 }
 
+html.is-ios.is-safari {
+  .cp__header {
+    background-color: var(--ls-primary-background-color);
+  }
+
+  .is-vw-pending {
+    display: none !important;
+  }
+}
+
 .drag-region {
   user-select: none;
   -webkit-app-region: drag;

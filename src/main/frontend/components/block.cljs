@@ -44,6 +44,7 @@
             [frontend.handler.notification :as notification]
             [frontend.handler.repeated :as repeated]
             [frontend.handler.route :as route-handler]
+            [frontend.handler.ui :as ui-handler]
             [frontend.handler.whiteboard :as whiteboard-handler]
             [frontend.modules.outliner.tree :as tree]
             [frontend.security :as security]
@@ -421,7 +422,7 @@
 (declare page-reference)
 
 (defn open-page-ref
-  [e page-name redirect-page-name page-name-in-block _contents-page? whiteboard-page?]
+  [e page-name redirect-page-name page-name-in-block contents-page? whiteboard-page?]
   (util/stop e)
   (when (not (util/right-click? e))
     (cond
@@ -445,7 +446,10 @@
 
       :else
       (state/pub-event! [:page/create page-name-in-block])))
-  nil)
+  (when (and contents-page?
+             (util/mobile?)
+             (state/get-left-sidebar-open?))
+    (ui-handler/close-left-sidebar!)))
 
 (rum/defc page-inner
   "The inner div of page reference component
@@ -615,7 +619,8 @@
         (or (:block/original-name page)
             (:block/name page))
 
-        (and (not preview?)
+        (and (not (util/mobile?))
+             (not preview?)
              (not modal?))
         (page-preview-trigger (assoc config :children inner) page-name)
 
@@ -837,8 +842,8 @@
 
                       ;; default open block page
                       :else (route-handler/redirect-to-page! id))))))}
-
-           (if (and (not (:preview? config))
+           (if (and (not (util/mobile?))
+                    (not (:preview? config))
                     (not (:modal/show? @state/state))
                     (nil? block-type))
              (ui/tippy {:html        (fn []
@@ -1665,30 +1670,33 @@
         control-show?      (util/react *control-show?)
         ref?               (:ref? config)
         empty-content?     (block-content-empty? block)
+        fold-button-right? (state/enable-fold-button-right?)
         own-number-list?   (:own-order-number-list? config)
         order-list?        (boolean own-number-list?)
         order-list-idx     (:own-order-list-index config)
         collapsable?       (editor-handler/collapsable? uuid {:semantic? true})]
+
     [:div.block-control-wrap.flex.flex-row.items-center
      {:class (util/classnames [{:is-order-list order-list?
                                 :bullet-closed collapsed?}])}
-     [:a.block-control
-      {:id       (str "control-" uuid)
-       :on-click (fn [event]
-                   (util/stop event)
-                   (state/clear-edit!)
-                   (if ref?
-                     (state/toggle-collapsed-block! uuid)
-                     (if collapsed?
-                       (editor-handler/expand-block! uuid)
-                       (editor-handler/collapse-block! uuid))))}
-      [:span {:class (if (or (and control-show?
-                                  (or collapsed?
-                                      (editor-handler/collapsable? uuid {:semantic? true})))
-                             (and collapsed? order-list?))
-                       "control-show cursor-pointer"
-                       "control-hide")}
-       (ui/rotating-arrow collapsed?)]]
+     (when (or (not fold-button-right?) collapsable?)
+       [:a.block-control
+        {:id       (str "control-" uuid)
+         :on-click (fn [event]
+                     (util/stop event)
+                     (state/clear-edit!)
+                     (if ref?
+                       (state/toggle-collapsed-block! uuid)
+                       (if collapsed?
+                         (editor-handler/expand-block! uuid)
+                         (editor-handler/collapse-block! uuid))))}
+        [:span {:class (if (or (and control-show?
+                                    (or collapsed?
+                                        (editor-handler/collapsable? uuid {:semantic? true})))
+                               (and collapsed? order-list?))
+                         "control-show cursor-pointer"
+                         "control-hide")}
+         (ui/rotating-arrow collapsed?)]])
 
      (let [bullet [:a.bullet-link-wrap {:on-click #(bullet-on-click % block uuid)}
                    [:span.bullet-container.cursor
@@ -2204,7 +2212,9 @@
         block-ref-with-title? (and block-ref? (not (state/show-full-blocks?)) (seq title))
         block-type (or (:ls-type properties) :default)
         content (if (string? content) (string/trim content) "")
-        mouse-down-key :on-mouse-down
+        mouse-down-key (if (util/ios?)
+                         :on-click
+                         :on-mouse-down) ; TODO: it seems that Safari doesn't work well with on-mouse-down
 
         attrs (cond->
                {:blockid       (str uuid)

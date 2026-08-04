@@ -18,20 +18,20 @@
 (rum/defc add-local-directory
   []
   [:div.flex.flex-col
-   [:h1.title (t :on-boarding/add-graph)]
+   [:h1.title (t :graph-setup/add-graph)]
    (let [nfs-supported? (nfs/supported?)]
      [:div.cp__widgets-open-local-directory
       [:div.select-file-wrap.cursor
        (when nfs-supported?
          {:on-click #(page-handler/ls-dir-files! shortcut/refresh!)})
        [:div
-        [:h1.title (t :on-boarding/open-local-dir)]
-        [:p (t :on-boarding/new-graph-desc-1)]
-        [:p (t :on-boarding/new-graph-desc-2)]
+        [:h1.title (t :graph-setup/open-local-dir)]
+        [:p (t :graph-setup/new-graph-desc-1)]
+        [:p (t :graph-setup/new-graph-desc-2)]
         [:ul
-         [:li (t :on-boarding/new-graph-desc-3)]
-         [:li (t :on-boarding/new-graph-desc-4)]
-         [:li (t :on-boarding/new-graph-desc-5)]]
+         [:li (t :graph-setup/new-graph-desc-3)]
+         [:li (t :graph-setup/new-graph-desc-4)]
+         [:li (t :graph-setup/new-graph-desc-5)]]
         (when-not nfs-supported?
           (ui/admonition :warning (filesystem-api-alert)))]]])])
 
@@ -57,4 +57,4 @@
              (not config/publishing?))
     (ui/admonition
      :warning
-     [:p (t :on-boarding/demo-graph)])))
+     [:p (t :graph-setup/demo-graph)])))

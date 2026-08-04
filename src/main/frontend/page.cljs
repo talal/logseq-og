@@ -1,7 +1,6 @@
 (ns frontend.page
   "Provides root component for both Logseq app and publishing build"
   (:require [frontend.components.container :as container]
-            [frontend.components.onboarding.quick-tour :as quick-tour]
             [frontend.context.i18n :refer [t]]
             [frontend.handler.notification :as notification]
             [frontend.handler.search :as search-handler]
@@ -90,7 +89,6 @@
                    (state/load-app-user-cfgs)
                    (ui/inject-document-devices-envs!)
                    (ui/inject-dynamic-style-node!)
-                   (quick-tour/init)
                    (assoc state ::teardown (setup-fns!)))
    :will-unmount (fn [state]
                    (when-let [teardown (::teardown state)]

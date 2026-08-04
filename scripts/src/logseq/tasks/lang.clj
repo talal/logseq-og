@@ -37,7 +37,7 @@
   (if (< (count s) length)
     s
     (string/replace (str (subs s 0 length) "...")
-                    ;; Escape newlines for multi-line translations like tutorials
+                    ;; Escape newlines for multi-line translations
                     "\n" "\\n")))
 
 (defn list-missing
@@ -59,9 +59,7 @@
                                 (map (fn [[k v]]
                                        {:translation-key k
                                         :string-to-translate v
-                                        :file (if (= "tutorial" (namespace k))
-                                                (str "Under tutorials/")
-                                                (str "dicts/" (-> lang name string/lower-case) ".edn"))}))
+                                        :file (str "dicts/" (-> lang name string/lower-case) ".edn")}))
                                 (sort-by (juxt :file :translation-key)))]
         (if (:copy options)
           (doseq [[file missing-for-file] (group-by :file sorted-missing)]
@@ -150,23 +148,22 @@
   "Allows certain keys in a language to have the same translation
    as English. Happens more in romance languages but pretty rare otherwise"
   {:fr #{:port :type :help/docs :search-item/page :shortcut.category/navigating :text/image
-         :code :on-boarding/section-pages :paginates/pages :right-side-bar/history-global}
+         :code :graph-setup/section-pages :paginates/pages :right-side-bar/history-global}
    :de #{:graph :host :port :shortcut.category/navigating
          :settings-page/enable-tooltip}
    :ca #{:port :right-side-bar/history-global :settings-page/tab-editor :settings-page/tab-general}
    :es #{:settings-page/tab-general :settings-page/tab-editor :right-side-bar/history-global}
-   :it #{:home :handbook/home :host :help/awesome-logseq :on-boarding/section-computer
+   :it #{:home :handbook/home :host :help/awesome-logseq :graph-setup/section-computer
          :settings-page/tab-editor}
    :nl #{:type :left-side-bar/nav-recent-pages}
    :pl #{:port :home :host}
    :pt-BR #{:right-side-bar/flashcards :settings-page/enable-flashcards :page/backlinks
-            :host :settings-page/tab-editor :on-boarding/quick-tour-journal-page-desc-2
-            :right-side-bar/history-global}
+            :host :settings-page/tab-editor :right-side-bar/history-global}
    :pt-PT #{:right-side-bar/flashcards :settings-page/enable-flashcards}
    :nb-NO #{:port :type :right-side-bar/flashcards
             :settings-page/tab-editor :right-side-bar/history-global :linked-references/filter-heading}
    :tr #{:help/awesome-logseq}
-   :id #{:host :port :on-boarding/section-app :right-side-bar/history-global}
+   :id #{:host :port :graph-setup/section-app :right-side-bar/history-global}
    :cs #{:host :port :help/blog :settings-page/tab-editor}})
 
 (defn- validate-languages-dont-have-duplicates

@@ -130,14 +130,14 @@ export async function openLeftSidebar(page: Page): Promise<void> {
 export async function loadLocalGraph(page: Page, path: string): Promise<void> {
   await setMockedOpenDirPath(page, path)
 
-  const onboardingOpenButton = page.locator(
+  const graphSetupOpenButton = page.locator(
     'strong:has-text("Choose a folder")'
   )
 
-  if (await onboardingOpenButton.isVisible()) {
-    await onboardingOpenButton.click()
+  if (await graphSetupOpenButton.isVisible()) {
+    await graphSetupOpenButton.click()
   } else {
-    console.log('No onboarding button, loading file manually')
+    console.log('No graph setup button, loading file manually')
     const sidebar = page.locator('#left-sidebar')
     if (!/is-open/.test((await sidebar.getAttribute('class')) || '')) {
       await page.click('#left-menu.button')

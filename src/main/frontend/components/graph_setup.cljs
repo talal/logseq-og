@@ -1,4 +1,4 @@
-(ns frontend.components.onboarding.setups
+(ns frontend.components.graph-setup
   (:require [clojure.string :as string]
             [frontend.components.svg :as svg]
             [frontend.components.widgets :as widgets]
@@ -16,31 +16,31 @@
             [rum.core :as rum]))
 
 (defn- device []
-  (t :on-boarding/section-computer))
+  (t :graph-setup/section-computer))
 
 (rum/defc setups-container
   [flag content]
 
-  [:div.cp__onboarding-setups.flex.flex-1
+  [:div.cp__graph-setup-setups.flex.flex-1
    (let [picker? (= flag :picker)]
      [:div.inner-card.flex.flex-col.items-center
 
       [:h1.text-xl
        (if picker?
          [:span.flex.items-center.gap-1
-          [:strong (ui/icon "heart" {:size 30})] (t :on-boarding/main-title)]
+          [:strong (ui/icon "heart" {:size 30})] (t :graph-setup/main-title)]
          [:span.flex.items-center.gap-1
-          [:strong (ui/icon "file-import" {:size 30})] (t :on-boarding/importing-main-title)])]
+          [:strong (ui/icon "file-import" {:size 30})] (t :graph-setup/importing-main-title)])]
 
       [:h2.opacity-60
        (if picker?
-         (t :on-boarding/main-desc)
-         (t :on-boarding/importing-main-desc))]
+         (t :graph-setup/main-desc)
+         (t :graph-setup/importing-main-desc))]
 
       content])])
 
 (rum/defcs picker < rum/reactive
-  [_state _onboarding-and-home?]
+  [_route-match]
   (let [parsing? (state/sub :repo/parsing-files?)]
 
     (setups-container
@@ -59,8 +59,8 @@
 
             (if parsing?
               (ui/loading "")
-              [[:strong (t :on-boarding/section-btn-title)]
-               [:small (t :on-boarding/section-btn-desc)]])]]]
+              [[:strong (t :graph-setup/section-btn-title)]
+               [:small (t :graph-setup/section-btn-desc)]])]]]
          [:div.px-5
           (ui/admonition :warning
                          (widgets/filesystem-api-alert))])]
@@ -68,21 +68,21 @@
        [:p.flex
         [:i.as-flex-center (ui/icon "zoom-question" {:style {:fontSize "22px"}})]
         [:span.flex-1.flex.flex-col
-         [:strong (t :on-boarding/section-title)]
-         [:small.opacity-60 (t :on-boarding/section-desc)]]]
+         [:strong (t :graph-setup/section-title)]
+         [:small.opacity-60 (t :graph-setup/section-desc)]]]
 
        [:p.text-sm.pt-5.tracking-wide
-        [:span (str (t :on-boarding/section-tip-1 (device)))]
+        [:span (str (t :graph-setup/section-tip-1 (device)))]
         [:br]
-        [:span (t :on-boarding/section-tip-2)]]
+        [:span (t :graph-setup/section-tip-2)]]
 
        [:ul
         (for [[title label icon]
-              [[(t :on-boarding/section-journals) "/journals" "calendar-plus"]
-               [(t :on-boarding/section-pages) "/pages" "page"]
+              [[(t :graph-setup/section-journals) "/journals" "calendar-plus"]
+               [(t :graph-setup/section-pages) "/pages" "page"]
                []
-               [(t :on-boarding/section-app) "/logseq" "tool"]
-               [(t :on-boarding/section-config) "/logseq/config.edn" "settings"]]]
+               [(t :graph-setup/section-app) "/logseq" "tool"]
+               [(t :graph-setup/section-config) "/logseq/config.edn" "settings"]]]
           (if-not title
             [:li.hr]
             [:li
@@ -186,14 +186,14 @@
      :importer
      [:article.flex.flex-col.items-center.importer.py-16.px-8
       [:section.c.text-center
-       [:h1 (t :on-boarding/importing-title)]
-       [:h2 (t :on-boarding/importing-desc)]]
+       [:h1 (t :graph-setup/importing-title)]
+       [:h2 (t :graph-setup/importing-desc)]]
       [:section.d.md:flex
        [:label.action-input.flex.items-center.mx-2.my-2
         [:span.as-flex-center [:i (svg/roam-research 28)]]
         [:div.flex.flex-col
          [[:strong "RoamResearch"]
-          [:small (t :on-boarding/importing-roam-desc)]]]
+          [:small (t :graph-setup/importing-roam-desc)]]]
         [:input.absolute.hidden
          {:id        "import-roam"
           :type      "file"
@@ -203,7 +203,7 @@
         [:span.as-flex-center [:i (svg/logo 28)]]
         [:span.flex.flex-col
          [[:strong "EDN / JSON"]
-          [:small (t :on-boarding/importing-lsq-desc)]]]
+          [:small (t :graph-setup/importing-lsq-desc)]]]
         [:input.absolute.hidden
          {:id        "import-lsq"
           :type      "file"
@@ -213,7 +213,7 @@
         [:span.as-flex-center (ui/icon "sitemap" {:style {:fontSize "26px"}})]
         [:span.flex.flex-col
          [[:strong "OPML"]
-          [:small (t :on-boarding/importing-opml-desc)]]]
+          [:small (t :graph-setup/importing-opml-desc)]]]
 
         [:input.absolute.hidden
          {:id        "import-opml"

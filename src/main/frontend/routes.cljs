@@ -2,9 +2,9 @@
   "Defines routes for use with reitit router"
   (:require [frontend.components.bug-report :as bug-report]
             [frontend.components.file :as file]
+            [frontend.components.graph-setup :as graph-setup]
             [frontend.components.home :as home]
             [frontend.components.journal :as journal]
-            [frontend.components.onboarding.setups :as setups]
             [frontend.components.page :as page]
             [frontend.components.repo :as repo]
             [frontend.components.settings :as settings]
@@ -23,7 +23,7 @@
 
    ["/repo/add"
     {:name :repo-add
-     :view setups/picker}]
+     :view graph-setup/picker}]
 
    ["/all-files"
     {:name :all-files
@@ -59,8 +59,7 @@
 
    ["/import"
     {:name :import
-     :view setups/importer}]
-
+     :view graph-setup/importer}]
    ["/bug-report"
     {:name :bug-report
      :view bug-report/bug-report}]

@@ -85,7 +85,6 @@
  :help/shortcut-page-title "Toetsenbord snelkoppelingen"
  :help/shortcuts "Toetsenbord snelkoppelingen"
  :help/slash-autocomplete "Slash-Autocomplete"
- :help/start "Aan de slag"
  :help/terms "Voorwaarden"
  :help/open-link-in-sidebar "Open link in zijbalk"
 
@@ -96,14 +95,14 @@
 
  :linked-references/filter-search "Zoeken in gelinkte pagina's"
 
- :on-boarding/add-graph "Grafiek toevoegen"
- :on-boarding/demo-graph "Dit is een demo grafiek, wijzigingen worden niet opgeslagen totdat u een lokale map opent."
- :on-boarding/new-graph-desc-1 "Logseq ondersteunt zowel Markdown als Org-mode. U kunt een bestaande map openen of een nieuwe aanmaken op uw apparaat, een map is ook gewoon bekend als een folder. Uw gegevens worden alleen op dit apparaat opgeslagen."
- :on-boarding/new-graph-desc-2 "Nadat u map hebt geopend, worden er drie mappen in die map aangemaakt:"
- :on-boarding/new-graph-desc-3 "/journals - bewaart de Journaal pagina's"
- :on-boarding/new-graph-desc-4 "/pages - bewaart de andere pagina's"
- :on-boarding/new-graph-desc-5 "/logseq - bewaart configuratie, custom.css, en wat metadata."
- :on-boarding/open-local-dir "Open een lokale map"
+ :graph-setup/add-graph "Grafiek toevoegen"
+ :graph-setup/demo-graph "Dit is een demo grafiek, wijzigingen worden niet opgeslagen totdat u een lokale map opent."
+ :graph-setup/new-graph-desc-1 "Logseq ondersteunt zowel Markdown als Org-mode. U kunt een bestaande map openen of een nieuwe aanmaken op uw apparaat, een map is ook gewoon bekend als een folder. Uw gegevens worden alleen op dit apparaat opgeslagen."
+ :graph-setup/new-graph-desc-2 "Nadat u map hebt geopend, worden er drie mappen in die map aangemaakt:"
+ :graph-setup/new-graph-desc-3 "/journals - bewaart de Journaal pagina's"
+ :graph-setup/new-graph-desc-4 "/pages - bewaart de andere pagina's"
+ :graph-setup/new-graph-desc-5 "/logseq - bewaart configuratie, custom.css, en wat metadata."
+ :graph-setup/open-local-dir "Open een lokale map"
 
  :page/add-to-favorites "Voeg aan favorieten toe"
  :page/copy-page-url "Kopieer pagina URL"

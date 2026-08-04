@@ -1,13 +1,7 @@
-(ns frontend.components.onboarding
-  (:require [frontend.components.onboarding.setups :as setups]
-            [frontend.context.i18n :refer [t]]
+(ns frontend.components.help
+  (:require [frontend.context.i18n :refer [t]]
             [frontend.state :as state]
-            [frontend.ui :as ui]
-            [rum.core :as rum]))
-
-(rum/defc intro
-  [onboarding-and-home?]
-  (setups/picker onboarding-and-home?))
+            [frontend.ui :as ui]))
 
 (defn help
   []
@@ -23,7 +17,6 @@
                          [:span.mr-1 (t :help/shortcuts)]
                          (ui/icon "command" {:style {:font-size 20}})]]]
                       [(t :help/docs) "https://docs.logseq.com/"]
-                      [(t :help/start) "https://docs.logseq.com/#/page/tutorial"]
                       ["FAQ" "https://docs.logseq.com/#/page/faq"]]}
 
           {:title (t :help/title-community)

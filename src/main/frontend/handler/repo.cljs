@@ -5,7 +5,6 @@
    [clojure.string :as string]
    [electron.ipc :as ipc]
    [frontend.config :as config]
-   [frontend.context.i18n :refer [t]]
    [frontend.date :as date]
    [frontend.db :as db]
    [frontend.db.persist :as db-persist]
@@ -61,15 +60,6 @@
             file-exists? (fs/create-if-not-exists repo-url repo-dir file-rpath default-content)]
       (when-not file-exists?
         (file-common-handler/reset-file! repo-url path default-content)))))
-
-(defn create-dummy-notes-page
-  [repo-url content]
-  (spec/validate :repos/url repo-url)
-  (let [repo-dir (config/get-repo-dir repo-url)
-        file-rpath (str (config/get-pages-directory) "/how_to_make_dummy_notes.md")]
-    (p/let [_ (fs/mkdir-if-not-exists (path/path-join repo-dir (config/get-pages-directory)))
-            _file-exists? (fs/create-if-not-exists repo-url repo-dir file-rpath content)]
-      (file-common-handler/reset-file! repo-url file-rpath content))))
 
 (defn- create-today-journal-if-not-exists
   [repo-url {:keys [content]}]
@@ -352,12 +342,7 @@
              (state/set-current-repo! repo)
              (db/start-db-conn! repo)
              (when-not config/publishing?
-               (let [dummy-notes (t :tutorial/dummy-notes)]
-                 (create-dummy-notes-page repo dummy-notes)))
-             (when-not config/publishing?
-               (let [tutorial (t :tutorial/text)
-                     tutorial (string/replace-first tutorial "$today" (date/today))]
-                 (create-today-journal-if-not-exists repo {:content tutorial})))
+               (create-today-journal-if-not-exists repo {}))
              (repo-config-handler/create-config-file-if-not-exists repo)
              (create-contents-file repo)
              (create-custom-theme repo)

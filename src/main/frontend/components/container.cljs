@@ -6,7 +6,6 @@
             [frontend.components.handbooks :as handbooks]
             [frontend.components.header :as header]
             [frontend.components.journal :as journal]
-            [frontend.components.onboarding :as onboarding]
             [frontend.components.repo :as repo]
             [frontend.components.right-sidebar :as right-sidebar]
             [frontend.components.select :as select]
@@ -551,11 +550,7 @@
                      (dnd/unsubscribe! el :upload-files))
                    state)}
   [{:keys [route-match margin-less-pages? route-name indexeddb-support? db-restoring? main-content]}]
-  (let [left-sidebar-open?   (state/sub :ui/left-sidebar-open?)
-        onboarding-and-home? (and (or (nil? (state/get-current-repo)) (config/demo-graph?))
-                                  (not config/publishing?)
-                                  (= :home route-name))
-        margin-less-pages?   margin-less-pages?]
+  (let [left-sidebar-open? (state/sub :ui/left-sidebar-open?)]
     [:div#main-container.cp__sidebar-main-layout.flex-1.flex
      {:class (util/classnames [{:is-left-sidebar-open left-sidebar-open?}])}
 
@@ -587,15 +582,9 @@
 
          :else
          [:div
-          {:class (if (or onboarding-and-home? margin-less-pages?) "" (util/hiccup->class "mx-auto.pb-24"))
-           :style {:margin-bottom  (cond
-                                     margin-less-pages? 0
-                                     onboarding-and-home? 0
-                                     :else 120)}}
-          main-content])
-
-       (when onboarding-and-home?
-         (onboarding/intro onboarding-and-home?))]]]))
+          {:class (if margin-less-pages? "" (util/hiccup->class "mx-auto.pb-24"))
+           :style {:margin-bottom (if margin-less-pages? 0 120)}}
+          main-content])]]]))
 
 (defonce sidebar-inited? (atom false))
 ;; TODO: simplify logic

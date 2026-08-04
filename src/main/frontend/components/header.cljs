@@ -189,7 +189,7 @@
          {:on-click #(route-handler/redirect! {:to :repo-add})}
          (ui/icon "folder-plus")
          [:span.ml-1 {:style {:margin-top (if electron-mac? 0 2)}}
-          (t :on-boarding/add-graph)]])
+          (t :graph-setup/add-graph)]])
 
       (when config/publishing?
         [:a.text-sm.font-medium.button {:href (rfe/href :graph)}

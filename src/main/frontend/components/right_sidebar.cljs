@@ -3,7 +3,7 @@
             [clojure.string :as string]
             [frontend.components.block :as block]
             [frontend.components.cmdk :as cmdk]
-            [frontend.components.onboarding :as onboarding]
+            [frontend.components.help :as help]
             [frontend.components.page :as page]
             [frontend.components.shortcut-help :as shortcut-help]
             [frontend.config :as config]
@@ -120,7 +120,7 @@
      (contents)]
 
     :help
-    [[:.flex.items-center (ui/icon "help" {:class "text-md mr-2"}) (t :right-side-bar/help)] (onboarding/help)]
+    [[:.flex.items-center (ui/icon "help" {:class "text-md mr-2"}) (t :right-side-bar/help)] (help/help)]
 
     :page-graph
     [[:.flex.items-center (ui/icon "hierarchy" {:class "text-md mr-2"}) (t :right-side-bar/page-graph)]

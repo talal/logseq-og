@@ -59,7 +59,6 @@ const common = {
             'node_modules/interactjs/dist/interact.min.js',
             'node_modules/photoswipe/dist/umd/*.js',
             'node_modules/reveal.js/dist/reveal.js',
-            'node_modules/shepherd.js/dist/js/shepherd.min.js',
             'node_modules/marked/marked.min.js',
             'node_modules/@highlightjs/cdn-assets/highlight.min.js',
             'node_modules/@isomorphic-git/lightning-fs/dist/lightning-fs.min.js',

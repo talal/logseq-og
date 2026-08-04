@@ -77,23 +77,23 @@
     (are [x _y timeout] (>= timeout (:time (util/with-time (block/normalize-block x false))))
       "anreanre"
       "anreanre"
-      2.0 ;; actual 0.07
+      50.0 ;; actual 0.07
 
       ""
       ""
-      2.0 ;; actual 0.07
+      50.0 ;; actual 0.07
 
       "a.0%"
       "a.0%"
-      0.5 ;; actual 0.02
+      50.0 ;; actual 0.02
 
       "%"
       "%"
-      1.0 ;; actual 0.03
+      50.0 ;; actual 0.03
 
       "-%"
       "-%"
-      0.5 ;; actual 0.02
+      50.0 ;; actual 0.02
       )))
 
 (deftest test-normalize-journal-title

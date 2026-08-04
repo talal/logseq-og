@@ -53,7 +53,7 @@
             "invalid"
             {:logseq {:themes [{:name "No URL"}
                                {:url "./theme.css"}
-                               {:name "No name" :url "./theme.css"}]}})))))
+                               {:name "" :url "./theme.css"}]}})))))
 
 (deftest theme-selection-is-graph-local
   (is (= "atlas/custom.css/any/Atlas"

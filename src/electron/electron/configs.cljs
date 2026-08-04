@@ -7,25 +7,33 @@
 
 ;; FIXME: move configs.edn to where it should be
 (defonce dot-dir-name ".logseq-og")
-(defonce dot-root (.join node-path (.getPath app "home") dot-dir-name))
-(defonce cfg-root (.getPath app "userData"))
-(defonce cfg-path (.join node-path cfg-root "configs.edn"))
+(defonce dot-root
+  (when app
+    (.join node-path (.getPath app "home") dot-dir-name)))
+(defonce cfg-root
+  (when app
+    (.getPath app "userData")))
+(defonce cfg-path
+  (when cfg-root
+    (.join node-path cfg-root "configs.edn")))
 
 (defn- ensure-cfg
   []
-  (try
-    (.ensureFileSync fs cfg-path)
-    (let [body (.toString (.readFileSync fs cfg-path))]
-      (if (seq body) (reader/read-string body) {}))
-    (catch :default e
-      (logger/error :cfg-error e))))
+  (when cfg-path
+    (try
+      (.ensureFileSync fs cfg-path)
+      (let [body (.toString (.readFileSync fs cfg-path))]
+        (if (seq body) (reader/read-string body) {}))
+      (catch :default e
+        (logger/error :cfg-error e)))))
 
 (defn- write-cfg!
   [cfg]
-  (try
-    (.writeFileSync fs cfg-path (pr-str cfg)) cfg
-    (catch :default e
-      (logger/error :cfg-error e))))
+  (when cfg-path
+    (try
+      (.writeFileSync fs cfg-path (pr-str cfg)) cfg
+      (catch :default e
+        (logger/error :cfg-error e)))))
 
 (defn set-item!
   [k v]

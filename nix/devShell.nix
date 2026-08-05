@@ -49,9 +49,10 @@ in
         clojure-lsp
         jdk
 
-        # Node
+        # Frontend
         nodejs_22
         playwright-driver.browsers
+        svelte-language-server
         typescript-language-server
         yarn
 
@@ -68,6 +69,7 @@ in
         python314 # for scripting
         ripgrep # for better `grep` and `glob_files` performance
         treefmtWrapper
+        zmx # for persistent shell sessions
       ]
       ++ linuxLibraries;
 

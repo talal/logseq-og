@@ -250,7 +250,6 @@
  :settings-page/enable-timetracking                "Sledování času"
  :settings-page/enable-tooltip                     "Povolit okno s nápovědou"
  :settings-page/enable-journals                    "Denníky"
- :settings-page/enable-all-pages-public            "Všechny stránky jsou při publikování veřejné"
  :settings-page/home-default-page                  "Nastavení výchozí domovské stránky"
  :settings-page/enable-block-time                  "Povolit časové razítka bloku"
  :settings-page/clear-cache                        "Vymazat mezipaměť"
@@ -334,7 +333,6 @@
  :export-page                                      "Exportovat stránku"
  :export-markdown                                  "Export jako standardní Markdown (bez vlastností bloků)"
  :export-opml                                      "Exportovat jako OPML"
- :export-public-pages                              "Exportovat veřejné stránky"
  :export-json                                      "Exportovat jako JSON"
  :export-roam-json                                 "Exportovat jako Roam JSON"
  :export-edn                                       "Exportovat jako EDN"
@@ -365,7 +363,6 @@
  :heading                                          "Nadpis {1}"
  :auto-heading                                     "Automatický nadpis"
  :open-a-directory                                 "Otevřít místní adresár"
- :toggle-theme                                     "Přepnout motiv"
 
  :help/shortcut-page-title                         "Klávesové zkratky"
 
@@ -516,7 +513,6 @@
  :command.sidebar/close-top                        "Zavřít horní položku v pravém postranním panelu"
  :command.sidebar/clear                            "Vymazat vše v pravém postranním panelu"
  :command.misc/copy                                "Kopírovat"
- :command.graph/export-as-html                     "Exportovat veřejné stránky grafu jako HTML"
  :command.graph/open                               "Vybrat graf na otevření"
  :command.graph/remove                             "Odstranit graf"
  :command.graph/add                                "Přidat graf"

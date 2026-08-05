@@ -83,24 +83,17 @@
           :options {:href (rfe/href :import)}
           :icon (ui/icon "file-upload")})
 
-       (when-not config/publishing?
-         {:title [:div.flex-row.flex.justify-between.items-center
-                  [:span (t :join-community)]]
-          :options {:href "https://discuss.logseq.com"
-                    :title (t :discourse-title)
-                    :target "_blank"}
-          :icon (ui/icon "brand-discord")})
+       {:title [:div.flex-row.flex.justify-between.items-center
+                [:span (t :join-community)]]
+        :options {:href "https://discuss.logseq.com"
+                  :title (t :discourse-title)
+                  :target "_blank"}
+        :icon (ui/icon "brand-discord")}
 
-       (when-not config/publishing?
-         {:title [:div.flex-row.flex.justify-between.items-center
-                  [:span (t :help/bug)]]
-          :options {:href (rfe/href :bug-report)}
-          :icon (ui/icon "bug")})
-
-       (when config/publishing?
-         {:title (t :toggle-theme)
-          :options {:on-click #(state/toggle-theme!)}
-          :icon (ui/icon "bulb")})]
+       {:title [:div.flex-row.flex.justify-between.items-center
+                [:span (t :help/bug)]]
+        :options {:href (rfe/href :bug-report)}
+        :icon (ui/icon "bug")}]
 
       (concat page-menu-and-hr)
       (remove nil?))
@@ -147,8 +140,7 @@
 (rum/defc header < rum/reactive
   [{:keys [open-fn current-repo default-home new-block-mode]}]
   (let [electron-mac?    (and util/mac? (util/electron?))
-        show-open-folder? (and (nil? (state/sub :repo/current))
-                               (not config/publishing?))
+        show-open-folder? (nil? (state/sub :repo/current))
         left-menu (left-menu-button {:on-click (fn []
                                                  (open-fn)
                                                  (state/set-left-sidebar-open!
@@ -190,10 +182,6 @@
          (ui/icon "folder-plus")
          [:span.ml-1 {:style {:margin-top (if electron-mac? 0 2)}}
           (t :graph-setup/add-graph)]])
-
-      (when config/publishing?
-        [:a.text-sm.font-medium.button {:href (rfe/href :graph)}
-         (t :graph)])
 
       (dropdown-menu {:t            t
                       :current-repo current-repo

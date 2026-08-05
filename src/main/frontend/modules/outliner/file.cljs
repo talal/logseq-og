@@ -3,7 +3,6 @@
             [cljs-time.core :as t]
             [clojure.core.async :as async]
             [clojure.string :as string]
-            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.db.model :as model]
             [frontend.handler.notification :as notification]
@@ -39,16 +38,15 @@
 (defn write-files!
   [pages]
   (when (seq pages)
-    (when-not config/publishing?
-      (doseq [[repo page-id outliner-op] (set (map #(take 3 %) pages))] ; remove time to dedupe pages to write
-        (try (do-write-file! repo page-id outliner-op)
-             (catch :default e
-               (notification/show!
-                [:div
-                 [:p "Write file failed, please copy the changes to other editors in case of losing data."]
-                 "Error: " (str (gobj/get e "stack"))]
-                :error)
-               (log/error :file/write-file-error {:error e})))))))
+    (doseq [[repo page-id outliner-op] (set (map #(take 3 %) pages))] ; remove time to dedupe pages to write
+      (try (do-write-file! repo page-id outliner-op)
+           (catch :default e
+             (notification/show!
+              [:div
+               [:p "Write file failed, please copy the changes to other editors in case of losing data."]
+               "Error: " (str (gobj/get e "stack"))]
+              :error)
+             (log/error :file/write-file-error {:error e}))))))
 
 (defn sync-to-file
   ([page]

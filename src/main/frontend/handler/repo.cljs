@@ -341,8 +341,7 @@
       (p/do! (fs/mkdir-if-not-exists repo-dir) ;; create memory://local
              (state/set-current-repo! repo)
              (db/start-db-conn! repo)
-             (when-not config/publishing?
-               (create-today-journal-if-not-exists repo {}))
+             (create-today-journal-if-not-exists repo {})
              (repo-config-handler/create-config-file-if-not-exists repo)
              (create-contents-file repo)
              (create-custom-theme repo)

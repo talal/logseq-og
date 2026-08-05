@@ -9,7 +9,7 @@
 | `src/electron/electron` | Electron main process              | Window lifecycle, filesystem, graph-local theme loading, watchers, search, updater, protocol handlers, and IPC.              |
 | `src/test`              | Main CLJS test suite               | Compiled by Shadow CLJS to a Node test script.                                                                               |
 | `src/bench`             | CLJS benchmarks                    | Separate Clojure alias and test runner.                                                                                      |
-| `scripts/src`           | Babashka task implementations      | Development, publishing, validation, language, and filesystem automation.                                                    |
+| `scripts/src`           | Babashka task implementations      | Development, validation, language, and filesystem automation.                                                                |
 | `resources`             | Source assets and packaging inputs | HTML, CSS, fonts, icons, preload bridge, and Electron Forge configuration.                                                   |
 | `static`                | Desktop/web assembly output        | Also a nested Node package used by Electron. Contains installed/generated material and should not be read as primary source. |
 
@@ -24,14 +24,12 @@ flowchart TB
     cljs_time["cljs-time"]
     graph_parser["graph-parser"]
     db["db"]
-    publishing["publishing"]
     shui["shui<br>(shared Rum UI primitives)"]
     bb_tasks["bb-tasks<br>(developer / CLI automation)"]
 
     common --> graph_parser
     cljs_time --> graph_parser
     db --> graph_parser
-    db --> publishing
 ```
 
 `shui` and `bb-tasks` are intentionally shown as independent support libraries:
@@ -45,13 +43,12 @@ definitions rather than forming part of the graph-parser runtime chain.
 - `deps/graph-parser`: parses graph files into DataScript; its documented
   primary APIs are `parse-file` for the frontend and `parse-graph` for Node CLI
   use.
-- `deps/publishing`: publishing-specific code built on the database model.
 - `deps/shui`: shared Rum UI components and callbacks into host context.
 - `deps/bb-tasks`: reusable Babashka `nbb` and domain-specific Datalog tasks.
 - `deps/cljs-time`: a locally carried fork/library dependency.
 
-The root app depends on `common`, `graph-parser`, `publishing`, and `shui`
-directly. `db` is reached transitively through `graph-parser` and `publishing`,
+The root app depends on `common`, `graph-parser`, and `shui`
+directly. `db` is reached transitively through `graph-parser`,
 although frontend namespaces also import `logseq.db.*`; this implicit
 availability makes the dependency graph less obvious than declaring `logseq/db`
 at the root.

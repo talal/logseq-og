@@ -9,7 +9,6 @@
             [frontend.components.reference :as reference]
             [frontend.components.scheduled-deadlines :as scheduled]
             [frontend.components.svg :as svg]
-            [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.date :as date]
             [frontend.db :as db]
@@ -47,7 +46,7 @@
   (let [route-match (first (:rum/args state))]
     (get-in route-match [:parameters :path :name])))
 
-;; Named block links only works on web (and publishing)
+;; Named block links only work on web
 (if util/web-platform?
   (defn- get-block-uuid-by-block-route-name
     "Return string block uuid for matching :name and :block-route-name params or
@@ -198,11 +197,10 @@
               hiccup (component-block/->hiccup page-blocks hiccup-config {})]
           [:div
            (page-blocks-inner page-name page-blocks hiccup sidebar? block-id)
-           (when-not config/publishing?
-             (let [args (if block-id
-                          {:block-uuid block-id}
-                          {:page page-name})]
-               (add-button args)))])))))
+           (let [args (if block-id
+                        {:block-uuid block-id}
+                        {:page page-name})]
+             (add-button args))])))))
 
 (defn contents-page
   [page]
@@ -340,7 +338,7 @@
                            repo
                            (:db/id page)
                            :page))
-                        (when (and (not hls-page?) (not fmt-journal?) (not config/publishing?))
+                        (when (and (not hls-page?) (not fmt-journal?))
                           (reset! *input-value old-name)
                           (reset! *edit? true)))))}
        (when (not= icon "") [:span.page-icon icon])

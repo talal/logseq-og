@@ -251,31 +251,30 @@
                                     (js/window.apis.openExternal image-src)))}
                 image-src])
              [:.flex
-              (when-not config/publishing?
-                [:button.asset-action-btn
-                 {:title         (t :asset/delete)
-                  :tabIndex      "-1"
-                  :on-mouse-down util/stop
-                  :on-click
-                  (fn [e]
-                    (when-let [block-id (:block/uuid config)]
-                      (let [confirm-fn (ui/make-confirm-modal
-                                        {:title         (t :asset/confirm-delete (.toLocaleLowerCase (t :text/image)))
-                                         :sub-title     (if local? :asset/physical-delete "")
-                                         :sub-checkbox? local?
-                                         :on-confirm    (fn [_e {:keys [close-fn sub-selected]}]
-                                                          (close-fn)
-                                                          (editor-handler/delete-asset-of-block!
-                                                           {:block-id      block-id
-                                                            :local?        local?
-                                                            :delete-local? (and sub-selected (first sub-selected))
-                                                            :repo          (state/get-current-repo)
-                                                            :href          src
-                                                            :title         title
-                                                            :full-text     full-text}))})]
-                        (util/stop e)
-                        (state/set-modal! confirm-fn))))}
-                 (ui/icon "trash")])
+              [:button.asset-action-btn
+               {:title         (t :asset/delete)
+                :tabIndex      "-1"
+                :on-mouse-down util/stop
+                :on-click
+                (fn [e]
+                  (when-let [block-id (:block/uuid config)]
+                    (let [confirm-fn (ui/make-confirm-modal
+                                      {:title         (t :asset/confirm-delete (.toLocaleLowerCase (t :text/image)))
+                                       :sub-title     (if local? :asset/physical-delete "")
+                                       :sub-checkbox? local?
+                                       :on-confirm    (fn [_e {:keys [close-fn sub-selected]}]
+                                                        (close-fn)
+                                                        (editor-handler/delete-asset-of-block!
+                                                         {:block-id      block-id
+                                                          :local?        local?
+                                                          :delete-local? (and sub-selected (first sub-selected))
+                                                          :repo          (state/get-current-repo)
+                                                          :href          src
+                                                          :title         title
+                                                          :full-text     full-text}))})]
+                      (util/stop e)
+                      (state/set-modal! confirm-fn))))}
+               (ui/icon "trash")]
 
               [:button.asset-action-btn
                {:title         (t :asset/copy)
@@ -364,9 +363,6 @@
 
                     (util/starts-with? href "ar")
                     (ar-url->http-url href)
-
-                    config/publishing?
-                    (subs href 1)
 
                     (= "Embed_data" (first url))
                     href
@@ -904,9 +900,6 @@
 
                  (util/starts-with? href "ar")
                  (ar-url->http-url href)
-
-                 config/publishing?
-                 (subs href 1)
 
                  (= "Embed_data" (first url))
                  href
@@ -1841,7 +1834,7 @@
 
      ;; children
      (let [area?  (= :area (keyword (:hl-type properties)))
-           hl-ref #(when (and (or config/publishing? (util/electron?))
+           hl-ref #(when (and (util/electron?)
                               (not= :default block-type))
                      [:div.prefix-link
                       {:on-mouse-down

@@ -4,7 +4,7 @@
 
 ### Portable domain model
 
-The graph parser, schema/rules, common utilities, and publishing logic are
+The graph parser, schema/rules, and common utilities are
 extracted into small Clojure local-root libraries designed to run in both
 compiled CLJS and Node via `nbb-logseq`. This is an effective form of reuse:
 domain semantics are shared without forcing the Electron shell, UI, or browser
@@ -19,7 +19,7 @@ the product's graph model.
 
 ### Cross-platform renderer reuse
 
-Browser, Electron, and publishing builds share most application code. Platform
+Browser and Electron builds share most application code. Platform
 checks and adapter namespaces isolate enough host behavior to avoid separate
 products, while Shadow compile-time defines allow meaningful specialization.
 
@@ -91,7 +91,7 @@ deterministically.
 ### 4. Describe the build as an artifact DAG
 
 Create one root task for each supported artifact—web renderer, desktop app,
-publishing site, and UI bundle—with declared inputs and outputs. Keep Babashka
+and UI bundle—with declared inputs and outputs. Keep Babashka
 as the human-facing orchestrator, but move build output to clean
 platform-specific directories. Eliminate build-on-install where practical.
 
@@ -121,7 +121,7 @@ should mirror all platform-independent gates.
 ## Changes to avoid
 
 - Do not replace DataScript solely to obtain stricter layering; it is central to
-  query semantics, reactive rendering, and publishing.
+  query semantics and reactive rendering.
 - Do not migrate Rum to JavaScript React components as a prerequisite for
   modularity. The current problems are dependency ownership and lifecycle
   management, not the view syntax.
@@ -138,11 +138,10 @@ flowchart TB
     schema["Schema"]
     parser["Parser"]
     queries["Graph commands / queries"]
-    publishing["Publishing"]
     services["Application services<br>(filesystem · persistence · themes)"]
     presentation["Presentation<br>(Rum + React islands)"]
 
-    domain --> schema --> parser --> queries --> publishing
+    domain --> schema --> parser --> queries
     queries --> services --> hosts --> presentation
 ```
 

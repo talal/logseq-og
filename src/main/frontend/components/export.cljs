@@ -25,10 +25,6 @@
       [:li.mb-4
        [:a.font-medium {:on-click #(export/export-repo-as-json-v2! current-repo)}
         (t :export-json)]]
-      (when (util/electron?)
-        [:li.mb-4
-         [:a.font-medium {:on-click #(export/download-repo-as-html! current-repo)}
-          (t :export-public-pages)]])
       [:li.mb-4
        [:a.font-medium {:on-click #(export-text/export-repo-as-markdown! current-repo)}
         (t :export-markdown)]]
@@ -41,7 +37,6 @@
      [:a#download-as-edn-v2.hidden]
      [:a#download-as-json-v2.hidden]
      [:a#download-as-roam-json.hidden]
-     [:a#download-as-html.hidden]
      [:a#download-as-zip.hidden]
      [:a#export-as-markdown.hidden]
      [:a#export-as-opml.hidden]

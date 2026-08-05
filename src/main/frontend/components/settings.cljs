@@ -449,14 +449,6 @@
             (let [value (not enable-journals?)]
               (config-handler/set-config! :feature/enable-journals? value)))))
 
-(defn enable-all-pages-public-row [t enable-all-pages-public?]
-  (toggle "all pages public"
-          (t :settings-page/enable-all-pages-public)
-          enable-all-pages-public?
-          (fn []
-            (let [value (not enable-all-pages-public?)]
-              (config-handler/set-config! :publishing/all-pages-public? value)))))
-
 ;; (defn enable-block-timestamps-row [t enable-block-timestamps?]
 ;;   (toggle "block timestamps"
 ;;           (t :settings-page/enable-block-time)
@@ -574,7 +566,6 @@
         preferred-date-format (state/get-date-formatter)
         preferred-workflow (state/get-preferred-workflow)
         enable-timetracking? (state/enable-timetracking?)
-        enable-all-pages-public? (state/all-pages-public?)
         logical-outdenting? (state/logical-outdenting?)
         show-full-blocks? (state/show-full-blocks?)
         preferred-pasting-file? (state/preferred-pasting-file?)
@@ -597,8 +588,7 @@
      (auto-expand-row t auto-expand-block-refs?)
      (when-not (util/mobile?) (shortcut-tooltip-row t enable-shortcut-tooltip?))
      (when-not (util/mobile?) (tooltip-row t enable-tooltip?))
-     (timetracking-row t enable-timetracking?)
-     (enable-all-pages-public-row t enable-all-pages-public?)]))
+     (timetracking-row t enable-timetracking?)]))
 
 (rum/defc settings-advanced < rum/reactive
   [current-repo]

@@ -1,7 +1,6 @@
 (ns frontend.components.theme
   (:require [electron.ipc :as ipc]
             [frontend.components.settings :as settings]
-            [frontend.config :as config]
             [frontend.context.i18n :refer [t]]
             [frontend.extensions.pdf.core :as pdf]
             [frontend.handler.route :as route-handler]
@@ -89,8 +88,6 @@
                     ;; demo graph only
                     (and (= 1 (count repos)) (:example? (first repos))
                          (not (util/mobile?)))
-                    ;; not in publishing mode
-                    config/publishing?
                     ;; other graphs exists
                     (seq repos))
              (route-handler/redirect! {:to :repo-add})

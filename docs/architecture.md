@@ -7,8 +7,7 @@ One ClojureScript renderer serves two application hosts:
 - Browser: Shadow CLJS serves or builds `static/js`, and the app uses browser
   storage/filesystem capabilities.
 - Desktop: Electron loads assembled HTML and JS, while a CLJS-compiled Node main
-  process supplies privileged capabilities. The separate `publishing` build
-  creates a read-oriented browser application from exported graph data. The code
+  process supplies privileged capabilities. The code
   editor remains a lazy Shadow module depending on the main module, reducing
   initial loading cost.
 
@@ -147,9 +146,3 @@ from graph-local themes.
 The application no longer has a plugin host, marketplace, plugin SDK bridge, or
 developer HTTP API server. External customization is limited to manually copied
 local CSS themes; application behavior is provided by built-in features.
-
-## Publishing
-
-The publishing build has its own entry point and creates a DataScript connection
-from exported graph data. It reuses much of the renderer and lazy extension
-modules while setting a compile-time `PUBLISHING` define.

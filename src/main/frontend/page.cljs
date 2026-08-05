@@ -1,5 +1,5 @@
 (ns frontend.page
-  "Provides root component for both Logseq app and publishing build"
+  "Provides root component for Logseq app"
   (:require [frontend.components.container :as container]
             [frontend.context.i18n :refer [t]]
             [frontend.handler.notification :as notification]

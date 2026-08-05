@@ -2,7 +2,6 @@
   "Some utils are required by other namespace in frontend.db package."
   (:require [datascript.core :as d]
             [datascript.transit :as dt]
-            [frontend.config :as config]
             [frontend.db.conn :as conn]
             [frontend.state :as state]
             [logseq.graph-parser.util :as gp-util]))
@@ -89,13 +88,12 @@
   ([repo-url tx-data]
    (transact! repo-url tx-data nil))
   ([repo-url tx-data tx-meta]
-   (when-not config/publishing?
-     (let [tx-data (gp-util/fast-remove-nils tx-data)]
-       (when (seq tx-data)
-         (when-let [conn (conn/get-db repo-url false)]
-           (if tx-meta
-             (d/transact! conn (vec tx-data) tx-meta)
-             (d/transact! conn (vec tx-data)))))))))
+   (let [tx-data (gp-util/fast-remove-nils tx-data)]
+     (when (seq tx-data)
+       (when-let [conn (conn/get-db repo-url false)]
+         (if tx-meta
+           (d/transact! conn (vec tx-data) tx-meta)
+           (d/transact! conn (vec tx-data))))))))
 
 (defn get-key-value
   ([key]

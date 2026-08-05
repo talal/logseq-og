@@ -7,7 +7,6 @@
             [frontend.extensions.srs.handler :as srs]
             [frontend.handler.config :as config-handler]
             [frontend.handler.editor :as editor-handler]
-            [frontend.handler.export :as export-handler]
             [frontend.handler.history :as history]
             [frontend.handler.journal :as journal-handler]
             [frontend.handler.page :as page-handler]
@@ -313,10 +312,6 @@
    :misc/copy                               {:binding "mod+c"
                                              :fn      (fn [] (js/document.execCommand "copy"))}
 
-   :graph/export-as-html                    {:fn      #(export-handler/download-repo-as-html!
-                                                        (state/get-current-repo))
-                                             :binding []}
-
    :graph/open                              {:fn      #(do
                                                          (editor-handler/escape-editing)
                                                          (state/set-state! :ui/open-select :graph-open))
@@ -534,8 +529,7 @@
 
     :shortcut.handler/editor-global
     (-> (build-category-map
-         [:graph/export-as-html
-          :graph/open
+         [:graph/open
           :graph/remove
           :graph/add
           :graph/save
@@ -746,7 +740,6 @@
      :pdf/find
      :command/toggle-favorite
      :command/run
-     :graph/export-as-html
      :graph/open
      :graph/remove
      :graph/add

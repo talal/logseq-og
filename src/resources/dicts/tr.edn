@@ -273,7 +273,6 @@
  :settings-page/enable-timetracking "Zaman takibi"
  :settings-page/enable-tooltip "Araç ipuçları"
  :settings-page/enable-journals "Günlük"
- :settings-page/enable-all-pages-public "Yayımlanan tüm sayfaları herkese açık yap"
  :settings-page/home-default-page "Varsayılan ana sayfayı ayarla"
  :settings-page/enable-block-time "Blok zaman damgaları"
  :settings-page/clear-cache "Önbelleği temizle"
@@ -358,7 +357,6 @@
  :export-page "Sayfayı dışarı aktar"
  :export-markdown "Standart Markdown olarak dışarı aktar (blok özelliği yok)"
  :export-opml "OPML olarak dışarı aktar"
- :export-public-pages "Herkese açık sayfaları dışarı aktar"
  :export-json "JSON olarak dışarı aktar"
  :export-roam-json "Roam JSON olarak dışarı aktar"
  :export-edn "EDN olarak dışarı aktar"
@@ -389,7 +387,6 @@
  :heading "Başlık {1}"
  :auto-heading "Otomatik başlık"
  :open-a-directory "Yerel bir dizin aç"
- :toggle-theme "Temayı değiştir"
 
  :help/shortcut-page-title "Klavye kısayolları"
 
@@ -540,7 +537,6 @@
  :command.sidebar/close-top              "Sağ kenar çubuğunun en üst öğesini kapatır"
  :command.sidebar/clear                  "Sağ kenar çubuğundaki herşeyi temizle"
  :command.misc/copy                      "Kopyala"
- :command.graph/export-as-html           "Herkese açık graf sayfalarını html olarak dışarı aktar"
  :command.graph/open                     "Açılacak grafı seçin"
  :command.graph/remove                   "Bir grafı kaldır"
  :command.graph/add                      "Graf ekle"

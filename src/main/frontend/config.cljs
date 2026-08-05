@@ -14,13 +14,8 @@
 (defonce dev-release? DEV-RELEASE)
 (defonce dev? ^boolean (or dev-release? goog.DEBUG))
 
-(goog-define PUBLISHING false)
-(defonce publishing? PUBLISHING)
-
 (goog-define REVISION "unknown")
 (defonce revision REVISION)
-
-(reset! state/publishing? publishing?)
 
 (goog-define TEST false)
 (def test? TEST)

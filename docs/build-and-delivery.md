@@ -5,8 +5,8 @@
 | Tool             | Source of truth                                    | Responsibility                                                                                       |
 | ---------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Clojure CLI      | `deps.edn`                                         | JVM/CLJS dependencies, source paths, test/bench/lint aliases.                                        |
-| Shadow CLJS      | `shadow-cljs.edn`                                  | Browser modules, Electron Node script, publishing app, Node tests, Storybook CLJS module.            |
-| Babashka         | `bb.edn`, `scripts/src`                            | Preferred task catalog and orchestration across CLJS, Electron, publishing, validation, and linting. |
+| Shadow CLJS      | `shadow-cljs.edn`                                  | Browser modules, Electron Node script, Node tests, Storybook CLJS module.            |
+| Babashka         | `bb.edn`, `scripts/src`                            | Preferred task catalog and orchestration across CLJS, Electron, validation, and linting. |
 | Yarn             | multiple `package.json`/lockfiles                  | JS dependencies for root and independently managed subprojects.                                      |
 | Gulp             | `gulpfile.js`                                      | Copy resources/vendor assets, compile/minify CSS, assemble `static`, and launch packaging.           |
 | PostCSS/Tailwind | root configs                                       | Main application stylesheet generation.                                                              |
@@ -19,8 +19,6 @@
   module.
 - `electron`: Node script at `static/electron.js`, entry `electron.core/main`.
 - `test`: Node test bundle at `static/tests.js`.
-- `publishing`: browser target, entry `frontend.publishing/init`, with parallel
-  lazy modules.
 - `stories-dev`: npm module feeding the UI package's Storybook.
 - `gen-malli-kondo-config`: utility Node script for lint configuration.
 
@@ -50,7 +48,6 @@ The clearest supported entry points are the Babashka tasks:
 - `bb watch`: build static assets and keep the desktop asset/CLJS watchers
   running. Stop it with Ctrl+C; it owns and cleans up both watcher processes.
 - `bb electron-start`: open Electron using an already-running `bb watch`.
-- `bb dev:publishing`: build publishing output, optionally in watch mode.
 - `bb test`: compile and execute the main CLJS tests.
 - `bb lint`: aggregate repository linting.
 

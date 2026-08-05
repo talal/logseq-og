@@ -250,7 +250,6 @@
  :settings-page/enable-timetracking                "Meranie času"
  :settings-page/enable-tooltip                     "Povoliť okno s nápovedou"
  :settings-page/enable-journals                    "Denníky"
- :settings-page/enable-all-pages-public            "Všetky stránky označiť ako verejné"
  :settings-page/home-default-page                  "Nastaviť predvolenú domovskú stránku"
  :settings-page/enable-block-time                  "Povoliť časové pečiatky bloku"
  :settings-page/clear-cache                        "Vymazať vyrovnávaciu pamäť"
@@ -334,7 +333,6 @@
  :export-page                                      "Exportovať stránku"
  :export-markdown                                  "Exportovať ako štandardný Markdown (žiadne vlastnosti bloku)"
  :export-opml                                      "Exportovať ako OPML"
- :export-public-pages                              "Exportovať verejné stránky"
  :export-json                                      "Exportovať ako JSON"
  :export-roam-json                                 "Exportovať ako Roam JSON"
  :export-edn                                       "Exportovať ako EDN"
@@ -365,7 +363,6 @@
  :heading                                          "Nadpis {1}"
  :auto-heading                                     "Automatický nadpis"
  :open-a-directory                                 "Otvoriť lokálny adresár"
- :toggle-theme                                     "Prepnúť motív"
 
  :help/shortcut-page-title                         "Klávesové skratky"
 
@@ -516,7 +513,6 @@
  :command.sidebar/close-top                        "Zavrieť hornú položku na pravom bočnom paneli"
  :command.sidebar/clear                            "Vymazať všetko na pravom bočnom paneli"
  :command.misc/copy                                "Kopírovať"
- :command.graph/export-as-html                     "Exportovať verejné stránky grafu ako HTML"
  :command.graph/open                               "Vybrať graf na otvorenie"
  :command.graph/remove                             "Odstrániť graf"
  :command.graph/add                                "Pridať graf"

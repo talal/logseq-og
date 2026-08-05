@@ -308,15 +308,9 @@ should be done through this fn in order to get global config and config defaults
     (get-global-config)
     (get-graph-config repo-url))))
 
-(defonce publishing? (atom nil))
-
-(defn publishing-enable-editing?
-  []
-  (and @publishing? (:publishing/enable-editing? (get-config))))
-
 (defn enable-editing?
   []
-  (or (not @publishing?) (:publishing/enable-editing? (get-config))))
+  true)
 
 (defn get-arweave-gateway
   []
@@ -1567,10 +1561,7 @@ Similar to re-frame subscriptions"
        (when (first elements)
          (util/scroll-to-element (gobj/get (first elements) "id")))
        (exit-editing-and-set-selected-blocks! elements))
-     (when (and edit-input-id block
-                (or
-                 (publishing-enable-editing?)
-                 (not @publishing?)))
+     (when (and edit-input-id block)
        (let [block-element (gdom/getElement (string/replace edit-input-id "edit-block" "ls-block"))
              container (util/get-block-container block-element)
              block (if container

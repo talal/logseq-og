@@ -128,7 +128,6 @@
             ["codemirror/mode/z80/z80"]
             [clojure.string :as string]
             [frontend.commands :as commands]
-            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.extensions.calc :as calc]
             [frontend.handler.code :as code-handler]
@@ -407,9 +406,6 @@
                                              (when config-edit?
                                                {"':'" complete-after
                                                 "Ctrl-Space" "autocomplete"}))}
-                          (when config/publishing?
-                            {:readOnly true
-                             :cursorBlinkRate -1})
                           (when config-edit?
                             {:hintOptions {}})
                           user-options)

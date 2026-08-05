@@ -273,7 +273,6 @@
  :settings-page/enable-timetracking "Timetracking"
  :settings-page/enable-tooltip "Tooltips"
  :settings-page/enable-journals "Journals"
- :settings-page/enable-all-pages-public "All pages public when publishing"
  :settings-page/home-default-page "Set the default home page"
  :settings-page/enable-block-time "Block timestamps"
  :settings-page/clear-cache "Clear cache"
@@ -358,7 +357,6 @@
  :export-page "Export page"
  :export-markdown "Export as standard Markdown (no block properties)"
  :export-opml "Export as OPML"
- :export-public-pages "Export public pages"
  :export-json "Export as JSON"
  :export-roam-json "Export as Roam JSON"
  :export-edn "Export as EDN"
@@ -389,7 +387,6 @@
  :heading "Heading {1}"
  :auto-heading "Auto heading"
  :open-a-directory "Open a local directory"
- :toggle-theme      "Toggle theme"
 
  :help/shortcut-page-title "Keyboard shortcuts"
 
@@ -545,7 +542,6 @@
   :sidebar/close-top              "Closes the top item in the right sidebar"
   :sidebar/clear                  "Clear all in the right sidebar"
   :misc/copy                      "Copy"
-  :graph/export-as-html           "Export public graph pages as html"
   :graph/open                     "Select graph to open"
   :graph/remove                   "Remove a graph"
   :graph/add                      "Add a graph"

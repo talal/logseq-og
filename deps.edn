@@ -29,7 +29,6 @@
   fipp/fipp                             {:mvn/version "0.6.26"}
   logseq/common                         {:local/root "deps/common"}
   logseq/graph-parser                   {:local/root "deps/graph-parser"}
-  logseq/publishing                     {:local/root "deps/publishing"}
   logseq/shui                           {:local/root "deps/shui"}
   metosin/malli                         {:mvn/version "0.10.0"}}
 

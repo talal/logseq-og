@@ -1,3 +1,0 @@
-{:lint-as
- {logseq.publishing.test.helper/deftest-async clojure.test/deftest
-  promesa.core/let clojure.core/let}}

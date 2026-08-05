@@ -535,8 +535,7 @@
   ([state]
    (insert-new-block! state nil))
   ([_state block-value]
-   (when (and (not config/publishing?)
-              (not= :insert (state/get-editor-op)))
+   (when (not= :insert (state/get-editor-op))
      (state/set-editor-op! :insert)
      (when-let [state (get-state)]
        (let [{:keys [block value id config]} state
@@ -1446,38 +1445,36 @@
 (defn make-asset-url
   "Make asset URL for UI element, to fill img.src"
   [path]
-  (if config/publishing?
-    path
-    (let [repo      (state/get-current-repo)
-          repo-dir  (config/get-repo-dir repo)
-          ;; Hack for path calculation
-          path      (string/replace path #"^(\.\.)?/" "./")
-          full-path (path/path-join repo-dir path)
-          data-url? (string/starts-with? path "data:")]
-      (cond
-        data-url?
-        path ;; just return the original
+  (let [repo      (state/get-current-repo)
+        repo-dir  (config/get-repo-dir repo)
+        ;; Hack for path calculation
+        path      (string/replace path #"^(\.\.)?/" "./")
+        full-path (path/path-join repo-dir path)
+        data-url? (string/starts-with? path "data:")]
+    (cond
+      data-url?
+      path ;; just return the original
 
-        (and (assets-handler/alias-enabled?)
-             (assets-handler/check-alias-path? path))
-        (assets-handler/resolve-asset-real-path-url (state/get-current-repo) path)
+      (and (assets-handler/alias-enabled?)
+           (assets-handler/check-alias-path? path))
+      (assets-handler/resolve-asset-real-path-url (state/get-current-repo) path)
 
-        (util/electron?)
-        (path/prepend-protocol "assets:" full-path)
+      (util/electron?)
+      (path/prepend-protocol "assets:" full-path)
 
-        :else ;; nfs
-        (let [handle-path (str "handle/" full-path)
-              cached-url  (get @*assets-url-cache (keyword handle-path))]
-          (if cached-url
-            (p/resolved cached-url)
-            ;; Loading File from handle cache
-            ;; Use await file handle, to ensure all handles are loaded.
-            (p/let [handle (nfs/await-get-nfs-file-handle repo handle-path)
-                    file   (and handle (.getFile handle))]
-              (when file
-                (p/let [url (js/URL.createObjectURL file)]
-                  (swap! *assets-url-cache assoc (keyword handle-path) url)
-                  url)))))))))
+      :else ;; nfs
+      (let [handle-path (str "handle/" full-path)
+            cached-url  (get @*assets-url-cache (keyword handle-path))]
+        (if cached-url
+          (p/resolved cached-url)
+          ;; Loading File from handle cache
+          ;; Use await file handle, to ensure all handles are loaded.
+          (p/let [handle (nfs/await-get-nfs-file-handle repo handle-path)
+                  file   (and handle (.getFile handle))]
+            (when file
+              (p/let [url (js/URL.createObjectURL file)]
+                (swap! *assets-url-cache assoc (keyword handle-path) url)
+                url))))))))
 
 (defn delete-asset-of-block!
   [{:keys [repo href full-text block-id local? delete-local?] :as _opts}]

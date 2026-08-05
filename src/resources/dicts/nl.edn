@@ -15,7 +15,6 @@
  :export-markdown "Exporteren als standaard Markdown (geen blok eigenschappen)"
  :export-opml "Exporteren als OPML"
  :export-page "Exporteer pagina"
- :export-public-pages "Exporteer openbare pagina's"
  :export-roam-json "Exporteer als Roam JSON"
  :graph "Grafiek"
  :help-shortcut-title "Klik om sneltoetsen en andere tips te bekijken"
@@ -154,7 +153,6 @@
  :settings-page/edit-config-edn "Bewerk config.edn"
  :settings-page/edit-custom-css "Bewerk custom.css"
  :settings-page/edit-export-css "Bewerk export.css"
- :settings-page/enable-all-pages-public "Alle pagina's openbaar bij publiceren"
  :settings-page/enable-block-time "Tijdstempel voor blokken inschakelen"
 
  :settings-page/enable-journals "Journaals"

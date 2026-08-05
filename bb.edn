@@ -26,33 +26,6 @@
   {:doc "Open Electron using the watcher started by `bb watch`"
    :task logseq.tasks.dev.desktop/electron-start}
 
-  -dev:build-publishing-frontend
-  logseq.tasks.dev/build-publishing-frontend
-
-  dev:publishing-backend
-  logseq.tasks.dev/publishing-backend
-
-  -dev:publishing-release
-  {:depends [-dev:build-publishing-frontend]
-   :doc "Build release publishing spa app given graph and output dirs"
-   :task (run 'dev:publishing-backend)}
-
-  -dev:watch-publishing-frontend
-  logseq.tasks.dev/watch-publishing-frontend
-
-  -dev:watch-publishing-backend
-  logseq.tasks.dev/watch-publishing-backend
-
-  -dev:publishing-dev
-  {:depends [-dev:watch-publishing-frontend -dev:watch-publishing-backend]
-   :doc "Watch dev publishing spa app given graph and output dirs"}
-
-  dev:publishing
-  {:doc "Builds full publishing app given graph and output dirs. Append --dev to watch frontend"
-   :task (if ((set *command-line-args*) "--dev")
-           (run '-dev:publishing-dev {:parallel true})
-           (run '-dev:publishing-release))}
-
   ;; Validation and linting
   dev:validate-local-storage
   logseq.tasks.spec/validate-local-storage
@@ -110,21 +83,16 @@
    :task (shell "clojure -M:cljs watch app")}
 
   cljs:release
-  {:doc "Build the app, publishing, and Electron ClojureScript releases"
-   :task (shell "clojure -M:cljs release app publishing electron")}
+  {:doc "Build the app and Electron ClojureScript releases"
+   :task (shell "clojure -M:cljs release app electron")}
 
   cljs:release-electron
-  {:doc "Build the Electron and publishing ClojureScript releases"
-   :task (do (shell "clojure -M:cljs release app electron --debug")
-             (shell "clojure -M:cljs release publishing"))}
+  {:doc "Build the Electron ClojureScript release"
+   :task (shell "clojure -M:cljs release app electron --debug")}
 
   cljs:release-app
   {:doc "Build the production browser ClojureScript release"
    :task (shell "clojure -M:cljs release app --config-merge" "{:compiler-options {:output-feature-set :es6}}")}
-
-  cljs:release-publishing
-  {:doc "Build the publishing ClojureScript release"
-   :task (shell "clojure -M:cljs release publishing")}
 
   test:compile
   {:doc "Compile the ClojureScript test bundle"
@@ -143,9 +111,8 @@
    :task (shell "clojure -M:cljs release app --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")}
 
   cljs:dev-release-electron
-  {:doc "Build development Electron and publishing releases"
-   :task (do (shell "clojure -M:cljs release app electron --debug --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")
-             (shell "clojure -M:cljs release publishing"))}
+  {:doc "Build development Electron release"
+   :task (shell "clojure -M:cljs release app electron --debug --config-merge" "{:closure-defines {frontend.config/DEV-RELEASE true}}")}
 
   cljs:debug
   {:doc "Build the debug browser release"
@@ -185,7 +152,7 @@
   build:release
   {:doc "Build static assets and all production ClojureScript targets"
    :depends [assets:build]
-   :task (shell "clojure -M:cljs release app publishing electron")}
+   :task (shell "clojure -M:cljs release app electron")}
 
   release:electron
   {:doc "Build and package the Electron application"

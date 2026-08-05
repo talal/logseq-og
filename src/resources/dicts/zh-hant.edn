@@ -189,7 +189,6 @@
  :export-page "匯出頁面"
  :export-markdown "以標準 Markdown 匯出（將移除區塊屬性）"
  :export-opml "以 OPML 格式匯出"
- :export-public-pages "匯出公開頁面"
  :export-json "以 JSON 格式匯出"
  :export-roam-json "以 Roam JSON 格式匯出"
  :export-edn "以 EDN 格式匯出"

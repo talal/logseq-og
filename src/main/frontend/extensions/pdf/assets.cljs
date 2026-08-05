@@ -274,16 +274,15 @@
     (let [asset-path (editor-handler/make-asset-url asset-path')]
       [:span.hl-area
        [:span.actions
-        (when-not config/publishing?
-          [:button.asset-action-btn.px-1
-           {:title         (t :asset/copy)
-            :tabIndex      "-1"
-            :on-mouse-down util/stop
-            :on-click      (fn [e]
-                             (util/stop e)
-                             (-> (util/copy-image-to-clipboard (gp-config/remove-asset-protocol asset-path))
-                                 (p/then #(notification/show! "Copied!" :success))))}
-           (ui/icon "copy")])
+        [:button.asset-action-btn.px-1
+         {:title         (t :asset/copy)
+          :tabIndex      "-1"
+          :on-mouse-down util/stop
+          :on-click      (fn [e]
+                           (util/stop e)
+                           (-> (util/copy-image-to-clipboard (gp-config/remove-asset-protocol asset-path))
+                               (p/then #(notification/show! "Copied!" :success))))}
+         (ui/icon "copy")]
 
         [:button.asset-action-btn.px-1
          {:title         (t :asset/maximize)

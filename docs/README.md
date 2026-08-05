@@ -44,7 +44,7 @@ significant version skew between React and Shadow CLJS declarations.
 The most useful entry points are:
 
 1. [`shadow-cljs.edn`](../shadow-cljs.edn) defines browser, Electron,
-   publishing, test, and Storybook builds.
+   test, and Storybook builds.
 2. [`frontend.core`](../src/main/frontend/core.cljs) initializes the shared
    renderer.
 3. [`frontend.handler`](../src/main/frontend/handler.cljs) is the closest

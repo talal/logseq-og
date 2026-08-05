@@ -435,12 +435,10 @@
         {:on-scroll on-contents-scroll}
         (favorites t)
 
-        (when (not config/publishing?)
-          (recent-pages t))]
+        (recent-pages t)]
 
        [:footer.px-2 {:class "create"}
-        (when-not config/publishing?
-          (create-dropdown))]]]
+        (create-dropdown)]]]
      [:span.shade-mask
       (cond-> {:on-click close-fn}
         (number? offset-ratio)
@@ -566,7 +564,7 @@
       [:div.cp__sidebar-main-content
        {:data-is-margin-less-pages margin-less-pages?
         :data-is-full-width        (or margin-less-pages?
-                                       (contains? #{:all-files :all-pages :my-publishing} route-name))}
+                                       (contains? #{:all-files :all-pages} route-name))}
 
        (when (contains? #{:page :home} route-name)
          (widgets/demo-graph-alert))
@@ -646,8 +644,7 @@
               (:page default-home))
          (route-handler/redirect-to-page! (:page default-home))
 
-         (and config/publishing?
-              (not default-home)
+         (and (not default-home)
               (empty? latest-journals))
          (route-handler/redirect! {:to :all-pages})
 
@@ -892,5 +889,4 @@
       (select/select-modal)
       (custom-context-menu)
       [:a#download.hidden]
-      (when-not config/publishing?
-        (help-button))])))
+      (help-button)])))

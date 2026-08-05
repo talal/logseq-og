@@ -53,8 +53,7 @@
 
 (rum/defc demo-graph-alert
   []
-  (when (and (config/demo-graph?)
-             (not config/publishing?))
+  (when (config/demo-graph?)
     (ui/admonition
      :warning
      [:p (t :graph-setup/demo-graph)])))

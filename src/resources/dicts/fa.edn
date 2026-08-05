@@ -234,7 +234,6 @@
 :settings-page/edit-export-css "ویرایش export.css"
 :settings-page/edit-global-config-edn "ویرایش سراسری config.edn"
 :settings-page/edit-setting "ویرایش"
-:settings-page/enable-all-pages-public "عمومی کردن همه صفحه‌ها در زمانی انتشار"
 :settings-page/enable-block-time "مهر زمان بلوک"
 :settings-page/enable-flashcards "فلش‌کارت‌ها"
 :settings-page/enable-journals "روزنگارها"
@@ -298,7 +297,6 @@
  :export-page "برون‌ریزی برگه"
  :export-markdown "برون‌ریزی به صورت مارک‌داون معیاری (بدون خصوصیات بلوک‌ها)"
  :export-opml "برون‌ریزی به صورت OPML"
- :export-public-pages "برون‌ریزی برگه‌های عمومی"
  :export-json "برون‌ریزی به صورت JSON"
  :export-roam-json "برون‌ریزی به صورت Roam JSON"
  :export-edn "برون‌ریزی به صورت EDN"
@@ -325,7 +323,6 @@
  :language "زبان"
  :remove-background "حذف پس‌زمینه"
  :open-a-directory "باز کردن یک پوشه محلی"
- :toggle-theme      "تغییر پوسته"
 
  :help/shortcut-page-title "کلیدهای میان‌بر"
 

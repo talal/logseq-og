@@ -43,7 +43,7 @@
   []
   (redirect! {:to :repos}))
 
-;; Named block links only works on web (and publishing)
+;; Named block links only work on web
 (if util/web-platform?
   (defn- default-page-route [page-name-or-block-uuid]
     ;; Only query if in a block context

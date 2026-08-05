@@ -20,7 +20,6 @@
    [logseq.graph-parser.property :as gp-property]
    [logseq.graph-parser.util.block-ref :as block-ref]
    [logseq.graph-parser.util.page-ref :as page-ref]
-   [logseq.publishing.html :as publish-html]
    [promesa.core :as p])
   (:import
    [goog.string StringBuffer]))
@@ -68,30 +67,6 @@
         (.setAttribute anchor "href" url)
         (.setAttribute anchor "download" file-path)
         (.click anchor)))))
-
-(defn download-repo-as-html!
-  "download public pages as html"
-  [repo]
-  (when-let [db (db/get-db repo)]
-    (let [{:keys [asset-filenames html]}
-          (publish-html/build-html db
-                                   {:app-state (select-keys @state/state
-                                                            [:ui/theme
-                                                             :ui/sidebar-collapsed-blocks])
-                                    :repo-config (get-in @state/state [:config repo])})
-          html-str     (str "data:text/html;charset=UTF-8,"
-                            (js/encodeURIComponent html))]
-      (if (util/electron?)
-        (js/window.apis.exportPublishAssets
-         html
-         (config/get-repo-dir repo)
-         (clj->js asset-filenames)
-         (util/mocked-open-dir-path))
-
-        (when-let [anchor (gdom/getElement "download-as-html")]
-          (.setAttribute anchor "href" html-str)
-          (.setAttribute anchor "download" "index.html")
-          (.click anchor))))))
 
 (defn- get-file-contents
   ([repo]

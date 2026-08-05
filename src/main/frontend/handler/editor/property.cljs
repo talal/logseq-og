@@ -1,7 +1,6 @@
 (ns frontend.handler.editor.property
   "Property related fns for the editor"
   (:require [clojure.string :as string]
-            [frontend.config :as config]
             [frontend.db :as db]
             [frontend.modules.outliner.core :as outliner-core]
             [frontend.modules.outliner.transaction :as outliner-tx]
@@ -43,35 +42,34 @@
                        retry-times 0}
                   :as opts}]
    (when-not (> retry-times 2)
-     (when-not config/publishing?
-       (when-let [block-id (:block/uuid block)]
-         (let [block (or (db/pull [:block/uuid block-id]) block)
-               edit-input-id (if (uuid? id)
-                               (get-edit-input-id-with-block-id id)
-                               (-> (str (subs id 0 (- (count id) 36)) block-id)
-                                   (string/replace "ls-block" "edit-block")))
-               content (or custom-content (:block/content block) "")
-               content-length (count content)
-               text-range (cond
-                            (vector? pos)
-                            (text-range-by-lst-fst-line content pos)
+     (when-let [block-id (:block/uuid block)]
+       (let [block (or (db/pull [:block/uuid block-id]) block)
+             edit-input-id (if (uuid? id)
+                             (get-edit-input-id-with-block-id id)
+                             (-> (str (subs id 0 (- (count id) 36)) block-id)
+                                 (string/replace "ls-block" "edit-block")))
+             content (or custom-content (:block/content block) "")
+             content-length (count content)
+             text-range (cond
+                          (vector? pos)
+                          (text-range-by-lst-fst-line content pos)
 
-                            (and (> tail-len 0) (>= (count content) tail-len))
-                            (subs content 0 (- (count content) tail-len))
+                          (and (> tail-len 0) (>= (count content) tail-len))
+                          (subs content 0 (- (count content) tail-len))
 
-                            (or (= :max pos) (<= content-length pos))
-                            content
+                          (or (= :max pos) (<= content-length pos))
+                          content
 
-                            :else
-                            (subs content 0 pos))
-               content (-> (property/remove-built-in-properties (:block/format block)
-                                                                content)
-                           (drawer/remove-logbook))]
-           (clear-selection!)
-           (if edit-input-id
-             (state/set-editing! edit-input-id content block text-range)
-             ;; Block may not be rendered yet
-             (js/setTimeout (fn [] (edit-block! block pos id (update opts :retry-times inc))) 10))))))))
+                          :else
+                          (subs content 0 pos))
+             content (-> (property/remove-built-in-properties (:block/format block)
+                                                              content)
+                         (drawer/remove-logbook))]
+         (clear-selection!)
+         (if edit-input-id
+           (state/set-editing! edit-input-id content block text-range)
+           ;; Block may not be rendered yet
+           (js/setTimeout (fn [] (edit-block! block pos id (update opts :retry-times inc))) 10)))))))
 
 (defn batch-set-block-property!
   "col: a collection of [block-id property-key property-value]."

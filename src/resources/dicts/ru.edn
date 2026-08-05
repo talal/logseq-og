@@ -182,7 +182,6 @@
  :settings-page/enable-timetracking                    "Отслеживание времени"
  :settings-page/enable-tooltip                         "Всплывающие подсказки"
  :settings-page/enable-journals                        "Журналы"
- :settings-page/enable-all-pages-public                "При публикации все страницы становятся публичными"
  :settings-page/home-default-page                      "Установить домашнюю страницу по умолчанию"
  :settings-page/enable-block-time                      "Временные метки блока"
  :settings-page/clear-cache                            "Очистить кэш"
@@ -237,7 +236,6 @@
  :export-page                                          "Экспортировать страницу"
  :export-markdown                                      "Экспортировать как стандартный Markdown (без свойств блока)"
  :export-opml                                          "Экспортировать как OPML"
- :export-public-pages                                  "Экспорт публичных страниц"
  :export-json                                          "Экспортировать как JSON"
  :export-roam-json                                     "Экспортировать как Roam JSON"
  :export-edn                                           "Экспортировать как EDN"
@@ -264,7 +262,6 @@
  :heading                                              "Заголовок {1}"
  :auto-heading                                         "Автоматический заголовок"
  :open-a-directory                                     "Открыть локальный каталог"
- :toggle-theme                                         "Переключить тему"
 
  :help/shortcut-page-title                             "Сочетания клавиш"
 
@@ -398,7 +395,6 @@
  :command.sidebar/close-top                            "Закрыть верхний элемент на правой боковой панели"
  :command.sidebar/clear                                "Очистить всё на правой боковой панели"
  :command.misc/copy                                    "Копировать"
- :command.graph/export-as-html                         "Экспорт публичных страниц графов в формате html"
  :command.graph/open                                   "Выберите граф для открытия"
  :command.graph/remove                                 "Удалить граф"
  :command.graph/add                                    "Добавить граф"

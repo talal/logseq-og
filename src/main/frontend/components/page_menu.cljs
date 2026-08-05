@@ -66,22 +66,20 @@
           file-rpath (when (util/electron?) (page-util/get-page-file-rpath page-name))]
       (when (and page (not block?))
         (->>
-         [(when-not config/publishing?
-            {:title   (if favorited?
-                        (t :page/unfavorite)
-                        (t :page/add-to-favorites))
-             :options {:on-click
-                       (fn []
-                         (if favorited?
-                           (page-handler/unfavorite-page! page-original-name)
-                           (page-handler/favorite-page! page-original-name)))}})
+         [{:title   (if favorited?
+                     (t :page/unfavorite)
+                     (t :page/add-to-favorites))
+           :options {:on-click
+                     (fn []
+                       (if favorited?
+                         (page-handler/unfavorite-page! page-original-name)
+                         (page-handler/favorite-page! page-original-name)))}}
 
           (when (util/electron?)
             {:title   (t :page/copy-page-url)
              :options {:on-click #(page-handler/copy-page-url page-original-name)}})
 
-          (when-not (or contents?
-                        config/publishing?)
+          (when-not contents?
             {:title   (t :page/delete)
              :options {:on-click #(state/set-modal! (delete-page-dialog page-name))}})
 

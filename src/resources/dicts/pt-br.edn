@@ -252,7 +252,6 @@
  :settings-page/enable-timetracking "Rastreamento de tempo"
  :settings-page/enable-tooltip "Dicas de ferramentas"
  :settings-page/enable-journals "Diários"
- :settings-page/enable-all-pages-public "Todas as páginas públicas ao publicar"
  :settings-page/home-default-page "Definir a página inicial padrão"
  :settings-page/enable-block-time "Carimbos de hora dos blocos"
  :settings-page/clear-cache "Limpar cache"
@@ -337,7 +336,6 @@
  :export-page "Exportar página"
  :export-markdown "Exportar como Markdown padrão (sem propriedades de bloco)"
  :export-opml "Exportar como OPML"
- :export-public-pages "Exportar páginas públicas"
  :export-json "Exportar como JSON"
  :export-roam-json "Exportar como Roam JSON"
  :export-edn "Exportar como EDN"
@@ -368,7 +366,6 @@
  :heading "Cabeçalho {1}"
  :auto-heading "Cabeçalho automático"
  :open-a-directory "Abrir um diretório local"
- :toggle-theme "Alternar tema"
 
  :help/shortcut-page-title "Atalhos de teclado"
 
@@ -531,7 +528,6 @@
  :command.go/search-in-page "Pesquisar blocos na página"
  :command.go/tomorrow "Ir para amanhã"
  :command.graph/add "Adicionar um grafo"
- :command.graph/export-as-html "Exportar páginas de grafos públicos como HTML"
  :command.graph/open "Selecionar grafo para abrir"
  :command.graph/re-index "Reindexar grafo atual"
  :command.graph/remove "Remover um grafo"

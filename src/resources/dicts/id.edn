@@ -245,7 +245,6 @@
  :settings-page/enable-timetracking "Pelacakan waktu"
  :settings-page/enable-tooltip "Tooltip"
  :settings-page/enable-journals "Jurnal"
- :settings-page/enable-all-pages-public "Semua halaman menjadi publik saat dipublikasikan"
  :settings-page/home-default-page "Atur halaman beranda default"
  :settings-page/enable-block-time "Waktu blok"
  :settings-page/clear-cache "Hapus cache"
@@ -328,7 +327,6 @@
  :export-page "Ekspor halaman"
  :export-markdown "Ekspor sebagai Markdown standar (tanpa properti blok)"
  :export-opml "Ekspor sebagai OPML"
- :export-public-pages "Ekspor halaman publik"
  :export-json "Ekspor sebagai JSON"
  :export-roam-json "Ekspor sebagai JSON Roam"
  :export-edn "Ekspor sebagai EDN"
@@ -359,7 +357,6 @@
  :heading "Judul {1}"
  :auto-heading "Judul otomatis"
  :open-a-directory "Buka direktori lokal"
- :toggle-theme "Alihkan tema"
 
  :help/shortcut-page-title "Pintasan Papan Ketik"
 
@@ -518,7 +515,6 @@
  :command.go/search "Cari halaman dan blok"
  :command.go/tomorrow "Buka ke esok hari"
  :command.graph/add "Tambahkan grafik"
- :command.graph/export-as-html "Ekspor halaman grafik sebagai HTML"
  :command.graph/open "Pilih grafik untuk dibuka"
  :command.graph/re-index "Reindeks grafik saat ini"
  :command.graph/remove "Hapus grafik"

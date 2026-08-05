@@ -105,6 +105,21 @@ Start with:
 - the platform-specific `electron-log` output for Logseq OG
 - the graph files, backups, and error files involved in the reproduction
 
+### Persistent processes with zmx
+
+When a debugging command must outlive the current shell, use the `zmx` skill
+instead of an untracked background process:
+
+- use `zmx run NAME -d ...` for long-running non-interactive commands
+- use `zmx tail NAME` to follow live output and `zmx history NAME` for evidence
+- use `zmx attach NAME` and `zmx send NAME ...` for interactive prompts
+- record the session name in the reproduction notes and kill it during cleanup
+
+The managed `logseq-repl` startup workflow remains preferred for Logseq's
+watcher and Desktop lifecycle because it also verifies build readiness and
+runtime attachment. Use zmx as the lifecycle and output tool for commands that
+workflow does not own.
+
 ### Required final output
 
 The final response must include these sections or an equivalent structure:

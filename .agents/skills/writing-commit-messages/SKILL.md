@@ -1,8 +1,6 @@
 ---
 name: writing-commit-messages
-description: >-
-  Writes Git commit messages. Activates when the user asks to write
-  a commit message, draft a commit message, or similar.
+description: Writes Git commit messages. Activates when the user asks to write a commit message, draft a commit message, or similar.
 ---
 
 # Writing Commit Messages
@@ -25,19 +23,15 @@ Use one of the following types:
 
 - `feat`: commits that add a new feature
 - `fix`: commits that fix a bug
-- `refactor`: refactored code that neither fixes a bug nor adds a feature. There
-  should be no behavior change, only code rewriting/restructuring
+- `refactor`: refactored code that neither fixes a bug nor adds a feature. There should be no behavior change, only code rewriting/restructuring
 - `perf`: special refactor commits geared towards improving performance
 - `test`: commits that add new tests or fix existing tests
-- `chore`: Changes that do not relate to a fix or feature and don’t modify
-  source or test files. Basically miscellaneous commits (e.g., updating
-  dependencies or modifying .gitignore file)
+- `chore`: Changes that do not relate to a fix or feature and don’t modify source or test files. Basically miscellaneous commits (e.g., updating dependencies or modifying .gitignore file)
 - `build`: changes that affect the build system/tooling (e.g., just, cargo, npm,
   etc.)
 - `ci`: CI/CD related changes
 - `docs`: documentation only changes
-- `style`: changes that that do not affect the meaning of the code (e.g., using
-  code formatters, missing semi-colons, white-space fixes, etc.)
+- `style`: changes that that do not affect the meaning of the code (e.g., using code formatters, missing semi-colons, white-space fixes, etc.)
 
 ### Scope
 
@@ -53,8 +47,7 @@ concise—ideally under 60 characters total for the whole subject line.
 
 ### Long form description
 
-- Describe **what changed**, **what the previous behavior was**, and **how the
-  new behavior works** at a high level.
+- Describe **what changed**, **what the previous behavior was**, and **how the new behavior works** at a high level.
 - Use plain prose, not bullet points. Wrap lines at ~72 characters.
 - Focus on the _why_ and _how_ rather than restating the diff.
 - Keep the tone direct and technical without no filler phrases.

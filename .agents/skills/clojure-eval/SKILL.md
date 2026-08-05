@@ -35,6 +35,15 @@ If no nREPL is available, use the `logseq-repl` skill:
 
 Then use port `8701` for the Shadow Clojure nREPL. The startup script verifies that the renderer and Electron CLJS runtimes are attached; it does not replace this Clojure evaluator for namespace or build-tool evaluation.
 
+### Persistent command lifecycle
+
+When an nREPL server, watcher, or other long-running setup command must survive
+a shell disconnect, use the `zmx` skill to open or attach to its session and
+follow output with `zmx tail`. Keep expression evaluation and port discovery in
+`bb clj-nrepl-eval`; zmx preserves the process lifecycle, not the evaluator
+protocol or evaluator session state. The standard Logseq startup path remains
+the `logseq-repl` skill.
+
 ### 1. Discover and select an nREPL server
 
 First, discover nREPL servers in the current directory:

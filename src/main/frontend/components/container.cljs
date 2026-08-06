@@ -644,10 +644,6 @@
               (:page default-home))
          (route-handler/redirect-to-page! (:page default-home))
 
-         (and (not default-home)
-              (empty? latest-journals))
-         (route-handler/redirect! {:to :all-pages})
-
          loading-files?
          (ui/loading (t :loading-files))
 

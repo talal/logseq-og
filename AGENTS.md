@@ -45,7 +45,8 @@ the Nix devShell and prepends the repository's `node_modules/.bin` directory to
 
 - **ClojureScript tests:** `bb test`
   - Use `bb test:compile` and `bb test:run` to isolate compilation from execution.
-- **Browser/Electron E2E tests:** `playwright test`
+- **Browser/Electron E2E tests:** `yarn test:e2e`
+  - The suite requires `CI=true`. The Electron main process reads it (`src/electron/electron/utils.cljs`) to pick the per-run graphs cache at `tmp/graphs` instead of the persistent `~/.logseq-og/graphs`; without it, leftover graph caches make the demo-graph setup (and `#repo-switch`) not appear.
   - Run the targeted spec since full test suite is slow to run: `playwright test e2e-tests/<name>.spec.ts`
   - Do not pass `--browser` or browser-specific environment variables to Playwright.
 - **Linting (Clojure/ClojureScript):** `bb lint`
